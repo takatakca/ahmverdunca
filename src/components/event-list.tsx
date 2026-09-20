@@ -32,10 +32,10 @@ export function EventCard({ event }: { event: ScheduleEvent }) {
             {event.start} – {event.end}
           </span>
           <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", statusStyle[event.status])}>
-            {t(`status.${event.status}` as TranslationKeyless)}
+            {t(`status.${event.status}` as TranslationKey)}
           </span>
           <span className="rounded-full bg-secondary px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-secondary-foreground">
-            {t(`type.${event.type}` as TranslationKeyless)}
+            {t(`type.${event.type}` as TranslationKey)}
           </span>
         </div>
         <h3 className="heading-card mt-1.5 truncate">
