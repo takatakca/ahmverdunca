@@ -1,0 +1,44 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { PageHeader } from "@/components/page-header";
+import { DemoNotice } from "@/components/demo-notice";
+import { TEAMS } from "@/data/teams";
+import { useI18n } from "@/lib/i18n";
+
+export const Route = createFileRoute("/equipes/")({
+  head: () => ({
+    meta: [
+      { title: "Équipes et catégories — AHM Verdun" },
+      { name: "description", content: "M5 à M18, Junior et hockey féminin : toutes les catégories de l'AHM Verdun pour la saison 2026–2027." },
+      { property: "og:title", content: "Équipes et catégories — AHM Verdun" },
+      { property: "og:description", content: "Toutes les catégories de l'AHM Verdun, avec page dédiée pour chacune." },
+    ],
+  }),
+  component: TeamsPage,
+});
+
+function TeamsPage() {
+  const { t, l } = useI18n();
+  return (
+    <>
+      <PageHeader eyebrow={t("common.season")} title={t("teams.title")} description={t("teams.subtitle")} />
+      <div className="container-site py-8 md:py-12">
+        <div className="mb-6 grid gap-3 md:grid-cols-2">
+          <DemoNotice kind="info">{t("teams.divisionsNote")}</DemoNotice>
+          <DemoNotice kind="info" title={{ fr: "Confidentialité", en: "Privacy" }}>{t("teams.privacyNote")}</DemoNotice>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {TEAMS.map((team) => (
+            <Link key={team.slug} to="/equipes/$slug" params={{ slug: team.slug }} className="card-elevated group p-5">
+              <div className="flex items-baseline justify-between">
+                <span className="font-display text-4xl font-extrabold uppercase text-navy">{team.code}</span>
+                <span className="text-xs text-muted-foreground">{t("teams.ages")} : {l(team.ages)}</span>
+              </div>
+              <h2 className="heading-card mt-2 group-hover:text-sport">{l(team.name)}</h2>
+              <p className="mt-1.5 text-sm text-muted-foreground">{l(team.description)}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
