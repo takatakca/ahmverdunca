@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Clock, MapPin } from "lucide-react";
-import { useI18n, type TranslationKeyless } from "@/lib/i18n-types";
+import { useI18n } from "@/lib/i18n";
+import type { TranslationKey } from "@/lib/translations";
 import type { ScheduleEvent } from "@/data/schedule";
 import { getArena } from "@/data/arenas";
 import { getTeam } from "@/data/teams";
