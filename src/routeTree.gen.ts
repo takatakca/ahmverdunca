@@ -10,33 +10,284 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
+import { Route as ConnexionRouteImport } from './routes/connexion'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as EntraineursRouteImport } from './routes/entraineurs'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as HorairesRouteImport } from './routes/horaires'
+import { Route as InscriptionsRouteImport } from './routes/inscriptions'
+import { Route as RechercheRouteImport } from './routes/recherche'
+import { Route as RessourcesRouteImport } from './routes/ressources'
+import { Route as WllvRouteImport } from './routes/wllv'
+import { Route as ArenasIndexRouteImport } from './routes/arenas.index'
+import { Route as ArenasSlugRouteImport } from './routes/arenas.$slug'
+import { Route as EquipesIndexRouteImport } from './routes/equipes.index'
+import { Route as EquipesSlugRouteImport } from './routes/equipes.$slug'
+import { Route as GalerieIndexRouteImport } from './routes/galerie.index'
+import { Route as GalerieSlugRouteImport } from './routes/galerie.$slug'
+import { Route as NouvellesIndexRouteImport } from './routes/nouvelles.index'
+import { Route as NouvellesSlugRouteImport } from './routes/nouvelles.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+  id: '/confidentialite',
+  path: '/confidentialite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnexionRoute = ConnexionRouteImport.update({
+  id: '/connexion',
+  path: '/connexion',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntraineursRoute = EntraineursRouteImport.update({
+  id: '/entraineurs',
+  path: '/entraineurs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HorairesRoute = HorairesRouteImport.update({
+  id: '/horaires',
+  path: '/horaires',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InscriptionsRoute = InscriptionsRouteImport.update({
+  id: '/inscriptions',
+  path: '/inscriptions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RechercheRoute = RechercheRouteImport.update({
+  id: '/recherche',
+  path: '/recherche',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RessourcesRoute = RessourcesRouteImport.update({
+  id: '/ressources',
+  path: '/ressources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WllvRoute = WllvRouteImport.update({
+  id: '/wllv',
+  path: '/wllv',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArenasIndexRoute = ArenasIndexRouteImport.update({
+  id: '/arenas/',
+  path: '/arenas/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArenasSlugRoute = ArenasSlugRouteImport.update({
+  id: '/arenas/$slug',
+  path: '/arenas/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipesIndexRoute = EquipesIndexRouteImport.update({
+  id: '/equipes/',
+  path: '/equipes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipesSlugRoute = EquipesSlugRouteImport.update({
+  id: '/equipes/$slug',
+  path: '/equipes/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalerieIndexRoute = GalerieIndexRouteImport.update({
+  id: '/galerie/',
+  path: '/galerie/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalerieSlugRoute = GalerieSlugRouteImport.update({
+  id: '/galerie/$slug',
+  path: '/galerie/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NouvellesIndexRoute = NouvellesIndexRouteImport.update({
+  id: '/nouvelles/',
+  path: '/nouvelles/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NouvellesSlugRoute = NouvellesSlugRouteImport.update({
+  id: '/nouvelles/$slug',
+  path: '/nouvelles/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/connexion': typeof ConnexionRoute
+  '/contact': typeof ContactRoute
+  '/entraineurs': typeof EntraineursRoute
+  '/faq': typeof FaqRoute
+  '/horaires': typeof HorairesRoute
+  '/inscriptions': typeof InscriptionsRoute
+  '/recherche': typeof RechercheRoute
+  '/ressources': typeof RessourcesRoute
+  '/wllv': typeof WllvRoute
+  '/arenas/$slug': typeof ArenasSlugRoute
+  '/equipes/$slug': typeof EquipesSlugRoute
+  '/galerie/$slug': typeof GalerieSlugRoute
+  '/nouvelles/$slug': typeof NouvellesSlugRoute
+  '/arenas/': typeof ArenasIndexRoute
+  '/equipes/': typeof EquipesIndexRoute
+  '/galerie/': typeof GalerieIndexRoute
+  '/nouvelles/': typeof NouvellesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/connexion': typeof ConnexionRoute
+  '/contact': typeof ContactRoute
+  '/entraineurs': typeof EntraineursRoute
+  '/faq': typeof FaqRoute
+  '/horaires': typeof HorairesRoute
+  '/inscriptions': typeof InscriptionsRoute
+  '/recherche': typeof RechercheRoute
+  '/ressources': typeof RessourcesRoute
+  '/wllv': typeof WllvRoute
+  '/arenas/$slug': typeof ArenasSlugRoute
+  '/equipes/$slug': typeof EquipesSlugRoute
+  '/galerie/$slug': typeof GalerieSlugRoute
+  '/nouvelles/$slug': typeof NouvellesSlugRoute
+  '/arenas': typeof ArenasIndexRoute
+  '/equipes': typeof EquipesIndexRoute
+  '/galerie': typeof GalerieIndexRoute
+  '/nouvelles': typeof NouvellesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/connexion': typeof ConnexionRoute
+  '/contact': typeof ContactRoute
+  '/entraineurs': typeof EntraineursRoute
+  '/faq': typeof FaqRoute
+  '/horaires': typeof HorairesRoute
+  '/inscriptions': typeof InscriptionsRoute
+  '/recherche': typeof RechercheRoute
+  '/ressources': typeof RessourcesRoute
+  '/wllv': typeof WllvRoute
+  '/arenas/$slug': typeof ArenasSlugRoute
+  '/equipes/$slug': typeof EquipesSlugRoute
+  '/galerie/$slug': typeof GalerieSlugRoute
+  '/nouvelles/$slug': typeof NouvellesSlugRoute
+  '/arenas/': typeof ArenasIndexRoute
+  '/equipes/': typeof EquipesIndexRoute
+  '/galerie/': typeof GalerieIndexRoute
+  '/nouvelles/': typeof NouvellesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/confidentialite'
+    | '/connexion'
+    | '/contact'
+    | '/entraineurs'
+    | '/faq'
+    | '/horaires'
+    | '/inscriptions'
+    | '/recherche'
+    | '/ressources'
+    | '/wllv'
+    | '/arenas/$slug'
+    | '/equipes/$slug'
+    | '/galerie/$slug'
+    | '/nouvelles/$slug'
+    | '/arenas/'
+    | '/equipes/'
+    | '/galerie/'
+    | '/nouvelles/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/confidentialite'
+    | '/connexion'
+    | '/contact'
+    | '/entraineurs'
+    | '/faq'
+    | '/horaires'
+    | '/inscriptions'
+    | '/recherche'
+    | '/ressources'
+    | '/wllv'
+    | '/arenas/$slug'
+    | '/equipes/$slug'
+    | '/galerie/$slug'
+    | '/nouvelles/$slug'
+    | '/arenas'
+    | '/equipes'
+    | '/galerie'
+    | '/nouvelles'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/confidentialite'
+    | '/connexion'
+    | '/contact'
+    | '/entraineurs'
+    | '/faq'
+    | '/horaires'
+    | '/inscriptions'
+    | '/recherche'
+    | '/ressources'
+    | '/wllv'
+    | '/arenas/$slug'
+    | '/equipes/$slug'
+    | '/galerie/$slug'
+    | '/nouvelles/$slug'
+    | '/arenas/'
+    | '/equipes/'
+    | '/galerie/'
+    | '/nouvelles/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ConfidentialiteRoute: typeof ConfidentialiteRoute
+  ConnexionRoute: typeof ConnexionRoute
+  ContactRoute: typeof ContactRoute
+  EntraineursRoute: typeof EntraineursRoute
+  FaqRoute: typeof FaqRoute
+  HorairesRoute: typeof HorairesRoute
+  InscriptionsRoute: typeof InscriptionsRoute
+  RechercheRoute: typeof RechercheRoute
+  RessourcesRoute: typeof RessourcesRoute
+  WllvRoute: typeof WllvRoute
+  ArenasSlugRoute: typeof ArenasSlugRoute
+  EquipesSlugRoute: typeof EquipesSlugRoute
+  GalerieSlugRoute: typeof GalerieSlugRoute
+  NouvellesSlugRoute: typeof NouvellesSlugRoute
+  ArenasIndexRoute: typeof ArenasIndexRoute
+  EquipesIndexRoute: typeof EquipesIndexRoute
+  GalerieIndexRoute: typeof GalerieIndexRoute
+  NouvellesIndexRoute: typeof NouvellesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +299,163 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confidentialite': {
+      id: '/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/confidentialite'
+      preLoaderRoute: typeof ConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connexion': {
+      id: '/connexion'
+      path: '/connexion'
+      fullPath: '/connexion'
+      preLoaderRoute: typeof ConnexionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entraineurs': {
+      id: '/entraineurs'
+      path: '/entraineurs'
+      fullPath: '/entraineurs'
+      preLoaderRoute: typeof EntraineursRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/horaires': {
+      id: '/horaires'
+      path: '/horaires'
+      fullPath: '/horaires'
+      preLoaderRoute: typeof HorairesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inscriptions': {
+      id: '/inscriptions'
+      path: '/inscriptions'
+      fullPath: '/inscriptions'
+      preLoaderRoute: typeof InscriptionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recherche': {
+      id: '/recherche'
+      path: '/recherche'
+      fullPath: '/recherche'
+      preLoaderRoute: typeof RechercheRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ressources': {
+      id: '/ressources'
+      path: '/ressources'
+      fullPath: '/ressources'
+      preLoaderRoute: typeof RessourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wllv': {
+      id: '/wllv'
+      path: '/wllv'
+      fullPath: '/wllv'
+      preLoaderRoute: typeof WllvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/arenas/': {
+      id: '/arenas/'
+      path: '/arenas'
+      fullPath: '/arenas/'
+      preLoaderRoute: typeof ArenasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/arenas/$slug': {
+      id: '/arenas/$slug'
+      path: '/arenas/$slug'
+      fullPath: '/arenas/$slug'
+      preLoaderRoute: typeof ArenasSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipes/': {
+      id: '/equipes/'
+      path: '/equipes'
+      fullPath: '/equipes/'
+      preLoaderRoute: typeof EquipesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipes/$slug': {
+      id: '/equipes/$slug'
+      path: '/equipes/$slug'
+      fullPath: '/equipes/$slug'
+      preLoaderRoute: typeof EquipesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galerie/': {
+      id: '/galerie/'
+      path: '/galerie'
+      fullPath: '/galerie/'
+      preLoaderRoute: typeof GalerieIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/galerie/$slug': {
+      id: '/galerie/$slug'
+      path: '/galerie/$slug'
+      fullPath: '/galerie/$slug'
+      preLoaderRoute: typeof GalerieSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nouvelles/': {
+      id: '/nouvelles/'
+      path: '/nouvelles'
+      fullPath: '/nouvelles/'
+      preLoaderRoute: typeof NouvellesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/nouvelles/$slug': {
+      id: '/nouvelles/$slug'
+      path: '/nouvelles/$slug'
+      fullPath: '/nouvelles/$slug'
+      preLoaderRoute: typeof NouvellesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ConfidentialiteRoute: ConfidentialiteRoute,
+  ConnexionRoute: ConnexionRoute,
+  ContactRoute: ContactRoute,
+  EntraineursRoute: EntraineursRoute,
+  FaqRoute: FaqRoute,
+  HorairesRoute: HorairesRoute,
+  InscriptionsRoute: InscriptionsRoute,
+  RechercheRoute: RechercheRoute,
+  RessourcesRoute: RessourcesRoute,
+  WllvRoute: WllvRoute,
+  ArenasSlugRoute: ArenasSlugRoute,
+  EquipesSlugRoute: EquipesSlugRoute,
+  GalerieSlugRoute: GalerieSlugRoute,
+  NouvellesSlugRoute: NouvellesSlugRoute,
+  ArenasIndexRoute: ArenasIndexRoute,
+  EquipesIndexRoute: EquipesIndexRoute,
+  GalerieIndexRoute: GalerieIndexRoute,
+  NouvellesIndexRoute: NouvellesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

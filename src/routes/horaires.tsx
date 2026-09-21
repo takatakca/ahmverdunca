@@ -20,7 +20,7 @@ export const Route = createFileRoute("/horaires")({
       { property: "og:description", content: "Consultez les activités de la semaine par équipe et par aréna." },
     ],
   }),
-  component: SchedulePage;
+  component: SchedulePage,
 });
 
 const TYPES: EventType[] = ["practice", "game", "event", "tryout"];
