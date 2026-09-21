@@ -14,7 +14,7 @@ export function PlaceholderImage({
   aspect = "aspect-[16/10]",
   markIllustrative = true,
 }: {
-  src?: string;
+  src?: string | undefined;
   alt?: string;
   label?: string;
   className?: string;
