@@ -10,7 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
 import { Route as ConnexionRouteImport } from './routes/connexion'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -21,6 +22,7 @@ import { Route as InscriptionsRouteImport } from './routes/inscriptions'
 import { Route as RechercheRouteImport } from './routes/recherche'
 import { Route as RessourcesRouteImport } from './routes/ressources'
 import { Route as WllvRouteImport } from './routes/wllv'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArenasIndexRouteImport } from './routes/arenas.index'
 import { Route as ArenasSlugRouteImport } from './routes/arenas.$slug'
 import { Route as EquipesIndexRouteImport } from './routes/equipes.index'
@@ -35,9 +37,13 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
@@ -90,6 +96,11 @@ const WllvRoute = WllvRouteImport.update({
   path: '/wllv',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ArenasIndexRoute = ArenasIndexRouteImport.update({
   id: '/arenas/',
   path: '/arenas/',
@@ -133,7 +144,7 @@ const NouvellesSlugRoute = NouvellesSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/connexion': typeof ConnexionRoute
   '/contact': typeof ContactRoute
@@ -144,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/recherche': typeof RechercheRoute
   '/ressources': typeof RessourcesRoute
   '/wllv': typeof WllvRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
   '/galerie/$slug': typeof GalerieSlugRoute
@@ -155,7 +167,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/auth': typeof AuthRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/connexion': typeof ConnexionRoute
   '/contact': typeof ContactRoute
@@ -166,6 +178,7 @@ export interface FileRoutesByTo {
   '/recherche': typeof RechercheRoute
   '/ressources': typeof RessourcesRoute
   '/wllv': typeof WllvRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
   '/galerie/$slug': typeof GalerieSlugRoute
@@ -178,7 +191,8 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/confidentialite': typeof ConfidentialiteRoute
   '/connexion': typeof ConnexionRoute
   '/contact': typeof ContactRoute
@@ -189,6 +203,7 @@ export interface FileRoutesById {
   '/recherche': typeof RechercheRoute
   '/ressources': typeof RessourcesRoute
   '/wllv': typeof WllvRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
   '/galerie/$slug': typeof GalerieSlugRoute
@@ -202,7 +217,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/admin'
+    | '/auth'
     | '/confidentialite'
     | '/connexion'
     | '/contact'
@@ -213,6 +228,7 @@ export interface FileRouteTypes {
     | '/recherche'
     | '/ressources'
     | '/wllv'
+    | '/admin'
     | '/arenas/$slug'
     | '/equipes/$slug'
     | '/galerie/$slug'
@@ -224,7 +240,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
+    | '/auth'
     | '/confidentialite'
     | '/connexion'
     | '/contact'
@@ -235,6 +251,7 @@ export interface FileRouteTypes {
     | '/recherche'
     | '/ressources'
     | '/wllv'
+    | '/admin'
     | '/arenas/$slug'
     | '/equipes/$slug'
     | '/galerie/$slug'
@@ -246,7 +263,8 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/admin'
+    | '/_authenticated'
+    | '/auth'
     | '/confidentialite'
     | '/connexion'
     | '/contact'
@@ -257,6 +275,7 @@ export interface FileRouteTypes {
     | '/recherche'
     | '/ressources'
     | '/wllv'
+    | '/_authenticated/admin'
     | '/arenas/$slug'
     | '/equipes/$slug'
     | '/galerie/$slug'
@@ -269,7 +288,8 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   ConfidentialiteRoute: typeof ConfidentialiteRoute
   ConnexionRoute: typeof ConnexionRoute
   ContactRoute: typeof ContactRoute
@@ -299,11 +319,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/confidentialite': {
@@ -376,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WllvRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/arenas/': {
       id: '/arenas/'
       path: '/arenas'
@@ -435,9 +469,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   ConfidentialiteRoute: ConfidentialiteRoute,
   ConnexionRoute: ConnexionRoute,
   ContactRoute: ContactRoute,
