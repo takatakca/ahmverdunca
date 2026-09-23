@@ -19,7 +19,7 @@ const dict = {
   "nav.search": { fr: "Recherche", en: "Search" },
   "nav.menu": { fr: "Menu", en: "Menu" },
   "nav.close": { fr: "Fermer", en: "Close" },
-  "nav.admin": { fr: "Administration (prototype)", en: "Admin (prototype)" },
+  "nav.admin": { fr: "Administration", en: "Admin" },
   "nav.language": { fr: "Langue", en: "Language" },
 
   // Common
