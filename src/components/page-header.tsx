@@ -30,11 +30,13 @@ export function PageHeader({
 export function SectionHeading({
   eyebrow,
   title,
+  description,
   action,
   className,
 }: {
   eyebrow?: string;
   title: string;
+  description?: string;
   action?: ReactNode;
   className?: string;
 }) {
@@ -43,6 +45,7 @@ export function SectionHeading({
       <div>
         {eyebrow && <p className="eyebrow text-sport mb-2">{eyebrow}</p>}
         <h2 className="heading-section">{title}</h2>
+        {description && <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

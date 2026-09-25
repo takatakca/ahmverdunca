@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Users } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Radio, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
@@ -22,6 +22,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun. Maquette de préproduction." },
       { property: "og:title", content: "AHM Verdun — Le hockey commence ici" },
       { property: "og:description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,
@@ -30,7 +32,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { t, l, lang } = useI18n();
   const alerts = ALERTS.filter((a) => !a.archived);
-  const upcoming = SCHEDULE.filter((e) => e.date >= DEMO_TODAY).slice(0, 5);
+  const upcoming = SCHEDULE.filter((e) => e.date >= DEMO_TODAY).slice(0, 4);
   const news = NEWS.slice(0, 3);
 
   return (
@@ -44,8 +46,10 @@ function Home() {
             <span className="inline-block h-px w-8 bg-sport" />
             {t("common.season")} {SITE.season}
           </p>
-          <h1 className="heading-hero max-w-4xl">{t("home.heroTitle")}</h1>
-          <p className="mt-5 max-w-xl text-lg text-navy-foreground/85">{t("home.heroSub")} — {SITE.city}</p>
+          <p className="font-display text-2xl font-bold uppercase md:text-3xl">AHM Verdun</p>
+          <h1 className="heading-hero mt-2 max-w-4xl">{t("home.heroTitle")}</h1>
+          <p className="mt-5 max-w-xl text-lg text-navy-foreground/85">{lang === "fr" ? "Développement • Compétition • Communauté" : "Development • Competition • Community"}</p>
+          <p className="mt-2 text-sm text-navy-foreground/65">{t("home.heroSub")} — {SITE.city}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="sport" size="lg">
               <Link to="/horaires"><CalendarDays className="size-5" /> {t("home.ctaSchedule")}</Link>
@@ -59,44 +63,22 @@ function Home() {
         </div>
       </section>
 
-      {/* Find my team */}
-      <section className="border-b border-border bg-ice">
-        <div className="container-site py-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="eyebrow text-sport">{t("home.findTeamHint")}</p>
-              <h2 className="heading-card mt-1 flex items-center gap-2"><Users className="size-5 text-sport" /> {t("home.findTeam")}</h2>
-            </div>
-            <div className="scrollbar-none -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
-              {TEAMS.map((team) => (
-                <Link
-                  key={team.slug}
-                  to="/equipes/$slug"
-                  params={{ slug: team.slug }}
-                  className="tap-target inline-flex shrink-0 items-center justify-center rounded-md border border-navy/15 bg-card px-4 font-display text-base font-bold uppercase shadow-card transition-colors hover:bg-navy hover:text-navy-foreground"
-                >
-                  {team.code}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Alerts */}
       {alerts.length > 0 && (
-        <section className="container-site py-10 md:py-14">
-          <SectionHeading eyebrow={t("common.demo")} title={t("home.alerts")} />
+        <section className="container-site py-7 md:py-9">
+          <p className="eyebrow mb-3 text-sport">{t("home.alerts")}</p>
           <div className="space-y-3">
             {alerts.map((a) => (
-              <div key={a.id} className="card-elevated border-l-4 border-l-sport p-5">
+              <div key={a.id} className="flex flex-col gap-4 border-l-4 border-l-sport bg-status-cancelled-soft p-5 md:flex-row md:items-center md:justify-between">
+                <div>
                 <p className="flex items-center gap-2 font-display text-lg font-bold uppercase text-sport">
                   <AlertTriangle className="size-5" aria-hidden /> {l(a.title)}
                 </p>
                 <p className="mt-1.5 text-sm text-foreground/90">{l(a.message)}</p>
                 <p className="mt-2 text-xs text-muted-foreground">{t("common.published")} {formatDate(a.publishedAt, lang)}</p>
-                {a.linkTo && (
-                  <Link to="/nouvelles/$slug" params={{ slug: a.linkTo.split("/").pop()! }} className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-sport hover:underline">
+                </div>
+                {a.linkTo && a.linkTo.split("/").pop() && (
+                  <Link to="/nouvelles/$slug" params={{ slug: a.linkTo.split("/").pop() ?? "" }} className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-sport hover:underline">
                     {t("common.readMore")} <ArrowRight className="size-4" />
                   </Link>
                 )}
@@ -106,39 +88,41 @@ function Home() {
         </section>
       )}
 
-      {/* Teams */}
-      <section className="bg-ice py-12 md:py-16">
+      {/* This week */}
+      <section className="competition-panel py-12 text-navy-foreground md:py-16">
         <div className="container-site">
           <SectionHeading
-            eyebrow={t("home.myTeamsSub")}
-            title={t("home.myTeams")}
-            action={<Button asChild variant="outline" size="sm"><Link to="/equipes">{t("common.seeAll")}</Link></Button>}
+            eyebrow={t("common.demoData")}
+            title={t("home.weekTitle")}
+            description={t("home.weekHint")}
+            action={<Button asChild variant="outline-light" size="sm"><Link to="/horaires">{t("common.seeAll")}</Link></Button>}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {TEAMS.slice(0, 6).map((team) => (
-              <Link key={team.slug} to="/equipes/$slug" params={{ slug: team.slug }} className="card-elevated group p-5">
-                <div className="flex items-baseline justify-between">
-                  <span className="font-display text-3xl font-extrabold uppercase text-navy">{team.code}</span>
-                  <span className="text-xs text-muted-foreground">{l(team.ages)}</span>
-                </div>
-                <h3 className="heading-card mt-2 group-hover:text-sport">{l(team.name)}</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">{l(team.description)}</p>
-              </Link>
-            ))}
+          <DemoNotice className="mb-5">{t("home.upcomingNote")}</DemoNotice>
+          <div className="space-y-3 text-foreground">
+            {upcoming.map((e) => <EventCard key={e.id} event={e} />)}
           </div>
         </div>
       </section>
 
-      {/* Upcoming */}
-      <section className="container-site py-12 md:py-16">
+      {/* Team universe */}
+      <section className="rink-lines bg-ice py-12 md:py-16">
+        <div className="container-site">
         <SectionHeading
-          eyebrow={t("common.demoData")}
-          title={t("home.upcoming")}
-          action={<Button asChild variant="outline" size="sm"><Link to="/horaires">{t("common.seeAll")}</Link></Button>}
+          eyebrow={t("home.teamUniverseHint")}
+          title={t("home.teamUniverse")}
+          action={<Button asChild variant="outline" size="sm"><Link to="/equipes">{t("common.seeAll")}</Link></Button>}
         />
-        <DemoNotice className="mb-5">{t("home.upcomingNote")}</DemoNotice>
-        <div className="space-y-3">
-          {upcoming.map((e) => <EventCard key={e.id} event={e} />)}
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {TEAMS.map((team, index) => (
+            <Link key={team.slug} to="/equipes/$slug" params={{ slug: team.slug }} className="group relative min-h-44 overflow-hidden rounded-lg border border-navy/10 bg-card p-5 shadow-card transition-transform hover:-translate-y-1">
+              <span className="absolute right-2 top-0 font-display text-7xl font-extrabold text-navy/5">{String(index + 1).padStart(2, "0")}</span>
+              <Users className="size-5 text-sport" aria-hidden />
+              <span className="mt-7 block font-display text-4xl font-extrabold uppercase text-navy">{team.code}</span>
+              <span className="mt-1 block text-xs font-semibold text-muted-foreground">{l(team.ages)}</span>
+              <ArrowRight className="absolute bottom-4 right-4 size-5 text-sport transition-transform group-hover:translate-x-1" />
+            </Link>
+          ))}
+        </div>
         </div>
       </section>
 
@@ -164,22 +148,78 @@ function Home() {
         </div>
       </section>
 
+      {/* Tournament preview */}
+      <section className="border-y border-border bg-background py-12 md:py-16">
+        <div className="container-site grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+          <div>
+            <p className="eyebrow text-sport">{t("home.socialPreview")}</p>
+            <h2 className="heading-section mt-2">{t("home.tournaments")}</h2>
+            <p className="mt-4 max-w-lg text-muted-foreground">{t("home.tournamentsNote")}</p>
+            <Button asChild variant="outline" className="mt-6"><Link to="/nouvelles"><Trophy className="size-4" /> {t("common.seeAll")}</Link></Button>
+          </div>
+          <div className="competition-panel flex min-h-64 flex-col justify-end rounded-lg p-6 text-navy-foreground md:p-8">
+            <Trophy className="mb-auto size-8 text-sport-foreground" />
+            <p className="eyebrow text-navy-foreground/60">{t("common.demo")}</p>
+            <p className="mt-2 font-display text-3xl font-bold uppercase">{lang === "fr" ? "Centre des tournois AHMV" : "AHMV tournament centre"}</p>
+            <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? "Calendrier, inscriptions, résultats et visibilité des partenaires réunis dans un même espace." : "Schedules, registration, results and partner visibility in one place."}</p>
+          </div>
+        </div>
+      </section>
+
       {/* Gallery */}
       <section className="container-site py-12 md:py-16">
         <SectionHeading
-          title={t("home.gallery")}
+          eyebrow={t("common.demo")}
+          title={t("home.moments")}
           action={<Button asChild variant="outline" size="sm"><Link to="/galerie">{t("common.seeAll")}</Link></Button>}
         />
-        <div className="grid gap-5 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3">
           {ALBUMS.map((al) => (
-            <Link key={al.slug} to="/galerie/$slug" params={{ slug: al.slug }} className="card-elevated group overflow-hidden">
+            <Link key={al.slug} to="/galerie/$slug" params={{ slug: al.slug }} className="group relative overflow-hidden rounded-lg first:sm:col-span-2 first:sm:row-span-2">
               <PlaceholderImage src={img(al.cover)} alt={l(al.title)} aspect="aspect-[4/3]" />
-              <div className="p-4">
-                <h3 className="heading-card group-hover:text-sport">{l(al.title)}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{formatShortDate(al.date, lang)} · {l(al.eventType)}</p>
+              <div className="absolute inset-x-0 bottom-0 bg-navy-deep/90 p-4 text-navy-foreground">
+                <h3 className="heading-card">{l(al.title)}</h3>
+                <p className="mt-1 text-xs text-navy-foreground/65">{formatShortDate(al.date, lang)} · {l(al.eventType)}</p>
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Future social layer */}
+      <section className="bg-ice py-12 md:py-16">
+        <div className="container-site">
+          <SectionHeading eyebrow={t("home.socialPreview")} title={t("home.social")} description={t("home.socialNote")} />
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              { label: "Instagram", Icon: Instagram },
+              { label: "Facebook", Icon: Facebook },
+              { label: "Google", Icon: MapPin },
+            ].map(({ label, Icon }) => (
+              <div key={label} className="border-t-4 border-t-sport bg-card p-6 shadow-card">
+                <div className="flex items-center justify-between">
+                  <Icon className="size-6 text-navy" aria-hidden />
+                  <Radio className="size-4 text-muted-foreground" aria-hidden />
+                </div>
+                <h3 className="heading-card mt-8">{label}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{t("home.socialPreview")}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WLLV bridge */}
+      <section className="competition-panel py-12 text-navy-foreground md:py-16">
+        <div className="container-site flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="eyebrow text-sport-foreground">{t("home.nextStep")}</p>
+            <h2 className="heading-section mt-2">{t("home.wllvTitle")}</h2>
+            <p className="mt-3 max-w-2xl text-navy-foreground/70">{t("home.wllvNote")}</p>
+          </div>
+          <Button asChild variant="outline-light" size="lg">
+            <a href={EXTERNAL_LINKS.wllv} target="_blank" rel="noopener noreferrer">{t("home.discoverWllv")} <ExternalLink className="size-4" /></a>
+          </Button>
         </div>
       </section>
 
