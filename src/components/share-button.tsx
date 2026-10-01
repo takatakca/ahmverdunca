@@ -26,7 +26,7 @@ export function ShareButton({
 
     if (navigator.share) {
       try {
-        await navigator.share({ title, text, url });
+        await navigator.share({ title, url, ...(text ? { text } : {}) });
         return;
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") return;
