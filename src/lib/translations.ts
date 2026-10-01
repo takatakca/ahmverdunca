@@ -14,6 +14,7 @@ const dict = {
   "nav.arenas": { fr: "Arénas", en: "Arenas" },
   "nav.faq": { fr: "FAQ", en: "FAQ" },
   "nav.resources": { fr: "Ressources hockey", en: "Hockey resources" },
+  "nav.partners": { fr: "Partenaires", en: "Partners" },
   "nav.contact": { fr: "Contact", en: "Contact" },
   "nav.login": { fr: "Accès hockey", en: "Hockey access" },
   "nav.search": { fr: "Recherche", en: "Search" },
