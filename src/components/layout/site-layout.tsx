@@ -3,6 +3,7 @@ import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { PreprodBanner } from "./preprod-banner";
 import { MobileQuickNav } from "./mobile-quick-nav";
+import { GlobalSearchShortcut } from "@/components/global-search-shortcut";
 import { useI18n } from "@/lib/i18n";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
@@ -13,6 +14,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <a href="#contenu" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-sport focus:px-4 focus:py-2 focus:text-sport-foreground">
         {lang === "fr" ? "Aller au contenu" : "Skip to content"}
       </a>
+      <GlobalSearchShortcut />
       <PreprodBanner />
       <SiteHeader />
       <main id="contenu" className="flex-1">{children}</main>
