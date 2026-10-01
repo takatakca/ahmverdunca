@@ -38,8 +38,10 @@ function TeamsPage() {
                 <span className="font-display text-4xl font-extrabold uppercase text-navy">{team.code}</span>
                 <span className="text-xs text-muted-foreground">{t("teams.ages")} : {l(team.ages)}</span>
               </div>
-              <h2 className="heading-card mt-2 group-hover:text-sport">{l(team.name)}</h2>
-              <p className="mt-1.5 text-sm text-muted-foreground">{l(team.description)}</p>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{l(team.description)}</p>
+              <span className="mt-5 inline-flex text-xs font-semibold uppercase tracking-wide text-sport">
+                {l({ fr: "Ouvrir la catégorie", en: "Open category" })}
+              </span>
             </Link>
           ))}
         </div>
