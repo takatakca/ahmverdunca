@@ -105,7 +105,7 @@ export function SiteFooter() {
       <div className="border-t border-navy-foreground/10">
         <div className="container-site flex flex-col gap-2 py-5 text-xs text-navy-foreground/50 md:flex-row md:items-center md:justify-between">
           <p>© 2026 {l(SITE.name)}. {t("footer.rights")}</p>
-          <p>{t("footer.prototype")}</p>
+          <p className="uppercase tracking-[0.12em]">{t("footer.prototype")}</p>
         </div>
       </div>
     </footer>
