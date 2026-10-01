@@ -11,6 +11,9 @@ export const SITE = {
   city: "Verdun (Montréal), Québec",
   // Official email NOT confirmed — do not display a specific address as official.
   officialEmailConfirmed: false,
+  phoneDisplay: "1 (581) 666-6AHM",
+  phoneE164: "+15816666246",
+  voiceAssistantStatus: "planned",
 } as const;
 
 export const EXTERNAL_LINKS = {
