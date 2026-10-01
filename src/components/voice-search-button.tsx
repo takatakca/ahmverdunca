@@ -35,6 +35,46 @@ type VoiceWindow = Window & {
   webkitSpeechRecognition?: SpeechRecognitionCtor;
 };
 
+const CATEGORY_WORDS: Array<[string, string]> = [
+  ["vingt deux", "22"],
+  ["twenty two", "22"],
+  ["dix huit", "18"],
+  ["eighteen", "18"],
+  ["dix sept", "17"],
+  ["seventeen", "17"],
+  ["quinze", "15"],
+  ["fifteen", "15"],
+  ["treize", "13"],
+  ["thirteen", "13"],
+  ["douze", "12"],
+  ["twelve", "12"],
+  ["onze", "11"],
+  ["eleven", "11"],
+  ["neuf", "9"],
+  ["nine", "9"],
+  ["sept", "7"],
+  ["seven", "7"],
+  ["cinq", "5"],
+  ["five", "5"],
+];
+
+export function normalizeVoiceTranscript(value: string) {
+  let result = value.trim().replace(/-/g, " ");
+
+  for (const [word, number] of CATEGORY_WORDS) {
+    const pattern = new RegExp(`\\b(?:m|u|under)\\s*${word}\\b`, "gi");
+    result = result.replace(pattern, `M${number}`);
+  }
+
+  result = result
+    .replace(/\b(?:m|u)\s*(\d{1,2})\b/gi, "M$1")
+    .replace(/\bunder\s*(\d{1,2})\b/gi, "M$1")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return result;
+}
+
 export function VoiceSearchButton({
   onTranscript,
   compact = false,
@@ -70,7 +110,7 @@ export function VoiceSearchButton({
 
     recognition.onresult = (event) => {
       const transcript = event.results[0]?.[0]?.transcript?.trim();
-      if (transcript) onTranscript(transcript);
+      if (transcript) onTranscript(normalizeVoiceTranscript(transcript));
     };
 
     recognition.onerror = () => setListening(false);
