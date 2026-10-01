@@ -37,6 +37,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { t, lang } = useI18n();
   const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
+  const showPhone = showPlannedServices || SITE.phonePublic;
 
   return (
     <>
@@ -49,12 +50,14 @@ function ContactPage() {
             : "Choose the right access point for your need. Hockey operations remain in their official systems; this site simply makes the path easier for families."
         }
         actions={
-          <Button asChild variant="sport">
-            <a href={`tel:${SITE.phoneE164}`}>
-              <PhoneCall className="size-4" />
-              {SITE.phoneDisplay}
-            </a>
-          </Button>
+          showPhone ? (
+            <Button asChild variant="sport">
+              <a href={`tel:${SITE.phoneE164}`}>
+                <PhoneCall className="size-4" />
+                {SITE.phoneDisplay}
+              </a>
+            </Button>
+          ) : undefined
         }
       />
 
