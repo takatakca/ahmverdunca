@@ -58,11 +58,13 @@ function SchedulePage() {
     typeof search["arena"] === "string" && ARENAS.some((item) => item.slug === search["arena"])
       ? search["arena"]
       : undefined;
+  const searchQuery = typeof search["q"] === "string" ? search["q"].trim() : "";
   const officialTeamQuery = selectedTeam
     ? TEAMS.find((item) => item.slug === selectedTeam)?.code.startsWith("M")
       ? TEAMS.find((item) => item.slug === selectedTeam)?.code
       : undefined
     : undefined;
+  const officialInitialQuery = searchQuery || officialTeamQuery || "";
 
   const [start, setStart] = useState(() => weekStart(DEMO_TODAY));
   const [team, setTeam] = useState(selectedTeam ?? "all");
@@ -152,7 +154,7 @@ function SchedulePage() {
           </div>
         </section>
 
-        <OfficialWeekSchedule initialQuery={officialTeamQuery ?? ""} />
+        <OfficialWeekSchedule initialQuery={officialInitialQuery} />
 
         <details className="group mt-8 overflow-hidden rounded-xl border border-border bg-background shadow-card">
           <summary className="cursor-pointer list-none px-5 py-5 md:px-6">
