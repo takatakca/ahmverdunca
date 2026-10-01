@@ -10,6 +10,7 @@ import { TEAMS } from "@/data/teams";
 import { NEWS } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { SCHEDULE, DEMO_TODAY } from "@/data/schedule";
+import { SPONSORS } from "@/data/sponsors";
 import { EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
@@ -331,12 +332,34 @@ function Home() {
           <p className="eyebrow text-sport-foreground/80">{t("common.toValidate")}</p>
           <h2 className="heading-section mt-2">{t("home.sponsors")}</h2>
           <p className="mt-3 max-w-2xl text-sm text-navy-foreground/75">{t("home.sponsorsNote")}</p>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex h-24 items-center justify-center rounded-lg border border-dashed border-navy-foreground/25 text-center text-[11px] uppercase tracking-wider text-navy-foreground/50">
-                {t("home.sponsorSlot")}
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+            {SPONSORS.map((sponsor) => (
+              <div
+                key={sponsor.name}
+                className="flex min-h-24 items-center justify-center rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 text-center"
+              >
+                <div>
+                  <p className="text-sm font-semibold leading-tight text-navy-foreground/90">
+                    {sponsor.name}
+                  </p>
+                  {!sponsor.logoApproved && (
+                    <p className="mt-2 text-[10px] uppercase tracking-wider text-navy-foreground/45">
+                      {lang === "fr" ? "Logo à valider" : "Logo to approve"}
+                    </p>
+                  )}
+                </div>
               </div>
             ))}
+          </div>
+          <div className="mt-7 flex flex-col gap-3 border-t border-navy-foreground/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-2xl text-sm text-navy-foreground/65">
+              {lang === "fr"
+                ? "La gestion des commanditaires, renouvellements et campagnes pourra être centralisée dans GROUPE TAKATAK sans toucher aux opérations hockey."
+                : "Sponsor management, renewals and campaigns can be centralized in GROUPE TAKATAK without touching hockey operations."}
+            </p>
+            <Button asChild variant="outline-light">
+              <Link to="/contact">{lang === "fr" ? "Devenir partenaire" : "Become a partner"}</Link>
+            </Button>
           </div>
         </div>
       </section>
