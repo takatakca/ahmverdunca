@@ -9,7 +9,7 @@ import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 
 export function SiteHeader() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -52,12 +52,14 @@ export function SiteHeader() {
           <LogoSlot />
           <span className="hidden flex-col leading-none sm:flex">
             <span className="font-display text-xl font-bold uppercase tracking-tight">AHM Verdun</span>
-            <span className="text-[11px] uppercase tracking-[0.18em] text-navy-foreground/60">Hockey mineur</span>
+            <span className="text-[11px] uppercase tracking-[0.18em] text-navy-foreground/60">
+              {lang === "fr" ? "Hockey mineur" : "Minor hockey"}
+            </span>
           </span>
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Navigation principale" className="hidden items-center gap-1 lg:flex">
+        <nav aria-label={lang === "fr" ? "Navigation principale" : "Main navigation"} className="hidden items-center gap-1 lg:flex">
           {MAIN_NAV.map((item) => (
             <Link
               key={item.key}
