@@ -295,7 +295,7 @@ function Home() {
         </div>
       </section>
 
-      {/* Future social layer */}
+      {/* Official social channels */}
       <section className="bg-ice py-12 md:py-16">
         <div className="container-site">
           <SectionHeading eyebrow={t("home.socialPreview")} title={t("home.social")} description={t("home.socialNote")} />
@@ -420,8 +420,8 @@ function Home() {
           <div className="mt-7 flex flex-col gap-3 border-t border-navy-foreground/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-2xl text-sm text-navy-foreground/65">
               {lang === "fr"
-                ? "La gestion des commanditaires, renouvellements et campagnes pourra être centralisée dans GROUPE TAKATAK sans toucher aux opérations hockey."
-                : "Sponsor management, renewals and campaigns can be centralized in GROUPE TAKATAK without touching hockey operations."}
+                ? "Pour soutenir AHM Verdun ou discuter d’une commandite, communiquez directement avec l’association."
+                : "To support AHM Verdun or discuss sponsorship, contact the association directly."}
             </p>
             <Button asChild variant="outline-light">
               <Link to="/contact">{lang === "fr" ? "Devenir partenaire" : "Become a partner"}</Link>

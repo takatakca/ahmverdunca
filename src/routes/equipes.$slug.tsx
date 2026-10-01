@@ -263,8 +263,8 @@ function TeamPage() {
             title={lang === "fr" ? "Dans le vestiaire" : "Inside the team"}
             description={
               lang === "fr"
-                ? "Un espace prêt à accueillir les comptes sociaux autorisés de l'équipe, lorsque l'association choisira de les relier."
-                : "A space ready for the team's authorized social accounts whenever the association chooses to connect them."
+                ? "Les comptes sociaux officiels de l’équipe apparaîtront ici lorsqu’ils auront été approuvés par l’association."
+                : "The team’s official social accounts will appear here once they have been approved by the association."
             }
           />
 
@@ -280,7 +280,7 @@ function TeamPage() {
                 <div className="flex items-center justify-between">
                   <Icon className="size-6 text-navy" aria-hidden />
                   <span className="rounded-full bg-ice px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {lang === "fr" ? "Non relié" : "Not connected"}
+                    {lang === "fr" ? "À venir" : "Coming soon"}
                   </span>
                 </div>
                 <h3 className="heading-card mt-8">{label}</h3>
@@ -296,8 +296,8 @@ function TeamPage() {
           <div className="mt-4 rounded-xl border border-border bg-ice p-4">
             <p className="text-sm text-muted-foreground">
               {lang === "fr"
-                ? "Aucune publication sociale n'est simulée. Les connexions seront ajoutées seulement avec l'autorisation de l'association."
-                : "No social posts are simulated. Connections will be added only with association approval."}
+                ? "Seuls les comptes et contenus officiellement autorisés par l’association seront affichés ici."
+                : "Only accounts and content officially authorized by the association will be shown here."}
             </p>
           </div>
         </section>

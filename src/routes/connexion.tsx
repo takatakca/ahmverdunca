@@ -78,7 +78,7 @@ function AccessPage() {
 
           <section className="card-elevated p-6 md:p-8">
             <Mail className="size-7 text-sport" aria-hidden />
-            <p className="eyebrow mt-6 text-sport">GROUPE TAKATAK</p>
+            <p className="eyebrow mt-6 text-sport">{lang === "fr" ? "Communications" : "Communications"}</p>
             <h2 className="heading-section mt-2">
               {lang === "fr" ? "Communications AHMV" : "AHMV communications"}
             </h2>

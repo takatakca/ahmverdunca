@@ -12,7 +12,7 @@ export const Route = createFileRoute("/partenaires")({
       {
         name: "description",
         content:
-          "Partenaires de l'AHM Verdun et aperçu du futur espace de commandites géré avec GROUPE TAKATAK.",
+          "Partenaires de l'AHM Verdun et possibilités de visibilité pour les organisations qui soutiennent le hockey mineur.",
       },
       { property: "og:title", content: "Partenaires et commanditaires — AHM Verdun" },
       {
@@ -34,8 +34,8 @@ function PartnersPage() {
         title={lang === "fr" ? "Partenaires et commanditaires" : "Partners and sponsors"}
         description={
           lang === "fr"
-            ? "Une vitrine propre pour les organisations qui soutiennent le hockey mineur à Verdun, avec une gestion numérique qui pourra évoluer dans GROUPE TAKATAK."
-            : "A clean showcase for organizations supporting minor hockey in Verdun, with digital management that can evolve in GROUPE TAKATAK."
+            ? "Une vitrine claire pour les organisations qui soutiennent le hockey mineur à Verdun et souhaitent faire connaître leur contribution."
+            : "A clear showcase for organizations supporting minor hockey in Verdun and the contribution they make."
         }
         actions={
           <Button asChild variant="sport" size="lg">
@@ -95,12 +95,12 @@ function PartnersPage() {
 
         <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
           <SectionHeading
-            eyebrow="GROUPE TAKATAK"
+            eyebrow={lang === "fr" ? "Commandites AHMV" : "AHMV sponsorships"}
             title={lang === "fr" ? "Une commandite plus simple à gérer" : "Simpler sponsorship management"}
             description={
               lang === "fr"
-                ? "Offres, renouvellements, campagnes, visibilité et rapports peuvent être regroupés dans une expérience claire, sans toucher aux opérations hockey."
-                : "Offers, renewals, campaigns, visibility and reporting can be brought together in one clear experience without touching hockey operations."
+                ? "Des options claires pour présenter les offres, renouvellements, campagnes, visibilité et bilans aux partenaires."
+                : "Clear options for presenting offers, renewals, campaigns, visibility and reporting to partners."
             }
           />
           <div className="mt-8 grid gap-4 md:grid-cols-3">

@@ -153,8 +153,8 @@ function TournamentsPage() {
             </h3>
             <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
               {lang === "fr"
-                ? "Les opérations du tournoi restent dans leurs systèmes officiels. GROUPE TAKATAK pourra amplifier le recrutement, les partenaires, les campagnes et la visibilité numérique."
-                : "Tournament operations remain in their official systems. GROUPE TAKATAK can amplify recruitment, partners, campaigns and digital visibility."}
+                ? "Pour contribuer au tournoi comme bénévole ou partenaire, communiquez avec l’association. Les inscriptions, horaires et résultats demeurent sur les plateformes officielles."
+                : "To support the tournament as a volunteer or partner, contact the association. Registration, schedules and results remain on the official platforms."}
             </p>
           </div>
         </section>

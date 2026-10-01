@@ -75,7 +75,7 @@ const dict = {
   "home.tournamentsNote": { fr: "Les tournois officiels, inscriptions et résultats pourront être mis en valeur ici après validation.", en: "Official tournaments, registration and results can be featured here after approval." },
   "home.moments": { fr: "Moments AHMV", en: "AHMV moments" },
   "home.social": { fr: "Suivez AHM Verdun", en: "Follow AHM Verdun" },
-  "home.socialNote": { fr: "Retrouvez les comptes officiels AHM Verdun. La gestion centralisée des communications pourra ensuite être reliée à GROUPE TAKATAK.", en: "Find AHM Verdun's official accounts. Centralized communications management can later connect to GROUPE TAKATAK." },
+  "home.socialNote": { fr: "Retrouvez les comptes officiels AHM Verdun et les principaux canaux pour suivre les nouvelles de l’association.", en: "Find AHM Verdun’s official accounts and main channels for association updates." },
   "home.socialPreview": { fr: "Canaux officiels", en: "Official channels" },
   "home.nextStep": { fr: "Prochaine étape", en: "The next level" },
   "home.wllvTitle": { fr: "WLLV / Chacals AA–BB", en: "WLLV / Chacals AA–BB" },
