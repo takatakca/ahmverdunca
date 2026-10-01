@@ -52,6 +52,7 @@ function CoachesPage() {
             <button
               key={c.id}
               type="button"
+              aria-pressed={cat === c.id}
               onClick={() => setCat(c.id)}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",

@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { PlaceholderImage } from "@/components/placeholder-image";
+import { Button } from "@/components/ui/button";
 import { getAlbum } from "@/data/gallery";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
@@ -65,6 +66,14 @@ function AlbumPage() {
                     ? "Cet album est prêt à être consulté."
                     : "This album is ready to browse.")}
             </p>
+            {al.sourceUrl && (
+              <Button asChild variant="outline" className="mt-5 w-full">
+                <a href={al.sourceUrl} target="_blank" rel="noopener noreferrer">
+                  {lang === "fr" ? "Voir l'album officiel AHMV" : "View official AHMV album"}
+                  <ExternalLink className="size-4" />
+                </a>
+              </Button>
+            )}
             <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {al.season} · {l(al.eventType)}
             </p>

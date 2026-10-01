@@ -142,6 +142,10 @@ for (const album of ALBUMS) {
   if (!validDate(album.date)) {
     errors.push(`Album "${album.slug}" has invalid date "${album.date}".`);
   }
+  if (album.photosPending && !album.sourceUrl) {
+    errors.push(`Album "${album.slug}" has protected media but no official source URL.`);
+  }
+  if (album.sourceUrl) requireHttps(`Album "${album.slug}" sourceUrl`, album.sourceUrl);
   for (const teamSlug of album.teamSlugs) {
     if (!teamSlugs.has(teamSlug)) {
       errors.push(`Album "${album.slug}" references unknown team "${teamSlug}".`);

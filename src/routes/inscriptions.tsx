@@ -63,6 +63,7 @@ function RegistrationPage() {
 
         <section aria-labelledby="registration-steps-title">
           <SectionHeading
+            id="registration-steps-title"
             eyebrow={lang === "fr" ? "3 étapes" : "3 steps"}
             title={lang === "fr" ? "Simple du début à la fin" : "Simple from start to finish"}
             description={

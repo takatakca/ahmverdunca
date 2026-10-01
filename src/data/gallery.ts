@@ -11,6 +11,8 @@ export interface Album {
   cover?: string;
   /** Number of photos in the official album — unknown until media are provided. */
   photoCount?: number;
+  /** Official legacy AHMV album while local media remain under consent review. */
+  sourceUrl?: string;
   /** Photos pending official files + consent review for minors. */
   photosPending: boolean;
 }
@@ -25,6 +27,7 @@ export const ALBUMS: Album[] = [
     teamSlugs: [],
     eventType: { fr: "Événement", en: "Event" },
     cover: "gallery-party",
+    sourceUrl: "https://ahmverdun.com/albums/4",
     photosPending: true,
   },
   {
@@ -36,6 +39,7 @@ export const ALBUMS: Album[] = [
     teamSlugs: ["feminin"],
     eventType: { fr: "Porte ouverte", en: "Open house" },
     cover: "gallery-feminine",
+    sourceUrl: "https://ahmverdun.com/albums/3",
     photosPending: true,
   },
   {
@@ -47,6 +51,7 @@ export const ALBUMS: Album[] = [
     teamSlugs: ["m11"],
     eventType: { fr: "Tournoi", en: "Tournament" },
     cover: "gallery-tournament",
+    sourceUrl: "https://ahmverdun.com/albums/1",
     photosPending: true,
   },
   {
@@ -57,6 +62,7 @@ export const ALBUMS: Album[] = [
     season: "2024-2025",
     teamSlugs: [],
     eventType: { fr: "Communauté", en: "Community" },
+    sourceUrl: "https://ahmverdun.com/albums/2",
     photosPending: true,
   },
 ];

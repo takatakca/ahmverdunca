@@ -21,6 +21,9 @@ export const Route = createFileRoute("/ressources")({
 function ResourcesPage() {
   const { t, l, lang } = useI18n();
   const [cat, setCat] = useState("all");
+  const availableCategories = RESOURCE_CATEGORIES.filter((category) =>
+    RESOURCES.some((resource) => resource.category === category.id),
+  );
   const list = cat === "all" ? RESOURCES : RESOURCES.filter((r) => r.category === cat);
 
   return (
@@ -47,10 +50,11 @@ function ResourcesPage() {
         </div>
 
         <div className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
-          {[{ id: "all", label: { fr: "Tout", en: "All" } }, ...RESOURCE_CATEGORIES].map((c) => (
+          {[{ id: "all", label: { fr: "Tout", en: "All" } }, ...availableCategories].map((c) => (
             <button
               key={c.id}
               type="button"
+              aria-pressed={cat === c.id}
               onClick={() => setCat(c.id)}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",

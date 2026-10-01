@@ -33,18 +33,20 @@ export function SectionHeading({
   description,
   action,
   className,
+  id,
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   action?: ReactNode;
   className?: string;
+  id?: string;
 }) {
   return (
     <div className={cn("mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end md:mb-8", className)}>
       <div>
         {eyebrow && <p className="eyebrow text-sport mb-2">{eyebrow}</p>}
-        <h2 className="heading-section">{title}</h2>
+        <h2 id={id} className="heading-section">{title}</h2>
         {description && <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
