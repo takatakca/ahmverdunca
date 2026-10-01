@@ -28,6 +28,8 @@ export const EXTERNAL_LINKS = {
   kidsport: "https://kidsportcanada.ca/",
   jumpstart: "https://jumpstart.canadiantire.ca/",
   verdunM11Tournament: "https://tournoihockeyverdun.ca/",
+  facebook: "https://www.facebook.com/AHMVerdun",
+  instagram: "https://www.instagram.com/ahm_verdun/",
 } as const;
 
 export type NavKey =
