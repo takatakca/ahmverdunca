@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Radio, Trophy, Users } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
@@ -298,20 +298,49 @@ function Home() {
         <div className="container-site">
           <SectionHeading eyebrow={t("home.socialPreview")} title={t("home.social")} description={t("home.socialNote")} />
           <div className="grid gap-4 md:grid-cols-3">
-            {[
-              { label: "Instagram", Icon: Instagram },
-              { label: "Facebook", Icon: Facebook },
-              { label: "Google", Icon: MapPin },
-            ].map(({ label, Icon }) => (
-              <div key={label} className="border-t-4 border-t-sport bg-card p-6 shadow-card">
-                <div className="flex items-center justify-between">
-                  <Icon className="size-6 text-navy" aria-hidden />
-                  <Radio className="size-4 text-muted-foreground" aria-hidden />
-                </div>
-                <h3 className="heading-card mt-8">{label}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{t("home.socialPreview")}</p>
+            <a
+              href={EXTERNAL_LINKS.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between">
+                <Instagram className="size-6 text-navy" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
               </div>
-            ))}
+              <h3 className="heading-card mt-8">Instagram</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr" ? "Compte AHM Verdun" : "AHM Verdun account"}
+              </p>
+            </a>
+            <a
+              href={EXTERNAL_LINKS.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between">
+                <Facebook className="size-6 text-navy" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-8">Facebook</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr" ? "Page AHM Verdun" : "AHM Verdun page"}
+              </p>
+            </a>
+            <Link
+              to="/arenas"
+              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between">
+                <MapPin className="size-6 text-navy" aria-hidden />
+                <ArrowRight className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-8">Google / Maps</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr" ? "Arénas et itinéraires" : "Arenas and directions"}
+              </p>
+            </Link>
           </div>
         </div>
       </section>
