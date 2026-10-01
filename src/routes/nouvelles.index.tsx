@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { PlaceholderImage } from "@/components/placeholder-image";
-import { DemoNotice } from "@/components/demo-notice";
 import { NEWS, NEWS_CATEGORIES } from "@/data/news";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
@@ -48,9 +47,21 @@ function NewsPage() {
       />
 
       <div className="container-site py-8 md:py-12">
-        <DemoNotice className="mb-6">
-          {t("common.demoData")} — {t("common.toValidate")}
-        </DemoNotice>
+        <div className="mb-6 flex flex-col gap-2 rounded-xl border border-border bg-ice px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Nouvelles vérifiées" : "Verified news"}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Ces articles sont des résumés du contenu public AHM Verdun actuellement vérifié."
+                : "These articles summarize currently verified public AHM Verdun content."}
+            </p>
+          </div>
+          <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {NEWS.length} {lang === "fr" ? "articles intégrés" : "articles integrated"}
+          </span>
+        </div>
 
         <div
           className="scrollbar-none -mx-1 mb-8 flex gap-2 overflow-x-auto px-1 pb-1"
