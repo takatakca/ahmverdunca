@@ -59,6 +59,8 @@ Every imported schedule version should retain provenance, timestamps and validat
 
 Do not create a second AHM Verdun operational dashboard.
 
+The public AHM Verdun site must not attach its own local authentication middleware or create volunteer/admin roles for hockey operations. Any historical prototype authentication/database scaffolding is non-authoritative and must remain disconnected from the public experience.
+
 TAKATAK staff/client access belongs in the central GROUPE TAKATAK dashboard using the existing TAKATAK access model.
 
 Parents do not need a TAKATAK account merely to read schedules, news, arenas or registration information.
