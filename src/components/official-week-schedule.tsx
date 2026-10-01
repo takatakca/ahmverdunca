@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ExternalLink, MapPin, Search, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AddToCalendarButton } from "@/components/add-to-calendar-button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
@@ -59,11 +60,27 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
         </p>
       </div>
 
-      <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
-        <a href={mapsDirectionsUrl(item.venue)} target="_blank" rel="noopener noreferrer">
-          {lang === "fr" ? "Itinéraire" : "Directions"}
-        </a>
-      </Button>
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:justify-end">
+        {!cancelled && (
+          <AddToCalendarButton
+            title={`${item.group} — ${item.activity}`}
+            date={item.date}
+            start={item.start}
+            end={item.end}
+            location={item.venue}
+          />
+        )}
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className={cn("w-full sm:w-auto", cancelled && "col-span-2")}
+        >
+          <a href={mapsDirectionsUrl(item.venue)} target="_blank" rel="noopener noreferrer">
+            {lang === "fr" ? "Itinéraire" : "Directions"}
+          </a>
+        </Button>
+      </div>
     </article>
   );
 }
