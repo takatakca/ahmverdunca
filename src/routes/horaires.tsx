@@ -152,7 +152,7 @@ function SchedulePage() {
           </div>
         </section>
 
-        <OfficialWeekSchedule initialQuery={officialTeamQuery} />
+        <OfficialWeekSchedule initialQuery={officialTeamQuery ?? ""} />
 
         <div className="mt-8">
           <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
