@@ -28,6 +28,7 @@ export const Route = createFileRoute("/inscriptions")({
 
 function RegistrationPage() {
   const { t, l, lang } = useI18n();
+  const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
 
   return (
     <>
@@ -164,41 +165,44 @@ function RegistrationPage() {
           </div>
         </section>
 
-        <section>
-          <SectionHeading
-            eyebrow={lang === "fr" ? "Communications AHMV" : "AHMV communications"}
-            title={lang === "fr" ? "Infolettres et communications" : "Newsletters and communications"}
-            description={
-              lang === "fr"
-                ? "Un espace distinct pour les nouvelles générales, événements, rappels et communications autorisées."
-                : "A separate space for general news, events, reminders and authorized communications."
-            }
-          />
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="card-elevated p-6">
-              <Mail className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5">
-                {lang === "fr" ? "Restez informé" : "Stay informed"}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr"
-                  ? "Lorsque ce service sera activé, vous pourrez choisir les communications que vous souhaitez recevoir, avec consentement explicite."
-                  : "When this service is activated, you will be able to choose which communications you want to receive, with explicit consent."}
-              </p>
+        {showPlannedServices && (
+          <section>
+            <SectionHeading
+              eyebrow={lang === "fr" ? "Communications AHMV" : "AHMV communications"}
+              title={lang === "fr" ? "Infolettres et communications" : "Newsletters and communications"}
+              description={
+                lang === "fr"
+                  ? "Un espace distinct pour les nouvelles générales, événements, rappels et communications autorisées."
+                  : "A separate space for general news, events, reminders and authorized communications."
+              }
+            />
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="card-elevated p-6">
+                <Mail className="size-6 text-sport" aria-hidden />
+                <h3 className="heading-card mt-5">
+                  {lang === "fr" ? "Restez informé" : "Stay informed"}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {lang === "fr"
+                    ? "Lorsque ce service sera activé, vous pourrez choisir les communications que vous souhaitez recevoir, avec consentement explicite."
+                    : "When this service is activated, you will be able to choose which communications you want to receive, with explicit consent."}
+                </p>
+              </div>
+              <div className="card-elevated p-6">
+                <ShieldCheck className="size-6 text-sport" aria-hidden />
+                <h3 className="heading-card mt-5">
+                  {lang === "fr" ? "Séparé du hockey" : "Separate from hockey"}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {lang === "fr"
+                    ? "Les communications marketing restent distinctes des dossiers, paiements et opérations sportives."
+                    : "Marketing communications remain separate from records, payments and sport operations."}
+                </p>
+              </div>
             </div>
-            <div className="card-elevated p-6">
-              <ShieldCheck className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5">
-                {lang === "fr" ? "Séparé du hockey" : "Separate from hockey"}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr"
-                  ? "Les communications marketing restent distinctes des dossiers, paiements et opérations sportives."
-                  : "Marketing communications remain separate from records, payments and sport operations."}
-              </p>
-            </div>
-          </div>
-        </section>
+          </section>
+
+        )}
 
         <section>
           <SectionHeading title={lang === "fr" ? "Aide financière" : "Financial assistance"} />
