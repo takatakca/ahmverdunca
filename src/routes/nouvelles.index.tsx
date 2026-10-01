@@ -30,6 +30,9 @@ export const Route = createFileRoute("/nouvelles/")({
 function NewsPage() {
   const { t, l, lang } = useI18n();
   const [cat, setCat] = useState("all");
+  const availableCategories = NEWS_CATEGORIES.filter((category) =>
+    NEWS.some((article) => article.category === category.id),
+  );
   const list = cat === "all" ? NEWS : NEWS.filter((article) => article.category === cat);
   const featured = list[0];
   const remaining = list.slice(1);
@@ -67,7 +70,7 @@ function NewsPage() {
           className="scrollbar-none -mx-1 mb-8 flex gap-2 overflow-x-auto px-1 pb-1"
           aria-label={lang === "fr" ? "Filtres des nouvelles" : "News filters"}
         >
-          {[{ id: "all", label: { fr: "Toutes", en: "All" } }, ...NEWS_CATEGORIES].map(
+          {[{ id: "all", label: { fr: "Toutes", en: "All" } }, ...availableCategories].map(
             (category) => (
               <button
                 key={category.id}
