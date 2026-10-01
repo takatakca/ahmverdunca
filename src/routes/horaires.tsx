@@ -49,6 +49,7 @@ function addDays(iso: string, n: number) {
 
 function SchedulePage() {
   const { t, l, lang } = useI18n();
+  const showPrototypeCalendar = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
   const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
   const selectedTeam =
@@ -154,194 +155,196 @@ function SchedulePage() {
 
         <OfficialWeekSchedule initialQuery={officialInitialQuery} />
 
-        <details className="group mt-8 overflow-hidden rounded-xl border border-border bg-background shadow-card">
-          <summary className="cursor-pointer list-none px-5 py-5 md:px-6">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="eyebrow text-sport">
-                  {lang === "fr" ? "Aperçu du futur calendrier interactif" : "Future interactive calendar preview"}
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {lang === "fr"
-                    ? "Optionnel : ouvrez cette section pour voir l'interface prévue lorsque les données officielles seront automatisées."
-                    : "Optional: open this section to preview the interface planned once official data is automated."}
-                </p>
+        {showPrototypeCalendar && (
+          <details className="group mt-8 overflow-hidden rounded-xl border border-border bg-background shadow-card">
+            <summary className="cursor-pointer list-none px-5 py-5 md:px-6">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="eyebrow text-sport">
+                    {lang === "fr" ? "Aperçu du futur calendrier interactif" : "Future interactive calendar preview"}
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {lang === "fr"
+                      ? "Optionnel : ouvrez cette section pour voir l'interface prévue lorsque les données officielles seront automatisées."
+                      : "Optional: open this section to preview the interface planned once official data is automated."}
+                  </p>
+                </div>
+                <span className="shrink-0 rounded-full border border-input px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-navy group-open:bg-navy group-open:text-navy-foreground">
+                  {lang === "fr" ? "Voir l'aperçu" : "View preview"}
+                </span>
               </div>
-              <span className="shrink-0 rounded-full border border-input px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-navy group-open:bg-navy group-open:text-navy-foreground">
-                {lang === "fr" ? "Voir l'aperçu" : "View preview"}
-              </span>
-            </div>
-          </summary>
+            </summary>
 
-          <div className="border-t border-border px-4 pb-6 pt-5 md:px-6 md:pb-8">
-            <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
+            <div className="border-t border-border px-4 pb-6 pt-5 md:px-6 md:pb-8">
+              <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
 
-            <div className="grid gap-3 border-b border-border pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
-          <div className="min-w-0">
-            <p className="eyebrow text-sport">
-              {lang === "fr" ? "Cette semaine" : "This week"}
-            </p>
-            <p className="mt-1 font-display text-2xl font-bold uppercase leading-tight">
-              {formatDate(start, lang, { day: "numeric", month: "short" })} —{" "}
-              {formatDate(addDays(start, 6), lang, { day: "numeric", month: "short", year: "numeric" })}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-[auto_1fr_auto] gap-2 sm:flex">
-            <Button
-              variant="outline"
-              size="sm"
-              aria-label={t("schedule.prevWeek")}
-              title={t("schedule.prevWeek")}
-              onClick={() => setStart(addDays(start, -7))}
-            >
-              <ChevronLeft className="size-4" />
-              <span className="hidden sm:inline">{t("schedule.prevWeek")}</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="min-w-0"
-              onClick={() => setStart(weekStart(DEMO_TODAY))}
-            >
-              {t("schedule.today")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              aria-label={t("schedule.nextWeek")}
-              title={t("schedule.nextWeek")}
-              onClick={() => setStart(addDays(start, 7))}
-            >
-              <span className="hidden sm:inline">{t("schedule.nextWeek")}</span>
-              <ChevronRight className="size-4" />
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-5 rounded-xl border border-border bg-ice p-4 md:p-5">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <p className="eyebrow text-sport">{lang === "fr" ? "Filtrer rapidement" : "Quick filters"}</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {lang === "fr"
-                  ? "Commencez par votre équipe. Le choix est mémorisé sur cet appareil."
-                  : "Start with your team. Your choice is remembered on this device."}
+              <div className="grid gap-3 border-b border-border pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+            <div className="min-w-0">
+              <p className="eyebrow text-sport">
+                {lang === "fr" ? "Cette semaine" : "This week"}
+              </p>
+              <p className="mt-1 font-display text-2xl font-bold uppercase leading-tight">
+                {formatDate(start, lang, { day: "numeric", month: "short" })} —{" "}
+                {formatDate(addDays(start, 6), lang, { day: "numeric", month: "short", year: "numeric" })}
               </p>
             </div>
-            {preferredTeam && (
-              <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
-                {lang === "fr" ? "Mon équipe" : "My team"} · {l(TEAMS.find((item) => item.slug === preferredTeam)?.name)}
-              </span>
-            )}
-          </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">
-                {lang === "fr" ? "Mon équipe" : "My team"}
-              </span>
-              <select
-                className={selectClass}
-                value={team}
-                onChange={(event) => {
-                  const value = event.target.value;
-                  setTeam(value);
-                  if (value !== "all") savePreferredTeam(value);
-                }}
+            <div className="grid grid-cols-[auto_1fr_auto] gap-2 sm:flex">
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label={t("schedule.prevWeek")}
+                title={t("schedule.prevWeek")}
+                onClick={() => setStart(addDays(start, -7))}
               >
-                <option value="all">{t("common.all")}</option>
-                {TEAMS.map((item) => (
-                  <option key={item.slug} value={item.slug}>
-                    {item.code === "F" ? l(item.name) : `${item.code} · ${l(item.name)}`}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">{t("schedule.arena")}</span>
-              <select className={selectClass} value={arena} onChange={(event) => setArena(event.target.value)}>
-                <option value="all">{t("common.all")}</option>
-                {ARENAS.map((item) => (
-                  <option key={item.slug} value={item.slug}>{item.name}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">{t("schedule.type")}</span>
-              <select className={selectClass} value={type} onChange={(event) => setType(event.target.value)}>
-                <option value="all">{t("common.all")}</option>
-                {TYPES.map((item) => (
-                  <option key={item} value={item}>{t(`type.${item}` as TranslationKey)}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">{t("schedule.status")}</span>
-              <select className={selectClass} value={status} onChange={(event) => setStatus(event.target.value)}>
-                <option value="all">{t("common.all")}</option>
-                {STATUSES.map((item) => (
-                  <option key={item} value={item}>{t(`status.${item}`)}</option>
-                ))}
-              </select>
-            </label>
-
-            <div className="flex items-end">
-              <Button variant="secondary" className="w-full" onClick={resetFilters}>
-                <RotateCcw className="size-4" /> {t("common.reset")}
+                <ChevronLeft className="size-4" />
+                <span className="hidden sm:inline">{t("schedule.prevWeek")}</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="min-w-0"
+                onClick={() => setStart(weekStart(DEMO_TODAY))}
+              >
+                {t("schedule.today")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label={t("schedule.nextWeek")}
+                title={t("schedule.nextWeek")}
+                onClick={() => setStart(addDays(start, 7))}
+              >
+                <span className="hidden sm:inline">{t("schedule.nextWeek")}</span>
+                <ChevronRight className="size-4" />
               </Button>
             </div>
           </div>
-        </div>
 
-        <p className="mt-4 text-sm text-muted-foreground" aria-live="polite">
-          {events.length} {t("schedule.count")} · {t("schedule.version")} {SCHEDULE_META.version} ·{" "}
-          {t("schedule.lastModified")} {formatDate(SCHEDULE_META.lastModified, lang)}
-        </p>
+          <div className="mt-5 rounded-xl border border-border bg-ice p-4 md:p-5">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="eyebrow text-sport">{lang === "fr" ? "Filtrer rapidement" : "Quick filters"}</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {lang === "fr"
+                    ? "Commencez par votre équipe. Le choix est mémorisé sur cet appareil."
+                    : "Start with your team. Your choice is remembered on this device."}
+                </p>
+              </div>
+              {preferredTeam && (
+                <span className="rounded-full bg-background px-3 py-1 text-xs font-semibold text-foreground shadow-sm">
+                  {lang === "fr" ? "Mon équipe" : "My team"} · {l(TEAMS.find((item) => item.slug === preferredTeam)?.name)}
+                </span>
+              )}
+            </div>
 
-        <div className="mt-8 space-y-8 lg:hidden">
-          {events.length === 0 && <p className="text-muted-foreground">{t("schedule.noEventsWeek")}</p>}
-          {days.map((day) => {
-            const dayEvents = events.filter((event) => event.date === day);
-            if (dayEvents.length === 0) return null;
-            return (
-              <section key={day}>
-                <h2 className="mb-3 border-b border-border pb-2 font-display text-xl font-bold uppercase tracking-wide">
-                  {formatDate(day, lang, { weekday: "long", day: "numeric", month: "long" })}
-                </h2>
-                <div className="space-y-3">
-                  {dayEvents.map((event) => <EventCard key={event.id} event={event} />)}
-                </div>
-              </section>
-            );
-          })}
-        </div>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              <label className="block">
+                <span className="eyebrow mb-1.5 block text-muted-foreground">
+                  {lang === "fr" ? "Mon équipe" : "My team"}
+                </span>
+                <select
+                  className={selectClass}
+                  value={team}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    setTeam(value);
+                    if (value !== "all") savePreferredTeam(value);
+                  }}
+                >
+                  <option value="all">{t("common.all")}</option>
+                  {TEAMS.map((item) => (
+                    <option key={item.slug} value={item.slug}>
+                      {item.code === "F" ? l(item.name) : `${item.code} · ${l(item.name)}`}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-        <div
-          className="mt-8 hidden lg:grid lg:grid-cols-7 lg:gap-2"
-          aria-label={lang === "fr" ? "Semaine complète" : "Full week"}
-        >
-          {days.map((day) => {
-            const dayEvents = events.filter((event) => event.date === day);
-            return (
-              <section key={day} className="min-w-0 border-l border-border pl-2 first:border-l-0 first:pl-0">
-                <h2 className="min-h-14 border-b border-border pb-2 font-display text-lg font-bold uppercase leading-tight">
-                  {formatDate(day, lang, { weekday: "long", day: "numeric", month: "short" })}
-                </h2>
-                <div className="mt-3 space-y-2">
-                  {dayEvents.length
-                    ? dayEvents.map((event) => <EventCard key={event.id} event={event} compact />)
-                    : <p className="text-xs text-muted-foreground">{t("schedule.noEvents")}</p>}
-                </div>
-              </section>
-            );
-          })}
-        </div>
+              <label className="block">
+                <span className="eyebrow mb-1.5 block text-muted-foreground">{t("schedule.arena")}</span>
+                <select className={selectClass} value={arena} onChange={(event) => setArena(event.target.value)}>
+                  <option value="all">{t("common.all")}</option>
+                  {ARENAS.map((item) => (
+                    <option key={item.slug} value={item.slug}>{item.name}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="eyebrow mb-1.5 block text-muted-foreground">{t("schedule.type")}</span>
+                <select className={selectClass} value={type} onChange={(event) => setType(event.target.value)}>
+                  <option value="all">{t("common.all")}</option>
+                  {TYPES.map((item) => (
+                    <option key={item} value={item}>{t(`type.${item}` as TranslationKey)}</option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block">
+                <span className="eyebrow mb-1.5 block text-muted-foreground">{t("schedule.status")}</span>
+                <select className={selectClass} value={status} onChange={(event) => setStatus(event.target.value)}>
+                  <option value="all">{t("common.all")}</option>
+                  {STATUSES.map((item) => (
+                    <option key={item} value={item}>{t(`status.${item}`)}</option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="flex items-end">
+                <Button variant="secondary" className="w-full" onClick={resetFilters}>
+                  <RotateCcw className="size-4" /> {t("common.reset")}
+                </Button>
+              </div>
+            </div>
           </div>
-        </details>
+
+          <p className="mt-4 text-sm text-muted-foreground" aria-live="polite">
+            {events.length} {t("schedule.count")} · {t("schedule.version")} {SCHEDULE_META.version} ·{" "}
+            {t("schedule.lastModified")} {formatDate(SCHEDULE_META.lastModified, lang)}
+          </p>
+
+          <div className="mt-8 space-y-8 lg:hidden">
+            {events.length === 0 && <p className="text-muted-foreground">{t("schedule.noEventsWeek")}</p>}
+            {days.map((day) => {
+              const dayEvents = events.filter((event) => event.date === day);
+              if (dayEvents.length === 0) return null;
+              return (
+                <section key={day}>
+                  <h2 className="mb-3 border-b border-border pb-2 font-display text-xl font-bold uppercase tracking-wide">
+                    {formatDate(day, lang, { weekday: "long", day: "numeric", month: "long" })}
+                  </h2>
+                  <div className="space-y-3">
+                    {dayEvents.map((event) => <EventCard key={event.id} event={event} />)}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+
+          <div
+            className="mt-8 hidden lg:grid lg:grid-cols-7 lg:gap-2"
+            aria-label={lang === "fr" ? "Semaine complète" : "Full week"}
+          >
+            {days.map((day) => {
+              const dayEvents = events.filter((event) => event.date === day);
+              return (
+                <section key={day} className="min-w-0 border-l border-border pl-2 first:border-l-0 first:pl-0">
+                  <h2 className="min-h-14 border-b border-border pb-2 font-display text-lg font-bold uppercase leading-tight">
+                    {formatDate(day, lang, { weekday: "long", day: "numeric", month: "short" })}
+                  </h2>
+                  <div className="mt-3 space-y-2">
+                    {dayEvents.length
+                      ? dayEvents.map((event) => <EventCard key={event.id} event={event} compact />)
+                      : <p className="text-xs text-muted-foreground">{t("schedule.noEvents")}</p>}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+            </div>
+          </details>
+        )}
       </div>
     </>
   );
