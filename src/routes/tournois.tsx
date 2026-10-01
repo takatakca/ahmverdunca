@@ -84,7 +84,27 @@ function TournamentsPage() {
                 : "AHM Verdun showcases the event; tournament operations remain in their official system."
             }
           />
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <a
+              href={EXTERNAL_LINKS.verdunM11Registration}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card-elevated group p-6"
+            >
+              <div className="flex items-center justify-between">
+                <Users className="size-6 text-sport" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                {lang === "fr" ? "Inscriptions M11" : "U11 registration"}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Inscriptions ouvertes sur le site officiel jusqu’au 15 novembre 2026."
+                  : "Registration is open on the official site until November 15, 2026."}
+              </p>
+            </a>
+
             <a
               href={EXTERNAL_LINKS.m11TournamentSchedule}
               target="_blank"
@@ -120,8 +140,8 @@ function TournamentsPage() {
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 {lang === "fr"
-                  ? "Ouvrir le document actuellement publié par l'AHM Verdun."
-                  : "Open the document currently published by AHM Verdun."}
+                  ? "Consulter les règlements actuellement publiés sur le site officiel du tournoi."
+                  : "Read the rules currently published on the tournament’s official site."}
               </p>
             </a>
 
