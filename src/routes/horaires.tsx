@@ -29,6 +29,8 @@ export const Route = createFileRoute("/horaires")({
 const TYPES: EventType[] = ["practice", "game", "event", "tryout"];
 const STATUSES: EventStatus[] = ["confirmed", "modified", "cancelled", "pending"];
 
+// UI contract: official schedule ingestion can replace demo data later without changing the parent-facing experience.
+
 function weekStart(iso: string) {
   const d = new Date(`${iso}T12:00:00`);
   const diff = (d.getDay() + 6) % 7;
