@@ -54,6 +54,10 @@ The current public architecture does **not** recreate hockey operations. Spordle
 - Empty public filter categories are hidden instead of showing dead/empty states.
 - FAQ answers awaiting official validation remain available for pre-production review but are excluded from the indexed public FAQ and public search.
 - Critical filter state is exposed to assistive technologies.
+- Team quick links are data-driven so empty News/Photos anchors are not rendered.
+- Current functional operations and girls-hockey contacts are represented separately from the still-unconfirmed general association email.
+- The reserved AHMV phone number is preview-only until `SITE.phonePublic=true`; indexed production and organization structured data omit it while inactive.
+- Legacy indexed/bookmarked routes are permanently redirected to their new equivalents or the nearest current functional destination.
 
 ## 4. Current verified public sources
 
@@ -94,7 +98,9 @@ These are not code defects and must not be fabricated:
 - approved official hero/news/gallery media and permissions involving minors;
 - authorization for analytics, Search Console, Google Business Profile and social integrations;
 - authorization/credentials for newsletter, voice or other future communication services;
-- production hosting/DNS cutover from the current site to the new application.
+- activation and end-to-end testing of the reserved 1 (581) 666-6AHM phone number before setting `SITE.phonePublic=true`;
+- production hosting/DNS cutover from the current site to the new application;
+- final browser smoke test on the real deployment. Automated browser tooling was not available in the repository session, so visual/mobile runtime QA has not been falsely marked complete.
 
 Until those approvals exist, the code intentionally uses safe fallbacks.
 
@@ -104,7 +110,8 @@ Until those approvals exist, the code intentionally uses safe fallbacks.
 2. Test the production hostname privately: home, schedules, teams, registration, arenas, news, gallery, search, FR/EN, mobile navigation and external gateways.
 3. Confirm the final public media, privacy approval, sponsor assets and association contact details.
 4. Confirm the current weekly schedule source/update process.
-5. Perform the approved hosting/DNS cutover for `ahmverdun.com`.
+5. Activate/test the reserved phone if it is intended to be public at launch; only then set `SITE.phonePublic=true`.
+6. Perform the approved hosting/DNS cutover for `ahmverdun.com`.
 6. Verify HTTPS, redirects, `/robots.txt`, `/sitemap.xml`, 404 behavior and server headers on the actual production domain.
 7. Set `VITE_PUBLIC_INDEXING=true` only after the new production domain is confirmed correct.
 8. Rebuild/redeploy and verify the HTML robots meta plus `X-Robots-Tag`.
