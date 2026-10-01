@@ -27,12 +27,17 @@ export function EventCard({ event, compact = false }: { event: ScheduleEvent; co
         "card-elevated stripe-sport flex flex-col gap-3 p-4 pl-5",
         !compact && "sm:flex-row sm:items-center sm:justify-between",
         compact && "min-w-0 p-2.5 pl-3",
-        event.status === "cancelled" && "opacity-80",
+        event.status === "cancelled" && "border-status-cancelled bg-status-cancelled-soft/35",
       )}
     >
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-display text-lg font-bold tabular-nums">
+          <span
+            className={cn(
+              "font-display text-lg font-bold tabular-nums",
+              event.status === "cancelled" && "text-status-cancelled line-through decoration-2",
+            )}
+          >
             {event.start} – {event.end}
           </span>
           <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide", statusStyle[event.status])}>
