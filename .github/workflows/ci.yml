@@ -27,7 +27,7 @@ jobs:
       - name: Type check
         run: bunx tsc --noEmit
 
-      - name: Lint (logic only; legacy formatting is not yet normalized)
+      - name: Lint application logic
         run: bunx eslint . --rule 'prettier/prettier: off'
 
       - name: Build
