@@ -32,6 +32,9 @@ export const EXTERNAL_LINKS = {
   verdunM11Tournament: "https://tournoihockeyverdun.ca/",
   facebook: "https://www.facebook.com/AHMVerdun",
   instagram: "https://www.instagram.com/ahm_verdun/",
+  officialSimpleLetterSchedule: "https://scoresheets.ca/tournament.php?id=17",
+  officialDoubleLetterSchedule: "https://scoresheets.ca/tournament.php?id=15",
+  officialGirlsSchedule: "https://page.spordle.com/fr/ligue-quebecoise-de-hockey-feminin/teams/143558?tab=schedule",
 } as const;
 
 export type NavKey =
