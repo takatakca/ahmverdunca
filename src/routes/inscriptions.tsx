@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, Mail, ShieldCheck } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
 import { EXTERNAL_LINKS } from "@/lib/site";
@@ -50,11 +49,16 @@ function RegistrationPage() {
       />
 
       <div className="container-site space-y-12 py-8 md:py-12">
-        <DemoNotice kind="info">
-          {lang === "fr"
-            ? "Le site AHM Verdun informe et dirige. L'inscription hockey elle-même reste dans la plateforme officielle déjà utilisée par l'association."
-            : "The AHM Verdun site informs and directs. Hockey registration itself remains in the official platform already used by the association."}
-        </DemoNotice>
+        <div className="rounded-xl border border-border bg-ice p-5">
+          <p className="eyebrow text-sport">
+            {lang === "fr" ? "Parcours officiel" : "Official pathway"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {lang === "fr"
+              ? "AHM Verdun explique le parcours ici, puis l'inscription elle-même se poursuit sur Spordle, la plateforme officielle déjà utilisée par l'association."
+              : "AHM Verdun explains the process here, then registration continues on Spordle, the official platform already used by the association."}
+          </p>
+        </div>
 
         <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
