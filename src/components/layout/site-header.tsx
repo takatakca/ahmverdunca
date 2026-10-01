@@ -75,7 +75,7 @@ export function SiteHeader() {
 
         {/* Desktop nav */}
         <nav aria-label={lang === "fr" ? "Navigation principale" : "Main navigation"} className="hidden items-center gap-1 lg:flex">
-          {MAIN_NAV.map((item) => (
+          {MAIN_NAV.filter((item) => item.key !== "home").map((item) => (
             <Link
               key={item.key}
               to={item.to}
