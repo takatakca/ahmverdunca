@@ -73,7 +73,9 @@ function PartnersPage() {
                 <div className="mt-8">
                   <h2 className="heading-card">{sponsor.name}</h2>
                   <p className="mt-2 text-xs uppercase tracking-wider text-muted-foreground">
-                    {lang === "fr" ? "Identité visuelle à valider" : "Visual identity to approve"}
+                    {sponsor.websiteVerified
+                      ? (lang === "fr" ? "Partenaire AHMV · lien vérifié" : "AHMV partner · verified link")
+                      : (lang === "fr" ? "Partenaire AHMV" : "AHMV partner")}
                   </p>
                   {sponsor.website && (
                     <a
