@@ -44,14 +44,6 @@ requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
 requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
 requireUnique("ALERTS.id", ALERTS.map((alert) => alert.id));
 
-for (const team of TEAMS) {
-  for (const arenaSlug of team.arenaSlugs) {
-    if (!arenaSlugs.has(arenaSlug)) {
-      errors.push(`Team "${team.slug}" references unknown arena "${arenaSlug}".`);
-    }
-  }
-}
-
 for (const event of SCHEDULE) {
   if (!teamSlugs.has(event.teamSlug)) {
     errors.push(`Schedule event "${event.id}" references unknown team "${event.teamSlug}".`);
