@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
+import type { TranslationKey } from "@/lib/translations";
 
 export function SiteHeader() {
   const { t, lang } = useI18n();
@@ -68,7 +69,7 @@ export function SiteHeader() {
               className="rounded-md px-3 py-2 font-display text-base font-semibold uppercase tracking-wide text-navy-foreground/80 transition-colors hover:bg-navy-foreground/10 hover:text-navy-foreground"
               activeProps={{ className: "!text-navy-foreground border-b-2 border-sport rounded-b-none" }}
             >
-              {t(`nav.${item.key}` as const)}
+              {t(`nav.${item.key}` as TranslationKey)}
             </Link>
           ))}
           <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
@@ -94,7 +95,7 @@ export function SiteHeader() {
                     className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-secondary"
                     activeProps={{ className: "bg-secondary text-sport" }}
                   >
-                    {t(`nav.${item.key}` as const)}
+                    {t(`nav.${item.key}` as TranslationKey)}
                   </Link>
                 ))}
               </div>
@@ -145,7 +146,7 @@ export function SiteHeader() {
                   className="rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 py-4 font-display text-xl font-bold uppercase text-navy-foreground/90"
                   activeProps={{ className: "border-sport bg-navy-foreground/[0.08] text-sport-foreground" }}
                 >
-                  {t(`nav.${item.key}` as const)}
+                  {t(`nav.${item.key}` as TranslationKey)}
                 </Link>
               ))}
             </div>
@@ -181,7 +182,7 @@ export function SiteHeader() {
                   className="border-b border-navy-foreground/10 py-3 text-base font-medium text-navy-foreground/85"
                   activeProps={{ className: "text-sport-foreground" }}
                 >
-                  {t(`nav.${item.key}` as const)}
+                  {t(`nav.${item.key}` as TranslationKey)}
                 </Link>
               ))}
             </div>
