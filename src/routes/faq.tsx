@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { PageHeader } from "@/components/page-header";
+import { VoiceSearchButton } from "@/components/voice-search-button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQ, FAQ_TOPICS } from "@/data/faq";
 import { useI18n } from "@/lib/i18n";
@@ -20,8 +21,26 @@ export const Route = createFileRoute("/faq")({
 
 function FaqPage() {
   const { t, l, lang } = useI18n();
+  const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
+  const requestedItem =
+    typeof search["item"] === "string" && FAQ.some((item) => item.id === search["item"])
+      ? search["item"]
+      : "";
   const [topic, setTopic] = useState("all");
   const [q, setQ] = useState("");
+  const [openItem, setOpenItem] = useState(requestedItem);
+
+  useEffect(() => {
+    if (!requestedItem) return;
+    setTopic("all");
+    setQ("");
+    setOpenItem(requestedItem);
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById(requestedItem)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [requestedItem]);
+
   const list = FAQ.filter(
     (f) =>
       (topic === "all" || f.topic === topic) &&
@@ -50,14 +69,17 @@ function FaqPage() {
           </p>
         </div>
 
-        <input
-          type="search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder={t("search.placeholder")}
-          aria-label={t("common.search")}
-          className="h-12 w-full rounded-md border border-input bg-background px-4 text-base"
-        />
+        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t("search.placeholder")}
+            aria-label={t("common.search")}
+            className="h-12 w-full rounded-md border border-input bg-background px-4 text-base"
+          />
+          <VoiceSearchButton onTranscript={setQ} />
+        </div>
 
         <div className="scrollbar-none -mx-1 my-6 flex gap-2 overflow-x-auto px-1 pb-1">
           {[{ id: "all", label: { fr: "Tous les sujets", en: "All topics" } }, ...FAQ_TOPICS].map((c) => (
@@ -76,9 +98,15 @@ function FaqPage() {
         </div>
 
         {list.length === 0 && <p className="text-muted-foreground">{t("common.noResults")}</p>}
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion
+          type="single"
+          collapsible
+          value={openItem}
+          onValueChange={setOpenItem}
+          className="w-full"
+        >
           {list.map((f) => (
-            <AccordionItem key={f.id} value={f.id}>
+            <AccordionItem key={f.id} id={f.id} value={f.id} className="scroll-mt-28">
               <AccordionTrigger className="text-left font-display text-lg font-bold uppercase">{l(f.question)}</AccordionTrigger>
               <AccordionContent>
                 <p className="text-base text-foreground/90">{l(f.answer)}</p>
