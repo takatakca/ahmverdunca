@@ -2,7 +2,6 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { RESOURCES, RESOURCE_CATEGORIES } from "@/data/resources";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -20,17 +19,32 @@ export const Route = createFileRoute("/ressources")({
 });
 
 function ResourcesPage() {
-  const { t, l } = useI18n();
+  const { t, l, lang } = useI18n();
   const [cat, setCat] = useState("all");
   const list = cat === "all" ? RESOURCES : RESOURCES.filter((r) => r.category === cat);
 
   return (
     <>
-      <PageHeader eyebrow={t("common.externalLink")} title={t("nav.resources")} description="Ressources externes utiles aux familles et aux bénévoles. Les liens s'ouvrent dans un nouvel onglet." />
+      <PageHeader
+        eyebrow={lang === "fr" ? "Liens officiels & aide" : "Official links & support"}
+        title={t("nav.resources")}
+        description={
+          lang === "fr"
+            ? "Ressources utiles aux familles et aux bénévoles : hockey, formation, développement et aide financière."
+            : "Useful resources for families and volunteers: hockey, training, development and financial assistance."
+        }
+      />
       <div className="container-site py-8 md:py-12">
-        <DemoNotice kind="info" className="mb-6">
-          L'AHM Verdun n'est pas responsable du contenu des sites externes. Les programmes d'aide financière ne garantissent aucune admissibilité.
-        </DemoNotice>
+        <div className="mb-6 rounded-xl border border-border bg-ice p-5">
+          <p className="eyebrow text-sport">
+            {lang === "fr" ? "À savoir" : "Good to know"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {lang === "fr"
+              ? "Les liens ci-dessous ouvrent des organismes externes. Les critères, montants et disponibilités des programmes d'aide peuvent changer; vérifiez toujours la source officielle."
+              : "Links below open external organizations. Financial-assistance criteria, amounts and availability may change; always verify the official source."}
+          </p>
+        </div>
 
         <div className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
           {[{ id: "all", label: { fr: "Tout", en: "All" } }, ...RESOURCE_CATEGORIES].map((c) => (
