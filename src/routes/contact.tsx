@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, MapPin, PhoneCall } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
@@ -69,7 +69,17 @@ function ContactPage() {
           <div className="card-elevated p-5">
             <SectionHeading title="Association" className="mb-3" />
             <p className="flex items-start gap-2 text-sm"><MapPin className="mt-0.5 size-4 shrink-0 text-sport" aria-hidden /> {SITE.city}</p>
-            <p className="mt-3 text-sm italic text-muted-foreground">Adresse postale, téléphone et courriel officiels à fournir.</p>
+            <a
+              href={`tel:${SITE.phoneE164}`}
+              className="mt-4 flex items-center gap-2 font-display text-2xl font-bold text-navy hover:text-sport"
+            >
+              <PhoneCall className="size-5 text-sport" aria-hidden />
+              {SITE.phoneDisplay}
+            </a>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Assistant vocal automatisé : intégration à venir. Le numéro est déjà réservé.
+            </p>
+            <p className="mt-3 text-sm italic text-muted-foreground">Adresse postale et courriel officiels à valider.</p>
           </div>
           <div className="card-elevated p-5">
             <SectionHeading title="Inscriptions" className="mb-3" />
