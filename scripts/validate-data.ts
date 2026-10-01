@@ -89,7 +89,7 @@ for (const [label, email] of [
   ["SITE.operationsEmail", SITE.operationsEmail],
   ["SITE.girlsHockeyEmail", SITE.girlsHockeyEmail],
 ] as const) {
-  if (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) {
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     errors.push(`${label} is not a valid email address: "${email}".`);
   }
 }
