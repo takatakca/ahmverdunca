@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { TEAMS } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
 
@@ -22,9 +21,15 @@ function TeamsPage() {
     <>
       <PageHeader eyebrow={t("common.season")} title={t("teams.title")} description={t("teams.subtitle")} />
       <div className="container-site py-8 md:py-12">
-        <div className="mb-6 grid gap-3 md:grid-cols-2">
-          <DemoNotice kind="info">{t("teams.divisionsNote")}</DemoNotice>
-          <DemoNotice kind="info" title={{ fr: "Confidentialité", en: "Privacy" }}>{t("teams.privacyNote")}</DemoNotice>
+        <div className="mb-7 grid gap-3 md:grid-cols-2">
+          <div className="rounded-xl border border-border bg-ice p-5">
+            <p className="eyebrow text-sport">{t("teams.title")}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{t("teams.divisionsNote")}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-ice p-5">
+            <p className="eyebrow text-sport">{t("common.privacy")}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{t("teams.privacyNote")}</p>
+          </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {TEAMS.map((team) => (
