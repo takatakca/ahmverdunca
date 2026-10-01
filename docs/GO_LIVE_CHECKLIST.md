@@ -9,12 +9,14 @@ This project is intentionally safe for proposal/pre-production use by default.
 - [x] Required public routes are validated in the generated sitemap.
 - [x] `robots.txt` is validated against the canonical sitemap URL.
 - [x] Preview builds default to `noindex, nofollow`.
-- [x] Server responses apply matching `X-Robots-Tag` behavior.
+- [x] Server responses apply matching `X-Robots-Tag` behavior, including permanent noindex handling for Search and HTML error responses.
 - [x] Baseline browser security headers are enabled.
 - [x] Demo/illustrative media are prevented from silently appearing as approved public media.
 - [x] Unapproved team social accounts and inactive communication services are hidden from public launch mode.
 - [x] Public gallery records with protected media require an official source URL.
 - [x] Spordle, WLLV, standings/results and other hockey-operation systems remain external sources of truth.
+- [x] Legacy same-domain routes are redirected to current destinations for domain cutover.
+- [x] The reserved phone is hidden from indexed production until explicitly activated.
 
 ## Association / production approvals still required before indexing
 
@@ -26,7 +28,8 @@ This project is intentionally safe for proposal/pre-production use by default.
 - [ ] Validate all public photo/video permissions involving minors.
 - [ ] Approve any analytics, Search Console, Google Business Profile and social integrations.
 - [ ] Complete the approved production hosting/DNS cutover for `ahmverdun.com`.
-- [ ] Verify `/robots.txt`, `/sitemap.xml`, title/meta previews, redirects and social sharing on the actual new production deployment.
+- [ ] Activate and test the reserved phone with a real inbound call, then set `SITE.phonePublic=true`.
+- [ ] Verify `/robots.txt`, `/sitemap.xml`, `/recherche` noindex headers, title/meta previews, legacy redirects and social sharing on the actual new production deployment.
 - [ ] Run the full CI workflow and perform the final mobile/desktop smoke test against the production hostname.
 - [ ] Set `VITE_PUBLIC_INDEXING=true` only after every item above that affects public release is approved.
 
