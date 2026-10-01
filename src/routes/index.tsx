@@ -169,25 +169,84 @@ function Home() {
         </div>
       </section>
 
-      {/* News */}
+      {/* Newsroom */}
       <section className="bg-ice py-12 md:py-16">
         <div className="container-site">
           <SectionHeading
+            eyebrow={lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}
             title={t("home.news")}
-            action={<Button asChild variant="outline" size="sm"><Link to="/nouvelles">{t("common.seeAll")}</Link></Button>}
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link to="/nouvelles">
+                  {t("common.seeAll")} <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            }
           />
-          <div className="grid gap-5 md:grid-cols-3">
-            {news.map((a) => (
-              <Link key={a.slug} to="/nouvelles/$slug" params={{ slug: a.slug }} className="card-elevated group overflow-hidden">
-                <PlaceholderImage src={img(a.image)} alt={l(a.title)} />
-                <div className="p-5">
-                  <p className="eyebrow text-sport">{formatShortDate(a.date, lang)}</p>
-                  <h3 className="heading-card mt-2 group-hover:text-sport">{l(a.title)}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{l(a.excerpt)}</p>
+
+          {news[0] && (
+            <div className="grid gap-5 lg:grid-cols-[1.45fr_0.85fr]">
+              <Link
+                to="/nouvelles/$slug"
+                params={{ slug: news[0].slug }}
+                className="card-elevated group overflow-hidden"
+              >
+                <PlaceholderImage
+                  src={img(news[0].image)}
+                  alt={l(news[0].title)}
+                  aspect="aspect-[16/9]"
+                />
+                <div className="p-6 md:p-7">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="rounded-full bg-sport px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sport-foreground">
+                      {lang === "fr" ? "À la une" : "Featured"}
+                    </span>
+                    <p className="eyebrow text-sport">
+                      {formatShortDate(news[0].date, lang)}
+                    </p>
+                  </div>
+                  <h3 className="mt-4 font-display text-3xl font-extrabold uppercase leading-none text-navy group-hover:text-sport md:text-4xl">
+                    {l(news[0].title)}
+                  </h3>
+                  <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
+                    {l(news[0].excerpt)}
+                  </p>
+                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-sport">
+                    {t("common.readMore")}
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                  </span>
                 </div>
               </Link>
-            ))}
-          </div>
+
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+                {news.slice(1).map((article) => (
+                  <Link
+                    key={article.slug}
+                    to="/nouvelles/$slug"
+                    params={{ slug: article.slug }}
+                    className="card-elevated group grid overflow-hidden sm:grid-cols-[0.9fr_1.1fr] lg:grid-cols-[0.8fr_1.2fr]"
+                  >
+                    <PlaceholderImage
+                      src={img(article.image)}
+                      alt={l(article.title)}
+                      aspect="aspect-[4/3] sm:aspect-auto sm:min-h-full"
+                    />
+                    <div className="p-5">
+                      <p className="eyebrow text-sport">
+                        {formatShortDate(article.date, lang)}
+                      </p>
+                      <h3 className="heading-card mt-2 group-hover:text-sport">
+                        {l(article.title)}
+                      </h3>
+                      <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                        {l(article.excerpt)}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 

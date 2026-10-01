@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLink, MapPin } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, MapPin } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
-import { EXTERNAL_LINKS, SITE } from "@/lib/site";
+import { SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/contact")({
@@ -73,9 +73,9 @@ function ContactPage() {
           </div>
           <div className="card-elevated p-5">
             <SectionHeading title="Inscriptions" className="mb-3" />
-            <p className="text-sm text-muted-foreground">Toute question d'inscription passe par la plateforme officielle Spordle.</p>
+            <p className="text-sm text-muted-foreground">Commencez par le parcours AHM Verdun avant de continuer vers l'inscription hockey officielle.</p>
             <Button asChild variant="outline" className="mt-4">
-              <a href={EXTERNAL_LINKS.spordleRegister} target="_blank" rel="noopener noreferrer">{t("reg.cta")} <ExternalLink className="size-4" /></a>
+              <Link to="/inscriptions">{t("reg.cta")} <ArrowRight className="size-4" /></Link>
             </Button>
           </div>
         </aside>

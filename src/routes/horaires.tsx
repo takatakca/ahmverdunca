@@ -52,10 +52,14 @@ function SchedulePage() {
     typeof search["team"] === "string" && TEAMS.some((item) => item.slug === search["team"])
       ? search["team"]
       : undefined;
+  const selectedArena =
+    typeof search["arena"] === "string" && ARENAS.some((item) => item.slug === search["arena"])
+      ? search["arena"]
+      : undefined;
 
   const [start, setStart] = useState(() => weekStart(DEMO_TODAY));
   const [team, setTeam] = useState(selectedTeam ?? "all");
-  const [arena, setArena] = useState("all");
+  const [arena, setArena] = useState(selectedArena ?? "all");
   const [type, setType] = useState("all");
   const [status, setStatus] = useState("all");
 
@@ -63,10 +67,12 @@ function SchedulePage() {
     if (selectedTeam) {
       setTeam(selectedTeam);
       savePreferredTeam(selectedTeam);
-      return;
+    } else if (preferredTeam) {
+      setTeam(preferredTeam);
     }
-    if (preferredTeam) setTeam(preferredTeam);
-  }, [selectedTeam, preferredTeam, savePreferredTeam]);
+
+    if (selectedArena) setArena(selectedArena);
+  }, [selectedTeam, selectedArena, preferredTeam, savePreferredTeam]);
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(start, i)), [start]);
 

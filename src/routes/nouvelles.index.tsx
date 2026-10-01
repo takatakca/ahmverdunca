@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { DemoNotice } from "@/components/demo-notice";
@@ -12,9 +13,16 @@ export const Route = createFileRoute("/nouvelles/")({
   head: () => ({
     meta: [
       { title: "Nouvelles et communiqués — AHM Verdun" },
-      { name: "description", content: "Nouvelles, communiqués et annonces de l'Association du hockey mineur de Verdun, classés par catégorie." },
+      {
+        name: "description",
+        content:
+          "Nouvelles, communiqués et annonces de l'Association du hockey mineur de Verdun, classés par catégorie.",
+      },
       { property: "og:title", content: "Nouvelles et communiqués — AHM Verdun" },
-      { property: "og:description", content: "Les annonces de l'association, par catégorie et par saison." },
+      {
+        property: "og:description",
+        content: "Les annonces de l'association, par catégorie et par saison.",
+      },
     ],
   }),
   component: NewsPage,
@@ -23,43 +31,146 @@ export const Route = createFileRoute("/nouvelles/")({
 function NewsPage() {
   const { t, l, lang } = useI18n();
   const [cat, setCat] = useState("all");
-  const list = cat === "all" ? NEWS : NEWS.filter((n) => n.category === cat);
+  const list = cat === "all" ? NEWS : NEWS.filter((article) => article.category === cat);
+  const featured = list[0];
+  const remaining = list.slice(1);
 
   return (
     <>
-      <PageHeader eyebrow={t("common.season")} title={t("home.news")} description={t("search.hint")} />
-      <div className="container-site py-8 md:py-12">
-        <DemoNotice className="mb-6">{t("common.demoData")} — {t("common.toValidate")}</DemoNotice>
+      <PageHeader
+        eyebrow={t("common.season")}
+        title={t("home.news")}
+        description={
+          lang === "fr"
+            ? "Actualités, communiqués, équipes, tournois et vie de l’association réunis dans une salle de presse plus simple à parcourir."
+            : "News, releases, teams, tournaments and association updates gathered in one easy-to-browse newsroom."
+        }
+      />
 
-        <div className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
-          {[{ id: "all", label: { fr: "Toutes", en: "All" } }, ...NEWS_CATEGORIES].map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => setCat(c.id)}
-              className={cn(
-                "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
-                cat === c.id ? "border-sport bg-sport text-sport-foreground" : "border-input hover:bg-secondary",
-              )}
-            >
-              {l(c.label)}
-            </button>
-          ))}
+      <div className="container-site py-8 md:py-12">
+        <DemoNotice className="mb-6">
+          {t("common.demoData")} — {t("common.toValidate")}
+        </DemoNotice>
+
+        <div
+          className="scrollbar-none -mx-1 mb-8 flex gap-2 overflow-x-auto px-1 pb-1"
+          aria-label={lang === "fr" ? "Filtres des nouvelles" : "News filters"}
+        >
+          {[{ id: "all", label: { fr: "Toutes", en: "All" } }, ...NEWS_CATEGORIES].map(
+            (category) => (
+              <button
+                key={category.id}
+                type="button"
+                aria-pressed={cat === category.id}
+                onClick={() => setCat(category.id)}
+                className={cn(
+                  "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
+                  cat === category.id
+                    ? "border-sport bg-sport text-sport-foreground"
+                    : "border-input bg-background hover:bg-secondary",
+                )}
+              >
+                {l(category.label)}
+              </button>
+            ),
+          )}
         </div>
 
-        {list.length === 0 && <p className="text-muted-foreground">{t("common.noResults")}</p>}
-        <div className="grid gap-6 md:grid-cols-3">
-          {list.map((a) => (
-            <Link key={a.slug} to="/nouvelles/$slug" params={{ slug: a.slug }} className="card-elevated group overflow-hidden">
-              <PlaceholderImage src={img(a.image)} alt={l(a.title)} />
-              <div className="p-5">
-                <p className="eyebrow text-sport">{formatShortDate(a.date, lang)}</p>
-                <h2 className="heading-card mt-2 group-hover:text-sport">{l(a.title)}</h2>
-                <p className="mt-2 text-sm text-muted-foreground">{l(a.excerpt)}</p>
+        {list.length === 0 && (
+          <p className="rounded-lg border border-border bg-ice p-6 text-muted-foreground">
+            {t("common.noResults")}
+          </p>
+        )}
+
+        {featured && (
+          <section className="grid gap-6 lg:grid-cols-[1.35fr_0.95fr] lg:items-stretch">
+            <Link
+              to="/nouvelles/$slug"
+              params={{ slug: featured.slug }}
+              className="card-elevated group overflow-hidden"
+            >
+              <PlaceholderImage
+                src={img(featured.image)}
+                alt={l(featured.title)}
+                aspect="aspect-[16/9]"
+              />
+              <div className="p-6 md:p-8">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="rounded-full bg-sport px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sport-foreground">
+                    {lang === "fr" ? "À la une" : "Featured"}
+                  </span>
+                  <span className="eyebrow text-sport">
+                    {formatShortDate(featured.date, lang)}
+                  </span>
+                </div>
+                <h2 className="mt-4 font-display text-3xl font-extrabold uppercase leading-none text-navy group-hover:text-sport md:text-5xl">
+                  {l(featured.title)}
+                </h2>
+                <p className="mt-4 max-w-3xl text-base text-muted-foreground">
+                  {l(featured.excerpt)}
+                </p>
+                <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-sport">
+                  {t("common.readMore")}
+                  <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                </span>
               </div>
             </Link>
-          ))}
-        </div>
+
+            <div className="grid content-start gap-5">
+              {remaining.slice(0, 2).map((article) => (
+                <Link
+                  key={article.slug}
+                  to="/nouvelles/$slug"
+                  params={{ slug: article.slug }}
+                  className="card-elevated group grid overflow-hidden sm:grid-cols-[0.8fr_1.2fr]"
+                >
+                  <PlaceholderImage
+                    src={img(article.image)}
+                    alt={l(article.title)}
+                    aspect="aspect-[4/3] sm:aspect-auto sm:min-h-full"
+                  />
+                  <div className="p-5">
+                    <p className="eyebrow text-sport">
+                      {formatShortDate(article.date, lang)}
+                    </p>
+                    <h2 className="heading-card mt-2 group-hover:text-sport">
+                      {l(article.title)}
+                    </h2>
+                    <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                      {l(article.excerpt)}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {remaining.length > 2 && (
+          <div className="mt-6 grid gap-6 md:grid-cols-3">
+            {remaining.slice(2).map((article) => (
+              <Link
+                key={article.slug}
+                to="/nouvelles/$slug"
+                params={{ slug: article.slug }}
+                className="card-elevated group overflow-hidden"
+              >
+                <PlaceholderImage src={img(article.image)} alt={l(article.title)} />
+                <div className="p-5">
+                  <p className="eyebrow text-sport">
+                    {formatShortDate(article.date, lang)}
+                  </p>
+                  <h2 className="heading-card mt-2 group-hover:text-sport">
+                    {l(article.title)}
+                  </h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {l(article.excerpt)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
