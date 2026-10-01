@@ -1,3 +1,17 @@
+# CURRENT STATUS — 2026-10-01
+
+The original project brief is retained below for history, but the implementation has progressed far beyond the initial visual-prototype stage.
+
+The current public-site code is feature-complete for the approved information/gateway scope, with CI-enforced data, SEO, security and build checks. Public indexing remains deliberately disabled until the association and production-launch requirements are approved.
+
+- Final release dossier: `docs/FINAL_RELEASE_STATUS.md`
+- Go-live checklist: `docs/GO_LIVE_CHECKLIST.md`
+- GROUPE TAKATAK / hockey-operation boundary: `docs/TAKATAK_INTEGRATION_BOUNDARY.md`
+
+Do not treat the historical Phase 1 language below as the current implementation status.
+
+---
+
 # Verdun Hockey Hub
 
 # GROUPE TAKATAK — PROJET AHM VERDUN
