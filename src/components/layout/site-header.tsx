@@ -35,7 +35,6 @@ export function SiteHeader() {
         <div className="container-site flex h-9 items-center justify-between text-xs">
           <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
           <div className="flex items-center gap-4">
-            <Link to="/admin" className="text-navy-foreground/60 hover:text-navy-foreground">{t("nav.admin")}</Link>
             <LangSwitch />
           </div>
         </div>
@@ -150,7 +149,6 @@ export function SiteHeader() {
                 <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
                 <LangSwitch />
               </div>
-              <Link to="/admin" className="py-2 text-center text-xs text-navy-foreground/50 underline-offset-4 hover:underline">{t("nav.admin")}</Link>
             </div>
           </nav>
         </div>
