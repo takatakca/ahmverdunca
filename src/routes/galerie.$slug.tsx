@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { getAlbum } from "@/data/gallery";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -41,16 +40,35 @@ function AlbumPage() {
         <Link to="/galerie" className="inline-flex items-center gap-1.5 text-sm font-semibold text-sport hover:underline">
           <ArrowLeft className="size-4" /> {t("common.back")}
         </Link>
-        {al.photosPending && (
-          <DemoNotice kind="info" className="mt-6">
-            Album en attente des photos officielles et de la validation des consentements. Les vignettes ci-dessous sont des emplacements.
-          </DemoNotice>
-        )}
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <PlaceholderImage src={img(al.cover)} alt={l(al.title)} className="rounded-lg sm:col-span-2 sm:row-span-2" aspect="aspect-[4/3]" />
-          {Array.from({ length: 5 }).map((_, i) => (
-            <PlaceholderImage key={i} className="rounded-lg" aspect="aspect-[4/3]" />
-          ))}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
+          <PlaceholderImage
+            src={img(al.cover)}
+            alt={l(al.title)}
+            className="rounded-xl"
+            aspect="aspect-[4/3]"
+          />
+          <aside className="card-elevated self-start p-6">
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
+            </p>
+            <h2 className="heading-card mt-3">
+              {al.photosPending
+                ? (lang === "fr" ? "Médias en validation" : "Media under review")
+                : (lang === "fr" ? "Album public" : "Public album")}
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              {al.photosPending
+                ? (lang === "fr"
+                    ? "Les photos complètes de cet album ne sont pas encore publiées dans cette nouvelle expérience. Elles seront ajoutées seulement après validation des fichiers et des autorisations applicables."
+                    : "The full set of photos for this album is not yet published in this new experience. Media will be added only after file and applicable consent validation.")
+                : (lang === "fr"
+                    ? "Cet album est prêt à être consulté."
+                    : "This album is ready to browse.")}
+            </p>
+            <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {al.season} · {l(al.eventType)}
+            </p>
+          </aside>
         </div>
       </div>
     </>
