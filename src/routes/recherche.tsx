@@ -32,6 +32,7 @@ type Hit = { key: string; label: string; kind: string; to: string; slug?: string
 const STATIC_PAGES = [
   { key: "registration", fr: "Inscriptions 2026–2027 Spordle", en: "2026–2027 registration Spordle", to: "/inscriptions" },
   { key: "schedule", fr: "Horaires de la semaine", en: "Weekly schedules", to: "/horaires" },
+  { key: "tournaments", fr: "Tournois AHM Verdun", en: "AHM Verdun tournaments", to: "/tournois" },
   { key: "partners", fr: "Partenaires et commanditaires", en: "Partners and sponsors", to: "/partenaires" },
   { key: "coaches", fr: "Zone entraîneurs", en: "Coaches zone", to: "/entraineurs" },
   { key: "resources", fr: "Ressources hockey et aide financière", en: "Hockey resources and financial assistance", to: "/ressources" },
