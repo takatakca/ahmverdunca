@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
   ArrowRight,
   CalendarDays,
+  CheckCircle2,
   Facebook,
   Instagram,
   MapPin,
@@ -16,6 +17,7 @@ import { NEWS } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
+import { usePreferredTeam } from "@/lib/team-preference";
 
 export const Route = createFileRoute("/equipes/$slug")({
   loader: ({ params }) => {
@@ -52,7 +54,9 @@ export const Route = createFileRoute("/equipes/$slug")({
 function TeamPage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
+  const { preferredTeam, savePreferredTeam } = usePreferredTeam();
   const team = getTeam(slug)!;
+  const isPreferred = preferredTeam === slug;
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
 
@@ -70,37 +74,26 @@ function TeamPage() {
                 {lang === "fr" ? "Voir les horaires" : "View schedules"}
               </Link>
             </Button>
-            <Button asChild variant="outline-light">
-              <Link to="/inscriptions">
-                {t("reg.cta")} <ArrowRight className="size-4" />
-              </Link>
+            <Button
+              type="button"
+              variant="outline-light"
+              onClick={() => savePreferredTeam(slug)}
+              aria-pressed={isPreferred}
+            >
+              <CheckCircle2 className="size-4" />
+              {isPreferred
+                ? lang === "fr"
+                  ? "Ma catégorie"
+                  : "My category"
+                : lang === "fr"
+                  ? "Mémoriser"
+                  : "Remember"}
             </Button>
           </>
         }
       />
 
       <div className="container-site space-y-14 py-8 md:py-12">
-        <div className="grid gap-3 md:grid-cols-2">
-          <div className="rounded-xl border border-border bg-ice p-5">
-            <p className="eyebrow text-sport">
-              {lang === "fr" ? "Structure d'équipe" : "Team structure"}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Les sous-équipes et divisions officielles seront affichées lorsque leur structure sera confirmée. Aucune équipe n'est inventée ici."
-                : "Official sub-teams and divisions will appear once their structure is confirmed. No team is invented here."}
-            </p>
-          </div>
-          <div className="rounded-xl border border-border bg-ice p-5">
-            <p className="eyebrow text-sport">
-              {lang === "fr" ? "Confidentialité" : "Privacy"}
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {t("teams.privacyNote")}
-            </p>
-          </div>
-        </div>
-
         <section
           aria-labelledby="team-command-title"
           className="overflow-hidden rounded-xl border border-border bg-background shadow-card"
@@ -212,9 +205,9 @@ function TeamPage() {
           </div>
         </section>
 
-        <section id="nouvelles-equipe">
-          <SectionHeading title={t("teams.news")} />
-          {news.length ? (
+        {news.length > 0 && (
+          <section id="nouvelles-equipe">
+            <SectionHeading title={t("teams.news")} />
             <div className="grid gap-5 md:grid-cols-3">
               {news.map((article) => (
                 <Link
@@ -235,18 +228,12 @@ function TeamPage() {
                 </Link>
               ))}
             </div>
-          ) : (
-            <p className="rounded-xl border border-border bg-ice p-5 text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Aucune nouvelle vérifiée n'est encore associée à cette catégorie."
-                : "No verified news is associated with this category yet."}
-            </p>
-          )}
-        </section>
+          </section>
+        )}
 
-        <section id="photos-equipe">
-          <SectionHeading title={t("teams.albums")} />
-          {albums.length ? (
+        {albums.length > 0 && (
+          <section id="photos-equipe">
+            <SectionHeading title={t("teams.albums")} />
             <div className="grid gap-5 sm:grid-cols-3">
               {albums.map((album) => (
                 <Link
@@ -268,14 +255,8 @@ function TeamPage() {
                 </Link>
               ))}
             </div>
-          ) : (
-            <p className="rounded-xl border border-border bg-ice p-5 text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Aucun album public validé n'est encore associé à cette catégorie."
-                : "No approved public album is associated with this category yet."}
-            </p>
-          )}
-        </section>
+          </section>
+        )}
 
         <section id="social-equipe">
           <SectionHeading
