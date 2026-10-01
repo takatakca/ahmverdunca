@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Handshake, Megaphone, RefreshCw } from "lucide-react";
+import { ArrowRight, ExternalLink, Handshake, Megaphone, RefreshCw } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
@@ -61,13 +61,26 @@ function PartnersPage() {
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {SPONSORS.map((sponsor) => (
-              <article key={sponsor.name} className="card-elevated flex min-h-36 flex-col justify-between p-5">
-                <Handshake className="size-6 text-sport" aria-hidden />
+              <article key={sponsor.name} className="card-elevated flex min-h-40 flex-col justify-between p-5">
+                <div className="flex items-center justify-between">
+                  <Handshake className="size-6 text-sport" aria-hidden />
+                  {sponsor.website && <ExternalLink className="size-4 text-muted-foreground" aria-hidden />}
+                </div>
                 <div className="mt-8">
                   <h2 className="heading-card">{sponsor.name}</h2>
                   <p className="mt-2 text-xs uppercase tracking-wider text-muted-foreground">
                     {lang === "fr" ? "Identité visuelle à valider" : "Visual identity to approve"}
                   </p>
+                  {sponsor.website && (
+                    <a
+                      href={sponsor.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-flex text-sm font-semibold text-sport hover:underline"
+                    >
+                      {lang === "fr" ? "Visiter le partenaire" : "Visit partner"}
+                    </a>
+                  )}
                 </div>
               </article>
             ))}
