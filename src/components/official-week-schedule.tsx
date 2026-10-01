@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ExternalLink, MapPin, Search, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { VoiceSearchButton } from "@/components/voice-search-button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
@@ -115,23 +116,26 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
       </div>
 
       <div className="p-4 md:p-6">
-        <label className="relative block">
-          <span className="sr-only">
-            {lang === "fr" ? "Rechercher dans l'horaire officiel" : "Search official schedule"}
-          </span>
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-          <input
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder={
-              lang === "fr"
-                ? "M11, Louves, Chacals, Denis Savard…"
-                : "U11, Louves, Chacals, Denis Savard…"
-            }
-            className="h-12 w-full rounded-lg border border-input bg-background pl-11 pr-4 text-base"
-          />
-        </label>
+        <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+          <label className="relative block">
+            <span className="sr-only">
+              {lang === "fr" ? "Rechercher dans l'horaire officiel" : "Search official schedule"}
+            </span>
+            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <input
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={
+                lang === "fr"
+                  ? "M11, Louves, Chacals, Denis Savard…"
+                  : "U11, Louves, Chacals, Denis Savard…"
+              }
+              className="h-12 w-full rounded-lg border border-input bg-background pl-11 pr-4 text-base"
+            />
+          </label>
+          <VoiceSearchButton onTranscript={setQuery} />
+        </div>
 
         {filtered.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
