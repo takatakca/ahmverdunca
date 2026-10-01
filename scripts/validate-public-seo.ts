@@ -8,6 +8,25 @@ const [robots, sitemap] = await Promise.all([
 
 const errors: string[] = [];
 const sitemapUrl = `${SITE.domain}/sitemap.xml`;
+const requiredPublicRoutes = [
+  "/",
+  "/horaires",
+  "/equipes",
+  "/inscriptions",
+  "/tournois",
+  "/nouvelles",
+  "/galerie",
+  "/wllv",
+  "/entraineurs",
+  "/arenas",
+  "/faq",
+  "/ressources",
+  "/partenaires",
+  "/contact",
+  "/recherche",
+  "/connexion",
+  "/confidentialite",
+] as const;
 
 if (!robots.includes(`Sitemap: ${sitemapUrl}`)) {
   errors.push(`robots.txt must reference ${sitemapUrl}`);
@@ -29,8 +48,11 @@ for (const url of locations) {
   }
 }
 
-if (!locations.includes(SITE.domain + "/")) {
-  errors.push("sitemap.xml must include the homepage");
+for (const route of requiredPublicRoutes) {
+  const expected = SITE.domain + route;
+  if (!locations.includes(expected)) {
+    errors.push(`sitemap.xml is missing required public route: ${route}`);
+  }
 }
 
 if (errors.length > 0) {
