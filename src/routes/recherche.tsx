@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, Mic, PhoneCall, Search } from "lucide-react";
+import { ArrowRight, CalendarDays, PhoneCall, Search } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { VoiceSearchButton } from "@/components/voice-search-button";
 import { TEAMS } from "@/data/teams";
 import { ARENAS } from "@/data/arenas";
 import { NEWS } from "@/data/news";
@@ -325,15 +326,7 @@ function SearchPage() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              disabled
-              title={lang === "fr" ? "Intégration à venir" : "Coming integration"}
-            >
-              <Mic className="size-4" />
-              {lang === "fr" ? "Recherche vocale bientôt" : "Voice search soon"}
-            </Button>
+            <VoiceSearchButton onTranscript={setQ} />
             <Button asChild variant="outline">
               <a href={`tel:${SITE.phoneE164}`}>
                 <PhoneCall className="size-4" />
