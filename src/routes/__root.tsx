@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "../lib/i18n";
 import { SiteLayout } from "../components/layout/site-layout";
+import { EXTERNAL_LINKS, SITE } from "../lib/site";
 
 function NotFoundComponent() {
   return (
@@ -64,24 +65,46 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+const PUBLIC_INDEXING_ENABLED = import.meta.env.VITE_PUBLIC_INDEXING === "true";
+
+const organizationJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "SportsOrganization",
+  name: SITE.name.fr,
+  alternateName: SITE.name.en,
+  url: SITE.domain,
+  telephone: SITE.phoneE164,
+  sport: "Ice Hockey",
+  areaServed: "Verdun, Montréal, Québec, Canada",
+  sameAs: [EXTERNAL_LINKS.facebook, EXTERNAL_LINKS.instagram],
+});
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "author", content: "GROUPE TAKATAK" },
-      { name: "robots", content: "noindex, nofollow" }, // pre-production mockup
+      {
+        name: "robots",
+        content: PUBLIC_INDEXING_ENABLED
+          ? "index, follow, max-image-preview:large"
+          : "noindex, nofollow",
+      },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "AHM Verdun" },
       { property: "og:locale", content: "fr_CA" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#111a33" },
+      { name: "application-name", content: "AHM Verdun" },
+      { name: "apple-mobile-web-app-title", content: "AHM Verdun" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600&display=swap" },
       { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
     ],
   }),
@@ -96,6 +119,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="fr">
       <head>
         <HeadContent />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd }} />
       </head>
       <body>
         {children}
