@@ -98,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "AHM Verdun" },
       { property: "og:locale", content: "fr_CA" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
       { name: "theme-color", content: "#111a33" },
       { name: "application-name", content: "AHM Verdun" },
       { name: "apple-mobile-web-app-title", content: "AHM Verdun" },
