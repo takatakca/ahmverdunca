@@ -96,11 +96,11 @@ function PartnersPage() {
         <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
           <SectionHeading
             eyebrow="GROUPE TAKATAK"
-            title={lang === "fr" ? "Gestion commanditaire à venir" : "Sponsor management coming"}
+            title={lang === "fr" ? "Une commandite plus simple à gérer" : "Simpler sponsorship management"}
             description={
               lang === "fr"
-                ? "Le futur espace numérique pourra centraliser les offres, renouvellements, campagnes, visibilité et rapports, sans toucher aux opérations hockey."
-                : "The future digital workspace can centralize offers, renewals, campaigns, visibility and reporting without touching hockey operations."
+                ? "Offres, renouvellements, campagnes, visibilité et rapports peuvent être regroupés dans une expérience claire, sans toucher aux opérations hockey."
+                : "Offers, renewals, campaigns, visibility and reporting can be brought together in one clear experience without touching hockey operations."
             }
           />
           <div className="mt-8 grid gap-4 md:grid-cols-3">
