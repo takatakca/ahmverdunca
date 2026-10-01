@@ -9,6 +9,7 @@ import {
 } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { mapsDirectionsUrl } from "@/lib/site";
+import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
 
 function displayTime(value: string) {
@@ -70,6 +71,9 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
 export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: string }) {
   const { lang } = useI18n();
   const [query, setQuery] = useState(initialQuery);
+  const [showPast, setShowPast] = useState(false);
+  const today = montrealDateKey();
+  const weekActive = today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -83,10 +87,17 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
     );
   }, [query]);
 
+  const displayed = useMemo(() => {
+    if (query.trim() || !weekActive || showPast) return filtered;
+    return filtered.filter((item) => item.date >= today);
+  }, [filtered, query, showPast, today, weekActive]);
+
+  const hasPast = weekActive && filtered.some((item) => item.date < today);
+
   const days = useMemo(
     () =>
-      Array.from(new Set(filtered.map((item) => item.date))).sort(),
-    [filtered],
+      Array.from(new Set(displayed.map((item) => item.date))).sort(),
+    [displayed],
   );
 
   return (
@@ -137,7 +148,17 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           <VoiceSearchButton onTranscript={setQuery} />
         </div>
 
-        {filtered.length === 0 ? (
+        {hasPast && !query.trim() && (
+          <div className="mt-3 flex justify-end">
+            <Button type="button" variant="ghost" size="sm" onClick={() => setShowPast((value) => !value)}>
+              {showPast
+                ? (lang === "fr" ? "Masquer les jours passés" : "Hide past days")
+                : (lang === "fr" ? "Voir les jours passés" : "Show past days")}
+            </Button>
+          </div>
+        )}
+
+        {displayed.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
             {lang === "fr"
               ? "Aucune activité ne correspond à cette recherche dans le PDF de cette semaine."
@@ -147,11 +168,18 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           <div className="mt-6 space-y-8">
             {days.map((date) => (
               <section key={date}>
-                <h3 className="mb-3 border-b border-border pb-2 font-display text-xl font-bold uppercase">
-                  {formatDate(date, lang, { weekday: "long", day: "numeric", month: "long" })}
-                </h3>
+                <div className="mb-3 flex items-center justify-between gap-3 border-b border-border pb-2">
+                  <h3 className="font-display text-xl font-bold uppercase">
+                    {formatDate(date, lang, { weekday: "long", day: "numeric", month: "long" })}
+                  </h3>
+                  {date === today && (
+                    <span className="rounded-full bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-sport-foreground">
+                      {lang === "fr" ? "Aujourd'hui" : "Today"}
+                    </span>
+                  )}
+                </div>
                 <div className="space-y-2">
-                  {filtered
+                  {displayed
                     .filter((item) => item.date === date)
                     .sort((a, b) => a.start.localeCompare(b.start))
                     .map((item) => (
