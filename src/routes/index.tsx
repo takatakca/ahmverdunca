@@ -255,16 +255,20 @@ function Home() {
       <section className="border-y border-border bg-background py-12 md:py-16">
         <div className="container-site grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
           <div>
-            <p className="eyebrow text-sport">{t("home.socialPreview")}</p>
+            <p className="eyebrow text-sport">{lang === "fr" ? "Événement officiel" : "Official event"}</p>
             <h2 className="heading-section mt-2">{t("home.tournaments")}</h2>
-            <p className="mt-4 max-w-lg text-muted-foreground">{t("home.tournamentsNote")}</p>
-            <Button asChild variant="outline" className="mt-6"><Link to="/nouvelles"><Trophy className="size-4" /> {t("common.seeAll")}</Link></Button>
+            <p className="mt-4 max-w-lg text-muted-foreground">
+              {lang === "fr"
+                ? "La 30e édition du Tournoi Provincial M11 de Verdun se tiendra du 18 au 31 janvier 2027. Le site AHMV sert de passerelle vers l'information officielle."
+                : "The 30th Verdun Provincial U11 Tournament runs January 18–31, 2027. The AHMV site acts as a gateway to official information."}
+            </p>
+            <Button asChild variant="outline" className="mt-6"><Link to="/tournois"><Trophy className="size-4" /> {lang === "fr" ? "Voir le tournoi" : "View tournament"}</Link></Button>
           </div>
           <div className="competition-panel flex min-h-64 flex-col justify-end rounded-lg p-6 text-navy-foreground md:p-8">
             <Trophy className="mb-auto size-8 text-sport-foreground" />
-            <p className="eyebrow text-navy-foreground/60">{t("common.demo")}</p>
-            <p className="mt-2 font-display text-3xl font-bold uppercase">{lang === "fr" ? "Centre des tournois AHMV" : "AHMV tournament centre"}</p>
-            <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? "Calendrier, accès aux inscriptions et résultats officiels, nouvelles et visibilité des partenaires réunis dans un même espace." : "Schedule, access to official registration and results, news and partner visibility in one place."}</p>
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "30e édition" : "30th edition"}</p>
+            <p className="mt-2 font-display text-3xl font-bold uppercase">{lang === "fr" ? "Tournoi Provincial M11 de Verdun" : "Verdun Provincial U11 Tournament"}</p>
+            <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? "18–31 janvier 2027 · Auditorium de Verdun · horaires et classements sur le site officiel." : "January 18–31, 2027 · Verdun Auditorium · schedules and standings on the official site."}</p>
           </div>
         </div>
       </section>
