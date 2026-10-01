@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
+import { TEAMS } from "@/data/teams";
+import { usePreferredTeam } from "@/lib/team-preference";
 import type { TranslationKey } from "@/lib/translations";
 
 export function SiteHeader() {
@@ -14,6 +16,8 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { preferredTeam } = usePreferredTeam();
+  const savedTeam = TEAMS.find((team) => team.slug === preferredTeam);
 
   // Close menus on navigation
   useEffect(() => {
@@ -36,6 +40,16 @@ export function SiteHeader() {
         <div className="container-site flex h-9 items-center justify-between text-xs">
           <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
           <div className="flex items-center gap-4">
+            {savedTeam && (
+              <Link
+                to="/equipes/$slug"
+                params={{ slug: savedTeam.slug }}
+                className="inline-flex items-center gap-1.5 font-semibold text-navy-foreground/75 hover:text-navy-foreground"
+              >
+                <span className="size-1.5 rounded-full bg-sport" aria-hidden />
+                {lang === "fr" ? "Mon équipe" : "My team"} · {savedTeam.code}
+              </Link>
+            )}
             <a
               href={`tel:${SITE.phoneE164}`}
               className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
