@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown, ExternalLink, Menu, Search, X } from "lucide-react";
-import { MAIN_NAV, MORE_NAV, EXTERNAL_LINKS, SITE } from "@/lib/site";
+import { ChevronDown, Menu, Search, X } from "lucide-react";
+import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -99,9 +99,7 @@ export function SiteHeader() {
             <Link to="/recherche"><Search className="size-5" /></Link>
           </Button>
           <Button asChild variant="sport" size="sm" className="hidden sm:inline-flex">
-            <a href={EXTERNAL_LINKS.spordleLogin} target="_blank" rel="noopener noreferrer">
-              {t("nav.login")} <ExternalLink className="size-3.5" />
-            </a>
+            <Link to="/connexion">{t("nav.login")}</Link>
           </Button>
           <button
             type="button"
@@ -146,9 +144,7 @@ export function SiteHeader() {
             </div>
             <div className="mt-6 flex flex-col gap-3">
               <Button asChild variant="sport" size="lg">
-                <a href={EXTERNAL_LINKS.spordleLogin} target="_blank" rel="noopener noreferrer">
-                  {t("nav.login")} <ExternalLink className="size-4" />
-                </a>
+                <Link to="/connexion">{t("nav.login")}</Link>
               </Button>
               <div className="flex items-center justify-between rounded-md border border-navy-foreground/15 px-4 py-3">
                 <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
