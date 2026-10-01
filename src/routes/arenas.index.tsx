@@ -66,6 +66,7 @@ function ArenasPage() {
             <button
               key={zoneItem.id}
               type="button"
+              aria-pressed={zone === zoneItem.id}
               onClick={() => setZone(zoneItem.id)}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
