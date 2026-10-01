@@ -331,12 +331,37 @@ function Home() {
       </section>
 
       {/* WLLV bridge */}
-      <OfficialWeekPreview />
+      <section className="competition-panel py-12 text-navy-foreground md:py-16">
+        <div className="container-site flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="eyebrow text-sport-foreground">
+              {lang === "fr" ? "Hockey compétitif AA / BB" : "Competitive AA / BB hockey"}
+            </p>
+            <h2 className="heading-section mt-2">{t("home.wllvTitle")}</h2>
+            <p className="mt-3 max-w-2xl text-navy-foreground/70">{t("home.wllvNote")}</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button asChild variant="outline-light" size="lg">
+              <Link to="/wllv">
+                {lang === "fr" ? "Comprendre le parcours" : "Understand the pathway"}
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+            <Button asChild variant="sport" size="lg">
+              <a href={EXTERNAL_LINKS.wllv} target="_blank" rel="noopener noreferrer">
+                {t("home.discoverWllv")} <ExternalLink className="size-4" />
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
 
       {/* Sponsors */}
       <section className="navy-texture py-12 text-navy-foreground md:py-16">
         <div className="container-site">
-          <p className="eyebrow text-sport-foreground/80">{t("common.toValidate")}</p>
+          <p className="eyebrow text-sport-foreground/80">
+            {lang === "fr" ? "Partenaires AHMV" : "AHMV partners"}
+          </p>
           <h2 className="heading-section mt-2">{t("home.sponsors")}</h2>
           <p className="mt-3 max-w-2xl text-sm text-navy-foreground/75">{t("home.sponsorsNote")}</p>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
