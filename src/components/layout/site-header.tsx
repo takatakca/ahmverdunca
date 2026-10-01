@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown, Menu, Search, X } from "lucide-react";
+import { ChevronDown, Menu, PhoneCall, Search, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,13 @@ export function SiteHeader() {
         <div className="container-site flex h-9 items-center justify-between text-xs">
           <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
           <div className="flex items-center gap-4">
-            <Link to="/admin" className="text-navy-foreground/60 hover:text-navy-foreground">{t("nav.admin")}</Link>
+            <a
+              href={`tel:${SITE.phoneE164}`}
+              className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
+            >
+              <PhoneCall className="size-3.5" aria-hidden />
+              {SITE.phoneDisplay}
+            </a>
             <LangSwitch />
           </div>
         </div>
@@ -146,11 +152,16 @@ export function SiteHeader() {
               <Button asChild variant="sport" size="lg">
                 <Link to="/connexion">{t("nav.login")}</Link>
               </Button>
+              <Button asChild variant="outline-light" size="lg">
+                <a href={`tel:${SITE.phoneE164}`}>
+                  <PhoneCall className="size-4" />
+                  {SITE.phoneDisplay}
+                </a>
+              </Button>
               <div className="flex items-center justify-between rounded-md border border-navy-foreground/15 px-4 py-3">
                 <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
                 <LangSwitch />
               </div>
-              <Link to="/admin" className="py-2 text-center text-xs text-navy-foreground/50 underline-offset-4 hover:underline">{t("nav.admin")}</Link>
             </div>
           </nav>
         </div>

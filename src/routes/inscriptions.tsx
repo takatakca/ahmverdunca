@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink, Mail, ShieldCheck } from "lucide-react";
+import { ExternalLink, Mail, ShieldCheck } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
@@ -11,32 +11,21 @@ export const Route = createFileRoute("/inscriptions")({
   head: () => ({
     meta: [
       { title: "Inscriptions 2026–2027 — AHM Verdun" },
-      { name: "description", content: "Parcours d'inscription AHM Verdun : information, suivi et passage vers la plateforme officielle de hockey." },
+      {
+        name: "description",
+        content:
+          "Informations d'inscription AHM Verdun et accès direct à la plateforme officielle de hockey.",
+      },
       { property: "og:title", content: "Inscriptions 2026–2027 — AHM Verdun" },
-      { property: "og:description", content: "Un parcours simple pour les familles, avec continuité vers la plateforme officielle de hockey." },
+      {
+        property: "og:description",
+        content:
+          "Consultez les informations utiles puis poursuivez l'inscription hockey sur la plateforme officielle.",
+      },
     ],
   }),
   component: RegistrationPage,
 });
-
-const STEPS = [
-  {
-    fr: "Commencez sur le site AHM Verdun pour choisir la catégorie et recevoir les informations utiles.",
-    en: "Start on the AHM Verdun site to choose a category and receive the useful information.",
-  },
-  {
-    fr: "Le futur parcours GROUPE TAKATAK pourra enregistrer vos préférences de communication et assurer le suivi de l’association.",
-    en: "The future GROUPE TAKATAK flow can save your communication preferences and support association follow-up.",
-  },
-  {
-    fr: "Les informations propres à l’inscription hockey, les documents requis et le paiement demeurent sur la plateforme officielle.",
-    en: "Hockey registration details, required documents and payment remain on the official platform.",
-  },
-  {
-    fr: "Continuez vers Spordle pour compléter l’inscription hockey officielle.",
-    en: "Continue to Spordle to complete the official hockey registration.",
-  },
-];
 
 function RegistrationPage() {
   const { t, l, lang } = useI18n();
@@ -48,13 +37,13 @@ function RegistrationPage() {
         title={t("reg.title")}
         description={
           lang === "fr"
-            ? "Un parcours plus simple : AHM Verdun et GROUPE TAKATAK pour l’information et le suivi, puis Spordle pour l’inscription hockey officielle."
-            : "A simpler path: AHM Verdun and GROUPE TAKATAK for information and follow-up, then Spordle for the official hockey registration."
+            ? "Tout ce qu'il faut pour comprendre le parcours, puis un accès direct au système officiel d'inscription hockey."
+            : "Everything you need to understand the process, then direct access to the official hockey registration system."
         }
         actions={
           <Button asChild variant="sport" size="lg">
-            <a href="#parcours">
-              {lang === "fr" ? "Voir le parcours" : "See the flow"} <ArrowRight className="size-4" />
+            <a href={EXTERNAL_LINKS.spordleRegister} target="_blank" rel="noopener noreferrer">
+              {t("reg.cta")} <ExternalLink className="size-4" />
             </a>
           </Button>
         }
@@ -63,40 +52,23 @@ function RegistrationPage() {
       <div className="container-site space-y-12 py-8 md:py-12">
         <DemoNotice kind="info">
           {lang === "fr"
-            ? "La connexion GROUPE TAKATAK n’est pas encore activée dans cette maquette. Aucun lead ni préférence d’infolettre n’est transmis pour le moment."
-            : "The GROUPE TAKATAK connection is not active in this prototype yet. No lead or newsletter preference is currently transmitted."}
+            ? "Le site AHM Verdun informe et dirige. L'inscription hockey elle-même reste dans la plateforme officielle déjà utilisée par l'association."
+            : "The AHM Verdun site informs and directs. Hockey registration itself remains in the official platform already used by the association."}
         </DemoNotice>
 
-        <section id="parcours">
-          <SectionHeading
-            eyebrow={lang === "fr" ? "Expérience future" : "Future experience"}
-            title={lang === "fr" ? "Une inscription en 4 étapes" : "Registration in 4 steps"}
-          />
-          <ol className="grid gap-4 md:grid-cols-2">
-            {STEPS.map((step, index) => (
-              <li key={index} className="card-elevated flex gap-4 p-5">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-navy font-display text-xl font-extrabold text-navy-foreground">
-                  {index + 1}
-                </span>
-                <p className="self-center text-base">{l(step)}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
         <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
-          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
               <p className="eyebrow text-sport-foreground">
                 {lang === "fr" ? "Inscription hockey officielle" : "Official hockey registration"}
               </p>
               <h2 className="heading-section mt-2">
-                {lang === "fr" ? "Continuer sur Spordle" : "Continue on Spordle"}
+                {lang === "fr" ? "Prêt? Continuez sur Spordle" : "Ready? Continue on Spordle"}
               </h2>
               <p className="mt-3 max-w-2xl text-sm text-navy-foreground/75">
                 {lang === "fr"
-                  ? "Spordle demeure la destination officielle pour compléter l’inscription hockey, les documents et le paiement."
-                  : "Spordle remains the official destination for hockey registration, documents and payment."}
+                  ? "Les renseignements d'inscription, documents requis et étapes officielles restent dans Spordle. AHM Verdun demeure l'autorité pour ses règles et informations hockey."
+                  : "Registration information, required documents and official steps remain in Spordle. AHM Verdun remains the authority for its hockey rules and information."}
               </p>
             </div>
             <Button asChild variant="sport" size="lg">
@@ -109,8 +81,18 @@ function RegistrationPage() {
 
         <section>
           <SectionHeading
+            eyebrow={lang === "fr" ? "Choisir sa catégorie" : "Choose a category"}
             title={t("teams.title")}
-            action={<Button asChild variant="outline" size="sm"><Link to="/equipes">{t("common.seeAll")}</Link></Button>}
+            description={
+              lang === "fr"
+                ? "Accédez rapidement à la page de votre catégorie pour voir les informations publiques disponibles."
+                : "Quickly open your category page to see the available public information."
+            }
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link to="/equipes">{t("common.seeAll")}</Link>
+              </Button>
+            }
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {TEAMS.map((team) => (
@@ -127,28 +109,39 @@ function RegistrationPage() {
           </div>
         </section>
 
-        <section className="grid gap-4 md:grid-cols-2">
-          <div className="card-elevated p-6">
-            <Mail className="size-6 text-sport" aria-hidden />
-            <h2 className="heading-card mt-5">
-              {lang === "fr" ? "Infolettres et suivis" : "Newsletters and follow-up"}
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Ce volet sera relié au backend GROUPE TAKATAK après approbation, avec consentement explicite et gestion des préférences."
-                : "This will connect to the GROUPE TAKATAK backend after approval, with explicit consent and preference management."}
-            </p>
-          </div>
-          <div className="card-elevated p-6">
-            <ShieldCheck className="size-6 text-sport" aria-hidden />
-            <h2 className="heading-card mt-5">
-              {lang === "fr" ? "Données séparées" : "Separated data"}
-            </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Les suivis marketing resteront séparés des données sensibles de joueurs et des informations nécessaires à l’inscription hockey."
-                : "Marketing follow-up will remain separated from sensitive player data and official hockey registration information."}
-            </p>
+        <section>
+          <SectionHeading
+            eyebrow="GROUPE TAKATAK"
+            title={lang === "fr" ? "Infolettres et communications" : "Newsletters and communications"}
+            description={
+              lang === "fr"
+                ? "Une couche distincte pour les nouvelles générales, événements, rappels et campagnes autorisées."
+                : "A separate layer for general news, events, reminders and authorized campaigns."
+            }
+          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="card-elevated p-6">
+              <Mail className="size-6 text-sport" aria-hidden />
+              <h3 className="heading-card mt-5">
+                {lang === "fr" ? "Restez informé" : "Stay informed"}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Le futur branchement TAKATAK permettra de choisir les communications que vous souhaitez recevoir, avec consentement explicite."
+                  : "The future TAKATAK connection will let you choose which communications you want to receive, with explicit consent."}
+              </p>
+            </div>
+            <div className="card-elevated p-6">
+              <ShieldCheck className="size-6 text-sport" aria-hidden />
+              <h3 className="heading-card mt-5">
+                {lang === "fr" ? "Séparé du hockey" : "Separate from hockey"}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Les communications marketing restent distinctes des dossiers, paiements et opérations sportives."
+                  : "Marketing communications remain separate from records, payments and sport operations."}
+              </p>
+            </div>
           </div>
         </section>
 
@@ -156,8 +149,8 @@ function RegistrationPage() {
           <SectionHeading title={lang === "fr" ? "Aide financière" : "Financial assistance"} />
           <p className="max-w-2xl text-base text-muted-foreground">
             {lang === "fr"
-              ? "Des programmes externes peuvent soutenir la participation sportive. Leur présence ne garantit ni l’admissibilité ni l’obtention d’une aide."
-              : "External programs may help support sport participation. Their availability does not guarantee eligibility or funding."}
+              ? "Des programmes externes peuvent soutenir la participation sportive. Consultez toujours les critères directement auprès du programme concerné."
+              : "External programs may support sport participation. Always verify eligibility directly with the relevant program."}
           </p>
           <Button asChild variant="outline" className="mt-4">
             <Link to="/ressources">{t("nav.resources")}</Link>

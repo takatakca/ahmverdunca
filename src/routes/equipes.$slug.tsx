@@ -324,8 +324,8 @@ function TeamPage() {
                 <h3 className="heading-card mt-8">{label}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {lang === "fr"
-                    ? "Publications, résultats, photos et nouvelles de l’équipe pourront apparaître ici depuis le dashboard GROUPE TAKATAK."
-                    : "Posts, results, photos and team news can appear here from the GROUPE TAKATAK dashboard."}
+                    ? "Publications, photos, nouvelles générales et événements de l’équipe pourront apparaître ici depuis le dashboard GROUPE TAKATAK."
+                    : "Posts, photos, general news and team events can appear here from the GROUPE TAKATAK dashboard."}
                 </p>
               </div>
             ))}
@@ -333,8 +333,8 @@ function TeamPage() {
 
           <DemoNotice kind="connect" className="mt-4">
             {lang === "fr"
-              ? "Les futurs gestionnaires sociaux seront limités à leur équipe. Cette connexion n’est pas active dans la maquette."
-              : "Future social managers will be limited to their own team. This connection is not active in the prototype."}
+              ? "Les futurs accès sociaux seront limités à leur périmètre autorisé. Cette connexion n’est pas active dans la maquette."
+              : "Future social access will be limited to its authorized scope. This connection is not active in the prototype."}
           </DemoNotice>
         </section>
 

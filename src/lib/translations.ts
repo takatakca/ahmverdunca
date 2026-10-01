@@ -6,6 +6,7 @@ const dict = {
   "nav.schedule": { fr: "Horaires", en: "Schedules" },
   "nav.teams": { fr: "Équipes", en: "Teams" },
   "nav.registration": { fr: "Inscriptions", en: "Registration" },
+  "nav.tournaments": { fr: "Tournois", en: "Tournaments" },
   "nav.news": { fr: "Nouvelles", en: "News" },
   "nav.more": { fr: "Plus", en: "More" },
   "nav.wllv": { fr: "WLLV AA/BB", en: "WLLV AA/BB" },
@@ -14,8 +15,9 @@ const dict = {
   "nav.arenas": { fr: "Arénas", en: "Arenas" },
   "nav.faq": { fr: "FAQ", en: "FAQ" },
   "nav.resources": { fr: "Ressources hockey", en: "Hockey resources" },
+  "nav.partners": { fr: "Partenaires", en: "Partners" },
   "nav.contact": { fr: "Contact", en: "Contact" },
-  "nav.login": { fr: "Connexion / Spordle", en: "Login / Spordle" },
+  "nav.login": { fr: "Accès hockey", en: "Hockey access" },
   "nav.search": { fr: "Recherche", en: "Search" },
   "nav.menu": { fr: "Menu", en: "Menu" },
   "nav.close": { fr: "Fermer", en: "Close" },
@@ -140,7 +142,7 @@ const dict = {
   "footer.legal": { fr: "Confidentialité", en: "Privacy" },
   "footer.rights": { fr: "Tous droits réservés.", en: "All rights reserved." },
   "footer.prototype": { fr: "Maquette de préproduction — Phase 1 — Conçue par GROUPE TAKATAK", en: "Pre-production mockup — Phase 1 — Designed by GROUPE TAKATAK" },
-  "footer.contactNote": { fr: "Coordonnées officielles à valider avant publication.", en: "Official contact details to be validated before publishing." },
+  "footer.contactNote": { fr: "Courriel et adresse officielle à valider avant publication.", en: "Official email and address to be validated before publishing." },
 
   // Search
   "search.title": { fr: "Recherche", en: "Search" },

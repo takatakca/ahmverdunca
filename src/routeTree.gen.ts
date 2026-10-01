@@ -19,8 +19,10 @@ import { Route as EntraineursRouteImport } from './routes/entraineurs'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as HorairesRouteImport } from './routes/horaires'
 import { Route as InscriptionsRouteImport } from './routes/inscriptions'
+import { Route as PartenairesRouteImport } from './routes/partenaires'
 import { Route as RechercheRouteImport } from './routes/recherche'
 import { Route as RessourcesRouteImport } from './routes/ressources'
+import { Route as TournoisRouteImport } from './routes/tournois'
 import { Route as WllvRouteImport } from './routes/wllv'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as ArenasIndexRouteImport } from './routes/arenas.index'
@@ -81,6 +83,11 @@ const InscriptionsRoute = InscriptionsRouteImport.update({
   path: '/inscriptions',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PartenairesRoute = PartenairesRouteImport.update({
+  id: '/partenaires',
+  path: '/partenaires',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RechercheRoute = RechercheRouteImport.update({
   id: '/recherche',
   path: '/recherche',
@@ -89,6 +96,11 @@ const RechercheRoute = RechercheRouteImport.update({
 const RessourcesRoute = RessourcesRouteImport.update({
   id: '/ressources',
   path: '/ressources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TournoisRoute = TournoisRouteImport.update({
+  id: '/tournois',
+  path: '/tournois',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WllvRoute = WllvRouteImport.update({
@@ -152,8 +164,10 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/horaires': typeof HorairesRoute
   '/inscriptions': typeof InscriptionsRoute
+  '/partenaires': typeof PartenairesRoute
   '/recherche': typeof RechercheRoute
   '/ressources': typeof RessourcesRoute
+  '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/arenas/$slug': typeof ArenasSlugRoute
@@ -175,8 +189,10 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/horaires': typeof HorairesRoute
   '/inscriptions': typeof InscriptionsRoute
+  '/partenaires': typeof PartenairesRoute
   '/recherche': typeof RechercheRoute
   '/ressources': typeof RessourcesRoute
+  '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/arenas/$slug': typeof ArenasSlugRoute
@@ -200,8 +216,10 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/horaires': typeof HorairesRoute
   '/inscriptions': typeof InscriptionsRoute
+  '/partenaires': typeof PartenairesRoute
   '/recherche': typeof RechercheRoute
   '/ressources': typeof RessourcesRoute
+  '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/arenas/$slug': typeof ArenasSlugRoute
@@ -225,8 +243,10 @@ export interface FileRouteTypes {
     | '/faq'
     | '/horaires'
     | '/inscriptions'
+    | '/partenaires'
     | '/recherche'
     | '/ressources'
+    | '/tournois'
     | '/wllv'
     | '/admin'
     | '/arenas/$slug'
@@ -248,8 +268,10 @@ export interface FileRouteTypes {
     | '/faq'
     | '/horaires'
     | '/inscriptions'
+    | '/partenaires'
     | '/recherche'
     | '/ressources'
+    | '/tournois'
     | '/wllv'
     | '/admin'
     | '/arenas/$slug'
@@ -272,8 +294,10 @@ export interface FileRouteTypes {
     | '/faq'
     | '/horaires'
     | '/inscriptions'
+    | '/partenaires'
     | '/recherche'
     | '/ressources'
+    | '/tournois'
     | '/wllv'
     | '/_authenticated/admin'
     | '/arenas/$slug'
@@ -297,8 +321,10 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   HorairesRoute: typeof HorairesRoute
   InscriptionsRoute: typeof InscriptionsRoute
+  PartenairesRoute: typeof PartenairesRoute
   RechercheRoute: typeof RechercheRoute
   RessourcesRoute: typeof RessourcesRoute
+  TournoisRoute: typeof TournoisRoute
   WllvRoute: typeof WllvRoute
   ArenasSlugRoute: typeof ArenasSlugRoute
   EquipesSlugRoute: typeof EquipesSlugRoute
@@ -382,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InscriptionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/partenaires': {
+      id: '/partenaires'
+      path: '/partenaires'
+      fullPath: '/partenaires'
+      preLoaderRoute: typeof PartenairesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/recherche': {
       id: '/recherche'
       path: '/recherche'
@@ -394,6 +427,13 @@ declare module '@tanstack/react-router' {
       path: '/ressources'
       fullPath: '/ressources'
       preLoaderRoute: typeof RessourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tournois': {
+      id: '/tournois'
+      path: '/tournois'
+      fullPath: '/tournois'
+      preLoaderRoute: typeof TournoisRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/wllv': {
@@ -491,8 +531,10 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   HorairesRoute: HorairesRoute,
   InscriptionsRoute: InscriptionsRoute,
+  PartenairesRoute: PartenairesRoute,
   RechercheRoute: RechercheRoute,
   RessourcesRoute: RessourcesRoute,
+  TournoisRoute: TournoisRoute,
   WllvRoute: WllvRoute,
   ArenasSlugRoute: ArenasSlugRoute,
   EquipesSlugRoute: EquipesSlugRoute,

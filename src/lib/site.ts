@@ -11,6 +11,9 @@ export const SITE = {
   city: "Verdun (Montréal), Québec",
   // Official email NOT confirmed — do not display a specific address as official.
   officialEmailConfirmed: false,
+  phoneDisplay: "1 (581) 666-6AHM",
+  phoneE164: "+15816666246",
+  voiceAssistantStatus: "planned",
 } as const;
 
 export const EXTERNAL_LINKS = {
@@ -24,11 +27,12 @@ export const EXTERNAL_LINKS = {
   timbits: "https://www.timhortons.ca/timbits-minor-sports",
   kidsport: "https://kidsportcanada.ca/",
   jumpstart: "https://jumpstart.canadiantire.ca/",
+  verdunM11Tournament: "https://tournoihockeyverdun.ca/",
 } as const;
 
 export type NavKey =
-  | "home" | "schedule" | "teams" | "registration" | "news" | "more"
-  | "wllv" | "gallery" | "coaches" | "arenas" | "faq" | "resources" | "contact";
+  | "home" | "schedule" | "teams" | "registration" | "tournaments" | "news" | "more"
+  | "wllv" | "gallery" | "coaches" | "arenas" | "faq" | "resources" | "partners" | "contact";
 
 export interface NavItem {
   key: NavKey;
@@ -40,6 +44,7 @@ export const MAIN_NAV: NavItem[] = [
   { key: "schedule", to: "/horaires" },
   { key: "teams", to: "/equipes" },
   { key: "registration", to: "/inscriptions" },
+  { key: "tournaments", to: "/tournois" },
   { key: "news", to: "/nouvelles" },
 ];
 
@@ -50,6 +55,7 @@ export const MORE_NAV: NavItem[] = [
   { key: "arenas", to: "/arenas" },
   { key: "faq", to: "/faq" },
   { key: "resources", to: "/ressources" },
+  { key: "partners", to: "/partenaires" },
   { key: "contact", to: "/contact" },
 ];
 
