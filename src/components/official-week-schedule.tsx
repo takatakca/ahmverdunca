@@ -11,7 +11,7 @@ import {
 } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { mapsDirectionsUrl } from "@/lib/site";
-import { montrealDateKey } from "@/lib/montreal-date";
+import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
 
 function displayTime(value: string) {
@@ -24,6 +24,10 @@ function displayTime(value: string) {
 function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   const { lang } = useI18n();
   const cancelled = item.status === "cancelled";
+  const today = montrealDateKey();
+  const nowTime = montrealTimeKey();
+  const upcoming =
+    item.date > today || (item.date === today && item.end > nowTime);
 
   return (
     <article
@@ -67,7 +71,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
             {lang === "fr" ? "Itinéraire" : "Directions"}
           </a>
         </Button>
-        {!cancelled && (
+        {!cancelled && upcoming && (
           <AddToCalendarButton
             id={item.id}
             date={item.date}
@@ -86,8 +90,25 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
   const { lang } = useI18n();
   const [query, setQuery] = useState(initialQuery);
   const [showPast, setShowPast] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
   const today = montrealDateKey();
   const weekActive = today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
+  const weekExpired = today > OFFICIAL_WEEK_META.end;
+  const weekUpcoming = today < OFFICIAL_WEEK_META.start;
+
+  const rangeLabel = `${formatDate(OFFICIAL_WEEK_META.start, lang, {
+    day: "numeric",
+    month: "long",
+  })} — ${formatDate(OFFICIAL_WEEK_META.end, lang, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  })}`;
+  const publishedLabel = formatDate(OFFICIAL_WEEK_META.publishedAt, lang, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -102,9 +123,10 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
   }, [query]);
 
   const displayed = useMemo(() => {
+    if (weekExpired && !showArchive) return [];
     if (query.trim() || !weekActive || showPast) return filtered;
     return filtered.filter((item) => item.date >= today);
-  }, [filtered, query, showPast, today, weekActive]);
+  }, [filtered, query, showArchive, showPast, today, weekActive, weekExpired]);
 
   const hasPast = weekActive && filtered.some((item) => item.date < today);
 
@@ -122,15 +144,19 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
       <div className="grid gap-5 border-b border-border bg-background p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-6">
         <div>
           <p className="eyebrow text-sport">
-            {lang === "fr" ? "Horaire officiel publié" : "Published official schedule"}
+            {weekExpired
+              ? (lang === "fr" ? "Dernier horaire intégré — archive" : "Last integrated schedule — archive")
+              : weekUpcoming
+                ? (lang === "fr" ? "Horaire officiel publié — à venir" : "Published official schedule — upcoming")
+                : (lang === "fr" ? "Horaire officiel publié" : "Published official schedule")}
           </p>
           <h2 id="official-week-heading" className="heading-section mt-2">
-            {lang === "fr" ? "28 septembre au 4 octobre" : "September 28 to October 4"}
+            {rangeLabel}
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
             {lang === "fr"
-              ? "Transcription fidèle du PDF hebdomadaire AHMV publié le 29 septembre 2026. Aucune catégorie n'a été déduite ou renommée."
-              : "Faithful transcription of the AHMV weekly PDF published September 29, 2026. No category was inferred or renamed."}
+              ? `Transcription fidèle du PDF hebdomadaire AHMV publié le ${publishedLabel}. Aucune catégorie n'a été déduite ou renommée.`
+              : `Faithful transcription of the AHMV weekly PDF published ${publishedLabel}. No category was inferred or renamed.`}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -151,6 +177,34 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
       </div>
 
       <div className="p-4 md:p-6">
+        {weekExpired && !showArchive ? (
+          <div className="rounded-xl border border-border bg-background p-5 md:p-6">
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Semaine terminée" : "Week completed"}
+            </p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? `Ce PDF couvre ${rangeLabel}. Pour l'horaire actuel, utilisez les sources officielles présentées plus haut sur la page. L'archive demeure accessible pour référence.`
+                : `This PDF covers ${rangeLabel}. For the current schedule, use the official sources shown above on this page. The archive remains available for reference.`}
+            </p>
+            <Button type="button" variant="outline" className="mt-4" onClick={() => setShowArchive(true)}>
+              {lang === "fr" ? "Voir l'archive" : "View archive"}
+            </Button>
+          </div>
+        ) : (
+          <>
+            {weekExpired && (
+              <div className="mb-4 flex flex-col gap-3 rounded-lg border border-border bg-background p-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-muted-foreground">
+                  {lang === "fr"
+                    ? "Archive seulement — vérifiez les sources officielles pour l'horaire courant."
+                    : "Archive only — check official sources for the current schedule."}
+                </p>
+                <Button type="button" variant="ghost" size="sm" onClick={() => setShowArchive(false)}>
+                  {lang === "fr" ? "Fermer l'archive" : "Close archive"}
+                </Button>
+              </div>
+            )}
         <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
           <label className="relative block">
             <span className="sr-only">
@@ -216,10 +270,16 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
         )}
 
         <p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
-          {lang === "fr"
-            ? "Horaire sujet à changement — consultez le site du club ou le PDF source pour la version la plus récente."
-            : "Schedule subject to change — check the club website or source PDF for the latest version."}
+          {weekExpired
+            ? (lang === "fr"
+                ? "Archive historique — ne l'utilisez pas comme horaire courant."
+                : "Historical archive — do not use it as the current schedule.")
+            : (lang === "fr"
+                ? "Horaire sujet à changement — consultez le site du club ou le PDF source pour la version la plus récente."
+                : "Schedule subject to change — check the club website or source PDF for the latest version.")}
         </p>
+          </>
+        )}
       </div>
     </section>
   );

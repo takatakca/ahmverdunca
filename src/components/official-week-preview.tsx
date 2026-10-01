@@ -28,6 +28,11 @@ export function OfficialWeekPreview() {
 
   const inPublishedWeek =
     today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
+  const publishedLabel = formatDate(OFFICIAL_WEEK_META.publishedAt, lang, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 
   const savedTeam = TEAMS.find((item) => item.slug === preferredTeam);
   const savedTerms = officialScheduleTermsForTeam(savedTeam).map((term) => term.toUpperCase());
@@ -79,11 +84,11 @@ export function OfficialWeekPreview() {
               {inPublishedWeek
                 ? isPersonalized
                   ? lang === "fr"
-                    ? `Votre catégorie mémorisée (${l(savedTeam.name)}) est priorisée à partir du PDF hebdomadaire AHMV publié le 29 septembre 2026.`
-                    : `Your saved category (${l(savedTeam.name)}) is prioritized from the AHMV weekly PDF published September 29, 2026.`
+                    ? `Votre catégorie mémorisée (${l(savedTeam.name)}) est priorisée à partir du PDF hebdomadaire AHMV publié le ${publishedLabel}.`
+                    : `Your saved category (${l(savedTeam.name)}) is prioritized from the AHMV weekly PDF published ${publishedLabel}.`
                   : lang === "fr"
-                    ? "Données transcrites du PDF hebdomadaire AHMV publié le 29 septembre 2026."
-                    : "Data transcribed from the AHMV weekly PDF published September 29, 2026."
+                    ? `Données transcrites du PDF hebdomadaire AHMV publié le ${publishedLabel}.`
+                    : `Data transcribed from the AHMV weekly PDF published ${publishedLabel}.`
                 : lang === "fr"
                   ? "Consultez la page Horaires pour accéder aux sources officielles les plus récentes."
                   : "Open the Schedules page for the latest official sources."}
