@@ -134,6 +134,7 @@ function normalize(value: string) {
 
 function SearchPage() {
   const { t, l, lang } = useI18n();
+  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const [q, setQ] = useState("");
   const today = montrealDateKey();
   const officialWeekActive =
@@ -206,7 +207,7 @@ function SearchPage() {
       }
     });
 
-    FAQ.forEach((item) => {
+    FAQ.filter((item) => !publicLaunch || item.validated).forEach((item) => {
       if (normalize(`${l(item.question)} ${l(item.answer)} faq question aide help`).includes(needle)) {
         out.push({
           key: `faq-${item.id}`,
@@ -290,7 +291,7 @@ function SearchPage() {
       seen.add(key);
       return true;
     }).slice(0, 24);
-  }, [q, l, t, lang, officialWeekActive]);
+  }, [q, l, t, lang, officialWeekActive, publicLaunch]);
 
   return (
     <>

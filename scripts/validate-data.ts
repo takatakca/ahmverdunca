@@ -8,6 +8,8 @@ import { TEAMS } from "../src/data/teams";
 import { COACH_RESOURCES } from "../src/data/coaches";
 import { RESOURCES } from "../src/data/resources";
 import { SPONSORS } from "../src/data/sponsors";
+import { FAQ, FAQ_TOPICS } from "../src/data/faq";
+import { TEAM_SOCIAL_LINKS } from "../src/data/team-social";
 import { EXTERNAL_LINKS, MAIN_NAV, MORE_NAV, SITE } from "../src/lib/site";
 
 const errors: string[] = [];
@@ -39,6 +41,7 @@ function validTime(value: string) {
 const teamSlugs = new Set(TEAMS.map((team) => team.slug));
 const arenaSlugs = new Set(ARENAS.map((arena) => arena.slug));
 const newsSlugs = new Set(NEWS.map((article) => article.slug));
+const faqTopics = new Set(FAQ_TOPICS.map((topic) => topic.id));
 
 requireUnique("TEAMS.slug", TEAMS.map((team) => team.slug));
 requireUnique("ARENAS.slug", ARENAS.map((arena) => arena.slug));
@@ -47,6 +50,9 @@ requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
 requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
 requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
 requireUnique("ALERTS.id", ALERTS.map((alert) => alert.id));
+requireUnique("FAQ.id", FAQ.map((item) => item.id));
+requireUnique("FAQ_TOPICS.id", FAQ_TOPICS.map((topic) => topic.id));
+requireUnique("TEAM_SOCIAL_LINKS.teamPlatform", TEAM_SOCIAL_LINKS.map((item) => `${item.teamSlug}:${item.platform}`));
 requireUnique("NAV.key", [...MAIN_NAV, ...MORE_NAV].map((item) => item.key));
 requireUnique("NAV.to", [...MAIN_NAV, ...MORE_NAV].map((item) => item.to));
 
@@ -153,6 +159,25 @@ for (const album of ALBUMS) {
   }
 }
 
+for (const faq of FAQ) {
+  if (!faqTopics.has(faq.topic)) {
+    errors.push(`FAQ "${faq.id}" references unknown topic "${faq.topic}".`);
+  }
+  if (!faq.question.fr.trim() || !faq.question.en.trim() || !faq.answer.fr.trim() || !faq.answer.en.trim()) {
+    errors.push(`FAQ "${faq.id}" is missing FR/EN question or answer text.`);
+  }
+  if (faq.sourcePath && !faq.sourcePath.startsWith("/")) {
+    errors.push(`FAQ "${faq.id}" sourcePath must be an internal absolute path.`);
+  }
+}
+
+for (const social of TEAM_SOCIAL_LINKS) {
+  if (!teamSlugs.has(social.teamSlug)) {
+    errors.push(`Team social link references unknown team "${social.teamSlug}".`);
+  }
+  requireHttps(`TEAM_SOCIAL_LINKS ${social.teamSlug}/${social.platform}`, social.url);
+}
+
 for (const alert of ALERTS) {
   if (!validDate(alert.publishedAt) || !validDate(alert.expiresAt)) {
     errors.push(`Alert "${alert.id}" has an invalid published or expiry date.`);
@@ -187,6 +212,8 @@ console.log(
     `News: ${NEWS.length}`,
     `Albums: ${ALBUMS.length}`,
     `Alerts: ${ALERTS.length}`,
+    `FAQ: ${FAQ.length}`,
+    `Approved team social links: ${TEAM_SOCIAL_LINKS.length}`,
     `Official week events: ${OFFICIAL_WEEK_ACTIVITIES.length}`,
     `Validated external links: ${Object.keys(EXTERNAL_LINKS).length}`,
     `Navigation routes: ${MAIN_NAV.length + MORE_NAV.length}`,

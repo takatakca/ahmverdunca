@@ -21,9 +21,14 @@ export const Route = createFileRoute("/faq")({
 
 function FaqPage() {
   const { t, l, lang } = useI18n();
+  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
+  const visibleFaq = publicLaunch ? FAQ.filter((item) => item.validated) : FAQ;
+  const visibleTopics = FAQ_TOPICS.filter((topicItem) =>
+    visibleFaq.some((item) => item.topic === topicItem.id),
+  );
   const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
   const requestedItem =
-    typeof search["item"] === "string" && FAQ.some((item) => item.id === search["item"])
+    typeof search["item"] === "string" && visibleFaq.some((item) => item.id === search["item"])
       ? search["item"]
       : "";
   const [topic, setTopic] = useState("all");
@@ -41,7 +46,7 @@ function FaqPage() {
     return () => window.cancelAnimationFrame(frame);
   }, [requestedItem]);
 
-  const list = FAQ.filter(
+  const list = visibleFaq.filter(
     (f) =>
       (topic === "all" || f.topic === topic) &&
       (q.trim() === "" || `${l(f.question)} ${l(f.answer)}`.toLowerCase().includes(q.toLowerCase())),
@@ -64,8 +69,12 @@ function FaqPage() {
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
             {lang === "fr"
-              ? "Les réponses validées s'appuient sur les ressources actuellement publiées. Lorsqu'une procédure dépend encore de l'association, elle est clairement indiquée."
-              : "Validated answers rely on currently published resources. When a procedure still depends on the association, that is clearly indicated."}
+              ? publicLaunch
+                ? "Les réponses affichées ici s'appuient uniquement sur des informations actuellement validées."
+                : "Les réponses validées s'appuient sur les ressources actuellement publiées. Les éléments encore à confirmer sont identifiés en préproduction."
+              : publicLaunch
+                ? "Answers shown here rely only on currently validated information."
+                : "Validated answers rely on currently published resources. Items still awaiting confirmation are identified in pre-production."}
           </p>
         </div>
 
@@ -82,10 +91,11 @@ function FaqPage() {
         </div>
 
         <div className="scrollbar-none -mx-1 my-6 flex gap-2 overflow-x-auto px-1 pb-1">
-          {[{ id: "all", label: { fr: "Tous les sujets", en: "All topics" } }, ...FAQ_TOPICS].map((c) => (
+          {[{ id: "all", label: { fr: "Tous les sujets", en: "All topics" } }, ...visibleTopics].map((c) => (
             <button
               key={c.id}
               type="button"
+              aria-pressed={topic === c.id}
               onClick={() => setTopic(c.id)}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
