@@ -25,7 +25,13 @@ export function PlaceholderImage({
   return (
     <div className={cn("relative overflow-hidden bg-muted", aspect, className)}>
       {src ? (
-        <img src={src} alt={alt ?? ""} loading="lazy" className="absolute inset-0 size-full object-cover" />
+        <img
+          src={src}
+          alt={alt ?? ""}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 size-full object-cover"
+        />
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-[repeating-linear-gradient(45deg,transparent_0_12px,var(--color-border)_12px_13px)] text-muted-foreground">
           <ImageIcon className="size-8" aria-hidden />

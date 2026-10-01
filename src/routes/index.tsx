@@ -13,6 +13,7 @@ import { SCHEDULE, DEMO_TODAY } from "@/data/schedule";
 import { EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
+import { cn } from "@/lib/utils";
 import heroHockey from "@/assets/hero-hockey.jpg";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -42,7 +43,16 @@ function Home() {
     <>
       {/* Hero */}
       <section className="relative isolate">
-        <img src={heroHockey} alt="" width={1600} height={912} className="absolute inset-0 size-full object-cover" />
+        <img
+          src={heroHockey}
+          alt=""
+          width={1600}
+          height={912}
+          loading="eager"
+          decoding="async"
+          fetchPriority="high"
+          className="absolute inset-0 size-full object-cover"
+        />
         <div className="hero-gradient absolute inset-0" aria-hidden />
          <div className="container-site relative flex min-h-[58vh] flex-col justify-end py-10 text-navy-foreground md:min-h-[70vh] md:py-16">
           <p className="eyebrow mb-4 flex items-center gap-2 text-navy-foreground/80">
@@ -120,11 +130,38 @@ function Home() {
         />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {TEAMS.map((team, index) => (
-            <Link key={team.slug} to="/equipes/$slug" params={{ slug: team.slug }} className="group relative min-h-44 overflow-hidden rounded-lg border border-navy/10 bg-card p-5 shadow-card transition-transform hover:-translate-y-1">
-              <span className="absolute right-2 top-0 font-display text-7xl font-extrabold text-navy/5">{String(index + 1).padStart(2, "0")}</span>
-              <Users className="size-5 text-sport" aria-hidden />
-              <span className="mt-7 block font-display text-4xl font-extrabold uppercase text-navy">{team.code}</span>
-              <span className="mt-1 block text-xs font-semibold text-muted-foreground">{l(team.ages)}</span>
+            <Link
+              key={team.slug}
+              to="/equipes/$slug"
+              params={{ slug: team.slug }}
+              className={cn(
+                "group relative min-h-44 overflow-hidden rounded-lg border bg-card p-5 shadow-card transition-all hover:-translate-y-1 hover:shadow-card-hover",
+                preferredTeam === team.slug
+                  ? "border-sport ring-2 ring-sport/20"
+                  : "border-navy/10",
+              )}
+            >
+              <span className="absolute right-2 top-0 font-display text-7xl font-extrabold text-navy/5">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              {preferredTeam === team.slug && (
+                <span className="absolute left-4 top-4 rounded-full bg-sport px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sport-foreground">
+                  {lang === "fr" ? "Mon équipe" : "My team"}
+                </span>
+              )}
+              <Users
+                className={cn(
+                  "size-5 text-sport",
+                  preferredTeam === team.slug && "mt-8",
+                )}
+                aria-hidden
+              />
+              <span className="mt-7 block font-display text-4xl font-extrabold uppercase text-navy">
+                {team.code}
+              </span>
+              <span className="mt-1 block text-xs font-semibold text-muted-foreground">
+                {l(team.ages)}
+              </span>
               <ArrowRight className="absolute bottom-4 right-4 size-5 text-sport transition-transform group-hover:translate-x-1" />
             </Link>
           ))}
