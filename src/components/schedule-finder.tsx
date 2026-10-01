@@ -43,7 +43,7 @@ export function ScheduleFinder() {
             </select>
           </label>
           <Button asChild variant="sport" size="lg" className="w-full sm:w-auto">
-            <Link to="/horaires" search={{ team: team || undefined }}><CalendarDays className="size-5" /> {lang === "fr" ? "Voir mon horaire" : "See my schedule"} <ArrowRight className="size-4" /></Link>
+            <Link to="/horaires" search={team ? { team } : {}}><CalendarDays className="size-5" /> {lang === "fr" ? "Voir mon horaire" : "See my schedule"} <ArrowRight className="size-4" /></Link>
           </Button>
         </div>
       </div>
