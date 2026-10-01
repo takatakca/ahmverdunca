@@ -54,7 +54,7 @@ function Home() {
           className="absolute inset-0 size-full object-cover"
         />
         <div className="hero-gradient absolute inset-0" aria-hidden />
-         <div className="container-site relative flex min-h-[58vh] flex-col justify-end py-10 text-navy-foreground md:min-h-[70vh] md:py-16">
+         <div className="container-site relative flex min-h-[52vh] flex-col justify-end py-10 text-navy-foreground md:min-h-[62vh] md:py-14">
           <p className="eyebrow mb-4 flex items-center gap-2 text-navy-foreground/80">
             <span className="inline-block h-px w-8 bg-sport" />
             {t("common.season")} {SITE.season}

@@ -118,7 +118,24 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-1.5">
-          <Button asChild variant="ghost" size="icon" className="text-navy-foreground hover:bg-navy-foreground/10" aria-label={t("nav.search")}>
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="hidden gap-1.5 text-navy-foreground hover:bg-navy-foreground/10 md:inline-flex"
+          >
+            <Link to="/recherche">
+              <Search className="size-4" />
+              <span>{t("nav.search")}</span>
+            </Link>
+          </Button>
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="text-navy-foreground hover:bg-navy-foreground/10 md:hidden"
+            aria-label={t("nav.search")}
+          >
             <Link to="/recherche"><Search className="size-5" /></Link>
           </Button>
           <Button asChild variant="sport" size="sm" className="hidden sm:inline-flex">
