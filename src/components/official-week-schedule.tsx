@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ExternalLink, MapPin, Search, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -69,6 +69,10 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
 export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: string }) {
   const { lang } = useI18n();
   const [query, setQuery] = useState(initialQuery);
+
+  useEffect(() => {
+    setQuery(initialQuery);
+  }, [initialQuery]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
