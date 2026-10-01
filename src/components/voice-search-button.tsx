@@ -139,7 +139,9 @@ export function VoiceSearchButton({
       title={
         listening
           ? (lang === "fr" ? "Parlez maintenant…" : "Speak now…")
-          : (lang === "fr" ? "Recherche vocale" : "Voice search")
+          : (lang === "fr"
+              ? "Recherche vocale — reconnaissance fournie par votre navigateur"
+              : "Voice search — recognition provided by your browser")
       }
       className={listening ? "border-sport text-sport" : undefined}
     >
