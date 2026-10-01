@@ -1,0 +1,11 @@
+{
+  "name": "Association du hockey mineur de Verdun",
+  "short_name": "AHM Verdun",
+  "description": "Horaires, équipes, inscriptions, nouvelles, arénas et ressources AHM Verdun.",
+  "lang": "fr-CA",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111a33"
+}

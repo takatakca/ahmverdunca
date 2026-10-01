@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build",
+    "build": "bun run generate:sitemap && vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "check:data": "bun scripts/validate-data.ts"
+    "check:data": "bun scripts/validate-data.ts",
+    "generate:sitemap": "bun scripts/generate-sitemap.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"

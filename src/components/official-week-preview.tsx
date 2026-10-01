@@ -10,6 +10,7 @@ import { formatDate, useI18n } from "@/lib/i18n";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { mapsDirectionsUrl } from "@/lib/site";
 import { usePreferredTeam } from "@/lib/team-preference";
+import { officialScheduleTermsForTeam } from "@/lib/official-schedule-team";
 import { cn } from "@/lib/utils";
 
 function displayTime(value: string) {
@@ -29,7 +30,7 @@ export function OfficialWeekPreview() {
     today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
 
   const savedTeam = TEAMS.find((item) => item.slug === preferredTeam);
-  const savedCode = savedTeam?.code.startsWith("M") ? savedTeam.code.toUpperCase() : undefined;
+  const savedTerms = officialScheduleTermsForTeam(savedTeam).map((term) => term.toUpperCase());
 
   const upcoming = inPublishedWeek
     ? OFFICIAL_WEEK_ACTIVITIES.filter(
@@ -37,8 +38,11 @@ export function OfficialWeekPreview() {
       )
     : [];
 
-  const personalized = savedCode
-    ? upcoming.filter((item) => item.group.toUpperCase().includes(savedCode))
+  const personalized = savedTerms.length
+    ? upcoming.filter((item) => {
+        const group = item.group.toUpperCase();
+        return savedTerms.some((term) => group.includes(term));
+      })
     : [];
 
   const relevant = personalized.length > 0 ? personalized.slice(0, 4) : upcoming.slice(0, 6);
@@ -65,8 +69,8 @@ export function OfficialWeekPreview() {
             <h2 className="heading-section mt-2">
               {isPersonalized
                 ? lang === "fr"
-                  ? `${savedTeam.code} · Cette semaine`
-                  : `${savedTeam.code} · This week`
+                  ? `${savedTeam.code === "F" ? l(savedTeam.name) : savedTeam.code} · Cette semaine`
+                  : `${savedTeam.code === "F" ? l(savedTeam.name) : savedTeam.code} · This week`
                 : lang === "fr"
                   ? "Cette semaine à AHM Verdun"
                   : "This week at AHM Verdun"}
