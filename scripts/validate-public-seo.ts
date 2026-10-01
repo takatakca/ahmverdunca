@@ -23,10 +23,10 @@ const requiredPublicRoutes = [
   "/ressources",
   "/partenaires",
   "/contact",
-  "/recherche",
   "/connexion",
   "/confidentialite",
 ] as const;
+const noindexRoutes = ["/recherche"] as const;
 
 if (!robots.includes(`Sitemap: ${sitemapUrl}`)) {
   errors.push(`robots.txt must reference ${sitemapUrl}`);
@@ -52,6 +52,13 @@ for (const route of requiredPublicRoutes) {
   const expected = SITE.domain + route;
   if (!locations.includes(expected)) {
     errors.push(`sitemap.xml is missing required public route: ${route}`);
+  }
+}
+
+for (const route of noindexRoutes) {
+  const excluded = SITE.domain + route;
+  if (locations.includes(excluded)) {
+    errors.push(`sitemap.xml must not include noindex route: ${route}`);
   }
 }
 
