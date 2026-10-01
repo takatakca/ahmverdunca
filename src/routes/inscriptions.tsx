@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ExternalLink, Mail, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ExternalLink, Info, Mail, ShieldCheck } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
@@ -59,6 +59,57 @@ function RegistrationPage() {
               : "AHM Verdun explains the process here, then registration continues on Spordle, the official platform already used by the association."}
           </p>
         </div>
+
+        <section aria-labelledby="registration-steps-title">
+          <SectionHeading
+            eyebrow={lang === "fr" ? "3 étapes" : "3 steps"}
+            title={lang === "fr" ? "Simple du début à la fin" : "Simple from start to finish"}
+            description={
+              lang === "fr"
+                ? "Le site vous prépare, puis Spordle prend le relais pour l'inscription hockey officielle."
+                : "This site prepares you, then Spordle takes over for the official hockey registration."
+            }
+          />
+          <div className="grid gap-4 md:grid-cols-3">
+            {[
+              {
+                Icon: Info,
+                number: "01",
+                frTitle: "Choisir la catégorie",
+                enTitle: "Choose the category",
+                frText: "Repérez la catégorie qui correspond à votre enfant et ouvrez sa page AHMV.",
+                enText: "Find the category that matches your child and open its AHMV page.",
+              },
+              {
+                Icon: ExternalLink,
+                number: "02",
+                frTitle: "Ouvrir Spordle",
+                enTitle: "Open Spordle",
+                frText: "Continuez ensuite vers la plateforme officielle d'inscription.",
+                enText: "Then continue to the official registration platform.",
+              },
+              {
+                Icon: CheckCircle2,
+                number: "03",
+                frTitle: "Suivre les étapes officielles",
+                enTitle: "Follow the official steps",
+                frText: "Documents, paiements et confirmations restent dans le processus Spordle.",
+                enText: "Documents, payments and confirmations stay in the Spordle process.",
+              },
+            ].map(({ Icon, number, frTitle, enTitle, frText, enText }) => (
+              <div key={number} className="card-elevated relative overflow-hidden p-6">
+                <span className="absolute right-4 top-2 font-display text-5xl font-extrabold text-navy/5">
+                  {number}
+                </span>
+                <Icon className="size-6 text-sport" aria-hidden />
+                <h3 className="heading-card mt-6">{lang === "fr" ? frTitle : enTitle}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {lang === "fr" ? frText : enText}
+                </p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
