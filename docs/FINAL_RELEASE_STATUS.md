@@ -52,6 +52,7 @@ The current public architecture does **not** recreate hockey operations. Spordle
 - Planned newsletter/voice-service messaging is preview-only.
 - Protected photo albums retain official AHMV source links without copying media involving minors.
 - Empty public filter categories are hidden instead of showing dead/empty states.
+- FAQ answers awaiting official validation remain available for pre-production review but are excluded from the indexed public FAQ and public search.
 - Critical filter state is exposed to assistive technologies.
 
 ## 4. Current verified public sources
