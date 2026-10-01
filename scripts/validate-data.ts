@@ -63,6 +63,17 @@ function requireHttps(label: string, value: string) {
 }
 
 requireHttps("SITE.domain", SITE.domain);
+requireHttps("OFFICIAL_WEEK_META.sourceUrl", OFFICIAL_WEEK_META.sourceUrl);
+
+if (!validDate(OFFICIAL_WEEK_META.start) || !validDate(OFFICIAL_WEEK_META.end) || !validDate(OFFICIAL_WEEK_META.publishedAt)) {
+  errors.push("OFFICIAL_WEEK_META contains an invalid start, end or publication date.");
+}
+if (OFFICIAL_WEEK_META.start > OFFICIAL_WEEK_META.end) {
+  errors.push("OFFICIAL_WEEK_META start must not be after its end.");
+}
+if (OFFICIAL_WEEK_META.publishedAt > OFFICIAL_WEEK_META.end) {
+  errors.push("OFFICIAL_WEEK_META publication date must not be after the published week ends.");
+}
 
 if (SITE.domain.endsWith("/")) {
   errors.push("SITE.domain must not end with a slash.");
