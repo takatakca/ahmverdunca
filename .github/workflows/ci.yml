@@ -29,6 +29,9 @@ jobs:
       - name: Type check
         run: bunx tsc --noEmit
 
+      - name: Validate content data
+        run: bun run check:data
+
       - name: Lint application logic
         run: |
           bunx eslint . --rule 'prettier/prettier: off'
