@@ -68,11 +68,16 @@ export function ScheduleFinder() {
             variant="sport"
             size="lg"
             className="w-full sm:w-auto"
-            aria-disabled={!team}
           >
             <Link to="/horaires" search={team ? { team } : {}}>
               <CalendarDays className="size-5" />
-              {lang === "fr" ? "Voir mon horaire" : "See my schedule"}
+              {team
+                ? lang === "fr"
+                  ? "Voir mon horaire"
+                  : "See my schedule"
+                : lang === "fr"
+                  ? "Voir tous les horaires"
+                  : "See all schedules"}
               <ArrowRight className="size-4" />
             </Link>
           </Button>
