@@ -7,6 +7,7 @@ import { LogoSlot } from "./logo-slot";
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
+  const showPhone = !publicLaunch || SITE.phonePublic;
 
   return (
     <footer className="mt-auto bg-navy-deep text-navy-foreground">
@@ -22,9 +23,11 @@ export function SiteFooter() {
           </div>
           <p className="mt-4 max-w-xs text-sm text-navy-foreground/70">{t("footer.tagline")}</p>
           <p className="mt-4 text-xs text-navy-foreground/50">{SITE.city}</p>
-          <a href={`tel:${SITE.phoneE164}`} className="mt-2 inline-block text-sm font-semibold text-navy-foreground/85 hover:text-navy-foreground hover:underline">
-            {SITE.phoneDisplay}
-          </a>
+          {showPhone && (
+            <a href={`tel:${SITE.phoneE164}`} className="mt-2 inline-block text-sm font-semibold text-navy-foreground/85 hover:text-navy-foreground hover:underline">
+              {SITE.phoneDisplay}
+            </a>
+          )}
           {!publicLaunch && <p className="mt-1 text-xs italic text-navy-foreground/50">{t("footer.contactNote")}</p>}
         </div>
 
