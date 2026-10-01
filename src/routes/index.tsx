@@ -1,15 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { SectionHeading } from "@/components/page-header";
-import { EventCard } from "@/components/event-list";
 import { ALERTS } from "@/data/alerts";
 import { TEAMS } from "@/data/teams";
 import { NEWS } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
-import { SCHEDULE, DEMO_TODAY } from "@/data/schedule";
 import { SPONSORS } from "@/data/sponsors";
 import { EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
@@ -17,7 +14,9 @@ import { img } from "@/lib/images";
 import { cn } from "@/lib/utils";
 import heroHockey from "@/assets/hero-hockey.jpg";
 import { ScheduleFinder } from "@/components/schedule-finder";
+import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { usePreferredTeam } from "@/lib/team-preference";
+import { montrealDateKey } from "@/lib/montreal-date";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,8 +35,8 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { t, l, lang } = useI18n();
   const { preferredTeam } = usePreferredTeam();
-  const alerts = ALERTS.filter((a) => !a.archived);
-  const upcoming = SCHEDULE.filter((e) => e.date >= DEMO_TODAY && (!preferredTeam || e.teamSlug === preferredTeam)).slice(0, 4);
+  const today = montrealDateKey();
+  const alerts = ALERTS.filter((alert) => !alert.archived && alert.expiresAt >= today);
   const news = NEWS.slice(0, 3);
 
   return (
@@ -104,22 +103,8 @@ function Home() {
         </section>
       )}
 
-      {/* This week */}
-      <section className="competition-panel py-12 text-navy-foreground md:py-16">
-        <div className="container-site">
-          <SectionHeading
-            eyebrow={t("common.demoData")}
-            title={t("home.weekTitle")}
-            description={t("home.weekHint")}
-            action={<Button asChild variant="outline-light" size="sm"><Link to="/horaires">{t("common.seeAll")}</Link></Button>}
-          />
-          <DemoNotice className="mb-5">{t("home.upcomingNote")}</DemoNotice>
-           {preferredTeam && <p className="mb-4 text-sm text-navy-foreground/80">{lang === "fr" ? "Mon équipe" : "My team"} · {l(TEAMS.find((team) => team.slug === preferredTeam)?.name)}</p>}
-          <div className="space-y-3 text-foreground">
-             {upcoming.length ? upcoming.map((e) => <EventCard key={e.id} event={e} />) : <p className="py-5 text-sm text-navy-foreground/80">{t("schedule.noEventsWeek")}</p>}
-          </div>
-        </div>
-      </section>
+      {/* This week — official published source */}
+      <OfficialWeekPreview />
 
       {/* Team universe */}
       <section className="rink-lines bg-ice py-12 md:py-16">
@@ -346,18 +331,7 @@ function Home() {
       </section>
 
       {/* WLLV bridge */}
-      <section className="competition-panel py-12 text-navy-foreground md:py-16">
-        <div className="container-site flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="eyebrow text-sport-foreground">{t("home.nextStep")}</p>
-            <h2 className="heading-section mt-2">{t("home.wllvTitle")}</h2>
-            <p className="mt-3 max-w-2xl text-navy-foreground/70">{t("home.wllvNote")}</p>
-          </div>
-          <Button asChild variant="outline-light" size="lg">
-            <a href={EXTERNAL_LINKS.wllv} target="_blank" rel="noopener noreferrer">{t("home.discoverWllv")} <ExternalLink className="size-4" /></a>
-          </Button>
-        </div>
-      </section>
+      <OfficialWeekPreview />
 
       {/* Sponsors */}
       <section className="navy-texture py-12 text-navy-foreground md:py-16">
