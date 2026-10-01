@@ -18,6 +18,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Repository hygiene
+        run: |
+          tracked_env_files="$(git ls-files '.env' '.env.*' ':!.env.example')"
+          if [ -n "$tracked_env_files" ]; then
+            echo "Runtime environment files must not be committed:"
+            echo "$tracked_env_files"
+            exit 1
+          fi
+
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
