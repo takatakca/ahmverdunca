@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, ExternalLink, RotateCcw } from "lucide-react
 import { PageHeader } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { EventCard } from "@/components/event-list";
+import { OfficialWeekSchedule } from "@/components/official-week-schedule";
 import { Button } from "@/components/ui/button";
 import { SCHEDULE, SCHEDULE_META, DEMO_TODAY, type EventType, type EventStatus } from "@/data/schedule";
 import { TEAMS } from "@/data/teams";
@@ -146,7 +147,11 @@ function SchedulePage() {
           </div>
         </section>
 
-        <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
+        <OfficialWeekSchedule />
+
+        <div className="mt-8">
+          <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
+        </div>
 
         <div className="grid gap-3 border-b border-border pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
           <div className="min-w-0">
