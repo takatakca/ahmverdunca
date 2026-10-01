@@ -15,18 +15,96 @@ export interface CoachResource {
   title: Localized;
   description: Localized;
   category: CoachCategory;
-  /** Official link or document — to be provided by the association. */
-  url?: string;
-  restricted: boolean; // sensitive → secured area only
-  updatedAt: string;
+  /** Link currently published by the legacy AHM Verdun site. */
+  url: string;
+  /** True when the document can contain sensitive information once completed. */
+  sensitive: boolean;
+  verifiedAt: string;
 }
 
 export const COACH_RESOURCES: CoachResource[] = [
-  { id: "c1", title: { fr: "Formulaire Médaille ESSO", en: "ESSO Medal form" }, description: { fr: "Formulaire de mise en candidature pour les médailles ESSO.", en: "Nomination form for the ESSO medals." }, category: "forms", restricted: false, updatedAt: "2026-09-01" },
-  { id: "c2", title: { fr: "Devenir entraîneur", en: "Becoming a coach" }, description: { fr: "Étapes, exigences et personnes-ressources pour se joindre à l'encadrement.", en: "Steps, requirements and contacts to join the coaching staff." }, category: "recruitment", restricted: false, updatedAt: "2026-09-01" },
-  { id: "c3", title: { fr: "Fiche médicale", en: "Medical form" }, description: { fr: "Document confidentiel. Accessible uniquement dans un environnement sécurisé réservé aux responsables autorisés.", en: "Confidential document. Available only in a secured area for authorized staff." }, category: "medical", restricted: true, updatedAt: "2026-09-01" },
-  { id: "c4", title: { fr: "Respect et sport", en: "Respect in Sport" }, description: { fr: "Formation obligatoire sur le respect et la prévention des abus.", en: "Mandatory training on respect and abuse prevention." }, category: "ethics", restricted: false, updatedAt: "2026-09-01" },
-  { id: "c5", title: { fr: "Formation M7–M9 — Entraîneur 1", en: "U7–U9 Training — Coach 1" }, description: { fr: "Programme de certification pour les entraîneurs des catégories M7 et M9.", en: "Certification program for U7 and U9 coaches." }, category: "training", restricted: false, updatedAt: "2026-09-01" },
-  { id: "c6", title: { fr: "Formation M11–Junior — Entraîneur 2", en: "U11–Junior Training — Coach 2" }, description: { fr: "Programme de certification pour les entraîneurs des catégories M11 à Junior.", en: "Certification program for U11 to Junior coaches." }, category: "training", restricted: false, updatedAt: "2026-09-01" },
-  { id: "c7", title: { fr: "Soigneur — entraîneur-chef", en: "Trainer — head coach" }, description: { fr: "Exigences et formation du soigneur et de l'entraîneur-chef.", en: "Requirements and training for the trainer and head coach." }, category: "training", restricted: false, updatedAt: "2026-09-01" },
+  {
+    id: "c1",
+    title: { fr: "Formulaire Médaille ESSO", en: "ESSO Medal form" },
+    description: {
+      fr: "Formulaire public actuellement référencé par l'AHM Verdun.",
+      en: "Public form currently referenced by AHM Verdun.",
+    },
+    category: "forms",
+    url: "https://www.publicationsports.com/ressources/files/775/esso.pdf?t=1675447459",
+    sensitive: false,
+    verifiedAt: "2026-10-01",
+  },
+  {
+    id: "c2",
+    title: { fr: "Devenir entraîneur", en: "Becoming a coach" },
+    description: {
+      fr: "Accès au parcours d'inscription actuellement publié par l'AHM Verdun.",
+      en: "Access to the registration flow currently published by AHM Verdun.",
+    },
+    category: "recruitment",
+    url: "https://page.spordle.com/fr/ahm-de-verdun/register/1f082885-9400-678a-bb33-02b729a8ae7b",
+    sensitive: false,
+    verifiedAt: "2026-10-01",
+  },
+  {
+    id: "c3",
+    title: { fr: "Fiche médicale", en: "Medical information form" },
+    description: {
+      fr: "Formulaire Hockey Canada. Téléchargez-le et remettez-le uniquement selon la procédure officielle; aucune donnée médicale n'est enregistrée sur ce site.",
+      en: "Hockey Canada form. Download and submit it only through the official process; no medical data is stored on this site.",
+    },
+    category: "medical",
+    url: "https://www.publicationsports.com/ressources/files/775/player_med_info_f.pdf",
+    sensitive: true,
+    verifiedAt: "2026-10-01",
+  },
+  {
+    id: "c4",
+    title: { fr: "Respect et sport", en: "Respect in Sport" },
+    description: {
+      fr: "Programme Respect et sport pour responsables d'activités de Hockey Canada / Hockey Québec.",
+      en: "Respect in Sport program for Hockey Canada / Hockey Québec activity leaders.",
+    },
+    category: "ethics",
+    url: "https://hq.respectgroupinc.com/",
+    sensitive: false,
+    verifiedAt: "2026-10-01",
+  },
+  {
+    id: "c5",
+    title: { fr: "Formation M7–M9 — Entraîneur 1", en: "U7–U9 Training — Coach 1" },
+    description: {
+      fr: "Lien de clinique Spordle actuellement publié par l'AHM Verdun.",
+      en: "Spordle clinic link currently published by AHM Verdun.",
+    },
+    category: "training",
+    url: "https://page.spordle.com/fr/hq/clinics/1ef7538a-44c0-639a-908c-0243b7c607a7",
+    sensitive: false,
+    verifiedAt: "2026-10-01",
+  },
+  {
+    id: "c6",
+    title: { fr: "Formation M11–Junior — Entraîneur 2", en: "U11–Junior Training — Coach 2" },
+    description: {
+      fr: "Lien de clinique Spordle actuellement publié par l'AHM Verdun.",
+      en: "Spordle clinic link currently published by AHM Verdun.",
+    },
+    category: "training",
+    url: "https://page.spordle.com/fr/hq/clinics/1ef7463b-e50e-64fc-a0b6-021c3865613b",
+    sensitive: false,
+    verifiedAt: "2026-10-01",
+  },
+  {
+    id: "c7",
+    title: { fr: "Soigneur — entraîneur-chef seulement", en: "Trainer — head coach only" },
+    description: {
+      fr: "Lien de clinique Spordle actuellement publié par l'AHM Verdun.",
+      en: "Spordle clinic link currently published by AHM Verdun.",
+    },
+    category: "training",
+    url: "https://page.spordle.com/fr/hq/clinics/1ef74f69-f59b-6a72-9376-021c3865613b",
+    sensitive: false,
+    verifiedAt: "2026-10-01",
+  },
 ];

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
-import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, RotateCcw } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { EventCard } from "@/components/event-list";
@@ -11,6 +11,7 @@ import { ARENAS } from "@/data/arenas";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import type { TranslationKey } from "@/lib/translations";
+import { EXTERNAL_LINKS } from "@/lib/site";
 
 export const Route = createFileRoute("/horaires")({
   head: () => ({
@@ -102,12 +103,49 @@ function SchedulePage() {
   return (
     <>
       <PageHeader
-        eyebrow={t("common.demoData")}
+        eyebrow={lang === "fr" ? "Accès rapide" : "Quick access"}
         title={t("schedule.title")}
-        description={t("schedule.subtitle")}
+        description={
+          lang === "fr"
+            ? "Trouvez votre équipe rapidement. Les liens officiels restent disponibles pendant que la nouvelle expérience de calendrier est branchée aux données réelles."
+            : "Find your team quickly. Official links remain available while the new calendar experience is connected to real data."
+        }
       />
 
       <div className="container-site py-8 md:py-12">
+        <section className="mb-6 overflow-hidden rounded-xl border border-border bg-background shadow-card">
+          <div className="border-b border-border bg-ice px-5 py-4 md:px-6">
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Horaires et classements officiels" : "Official schedules and standings"}
+            </p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Besoin de la donnée officielle maintenant? Choisissez votre circuit."
+                : "Need the official data right now? Choose your circuit."}
+            </p>
+          </div>
+          <div className="grid gap-3 p-4 sm:grid-cols-3 md:p-6">
+            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+              <a href={EXTERNAL_LINKS.officialSimpleLetterSchedule} target="_blank" rel="noopener noreferrer">
+                <span>{lang === "fr" ? "Simple lettre" : "Single letter"}</span>
+                <ExternalLink className="size-4" />
+              </a>
+            </Button>
+            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+              <a href={EXTERNAL_LINKS.officialDoubleLetterSchedule} target="_blank" rel="noopener noreferrer">
+                <span>{lang === "fr" ? "Double lettre AA/BB" : "Double letter AA/BB"}</span>
+                <ExternalLink className="size-4" />
+              </a>
+            </Button>
+            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+              <a href={EXTERNAL_LINKS.officialGirlsSchedule} target="_blank" rel="noopener noreferrer">
+                <span>{lang === "fr" ? "Hockey féminin" : "Girls' hockey"}</span>
+                <ExternalLink className="size-4" />
+              </a>
+            </Button>
+          </div>
+        </section>
+
         <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
 
         <div className="grid gap-3 border-b border-border pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">

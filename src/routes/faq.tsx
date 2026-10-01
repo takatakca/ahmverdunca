@@ -31,7 +31,14 @@ function FaqPage() {
 
   return (
     <>
-      <PageHeader eyebrow={t("common.toValidate")} title={t("nav.faq")} description="Les réponses ci-dessous constituent la base de connaissances du site. Certaines seront précisées par l'association." />
+      <PageHeader
+        eyebrow={l({ fr: "Aide aux familles", en: "Family help" })}
+        title={t("nav.faq")}
+        description={l({
+          fr: "Réponses rapides sur les inscriptions, horaires, arénas, hockey féminin, entraîneurs et ressources.",
+          en: "Quick answers about registration, schedules, arenas, girls' hockey, coaches and resources.",
+        })}
+      />
       <div className="container-site py-8 md:py-12">
         <DemoNotice kind="info" className="mb-6">
           Les réponses marquées « à préciser » attendent le texte officiel de l'association.

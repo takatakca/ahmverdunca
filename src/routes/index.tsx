@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Radio, Trophy, Users } from "lucide-react";
+import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
@@ -298,20 +298,49 @@ function Home() {
         <div className="container-site">
           <SectionHeading eyebrow={t("home.socialPreview")} title={t("home.social")} description={t("home.socialNote")} />
           <div className="grid gap-4 md:grid-cols-3">
-            {[
-              { label: "Instagram", Icon: Instagram },
-              { label: "Facebook", Icon: Facebook },
-              { label: "Google", Icon: MapPin },
-            ].map(({ label, Icon }) => (
-              <div key={label} className="border-t-4 border-t-sport bg-card p-6 shadow-card">
-                <div className="flex items-center justify-between">
-                  <Icon className="size-6 text-navy" aria-hidden />
-                  <Radio className="size-4 text-muted-foreground" aria-hidden />
-                </div>
-                <h3 className="heading-card mt-8">{label}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{t("home.socialPreview")}</p>
+            <a
+              href={EXTERNAL_LINKS.instagram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between">
+                <Instagram className="size-6 text-navy" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
               </div>
-            ))}
+              <h3 className="heading-card mt-8">Instagram</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr" ? "Compte AHM Verdun" : "AHM Verdun account"}
+              </p>
+            </a>
+            <a
+              href={EXTERNAL_LINKS.facebook}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between">
+                <Facebook className="size-6 text-navy" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-8">Facebook</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr" ? "Page AHM Verdun" : "AHM Verdun page"}
+              </p>
+            </a>
+            <Link
+              to="/arenas"
+              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
+            >
+              <div className="flex items-center justify-between">
+                <MapPin className="size-6 text-navy" aria-hidden />
+                <ArrowRight className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-8">Google / Maps</h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr" ? "Arénas et itinéraires" : "Arenas and directions"}
+              </p>
+            </Link>
           </div>
         </div>
       </section>
@@ -337,11 +366,8 @@ function Home() {
           <h2 className="heading-section mt-2">{t("home.sponsors")}</h2>
           <p className="mt-3 max-w-2xl text-sm text-navy-foreground/75">{t("home.sponsorsNote")}</p>
           <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {SPONSORS.map((sponsor) => (
-              <div
-                key={sponsor.name}
-                className="flex min-h-24 items-center justify-center rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 text-center"
-              >
+            {SPONSORS.map((sponsor) => {
+              const content = (
                 <div>
                   <p className="text-sm font-semibold leading-tight text-navy-foreground/90">
                     {sponsor.name}
@@ -352,8 +378,28 @@ function Home() {
                     </p>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+
+              return sponsor.website ? (
+                <a
+                  key={sponsor.name}
+                  href={sponsor.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-h-24 items-center justify-center rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 text-center transition-colors hover:border-sport-foreground/50 hover:bg-navy-foreground/[0.08]"
+                  aria-label={`${sponsor.name} — ${lang === "fr" ? "site partenaire" : "partner site"}`}
+                >
+                  {content}
+                </a>
+              ) : (
+                <div
+                  key={sponsor.name}
+                  className="flex min-h-24 items-center justify-center rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 text-center"
+                >
+                  {content}
+                </div>
+              );
+            })}
           </div>
           <div className="mt-7 flex flex-col gap-3 border-t border-navy-foreground/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
             <p className="max-w-2xl text-sm text-navy-foreground/65">

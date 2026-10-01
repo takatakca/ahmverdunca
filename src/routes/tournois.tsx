@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, ExternalLink, Trophy, Users } from "lucide-react";
+import { CalendarDays, ExternalLink, FileText, Trophy, Users } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { EXTERNAL_LINKS } from "@/lib/site";
@@ -75,39 +75,77 @@ function TournamentsPage() {
             }
           />
           <div className="grid gap-4 md:grid-cols-3">
-            <article className="card-elevated p-6">
-              <CalendarDays className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5">
-                {lang === "fr" ? "Horaires & classements" : "Schedules & standings"}
+            <a
+              href={EXTERNAL_LINKS.m11TournamentSchedule}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card-elevated group p-6"
+            >
+              <div className="flex items-center justify-between">
+                <CalendarDays className="size-6 text-sport" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                {lang === "fr" ? "Horaires & classements M11" : "U11 schedules & standings"}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 {lang === "fr"
-                  ? "Consultez toujours le site officiel du tournoi pour les données sportives."
-                  : "Always use the official tournament site for sport data."}
+                  ? "Ouvrir les données sportives officielles dans Spordle."
+                  : "Open official sport data in Spordle."}
               </p>
-            </article>
-            <article className="card-elevated p-6">
-              <Users className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5">
-                {lang === "fr" ? "Bénévoles" : "Volunteers"}
+            </a>
+
+            <a
+              href={EXTERNAL_LINKS.m11TournamentRules}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card-elevated group p-6"
+            >
+              <div className="flex items-center justify-between">
+                <FileText className="size-6 text-sport" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                {lang === "fr" ? "Règlements M11" : "U11 tournament rules"}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 {lang === "fr"
-                  ? "Les occasions de bénévolat et les consignes officielles sont publiées par l'organisation du tournoi."
-                  : "Volunteer opportunities and official instructions are published by the tournament organization."}
+                  ? "Ouvrir le document actuellement publié par l'AHM Verdun."
+                  : "Open the document currently published by AHM Verdun."}
               </p>
-            </article>
-            <article className="card-elevated p-6">
-              <Trophy className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5">
-                {lang === "fr" ? "Partenaires" : "Partners"}
+            </a>
+
+            <a
+              href={EXTERNAL_LINKS.m7FestivalSchedule}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card-elevated group p-6"
+            >
+              <div className="flex items-center justify-between">
+                <Trophy className="size-6 text-sport" aria-hidden />
+                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              </div>
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                {lang === "fr" ? "Festival M7" : "U7 Festival"}
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 {lang === "fr"
-                  ? "La visibilité des partenaires pourra être amplifiée sur le site, les campagnes et les réseaux sociaux via GROUPE TAKATAK."
-                  : "Partner visibility can be amplified across the site, campaigns and social channels through GROUPE TAKATAK."}
+                  ? "Accéder à l'horaire officiel actuellement publié."
+                  : "Open the currently published official schedule."}
               </p>
-            </article>
+            </a>
+          </div>
+
+          <div className="card-elevated mt-5 p-6">
+            <Users className="size-6 text-sport" aria-hidden />
+            <h3 className="heading-card mt-5">
+              {lang === "fr" ? "Bénévoles & partenaires" : "Volunteers & partners"}
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Les opérations du tournoi restent dans leurs systèmes officiels. GROUPE TAKATAK pourra amplifier le recrutement, les partenaires, les campagnes et la visibilité numérique."
+                : "Tournament operations remain in their official systems. GROUPE TAKATAK can amplify recruitment, partners, campaigns and digital visibility."}
+            </p>
           </div>
         </section>
       </div>
