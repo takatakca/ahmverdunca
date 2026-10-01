@@ -45,6 +45,7 @@ const faqTopics = new Set(FAQ_TOPICS.map((topic) => topic.id));
 const faqSourcePaths = new Set([
   "/horaires",
   "/equipes",
+  "/equipes/feminin",
   "/inscriptions",
   "/tournois",
   "/nouvelles",
