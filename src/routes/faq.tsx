@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQ, FAQ_TOPICS } from "@/data/faq";
 import { useI18n } from "@/lib/i18n";
@@ -20,7 +19,7 @@ export const Route = createFileRoute("/faq")({
 });
 
 function FaqPage() {
-  const { t, l } = useI18n();
+  const { t, l, lang } = useI18n();
   const [topic, setTopic] = useState("all");
   const [q, setQ] = useState("");
   const list = FAQ.filter(
@@ -40,9 +39,16 @@ function FaqPage() {
         })}
       />
       <div className="container-site py-8 md:py-12">
-        <DemoNotice kind="info" className="mb-6">
-          Les réponses marquées « à préciser » attendent le texte officiel de l'association.
-        </DemoNotice>
+        <div className="mb-6 rounded-xl border border-border bg-ice p-5">
+          <p className="eyebrow text-sport">
+            {lang === "fr" ? "Réponses rapides" : "Quick answers"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {lang === "fr"
+              ? "Les réponses validées s'appuient sur les ressources actuellement publiées. Lorsqu'une procédure dépend encore de l'association, elle est clairement indiquée."
+              : "Validated answers rely on currently published resources. When a procedure still depends on the association, that is clearly indicated."}
+          </p>
+        </div>
 
         <input
           type="search"
@@ -76,7 +82,13 @@ function FaqPage() {
               <AccordionTrigger className="text-left font-display text-lg font-bold uppercase">{l(f.question)}</AccordionTrigger>
               <AccordionContent>
                 <p className="text-base text-foreground/90">{l(f.answer)}</p>
-                {!f.validated && <p className="mt-2 text-xs italic text-demo-foreground">Réponse à préciser par l'association.</p>}
+                {!f.validated && (
+                  <p className="mt-2 text-xs italic text-muted-foreground">
+                    {lang === "fr"
+                      ? "Cette procédure doit encore être confirmée par l'association."
+                      : "This procedure still needs confirmation from the association."}
+                  </p>
+                )}
                 {f.sourcePath && (
                   <Link to={f.sourcePath} className="mt-3 inline-block text-sm font-semibold text-sport hover:underline">
                     {t("common.seeAll")}
