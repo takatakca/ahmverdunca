@@ -12,6 +12,7 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
+import { getTeamSocialLinks } from "@/data/team-social";
 import { NEWS } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { formatShortDate, useI18n } from "@/lib/i18n";
@@ -58,6 +59,7 @@ function TeamPage() {
   const isPreferred = preferredTeam === slug;
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
+  const socialLinks = getTeamSocialLinks(slug);
 
   return (
     <>
@@ -149,13 +151,15 @@ function TeamPage() {
                   {lang === "fr" ? "Photos" : "Photos"}
                   <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
                 </a>
-                <a
-                  href="#social-equipe"
-                  className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
-                >
-                  {lang === "fr" ? "Réseaux sociaux" : "Social"}
-                  <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                </a>
+                {socialLinks.length > 0 && (
+                  <a
+                    href="#social-equipe"
+                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  >
+                    {lang === "fr" ? "Réseaux sociaux" : "Social"}
+                    <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                  </a>
+                )}
                 <Link
                   to="/inscriptions"
                   className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
@@ -257,50 +261,41 @@ function TeamPage() {
           </section>
         )}
 
-        <section id="social-equipe">
-          <SectionHeading
-            eyebrow={lang === "fr" ? "Médias d'équipe" : "Team media"}
-            title={lang === "fr" ? "Dans le vestiaire" : "Inside the team"}
-            description={
-              lang === "fr"
-                ? "Les comptes sociaux officiels de l’équipe apparaîtront ici lorsqu’ils auront été approuvés par l’association."
-                : "The team’s official social accounts will appear here once they have been approved by the association."
-            }
-          />
+        {socialLinks.length > 0 && (
+          <section id="social-equipe">
+            <SectionHeading
+              eyebrow={lang === "fr" ? "Médias d'équipe" : "Team media"}
+              title={lang === "fr" ? "Réseaux sociaux officiels" : "Official social media"}
+              description={
+                lang === "fr"
+                  ? "Accédez uniquement aux comptes d'équipe approuvés par l'association."
+                  : "Access only team accounts approved by the association."
+              }
+            />
 
-          <div className="grid gap-4 md:grid-cols-2">
-            {[
-              { label: "Facebook", Icon: Facebook },
-              { label: "Instagram", Icon: Instagram },
-            ].map(({ label, Icon }) => (
-              <div
-                key={label}
-                className="card-elevated relative overflow-hidden border-t-4 border-t-sport p-6"
-              >
-                <div className="flex items-center justify-between">
-                  <Icon className="size-6 text-navy" aria-hidden />
-                  <span className="rounded-full bg-ice px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    {lang === "fr" ? "À venir" : "Coming soon"}
-                  </span>
-                </div>
-                <h3 className="heading-card mt-8">{label}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {lang === "fr"
-                    ? "Publications, photos, nouvelles générales et événements de l'équipe, selon les permissions accordées."
-                    : "Team posts, photos, general news and events, according to granted permissions."}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-4 rounded-xl border border-border bg-ice p-4">
-            <p className="text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Seuls les comptes et contenus officiellement autorisés par l’association seront affichés ici."
-                : "Only accounts and content officially authorized by the association will be shown here."}
-            </p>
-          </div>
-        </section>
+            <div className="grid gap-4 md:grid-cols-2">
+              {socialLinks.map((social) => {
+                const Icon = social.platform === "facebook" ? Facebook : Instagram;
+                const label = social.platform === "facebook" ? "Facebook" : "Instagram";
+                return (
+                  <a
+                    key={social.platform}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="card-elevated group border-t-4 border-t-sport p-6"
+                  >
+                    <Icon className="size-6 text-navy" aria-hidden />
+                    <h3 className="heading-card mt-8 group-hover:text-sport">{label}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {lang === "fr" ? "Ouvrir le compte officiel de l'équipe." : "Open the team's official account."}
+                    </p>
+                  </a>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         <section>
           <SectionHeading
