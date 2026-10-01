@@ -154,11 +154,29 @@ function SchedulePage() {
 
         <OfficialWeekSchedule initialQuery={officialTeamQuery ?? ""} />
 
-        <div className="mt-8">
-          <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
-        </div>
+        <details className="group mt-8 overflow-hidden rounded-xl border border-border bg-background shadow-card">
+          <summary className="cursor-pointer list-none px-5 py-5 md:px-6">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="eyebrow text-sport">
+                  {lang === "fr" ? "Aperçu du futur calendrier interactif" : "Future interactive calendar preview"}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {lang === "fr"
+                    ? "Optionnel : ouvrez cette section pour voir l'interface prévue lorsque les données officielles seront automatisées."
+                    : "Optional: open this section to preview the interface planned once official data is automated."}
+                </p>
+              </div>
+              <span className="shrink-0 rounded-full border border-input px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-navy group-open:bg-navy group-open:text-navy-foreground">
+                {lang === "fr" ? "Voir l'aperçu" : "View preview"}
+              </span>
+            </div>
+          </summary>
 
-        <div className="grid gap-3 border-b border-border pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+          <div className="border-t border-border px-4 pb-6 pt-5 md:px-6 md:pb-8">
+            <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
+
+            <div className="grid gap-3 border-b border-border pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
           <div className="min-w-0">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Cette semaine" : "This week"}
@@ -322,6 +340,8 @@ function SchedulePage() {
             );
           })}
         </div>
+          </div>
+        </details>
       </div>
     </>
   );
