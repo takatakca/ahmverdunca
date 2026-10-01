@@ -13,6 +13,7 @@ import { formatDate, useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import type { TranslationKey } from "@/lib/translations";
 import { EXTERNAL_LINKS } from "@/lib/site";
+import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
 
 export const Route = createFileRoute("/horaires")({
   head: () => ({
@@ -59,12 +60,9 @@ function SchedulePage() {
       ? search["arena"]
       : undefined;
   const searchQuery = typeof search["q"] === "string" ? search["q"].trim() : "";
-  const officialTeamQuery = selectedTeam
-    ? TEAMS.find((item) => item.slug === selectedTeam)?.code.startsWith("M")
-      ? TEAMS.find((item) => item.slug === selectedTeam)?.code
-      : undefined
-    : undefined;
-  const officialInitialQuery = searchQuery || officialTeamQuery || "";
+  const scheduleTeamSlug = selectedTeam ?? preferredTeam;
+  const scheduleTeam = TEAMS.find((item) => item.slug === scheduleTeamSlug);
+  const officialInitialQuery = searchQuery || officialScheduleQueryForTeam(scheduleTeam);
 
   const [start, setStart] = useState(() => weekStart(DEMO_TODAY));
   const [team, setTeam] = useState(selectedTeam ?? "all");
