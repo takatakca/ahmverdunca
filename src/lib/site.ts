@@ -18,7 +18,7 @@ export const SITE = {
 
 export const EXTERNAL_LINKS = {
   spordleRegister: "https://page.spordle.com/fr/ahm-de-verdun/register",
-  spordleLogin: "https://page.spordle.com/fr/ahm-de-verdun/register",
+  spordleLogin: "https://www.spordle.com/",
   wllv: "https://wllv.org/",
   hockeyQuebec: "https://www.hockey.qc.ca/",
   hockeyCanada: "https://www.hockeycanada.ca/",
