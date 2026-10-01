@@ -9,7 +9,7 @@ type ServerEntry = {
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
-const PUBLIC_INDEXING_ENABLED = import.meta.env.VITE_PUBLIC_INDEXING === "true";
+const PUBLIC_INDEXING_ENABLED = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
 function applyIndexingHeader(response: Response) {
   const contentType = response.headers.get("content-type") ?? "";
