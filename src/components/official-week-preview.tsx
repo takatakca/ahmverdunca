@@ -1,12 +1,15 @@
+import { Link } from "@tanstack/react-router";
 import { ExternalLink, MapPin, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
 } from "@/data/official-week";
+import { TEAMS } from "@/data/teams";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { mapsDirectionsUrl } from "@/lib/site";
+import { usePreferredTeam } from "@/lib/team-preference";
 import { cn } from "@/lib/utils";
 
 function displayTime(value: string) {
@@ -17,15 +20,26 @@ function displayTime(value: string) {
 }
 
 export function OfficialWeekPreview() {
-  const { lang } = useI18n();
+  const { lang, l } = useI18n();
+  const { preferredTeam } = usePreferredTeam();
   const today = montrealDateKey();
 
   const inPublishedWeek =
     today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
 
-  const relevant = inPublishedWeek
-    ? OFFICIAL_WEEK_ACTIVITIES.filter((item) => item.date >= today).slice(0, 6)
+  const savedTeam = TEAMS.find((item) => item.slug === preferredTeam);
+  const savedCode = savedTeam?.code.startsWith("M") ? savedTeam.code.toUpperCase() : undefined;
+
+  const upcoming = inPublishedWeek
+    ? OFFICIAL_WEEK_ACTIVITIES.filter((item) => item.date >= today)
     : [];
+
+  const personalized = savedCode
+    ? upcoming.filter((item) => item.group.toUpperCase().includes(savedCode))
+    : [];
+
+  const relevant = personalized.length > 0 ? personalized.slice(0, 4) : upcoming.slice(0, 6);
+  const isPersonalized = personalized.length > 0 && savedTeam;
 
   return (
     <section className="competition-panel py-12 text-navy-foreground md:py-16">
@@ -34,21 +48,35 @@ export function OfficialWeekPreview() {
           <div>
             <p className="eyebrow text-sport-foreground">
               {inPublishedWeek
-                ? lang === "fr"
-                  ? "Horaire officiel de la semaine"
-                  : "Official weekly schedule"
+                ? isPersonalized
+                  ? lang === "fr"
+                    ? "Votre horaire officiel"
+                    : "Your official schedule"
+                  : lang === "fr"
+                    ? "Horaire officiel de la semaine"
+                    : "Official weekly schedule"
                 : lang === "fr"
                   ? "Horaires"
                   : "Schedules"}
             </p>
             <h2 className="heading-section mt-2">
-              {lang === "fr" ? "Cette semaine à AHM Verdun" : "This week at AHM Verdun"}
+              {isPersonalized
+                ? lang === "fr"
+                  ? `${savedTeam.code} · Cette semaine`
+                  : `${savedTeam.code} · This week`
+                : lang === "fr"
+                  ? "Cette semaine à AHM Verdun"
+                  : "This week at AHM Verdun"}
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-navy-foreground/70">
               {inPublishedWeek
-                ? lang === "fr"
-                  ? "Données transcrites du PDF hebdomadaire AHMV publié le 29 septembre 2026."
-                  : "Data transcribed from the AHMV weekly PDF published September 29, 2026."
+                ? isPersonalized
+                  ? lang === "fr"
+                    ? `Votre catégorie mémorisée (${l(savedTeam.name)}) est priorisée à partir du PDF hebdomadaire AHMV publié le 29 septembre 2026.`
+                    : `Your saved category (${l(savedTeam.name)}) is prioritized from the AHMV weekly PDF published September 29, 2026.`
+                  : lang === "fr"
+                    ? "Données transcrites du PDF hebdomadaire AHMV publié le 29 septembre 2026."
+                    : "Data transcribed from the AHMV weekly PDF published September 29, 2026."
                 : lang === "fr"
                   ? "Consultez la page Horaires pour accéder aux sources officielles les plus récentes."
                   : "Open the Schedules page for the latest official sources."}
@@ -56,9 +84,15 @@ export function OfficialWeekPreview() {
           </div>
 
           <Button asChild variant="outline-light">
-            <a href="/horaires">
-              {lang === "fr" ? "Voir tous les horaires" : "View all schedules"}
-            </a>
+            <Link to="/horaires" search={savedTeam ? { team: savedTeam.slug } : {}}>
+              {isPersonalized
+                ? lang === "fr"
+                  ? "Voir tout mon horaire"
+                  : "View my full schedule"
+                : lang === "fr"
+                  ? "Voir tous les horaires"
+                  : "View all schedules"}
+            </Link>
           </Button>
         </div>
 
