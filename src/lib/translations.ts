@@ -65,7 +65,7 @@ const dict = {
   "home.news": { fr: "Nouvelles", en: "News" },
   "home.gallery": { fr: "Galerie", en: "Gallery" },
   "home.sponsors": { fr: "Partenaires et commanditaires", en: "Partners & sponsors" },
-  "home.sponsorsNote": { fr: "Les logos des partenaires seront affichés après réception et validation des fichiers officiels.", en: "Partner logos will be displayed once official files are received and approved." },
+  "home.sponsorsNote": { fr: "Les partenaires sont présentés avec les identités et liens autorisés disponibles.", en: "Partners are presented with the authorized identities and links currently available." },
   "home.sponsorSlot": { fr: "Emplacement partenaire", en: "Partner slot" },
   "home.weekTitle": { fr: "Cette semaine à AHM Verdun", en: "This week at AHM Verdun" },
   "home.weekHint": { fr: "L'information utile en quelques secondes", en: "What you need in seconds" },
@@ -129,7 +129,7 @@ const dict = {
   // Registration
   "reg.title": { fr: "Inscriptions", en: "Registration" },
   "reg.cta": { fr: "S'inscrire sur Spordle", en: "Register on Spordle" },
-  "reg.loginTitle": { fr: "Connexion", en: "Login" },
+  "reg.loginTitle": { fr: "Services hockey", en: "Hockey services" },
 
   // Contact
   "contact.title": { fr: "Contact", en: "Contact" },

@@ -1,7 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { getArticle, NEWS, NEWS_CATEGORIES } from "@/data/news";
 import { getTeam } from "@/data/teams";
@@ -56,7 +55,11 @@ function ArticlePage() {
           <article>
             <PlaceholderImage src={img(a.image)} alt={l(a.title)} className="rounded-xl" />
             <p className="mt-4 text-sm text-muted-foreground">{t("article.author")} {a.author}</p>
-            {lang === "en" && !a.body.en && <DemoNotice kind="info" className="mt-4">{t("article.noEnglish")}</DemoNotice>}
+            {lang === "en" && !a.body.en && (
+              <div className="mt-4 rounded-lg border border-border bg-ice px-4 py-3 text-sm text-muted-foreground">
+                {t("article.noEnglish")}
+              </div>
+            )}
             <div className="mt-5 space-y-4 text-base leading-relaxed text-foreground/90">
               {body.map((p, i) => <p key={i}>{p}</p>)}
             </div>
@@ -68,7 +71,11 @@ function ArticlePage() {
                 </a>
               </Button>
             )}
-            {a.contentPending && <DemoNotice kind="info" className="mt-6">{t("common.toValidate")}</DemoNotice>}
+            {a.contentPending && (
+              <div className="mt-6 rounded-lg border border-border bg-ice px-4 py-3 text-sm text-muted-foreground">
+                {t("common.toValidate")}
+              </div>
+            )}
           </article>
 
           <aside className="space-y-8">
