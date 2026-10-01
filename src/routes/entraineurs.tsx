@@ -2,7 +2,6 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink, ShieldAlert } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
 import { COACH_CATEGORIES, COACH_RESOURCES } from "@/data/coaches";
 import { formatShortDate, useI18n } from "@/lib/i18n";
@@ -37,11 +36,16 @@ function CoachesPage() {
         }
       />
       <div className="container-site py-8 md:py-12">
-        <DemoNotice kind="info" className="mb-6">
-          {lang === "fr"
-            ? "Les liens ci-dessous ouvrent les services externes actuellement référencés par l'AHM Verdun. La fiche médicale n'est jamais remplie ni conservée sur ce site."
-            : "The links below open external services currently referenced by AHM Verdun. The medical form is never completed or stored on this site."}
-        </DemoNotice>
+        <div className="mb-6 rounded-xl border border-border bg-ice p-5">
+          <p className="eyebrow text-sport">
+            {lang === "fr" ? "Ressources externes" : "External resources"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {lang === "fr"
+              ? "Les liens ci-dessous ouvrent les services actuellement référencés par l'AHM Verdun. La fiche médicale n'est jamais remplie ni conservée sur ce site."
+              : "The links below open services currently referenced by AHM Verdun. The medical form is never completed or stored on this site."}
+          </p>
+        </div>
 
         <div className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
           {[{ id: "all", label: { fr: "Tout", en: "All" } }, ...COACH_CATEGORIES].map((c) => (

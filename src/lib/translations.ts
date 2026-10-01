@@ -141,7 +141,7 @@ const dict = {
   "footer.more": { fr: "Plus", en: "More" },
   "footer.legal": { fr: "Confidentialité", en: "Privacy" },
   "footer.rights": { fr: "Tous droits réservés.", en: "All rights reserved." },
-  "footer.prototype": { fr: "Maquette de préproduction — Phase 1 — Conçue par GROUPE TAKATAK", en: "Pre-production mockup — Phase 1 — Designed by GROUPE TAKATAK" },
+  "footer.prototype": { fr: "Expérience numérique développée par GROUPE TAKATAK", en: "Digital experience developed by GROUPE TAKATAK" },
   "footer.contactNote": { fr: "Courriel et adresse officielle à valider avant publication.", en: "Official email and address to be validated before publishing." },
 
   // Search

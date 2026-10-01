@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, Images } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { ALBUMS } from "@/data/gallery";
 import { formatShortDate, useI18n } from "@/lib/i18n";
@@ -42,11 +41,16 @@ function GalleryPage() {
         }
       />
       <div className="container-site py-8 md:py-12">
-        <DemoNotice kind="info" className="mb-6">
-          {lang === "fr"
-            ? "L'inventaire des albums provient du site public existant. Aucune nouvelle photo de mineur n'est publiée sans validation."
-            : "The album inventory comes from the existing public site. No new photo of a minor is published without validation."}
-        </DemoNotice>
+        <div className="mb-6 rounded-xl border border-border bg-ice p-5">
+          <p className="eyebrow text-sport">
+            {lang === "fr" ? "Protection des jeunes" : "Youth privacy"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {lang === "fr"
+              ? "Les albums répertoriés proviennent de l'archive publique AHMV. Les médias de mineurs ne sont affichés qu'après validation des fichiers et des autorisations applicables."
+              : "Listed albums come from the public AHMV archive. Media featuring minors is displayed only after file and applicable consent validation."}
+          </p>
+        </div>
 
         <div className="mb-7 flex flex-col gap-4 rounded-xl border border-border bg-ice p-4 sm:flex-row sm:items-center sm:justify-between">
           <div>

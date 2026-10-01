@@ -1,8 +1,15 @@
-import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, MapPin, PhoneCall } from "lucide-react";
+import {
+  ArrowRight,
+  BellRing,
+  CalendarDays,
+  HandHeart,
+  MapPin,
+  Megaphone,
+  PhoneCall,
+  ShieldCheck,
+} from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
 import { SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
@@ -11,26 +18,23 @@ export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
       { title: "Contact — AHM Verdun" },
-      { name: "description", content: "Joindre l'Association du hockey mineur de Verdun : information générale, bénévolat, commandites et accès aux services officiels." },
+      {
+        name: "description",
+        content:
+          "Joindre l'Association du hockey mineur de Verdun : information générale, horaires, bénévolat, commandites et services officiels.",
+      },
       { property: "og:title", content: "Contact — AHM Verdun" },
-      { property: "og:description", content: "Coordonnées et points de contact de l'Association du hockey mineur de Verdun." },
+      {
+        property: "og:description",
+        content: "Coordonnées et points de contact de l'Association du hockey mineur de Verdun.",
+      },
     ],
   }),
   component: ContactPage,
 });
 
-const SUBJECTS = [
-  { fr: "Inscriptions", en: "Registration" },
-  { fr: "Horaires", en: "Schedules" },
-  { fr: "Bénévolat", en: "Volunteering" },
-  { fr: "Zone entraîneurs", en: "Coaches' zone" },
-  { fr: "Commandites", en: "Sponsorships" },
-  { fr: "Autre", en: "Other" },
-];
-
 function ContactPage() {
   const { t, lang } = useI18n();
-  const [sent, setSent] = useState(false);
 
   return (
     <>
@@ -39,153 +43,138 @@ function ContactPage() {
         title={t("contact.title")}
         description={
           lang === "fr"
-            ? "Trouvez rapidement le bon point de contact. Le courriel général officiel sera affiché seulement après validation par l'association."
-            : "Find the right contact point quickly. The official general email will be displayed only after association validation."
+            ? "Choisissez le bon accès selon votre besoin. Les opérations hockey restent dans leurs systèmes officiels; le site simplifie le chemin pour les familles."
+            : "Choose the right access point for your need. Hockey operations remain in their official systems; this site simply makes the path easier for families."
+        }
+        actions={
+          <Button asChild variant="sport">
+            <a href={`tel:${SITE.phoneE164}`}>
+              <PhoneCall className="size-4" />
+              {SITE.phoneDisplay}
+            </a>
+          </Button>
         }
       />
 
-      <div className="container-site grid gap-10 py-8 md:py-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
-        <div>
-          <DemoNotice kind="connect" className="mb-6">
-            {lang === "fr"
-              ? "Le formulaire est en démonstration et n'envoie encore aucun message. Utilisez les accès officiels ci-contre lorsque votre demande concerne le hockey."
-              : "The form is currently a demo and does not send messages yet. Use the official access points shown here when your request concerns hockey."}
-          </DemoNotice>
+      <div className="container-site space-y-12 py-8 md:py-12">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <Link to="/horaires" className="card-elevated group p-6">
+            <CalendarDays className="size-6 text-sport" aria-hidden />
+            <h2 className="heading-card mt-5 group-hover:text-sport">
+              {lang === "fr" ? "Horaires" : "Schedules"}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Horaire hebdomadaire AHMV et liens vers les calendriers sportifs officiels."
+                : "AHMV weekly schedule and links to official sport calendars."}
+            </p>
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+              {lang === "fr" ? "Ouvrir" : "Open"} <ArrowRight className="size-3.5" />
+            </span>
+          </Link>
 
-          <form
-            className="space-y-4"
-            onSubmit={(event) => {
-              event.preventDefault();
-              setSent(true);
-            }}
-          >
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">
-                {lang === "fr" ? "Nom" : "Name"}
-              </span>
-              <input
-                required
-                autoComplete="name"
-                className="h-11 w-full rounded-md border border-input bg-background px-3 text-base"
-              />
-            </label>
+          <Link to="/inscriptions" className="card-elevated group p-6">
+            <ShieldCheck className="size-6 text-sport" aria-hidden />
+            <h2 className="heading-card mt-5 group-hover:text-sport">
+              {lang === "fr" ? "Inscriptions" : "Registration"}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Information AHMV puis redirection vers Spordle pour l'inscription officielle."
+                : "AHMV information followed by redirection to Spordle for official registration."}
+            </p>
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+              {lang === "fr" ? "Continuer" : "Continue"} <ArrowRight className="size-3.5" />
+            </span>
+          </Link>
 
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">
-                {lang === "fr" ? "Courriel" : "Email"}
-              </span>
-              <input
-                type="email"
-                required
-                autoComplete="email"
-                className="h-11 w-full rounded-md border border-input bg-background px-3 text-base"
-              />
-            </label>
+          <Link to="/entraineurs" className="card-elevated group p-6">
+            <HandHeart className="size-6 text-sport" aria-hidden />
+            <h2 className="heading-card mt-5 group-hover:text-sport">
+              {lang === "fr" ? "Entraîneurs & bénévoles" : "Coaches & volunteers"}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Formations, ressources et accès publiés par l'association."
+                : "Training, resources and access published by the association."}
+            </p>
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+              {lang === "fr" ? "Voir les ressources" : "View resources"} <ArrowRight className="size-3.5" />
+            </span>
+          </Link>
 
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">
-                {lang === "fr" ? "Sujet" : "Subject"}
-              </span>
-              <select className="h-11 w-full rounded-md border border-input bg-background px-3 text-base">
-                {SUBJECTS.map((subject) => (
-                  <option key={subject.fr}>{lang === "fr" ? subject.fr : subject.en}</option>
-                ))}
-              </select>
-            </label>
+          <Link to="/partenaires" className="card-elevated group p-6">
+            <Megaphone className="size-6 text-sport" aria-hidden />
+            <h2 className="heading-card mt-5 group-hover:text-sport">
+              {lang === "fr" ? "Commandites" : "Sponsorships"}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Partenaires actuels et futur espace de visibilité, renouvellement et campagnes."
+                : "Current partners and future visibility, renewal and campaign space."}
+            </p>
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+              {lang === "fr" ? "Voir les partenaires" : "View partners"} <ArrowRight className="size-3.5" />
+            </span>
+          </Link>
+        </section>
 
-            <label className="block">
-              <span className="eyebrow mb-1.5 block text-muted-foreground">
-                {lang === "fr" ? "Message" : "Message"}
-              </span>
-              <textarea
-                required
-                rows={5}
-                className="w-full rounded-md border border-input bg-background p-3 text-base"
-              />
-            </label>
-
-            <Button type="submit" variant="sport" size="lg">
-              {lang === "fr" ? "Envoyer (démonstration)" : "Send (demo)"}
-            </Button>
-
-            {sent && (
-              <p
-                role="status"
-                className="rounded-md border border-demo/40 bg-demo-soft px-4 py-3 text-sm text-demo-foreground"
-              >
-                {lang === "fr"
-                  ? "Démonstration : le message n'a pas été envoyé et aucune donnée n'est enregistrée."
-                  : "Demo: the message was not sent and no data was stored."}
-              </p>
-            )}
-          </form>
-        </div>
-
-        <aside className="space-y-6">
-          <div className="card-elevated p-5">
-            <SectionHeading
-              title={lang === "fr" ? "Association" : "Association"}
-              className="mb-3"
-            />
-            <p className="flex items-start gap-2 text-sm">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-sport" aria-hidden />
-              {SITE.city}
+        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
+            <p className="eyebrow text-sport-foreground">
+              {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
             </p>
             <a
               href={`tel:${SITE.phoneE164}`}
-              className="mt-4 flex items-center gap-2 font-display text-2xl font-bold text-navy hover:text-sport"
+              className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
             >
-              <PhoneCall className="size-5 text-sport" aria-hidden />
+              <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
               {SITE.phoneDisplay}
             </a>
-            <p className="mt-2 text-xs text-muted-foreground">
+            <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
               {lang === "fr"
-                ? "Assistant vocal automatisé : intégration à venir. Le numéro est déjà réservé."
-                : "Automated voice assistant: integration coming later. The number is already reserved."}
-            </p>
-            <p className="mt-3 text-sm italic text-muted-foreground">
-              {lang === "fr"
-                ? "Adresse postale et courriel général officiels à valider."
-                : "Official mailing address and general email still need validation."}
+                ? "Le numéro est réservé. L'assistant vocal automatisé multilingue prévu par GROUPE TAKATAK sera branché dans une phase ultérieure; aucun faux service vocal n'est activé aujourd'hui."
+                : "The number is reserved. The multilingual automated voice assistant planned by GROUPE TAKATAK will be connected in a later phase; no simulated voice service is active today."}
             </p>
           </div>
 
-          <div className="card-elevated p-5">
-            <SectionHeading
-              title={lang === "fr" ? "Inscriptions hockey" : "Hockey registration"}
-              className="mb-3"
-            />
-            <p className="text-sm text-muted-foreground">
+          <div className="card-elevated p-6 md:p-8">
+            <BellRing className="size-6 text-sport" aria-hidden />
+            <h2 className="heading-card mt-5">
+              {lang === "fr" ? "Info générale & infolettre" : "General info & newsletter"}
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
-                ? "Consultez l'information AHM Verdun, puis continuez vers le système officiel."
-                : "Review the AHM Verdun information, then continue to the official system."}
+                ? "Le futur canal TAKATAK servira aux nouvelles générales, événements, campagnes, commanditaires et infolettres — pas à gérer les résultats, classements ou opérations hockey."
+                : "The future TAKATAK channel will support general news, events, campaigns, sponsors and newsletters — not scores, standings or hockey operations."}
             </p>
-            <Button asChild variant="outline" className="mt-4">
-              <Link to="/inscriptions">
-                {lang === "fr" ? "Voir les inscriptions" : "View registration"}
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
+            <div className="mt-5 rounded-lg border border-border bg-ice px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {lang === "fr" ? "Activation après approbation de l'association" : "Activation after association approval"}
+            </div>
           </div>
+        </section>
 
-          <div className="card-elevated p-5">
-            <SectionHeading
-              title={lang === "fr" ? "Commandites" : "Sponsorships"}
-              className="mb-3"
-            />
-            <p className="text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Découvrez les partenaires actuels et le futur espace de visibilité commanditaire."
-                : "Discover current partners and the future sponsorship visibility space."}
-            </p>
-            <Button asChild variant="outline" className="mt-4">
-              <Link to="/partenaires">
-                {lang === "fr" ? "Voir les partenaires" : "View partners"}
-                <ArrowRight className="size-4" />
-              </Link>
-            </Button>
+        <section>
+          <SectionHeading
+            eyebrow={lang === "fr" ? "Coordonnées" : "Contact details"}
+            title={lang === "fr" ? "Association du hockey mineur de Verdun" : "Verdun Minor Hockey Association"}
+          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="rounded-xl border border-border bg-ice p-5">
+              <p className="flex items-start gap-2 text-sm">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-sport" aria-hidden />
+                {SITE.city}
+              </p>
+            </div>
+            <div className="rounded-xl border border-border bg-ice p-5">
+              <p className="text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Le courriel général officiel et l'adresse postale seront publiés seulement après confirmation par l'AHM Verdun."
+                  : "The official general email and mailing address will be published only after confirmation by AHM Verdun."}
+              </p>
+            </div>
           </div>
-        </aside>
+        </section>
       </div>
     </>
   );
