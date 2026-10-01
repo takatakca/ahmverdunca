@@ -54,6 +54,9 @@ function Home() {
           className="absolute inset-0 size-full object-cover"
         />
         <div className="hero-gradient absolute inset-0" aria-hidden />
+        <span className="absolute right-4 top-4 z-10 rounded-full border border-white/10 bg-navy-deep/55 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-navy-foreground/80 backdrop-blur-sm md:right-8 md:top-8">
+          {t("common.demo")}
+        </span>
          <div className="container-site relative flex min-h-[52vh] flex-col justify-end py-10 text-navy-foreground md:min-h-[62vh] md:py-14">
           <p className="eyebrow mb-4 flex items-center gap-2 text-navy-foreground/80">
             <span className="inline-block h-px w-8 bg-sport" />

@@ -39,7 +39,7 @@ export function PlaceholderImage({
         </div>
       )}
       {src && markIllustrative && (
-        <span className="absolute bottom-2 left-2 rounded-sm bg-navy-deep/75 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-navy-foreground backdrop-blur-sm">
+        <span className="absolute bottom-2 left-2 rounded-full border border-white/10 bg-navy-deep/70 px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-navy-foreground/85 backdrop-blur-sm">
           {t("common.demo")}
         </span>
       )}
