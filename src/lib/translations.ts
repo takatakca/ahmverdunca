@@ -6,6 +6,7 @@ const dict = {
   "nav.schedule": { fr: "Horaires", en: "Schedules" },
   "nav.teams": { fr: "Équipes", en: "Teams" },
   "nav.registration": { fr: "Inscriptions", en: "Registration" },
+  "nav.tournaments": { fr: "Tournois", en: "Tournaments" },
   "nav.news": { fr: "Nouvelles", en: "News" },
   "nav.more": { fr: "Plus", en: "More" },
   "nav.wllv": { fr: "WLLV AA/BB", en: "WLLV AA/BB" },
