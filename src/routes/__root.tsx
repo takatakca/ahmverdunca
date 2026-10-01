@@ -69,7 +69,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-const PUBLIC_INDEXING_ENABLED = import.meta.env.VITE_PUBLIC_INDEXING === "true";
+const PUBLIC_INDEXING_ENABLED = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
 const organizationJsonLd = JSON.stringify({
   "@context": "https://schema.org",
