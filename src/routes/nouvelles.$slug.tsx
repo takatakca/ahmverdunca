@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
@@ -7,6 +7,7 @@ import { getArticle, NEWS, NEWS_CATEGORIES } from "@/data/news";
 import { getTeam } from "@/data/teams";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
   loader: ({ params }) => {
@@ -59,6 +60,14 @@ function ArticlePage() {
             <div className="mt-5 space-y-4 text-base leading-relaxed text-foreground/90">
               {body.map((p, i) => <p key={i}>{p}</p>)}
             </div>
+            {a.sourceUrl && (
+              <Button asChild variant="outline" size="sm" className="mt-6">
+                <a href={a.sourceUrl} target="_blank" rel="noopener noreferrer">
+                  {lang === "fr" ? "Voir l'article original AHMV" : "View original AHMV article"}
+                  <ExternalLink className="size-4" />
+                </a>
+              </Button>
+            )}
             {a.contentPending && <DemoNotice kind="info" className="mt-6">{t("common.toValidate")}</DemoNotice>}
           </article>
 
