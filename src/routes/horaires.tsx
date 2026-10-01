@@ -114,8 +114,8 @@ function SchedulePage() {
         title={t("schedule.title")}
         description={
           lang === "fr"
-            ? "Trouvez votre équipe rapidement. Les liens officiels restent disponibles pendant que la nouvelle expérience de calendrier est branchée aux données réelles."
-            : "Find your team quickly. Official links remain available while the new calendar experience is connected to real data."
+            ? "Consultez l’horaire hebdomadaire publié par AHM Verdun et accédez directement aux calendriers sportifs officiels de votre circuit."
+            : "Check AHM Verdun’s published weekly schedule and open the official sport calendars for your circuit."
         }
       />
 

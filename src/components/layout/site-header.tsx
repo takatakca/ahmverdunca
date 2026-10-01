@@ -25,11 +25,25 @@ export function SiteHeader() {
     setMoreOpen(false);
   }, [pathname]);
 
-  // Lock scroll when the mobile menu is open
+  // Lock scroll when the mobile menu is open.
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
+
+  // Let keyboard users close either navigation menu immediately.
+  useEffect(() => {
+    if (!open && !moreOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      setMoreOpen(false);
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, moreOpen]);
 
   const isMoreActive = MORE_NAV.some((n) => pathname.startsWith(n.to));
 
