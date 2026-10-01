@@ -312,7 +312,6 @@ function SearchPage() {
             aria-hidden
           />
           <input
-            autoFocus
             data-site-search
             type="search"
             value={q}
