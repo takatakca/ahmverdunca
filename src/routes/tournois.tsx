@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, ExternalLink, FileText, Trophy, Users } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { ShareButton } from "@/components/share-button";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 
@@ -60,6 +61,15 @@ function TournamentsPage() {
                   {lang === "fr" ? "Site officiel du tournoi" : "Official tournament site"} <ExternalLink className="size-4" />
                 </a>
               </Button>
+              <ShareButton
+                variant="outline-light"
+                title={lang === "fr" ? "Tournoi Provincial M11 de Verdun" : "Verdun Provincial U11 Tournament"}
+                text={
+                  lang === "fr"
+                    ? "18 au 31 janvier 2027 · Auditorium de Verdun"
+                    : "January 18–31, 2027 · Verdun Auditorium"
+                }
+              />
             </div>
           </div>
         </section>
