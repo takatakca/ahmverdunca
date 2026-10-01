@@ -15,7 +15,7 @@ const dict = {
   "nav.faq": { fr: "FAQ", en: "FAQ" },
   "nav.resources": { fr: "Ressources hockey", en: "Hockey resources" },
   "nav.contact": { fr: "Contact", en: "Contact" },
-  "nav.login": { fr: "Connexion / Spordle", en: "Login / Spordle" },
+  "nav.login": { fr: "Accès hockey", en: "Hockey access" },
   "nav.search": { fr: "Recherche", en: "Search" },
   "nav.menu": { fr: "Menu", en: "Menu" },
   "nav.close": { fr: "Fermer", en: "Close" },
@@ -140,7 +140,7 @@ const dict = {
   "footer.legal": { fr: "Confidentialité", en: "Privacy" },
   "footer.rights": { fr: "Tous droits réservés.", en: "All rights reserved." },
   "footer.prototype": { fr: "Maquette de préproduction — Phase 1 — Conçue par GROUPE TAKATAK", en: "Pre-production mockup — Phase 1 — Designed by GROUPE TAKATAK" },
-  "footer.contactNote": { fr: "Coordonnées officielles à valider avant publication.", en: "Official contact details to be validated before publishing." },
+  "footer.contactNote": { fr: "Courriel et adresse officielle à valider avant publication.", en: "Official email and address to be validated before publishing." },
 
   // Search
   "search.title": { fr: "Recherche", en: "Search" },
