@@ -20,6 +20,7 @@ export const Route = createFileRoute("/recherche")({
   head: () => ({
     meta: [
       { title: "Recherche — AHM Verdun" },
+      { name: "robots", content: "noindex, follow" },
       {
         name: "description",
         content:
