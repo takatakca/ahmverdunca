@@ -299,6 +299,7 @@ function SearchPage() {
           />
           <input
             autoFocus
+            data-site-search
             type="search"
             value={q}
             onChange={(event) => setQ(event.target.value)}
