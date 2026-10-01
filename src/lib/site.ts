@@ -31,7 +31,7 @@ export const EXTERNAL_LINKS = {
 
 export type NavKey =
   | "home" | "schedule" | "teams" | "registration" | "news" | "more"
-  | "wllv" | "gallery" | "coaches" | "arenas" | "faq" | "resources" | "contact";
+  | "wllv" | "gallery" | "coaches" | "arenas" | "faq" | "resources" | "partners" | "contact";
 
 export interface NavItem {
   key: NavKey;
@@ -53,6 +53,7 @@ export const MORE_NAV: NavItem[] = [
   { key: "arenas", to: "/arenas" },
   { key: "faq", to: "/faq" },
   { key: "resources", to: "/ressources" },
+  { key: "partners", to: "/partenaires" },
   { key: "contact", to: "/contact" },
 ];
 
