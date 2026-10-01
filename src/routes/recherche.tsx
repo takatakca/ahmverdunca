@@ -12,9 +12,10 @@ import { ALBUMS } from "@/data/gallery";
 import { RESOURCES } from "@/data/resources";
 import { COACH_RESOURCES } from "@/data/coaches";
 import { SPONSORS } from "@/data/sponsors";
-import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
+import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
 import { SITE } from "@/lib/site";
 import { formatShortDate, useI18n } from "@/lib/i18n";
+import { montrealDateKey } from "@/lib/montreal-date";
 
 export const Route = createFileRoute("/recherche")({
   head: () => ({
@@ -134,6 +135,9 @@ function normalize(value: string) {
 function SearchPage() {
   const { t, l, lang } = useI18n();
   const [q, setQ] = useState("");
+  const today = montrealDateKey();
+  const officialWeekActive =
+    today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
 
   const hits = useMemo<Hit[]>(() => {
     const needle = normalize(q.trim());
@@ -173,19 +177,21 @@ function SearchPage() {
       }
     });
 
-    OFFICIAL_WEEK_ACTIVITIES.filter((item) =>
-      normalize(`${item.group} ${item.activity} ${item.venue} ${item.date} ${item.start}`).includes(needle),
-    )
-      .slice(0, 8)
-      .forEach((item) => {
-        out.push({
-          key: `schedule-${item.id}`,
-          label: `${item.group} · ${item.start}`,
-          kind: lang === "fr" ? "Horaire officiel" : "Official schedule",
-          detail: `${item.activity} · ${item.venue} · ${formatShortDate(item.date, lang)}`,
-          href: `/horaires?q=${encodeURIComponent(item.group)}`,
+    if (officialWeekActive) {
+      OFFICIAL_WEEK_ACTIVITIES.filter((item) =>
+        normalize(`${item.group} ${item.activity} ${item.venue} ${item.date} ${item.start}`).includes(needle),
+      )
+        .slice(0, 8)
+        .forEach((item) => {
+          out.push({
+            key: `schedule-${item.id}`,
+            label: `${item.group} · ${item.start}`,
+            kind: lang === "fr" ? "Horaire officiel" : "Official schedule",
+            detail: `${item.activity} · ${item.venue} · ${formatShortDate(item.date, lang)}`,
+            href: `/horaires?q=${encodeURIComponent(item.group)}`,
+          });
         });
-      });
+    }
 
     NEWS.forEach((item) => {
       if (normalize(`${l(item.title)} ${l(item.excerpt)} nouvelles news`).includes(needle)) {
@@ -284,7 +290,7 @@ function SearchPage() {
       seen.add(key);
       return true;
     }).slice(0, 24);
-  }, [q, l, t, lang]);
+  }, [q, l, t, lang, officialWeekActive]);
 
   return (
     <>
