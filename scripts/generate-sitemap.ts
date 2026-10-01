@@ -21,6 +21,7 @@ const staticRoutes = [
   "/ressources",
   "/partenaires",
   "/contact",
+  "/recherche",
   "/connexion",
   "/confidentialite",
 ];
