@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { Clock, MapPin } from "lucide-react";
+import { Clock, MapPin, Navigation } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import type { TranslationKey } from "@/lib/translations";
 import type { ScheduleEvent } from "@/data/schedule";
 import { getArena } from "@/data/arenas";
 import { getTeam } from "@/data/teams";
 import { cn } from "@/lib/utils";
+import { mapsDirectionsUrl } from "@/lib/site";
+import { Button } from "@/components/ui/button";
 
 const statusStyle: Record<ScheduleEvent["status"], string> = {
   confirmed: "bg-status-confirmed-soft text-status-confirmed",
@@ -14,7 +16,7 @@ const statusStyle: Record<ScheduleEvent["status"], string> = {
   pending: "bg-status-pending-soft text-status-pending",
 };
 
-export function EventCard({ event }: { event: ScheduleEvent }) {
+export function EventCard({ event, compact = false }: { event: ScheduleEvent; compact?: boolean }) {
   const { t, l } = useI18n();
   const arena = getArena(event.arenaSlug);
   const team = getTeam(event.teamSlug);
@@ -22,7 +24,9 @@ export function EventCard({ event }: { event: ScheduleEvent }) {
   return (
     <article
       className={cn(
-        "card-elevated stripe-sport flex flex-col gap-3 p-4 pl-5 sm:flex-row sm:items-center sm:justify-between",
+        "card-elevated stripe-sport flex flex-col gap-3 p-4 pl-5",
+        !compact && "sm:flex-row sm:items-center sm:justify-between",
+        compact && "min-w-0 p-2.5 pl-3",
         event.status === "cancelled" && "opacity-80",
       )}
     >
@@ -38,7 +42,7 @@ export function EventCard({ event }: { event: ScheduleEvent }) {
             {t(`type.${event.type}` as TranslationKey)}
           </span>
         </div>
-        <h3 className="heading-card mt-1.5 truncate">
+        <h3 className={cn("heading-card mt-1.5", compact ? "break-words text-lg" : "truncate")}>
           {team ? l(team.name) : event.teamSlug}
           {event.opponent && <span className="text-muted-foreground"> · {event.opponent}</span>}
         </h3>
@@ -51,25 +55,20 @@ export function EventCard({ event }: { event: ScheduleEvent }) {
         </p>
         {event.note && <p className="mt-1.5 text-sm italic text-demo-foreground">{l(event.note)}</p>}
       </div>
-      <div className="flex shrink-0 gap-2">
+      <div className={cn("flex flex-wrap gap-2", compact ? "min-w-0" : "shrink-0")}>
         {team && (
-          <Link
+          <Button asChild variant="outline" size="sm" className={compact ? "h-8 min-h-8 px-2 text-[10px]" : ""}><Link
             to="/equipes/$slug"
             params={{ slug: team.slug }}
-            className="inline-flex items-center rounded-md border border-input px-3 py-2 text-xs font-semibold uppercase tracking-wide hover:bg-secondary"
           >
             {t("common.viewTeam")}
-          </Link>
+          </Link></Button>
         )}
         {arena && (
-          <Link
-            to="/arenas/$slug"
-            params={{ slug: arena.slug }}
-            className="inline-flex items-center gap-1.5 rounded-md border border-input px-3 py-2 text-xs font-semibold uppercase tracking-wide hover:bg-secondary"
-          >
-            <Clock className="size-3.5" aria-hidden />
-            {t("common.viewArena")}
-          </Link>
+          <>
+            <Button asChild variant="outline" size="sm" className={compact ? "h-8 min-h-8 px-2 text-[10px]" : ""}><Link to="/arenas/$slug" params={{ slug: arena.slug }}><Clock className="size-3.5" aria-hidden />{t("common.viewArena")}</Link></Button>
+            <Button asChild variant="outline" size="sm" className={compact ? "h-8 min-h-8 px-2 text-[10px]" : ""}><a href={mapsDirectionsUrl(arena.name)} target="_blank" rel="noopener noreferrer"><Navigation className="size-3.5" aria-hidden />{t("common.directions")}</a></Button>
+          </>
         )}
       </div>
     </article>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
@@ -77,7 +77,7 @@ function SchedulePage() {
 
   return (
     <>
-      <PageHeader eyebrow={t("common.demoData")} title={t("schedule.title")} description={t("schedule.subtitle")} />
+       <PageHeader eyebrow={t("common.demoData")} title={t("schedule.title")} description={t("schedule.subtitle")} />
 
       <div className="container-site py-8 md:py-12">
         <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
