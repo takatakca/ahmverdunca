@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Mic, PhoneCall, Search } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
 import { ARENAS } from "@/data/arenas";
@@ -106,11 +105,13 @@ function SearchPage() {
         </div>
 
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-          <DemoNotice kind="info">
-            {lang === "fr"
-              ? "Recherche instantanée sur les équipes, arénas, nouvelles, FAQ et pages principales."
-              : "Instant search across teams, arenas, news, FAQ and key pages."}
-          </DemoNotice>
+          <div className="rounded-xl border border-border bg-ice px-4 py-3">
+            <p className="text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Recherche instantanée sur les équipes, arénas, nouvelles, FAQ et pages principales."
+                : "Instant search across teams, arenas, news, FAQ and key pages."}
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             <Button type="button" variant="outline" disabled title={lang === "fr" ? "Intégration à venir" : "Coming integration"}>
               <Mic className="size-4" />
