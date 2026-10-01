@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown, Menu, PhoneCall, Search, X } from "lucide-react";
+import { CalendarDays, ChevronDown, Menu, PhoneCall, Search, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -139,7 +139,10 @@ export function SiteHeader() {
             <Link to="/recherche"><Search className="size-5" /></Link>
           </Button>
           <Button asChild variant="sport" size="sm" className="hidden sm:inline-flex">
-            <Link to="/connexion">{t("nav.login")}</Link>
+            <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
+              <CalendarDays className="size-4" />
+              {lang === "fr" ? "Mon horaire" : "My schedule"}
+            </Link>
           </Button>
           <button
             type="button"
@@ -220,6 +223,12 @@ export function SiteHeader() {
 
             <div className="mt-7 flex flex-col gap-3">
               <Button asChild variant="sport" size="lg">
+                <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
+                  <CalendarDays className="size-4" />
+                  {lang === "fr" ? "Voir mon horaire" : "View my schedule"}
+                </Link>
+              </Button>
+              <Button asChild variant="outline-light" size="lg">
                 <Link to="/connexion">{t("nav.login")}</Link>
               </Button>
               <Button asChild variant="outline-light" size="lg">
