@@ -7,6 +7,7 @@ import { getTeam } from "@/data/teams";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 import { Button } from "@/components/ui/button";
+import { ShareButton } from "@/components/share-button";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
   loader: ({ params }) => {
@@ -63,14 +64,17 @@ function ArticlePage() {
             <div className="mt-5 space-y-4 text-base leading-relaxed text-foreground/90">
               {body.map((p, i) => <p key={i}>{p}</p>)}
             </div>
-            {a.sourceUrl && (
-              <Button asChild variant="outline" size="sm" className="mt-6">
-                <a href={a.sourceUrl} target="_blank" rel="noopener noreferrer">
-                  {lang === "fr" ? "Voir l'article original AHMV" : "View original AHMV article"}
-                  <ExternalLink className="size-4" />
-                </a>
-              </Button>
-            )}
+            <div className="mt-6 flex flex-wrap gap-2">
+              <ShareButton title={l(a.title)} text={l(a.excerpt)} />
+              {a.sourceUrl && (
+                <Button asChild variant="outline" size="sm">
+                  <a href={a.sourceUrl} target="_blank" rel="noopener noreferrer">
+                    {lang === "fr" ? "Voir l'article original AHMV" : "View original AHMV article"}
+                    <ExternalLink className="size-4" />
+                  </a>
+                </Button>
+              )}
+            </div>
             {a.contentPending && (
               <div className="mt-6 rounded-lg border border-border bg-ice px-4 py-3 text-sm text-muted-foreground">
                 {t("common.toValidate")}
