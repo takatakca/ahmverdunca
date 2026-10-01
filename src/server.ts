@@ -47,7 +47,7 @@ function legacyRedirect(request: Request) {
   return Response.redirect(new URL(target, url.origin), 308);
 }
 
-function applyResponseHeaders(response: Response) {
+function applyResponseHeaders(response: Response, request: Request) {
   const headers = new Headers(response.headers);
   const contentType = headers.get("content-type") ?? "";
 
@@ -57,9 +57,15 @@ function applyResponseHeaders(response: Response) {
   headers.set("X-Frame-Options", "SAMEORIGIN");
 
   if (contentType.includes("text/html")) {
+    const pathname = new URL(request.url).pathname;
+    const routeMustStayNoindex = pathname === "/recherche" || response.status >= 400;
     headers.set(
       "X-Robots-Tag",
-      PUBLIC_INDEXING_ENABLED ? "index, follow" : "noindex, nofollow",
+      PUBLIC_INDEXING_ENABLED && !routeMustStayNoindex
+        ? "index, follow"
+        : routeMustStayNoindex
+          ? "noindex, follow"
+          : "noindex, nofollow",
     );
   }
 
@@ -108,18 +114,18 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const redirectResponse = legacyRedirect(request);
-    if (redirectResponse) return applyResponseHeaders(redirectResponse);
+    if (redirectResponse) return applyResponseHeaders(redirectResponse, request);
 
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return applyResponseHeaders(await normalizeCatastrophicSsrResponse(response));
+      return applyResponseHeaders(await normalizeCatastrophicSsrResponse(response), request);
     } catch (error) {
       console.error(error);
       return applyResponseHeaders(new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
-      }));
+      }), request);
     }
   },
 };

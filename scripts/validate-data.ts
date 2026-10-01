@@ -105,8 +105,28 @@ for (const [key, value] of Object.entries(EXTERNAL_LINKS)) {
 
 requireHttps("OFFICIAL_WEEK_META.sourceUrl", OFFICIAL_WEEK_META.sourceUrl);
 
+if (!validDate(OFFICIAL_WEEK_META.start) || !validDate(OFFICIAL_WEEK_META.end) || !validDate(OFFICIAL_WEEK_META.publishedAt)) {
+  errors.push("OFFICIAL_WEEK_META contains an invalid start, end or publication date.");
+}
+if (OFFICIAL_WEEK_META.start > OFFICIAL_WEEK_META.end) {
+  errors.push("OFFICIAL_WEEK_META start must not be after its end.");
+}
+if (OFFICIAL_WEEK_META.publishedAt > OFFICIAL_WEEK_META.end) {
+  errors.push("OFFICIAL_WEEK_META publication date must not be after the published week ends.");
+}
+
 for (const arena of ARENAS) {
-  if (arena.website) requireHttps(`Arena "${arena.slug}" website`, arena.website);
+  if (!arena.address.trim()) {
+    errors.push(`Arena "${arena.slug}" is missing an address.`);
+  }
+  if (!arena.addressVerified) {
+    errors.push(`Arena "${arena.slug}" must not be presented publicly as verified until its address is approved.`);
+  }
+  if (!arena.website) {
+    errors.push(`Arena "${arena.slug}" is missing its official municipal/institutional source.`);
+  } else {
+    requireHttps(`Arena "${arena.slug}" website`, arena.website);
+  }
 }
 
 for (const resource of COACH_RESOURCES) {
