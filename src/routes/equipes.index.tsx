@@ -27,7 +27,7 @@ function TeamsPage() {
             <p className="mt-2 text-sm text-muted-foreground">{t("teams.divisionsNote")}</p>
           </div>
           <div className="rounded-xl border border-border bg-ice p-5">
-            <p className="eyebrow text-sport">{t("common.privacy")}</p>
+            <p className="eyebrow text-sport">{l({ fr: "Confidentialité", en: "Privacy" })}</p>
             <p className="mt-2 text-sm text-muted-foreground">{t("teams.privacyNote")}</p>
           </div>
         </div>
