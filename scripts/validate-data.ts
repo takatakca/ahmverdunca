@@ -87,6 +87,20 @@ for (const [key, value] of Object.entries(EXTERNAL_LINKS)) {
   requireHttps(`EXTERNAL_LINKS.${key}`, value);
 }
 
+for (const arena of ARENAS) {
+  if (!arena.address.trim()) {
+    errors.push(`Arena "${arena.slug}" is missing an address.`);
+  }
+  if (!arena.addressVerified) {
+    errors.push(`Arena "${arena.slug}" must not be presented publicly as verified until its address is approved.`);
+  }
+  if (!arena.website) {
+    errors.push(`Arena "${arena.slug}" is missing its official municipal/institutional source.`);
+  } else {
+    requireHttps(`Arena "${arena.slug}" website`, arena.website);
+  }
+}
+
 for (const resource of COACH_RESOURCES) {
   requireHttps(`COACH_RESOURCES.${resource.id}.url`, resource.url);
 }
