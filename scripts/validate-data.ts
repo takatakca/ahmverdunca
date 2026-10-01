@@ -42,6 +42,24 @@ const teamSlugs = new Set(TEAMS.map((team) => team.slug));
 const arenaSlugs = new Set(ARENAS.map((arena) => arena.slug));
 const newsSlugs = new Set(NEWS.map((article) => article.slug));
 const faqTopics = new Set(FAQ_TOPICS.map((topic) => topic.id));
+const faqSourcePaths = new Set([
+  "/horaires",
+  "/equipes",
+  "/equipes/feminin",
+  "/inscriptions",
+  "/tournois",
+  "/nouvelles",
+  "/galerie",
+  "/wllv",
+  "/entraineurs",
+  "/arenas",
+  "/faq",
+  "/ressources",
+  "/partenaires",
+  "/contact",
+  "/connexion",
+  "/confidentialite",
+]);
 
 requireUnique("TEAMS.slug", TEAMS.map((team) => team.slug));
 requireUnique("ARENAS.slug", ARENAS.map((arena) => arena.slug));
@@ -68,12 +86,27 @@ if (SITE.domain.endsWith("/")) {
   errors.push("SITE.domain must not end with a slash.");
 }
 
+for (const [label, email] of [
+  ["SITE.operationsEmail", SITE.operationsEmail],
+  ["SITE.girlsHockeyEmail", SITE.girlsHockeyEmail],
+] as const) {
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    errors.push(`${label} is not a valid email address: "${email}".`);
+  }
+}
+
 if (!/^\+1\d{10}$/.test(SITE.phoneE164)) {
   errors.push(`SITE.phoneE164 is not a valid +1 E.164 number: "${SITE.phoneE164}".`);
 }
 
 for (const [key, value] of Object.entries(EXTERNAL_LINKS)) {
   requireHttps(`EXTERNAL_LINKS.${key}`, value);
+}
+
+requireHttps("OFFICIAL_WEEK_META.sourceUrl", OFFICIAL_WEEK_META.sourceUrl);
+
+for (const arena of ARENAS) {
+  if (arena.website) requireHttps(`Arena "${arena.slug}" website`, arena.website);
 }
 
 for (const resource of COACH_RESOURCES) {
@@ -134,6 +167,7 @@ for (const event of OFFICIAL_WEEK_ACTIVITIES) {
 }
 
 for (const article of NEWS) {
+  if (article.sourceUrl) requireHttps(`News article "${article.slug}" sourceUrl`, article.sourceUrl);
   if (!validDate(article.date)) {
     errors.push(`News article "${article.slug}" has invalid date "${article.date}".`);
   }
@@ -166,8 +200,8 @@ for (const faq of FAQ) {
   if (!faq.question.fr.trim() || !faq.question.en.trim() || !faq.answer.fr.trim() || !faq.answer.en.trim()) {
     errors.push(`FAQ "${faq.id}" is missing FR/EN question or answer text.`);
   }
-  if (faq.sourcePath && !faq.sourcePath.startsWith("/")) {
-    errors.push(`FAQ "${faq.id}" sourcePath must be an internal absolute path.`);
+  if (faq.sourcePath && !faqSourcePaths.has(faq.sourcePath)) {
+    errors.push(`FAQ "${faq.id}" sourcePath is not an approved public route: "${faq.sourcePath}".`);
   }
 }
 

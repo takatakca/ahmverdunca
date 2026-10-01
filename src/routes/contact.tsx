@@ -37,6 +37,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { t, lang } = useI18n();
   const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
+  const showPhone = showPlannedServices || SITE.phonePublic;
 
   return (
     <>
@@ -49,12 +50,14 @@ function ContactPage() {
             : "Choose the right access point for your need. Hockey operations remain in their official systems; this site simply makes the path easier for families."
         }
         actions={
-          <Button asChild variant="sport">
-            <a href={`tel:${SITE.phoneE164}`}>
-              <PhoneCall className="size-4" />
-              {SITE.phoneDisplay}
-            </a>
-          </Button>
+          showPhone ? (
+            <Button asChild variant="sport">
+              <a href={`tel:${SITE.phoneE164}`}>
+                <PhoneCall className="size-4" />
+                {SITE.phoneDisplay}
+              </a>
+            </Button>
+          ) : undefined
         }
       />
 
@@ -140,28 +143,31 @@ function ContactPage() {
           </Button>
         </section>
 
-        <section className={showPlannedServices ? "grid gap-6 lg:grid-cols-[1.1fr_0.9fr]" : "grid gap-6"}>
-          <div className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
-            </p>
-            <a
-              href={`tel:${SITE.phoneE164}`}
-              className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
-            >
-              <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
-              {SITE.phoneDisplay}
-            </a>
-            <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
-              {showPlannedServices
-                ? lang === "fr"
-                  ? "Numéro AHMV réservé pour l'information générale. L'assistance vocale automatisée sera offerte seulement lorsqu'elle aura été officiellement activée."
-                  : "AHMV number reserved for general information. Automated voice assistance will be offered only after it has been officially activated."
-                : lang === "fr"
-                  ? "Appelez ce numéro pour l'information générale AHMV."
-                  : "Call this number for general AHMV information."}
-            </p>
-          </div>
+        {(showPhone || showPlannedServices) && (
+          <section className={showPlannedServices && showPhone ? "grid gap-6 lg:grid-cols-[1.1fr_0.9fr]" : "grid gap-6"}>
+          {showPhone && (
+            <div className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
+              </p>
+              <a
+                href={`tel:${SITE.phoneE164}`}
+                className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
+              >
+                <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
+                {SITE.phoneDisplay}
+              </a>
+              <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
+                {showPlannedServices
+                  ? lang === "fr"
+                    ? "Numéro AHMV réservé pour l'information générale. L'assistance vocale automatisée sera offerte seulement lorsqu'elle aura été officiellement activée."
+                    : "AHMV number reserved for general information. Automated voice assistance will be offered only after it has been officially activated."
+                  : lang === "fr"
+                    ? "Appelez ce numéro pour l'information générale AHMV."
+                    : "Call this number for general AHMV information."}
+              </p>
+            </div>
+          )}
 
           {showPlannedServices && (
             <div className="card-elevated p-6 md:p-8">
@@ -179,8 +185,8 @@ function ContactPage() {
               </div>
             </div>
           )}
-        </section>
-
+          </section>
+        )}
         <section>
           <SectionHeading
             eyebrow={lang === "fr" ? "Coordonnées" : "Contact details"}

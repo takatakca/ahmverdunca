@@ -135,6 +135,7 @@ function normalize(value: string) {
 function SearchPage() {
   const { t, l, lang } = useI18n();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
+  const showPhone = !publicLaunch || SITE.phonePublic;
   const [q, setQ] = useState("");
   const today = montrealDateKey();
   const officialWeekActive =
@@ -341,12 +342,14 @@ function SearchPage() {
 
           <div className="flex flex-wrap gap-2">
             <VoiceSearchButton onTranscript={setQ} />
-            <Button asChild variant="outline">
-              <a href={`tel:${SITE.phoneE164}`}>
-                <PhoneCall className="size-4" />
-                {SITE.phoneDisplay}
-              </a>
-            </Button>
+            {showPhone && (
+              <Button asChild variant="outline">
+                <a href={`tel:${SITE.phoneE164}`}>
+                  <PhoneCall className="size-4" />
+                  {SITE.phoneDisplay}
+                </a>
+              </Button>
+            )}
           </div>
         </div>
 

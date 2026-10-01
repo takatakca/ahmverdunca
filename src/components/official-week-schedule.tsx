@@ -88,6 +88,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
 
 export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: string }) {
   const { lang } = useI18n();
+  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const [query, setQuery] = useState(initialQuery);
   const [showPast, setShowPast] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
@@ -168,11 +169,13 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                 : "Official AHM Verdun weekly schedule"
             }
           />
-          <Button asChild variant="outline">
-            <a href={OFFICIAL_WEEK_META.sourceUrl} target="_blank" rel="noopener noreferrer">
-              PDF officiel <ExternalLink className="size-4" />
-            </a>
-          </Button>
+          {!publicLaunch && (
+            <Button asChild variant="outline">
+              <a href={OFFICIAL_WEEK_META.sourceUrl} target="_blank" rel="noopener noreferrer">
+                PDF officiel <ExternalLink className="size-4" />
+              </a>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -275,8 +278,12 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                 ? "Archive historique — ne l'utilisez pas comme horaire courant."
                 : "Historical archive — do not use it as the current schedule.")
             : (lang === "fr"
-                ? "Horaire sujet à changement — consultez le site du club ou le PDF source pour la version la plus récente."
-                : "Schedule subject to change — check the club website or source PDF for the latest version.")}
+                ? (publicLaunch
+                    ? "Horaire sujet à changement — utilisez les calendriers officiels présentés plus haut pour la version la plus récente."
+                    : "Horaire sujet à changement — consultez le site du club ou le PDF source pour la version la plus récente.")
+                : (publicLaunch
+                    ? "Schedule subject to change — use the official calendars shown above for the latest version."
+                    : "Schedule subject to change — check the club website or source PDF for the latest version."))}
         </p>
           </>
         )}

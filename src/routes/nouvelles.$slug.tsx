@@ -35,6 +35,7 @@ function ArticlePage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
   const a = getArticle(slug)!;
+  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const category = NEWS_CATEGORIES.find((c) => c.id === a.category);
   const body = lang === "en" && a.body.en ? a.body.en : a.body.fr;
   const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
@@ -66,7 +67,7 @@ function ArticlePage() {
             </div>
             <div className="mt-6 flex flex-wrap gap-2">
               <ShareButton title={l(a.title)} text={l(a.excerpt)} />
-              {a.sourceUrl && (
+              {a.sourceUrl && !publicLaunch && (
                 <Button asChild variant="outline" size="sm">
                   <a href={a.sourceUrl} target="_blank" rel="noopener noreferrer">
                     {lang === "fr" ? "Voir l'article original AHMV" : "View original AHMV article"}

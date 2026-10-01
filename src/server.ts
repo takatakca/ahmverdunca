@@ -11,6 +11,42 @@ let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 const PUBLIC_INDEXING_ENABLED = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
+const LEGACY_REDIRECTS: Record<string, string> = {
+  "/index": "/",
+  "/schedules": "/horaires",
+  "/pages/2": "/horaires",
+  "/photos": "/galerie",
+  "/news": "/nouvelles",
+  "/news/26": "/inscriptions",
+  "/news/27": "/ressources",
+  "/news/29": "/contact",
+  "/news/33": "/equipes/feminin",
+  "/news/34": "/wllv",
+  "/news/35": "/tournois",
+  "/news/37": "/nouvelles/academie-ahmv-remise-des-bourses",
+  "/news/38": "/nouvelles/debut-de-saison-m5-m7",
+  "/news/39": "/nouvelles/annulations-22-26-septembre-2026",
+  "/albums": "/galerie",
+  "/albums/1": "/galerie/tournoi-m11-2025",
+  "/albums/2": "/galerie/journee-benevoles-2024",
+  "/albums/3": "/galerie/porte-ouverte-hockey-feminin",
+  "/albums/4": "/galerie/fete-fin-annee-2025-2026",
+  "/storage/5pW35UlsUj1CAOp9lljaN4JAnw5ayAEH70vcajXy.pdf": "/horaires",
+};
+
+function legacyRedirect(request: Request) {
+  const url = new URL(request.url);
+  const target =
+    LEGACY_REDIRECTS[url.pathname] ??
+    (/^\/news\/\d+$/.test(url.pathname)
+      ? "/nouvelles"
+      : /^\/albums\/\d+$/.test(url.pathname)
+        ? "/galerie"
+        : undefined);
+  if (!target) return null;
+  return Response.redirect(new URL(target, url.origin), 308);
+}
+
 function applyResponseHeaders(response: Response) {
   const headers = new Headers(response.headers);
   const contentType = headers.get("content-type") ?? "";
@@ -71,6 +107,9 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const redirectResponse = legacyRedirect(request);
+    if (redirectResponse) return applyResponseHeaders(redirectResponse);
+
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);

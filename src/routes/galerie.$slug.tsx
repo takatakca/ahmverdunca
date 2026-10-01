@@ -33,6 +33,7 @@ function AlbumPage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
   const al = getAlbum(slug)!;
+  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
   return (
     <>
@@ -66,7 +67,7 @@ function AlbumPage() {
                     ? "Cet album est prêt à être consulté."
                     : "This album is ready to browse.")}
             </p>
-            {al.sourceUrl && (
+            {al.sourceUrl && !publicLaunch && (
               <Button asChild variant="outline" className="mt-5 w-full">
                 <a href={al.sourceUrl} target="_blank" rel="noopener noreferrer">
                   {lang === "fr" ? "Voir l'album officiel AHMV" : "View official AHMV album"}
