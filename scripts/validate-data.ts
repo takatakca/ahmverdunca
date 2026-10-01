@@ -85,6 +85,15 @@ if (SITE.domain.endsWith("/")) {
   errors.push("SITE.domain must not end with a slash.");
 }
 
+for (const [label, email] of [
+  ["SITE.operationsEmail", SITE.operationsEmail],
+  ["SITE.girlsHockeyEmail", SITE.girlsHockeyEmail],
+] as const) {
+  if (!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(email)) {
+    errors.push(`${label} is not a valid email address: "${email}".`);
+  }
+}
+
 if (!/^\+1\d{10}$/.test(SITE.phoneE164)) {
   errors.push(`SITE.phoneE164 is not a valid +1 E.164 number: "${SITE.phoneE164}".`);
 }
