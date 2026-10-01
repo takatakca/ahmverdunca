@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
@@ -12,7 +12,6 @@ import { formatDate, useI18n } from "@/lib/i18n";
 import type { TranslationKey } from "@/lib/translations";
 
 export const Route = createFileRoute("/horaires")({
-  validateSearch: (search: Record<string, unknown>) => ({ team: typeof search.team === "string" && TEAMS.some((item) => item.slug === search.team) ? search.team : undefined }),
   head: () => ({
     meta: [
       { title: "Horaires — AHM Verdun" },
@@ -44,7 +43,8 @@ function addDays(iso: string, n: number) {
 
 function SchedulePage() {
   const { t, l, lang } = useI18n();
-  const { team: selectedTeam } = Route.useSearch();
+  const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
+  const selectedTeam = typeof search['team'] === "string" && TEAMS.some((item) => item.slug === search['team']) ? search['team'] : undefined;
   const [start, setStart] = useState(() => weekStart(DEMO_TODAY));
   const [team, setTeam] = useState(selectedTeam ?? "all");
   const [category, setCategory] = useState("all");
@@ -107,7 +107,7 @@ function SchedulePage() {
             <span className="eyebrow mb-1.5 block text-muted-foreground">{t("schedule.team")}</span>
             <select className={selectClass} value={team} onChange={(e) => setTeam(e.target.value)}>
               <option value="all">{t("common.all")}</option>
-              {TEAMS.map((tm) => <option key={tm.slug} value={tm.slug}>{l(tm.name)}</option>)}
+               {TEAMS.filter((tm) => category === "all" || tm.slug === category).map((tm) => <option key={tm.slug} value={tm.slug}>{l(tm.name)}</option>)}
             </select>
           </label>
            <label className="block">
