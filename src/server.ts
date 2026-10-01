@@ -12,6 +12,10 @@ let serverEntryPromise: Promise<ServerEntry> | undefined;
 const PUBLIC_INDEXING_ENABLED = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
 const LEGACY_REDIRECTS: Record<string, string> = {
+  "/index": "/",
+  "/schedules": "/horaires",
+  "/pages/2": "/horaires",
+  "/photos": "/galerie",
   "/news": "/nouvelles",
   "/news/37": "/nouvelles/academie-ahmv-remise-des-bourses",
   "/news/38": "/nouvelles/debut-de-saison-m5-m7",
