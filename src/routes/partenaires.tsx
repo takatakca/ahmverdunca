@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink, Handshake, Megaphone, RefreshCw } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
 import { SPONSORS } from "@/data/sponsors";
 import { useI18n } from "@/lib/i18n";
@@ -48,11 +47,16 @@ function PartnersPage() {
       />
 
       <div className="container-site space-y-12 py-8 md:py-12">
-        <DemoNotice kind="info">
-          {lang === "fr"
-            ? "Les noms sont affichés sans faux logos. Les logos, liens et niveaux de partenariat seront ajoutés seulement après validation."
-            : "Names are shown without fake logos. Logos, links and partnership levels will be added only after approval."}
-        </DemoNotice>
+        <div className="rounded-xl border border-border bg-ice p-5">
+          <p className="eyebrow text-sport">
+            {lang === "fr" ? "Identités protégées" : "Protected identities"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {lang === "fr"
+              ? "Les partenaires sont présentés par leur nom tant que l'utilisation de leur logo et leur niveau de visibilité n'ont pas été confirmés. Aucun logo n'est fabriqué."
+              : "Partners are shown by name until logo use and visibility level are confirmed. No logo is fabricated."}
+          </p>
+        </div>
 
         <section>
           <SectionHeading
