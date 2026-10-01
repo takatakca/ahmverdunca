@@ -6,7 +6,6 @@ import {
   Facebook,
   Instagram,
   MapPin,
-  Radio,
   ShieldCheck,
 } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -260,12 +259,12 @@ function TeamPage() {
 
         <section id="social-equipe">
           <SectionHeading
-            eyebrow={lang === "fr" ? "GROUPE TAKATAK — prochaine étape" : "GROUPE TAKATAK — next step"}
+            eyebrow={lang === "fr" ? "Médias d'équipe" : "Team media"}
             title={lang === "fr" ? "Dans le vestiaire" : "Inside the team"}
             description={
               lang === "fr"
-                ? "Les comptes sociaux autorisés de cette équipe pourront être reliés ici plus tard. Aucun faux fil social n'est affiché."
-                : "Authorized social accounts for this team can connect here later. No fake social feed is shown."
+                ? "Un espace prêt à accueillir les comptes sociaux autorisés de l'équipe, lorsque l'association choisira de les relier."
+                : "A space ready for the team's authorized social accounts whenever the association chooses to connect them."
             }
           />
 
@@ -280,16 +279,15 @@ function TeamPage() {
               >
                 <div className="flex items-center justify-between">
                   <Icon className="size-6 text-navy" aria-hidden />
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-ice px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    <Radio className="size-3" aria-hidden />
-                    {lang === "fr" ? "Connexion à venir" : "Connection coming"}
+                  <span className="rounded-full bg-ice px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    {lang === "fr" ? "Non relié" : "Not connected"}
                   </span>
                 </div>
                 <h3 className="heading-card mt-8">{label}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {lang === "fr"
-                    ? "Publications, photos, nouvelles générales et événements pourront être préparés dans GROUPE TAKATAK selon les permissions accordées."
-                    : "Posts, photos, general news and events can be prepared in GROUPE TAKATAK according to granted permissions."}
+                    ? "Publications, photos, nouvelles générales et événements de l'équipe, selon les permissions accordées."
+                    : "Team posts, photos, general news and events, according to granted permissions."}
                 </p>
               </div>
             ))}
@@ -298,8 +296,8 @@ function TeamPage() {
           <div className="mt-4 rounded-xl border border-border bg-ice p-4">
             <p className="text-sm text-muted-foreground">
               {lang === "fr"
-                ? "Les connexions sociales par équipe seront activées seulement après autorisation de l'association et configuration des permissions dans GROUPE TAKATAK."
-                : "Team social connections will be activated only after association approval and permission setup in GROUPE TAKATAK."}
+                ? "Aucune publication sociale n'est simulée. Les connexions seront ajoutées seulement avec l'autorisation de l'association."
+                : "No social posts are simulated. Connections will be added only with association approval."}
             </p>
           </div>
         </section>

@@ -18,7 +18,7 @@ export function MobileQuickNav() {
 
   const isActive = (to: string) => {
     if (to === "/") return pathname === "/";
-    if (to.startsWith("/equipes/")) return pathname.startsWith("/equipes/");
+    if (to === "/equipes" || to.startsWith("/equipes/")) return pathname.startsWith("/equipes");
     return pathname === to || pathname.startsWith(`${to}/`);
   };
 

@@ -133,8 +133,8 @@ function ContactPage() {
             </a>
             <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
               {lang === "fr"
-                ? "Le numéro est réservé. L'assistant vocal automatisé multilingue prévu par GROUPE TAKATAK sera branché dans une phase ultérieure; aucun faux service vocal n'est activé aujourd'hui."
-                : "The number is reserved. The multilingual automated voice assistant planned by GROUPE TAKATAK will be connected in a later phase; no simulated voice service is active today."}
+                ? "Numéro AHMV réservé pour l'information générale. L'assistance vocale automatisée sera offerte seulement lorsqu'elle aura été officiellement activée."
+                : "AHMV number reserved for general information. Automated voice assistance will be offered only after it has been officially activated."}
             </p>
           </div>
 
@@ -145,8 +145,8 @@ function ContactPage() {
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
-                ? "Le futur canal TAKATAK servira aux nouvelles générales, événements, campagnes, commanditaires et infolettres — pas à gérer les résultats, classements ou opérations hockey."
-                : "The future TAKATAK channel will support general news, events, campaigns, sponsors and newsletters — not scores, standings or hockey operations."}
+                ? "Nouvelles générales, événements, campagnes, commanditaires et infolettres pourront être regroupés ici. Les résultats, classements et opérations hockey demeurent dans les services officiels."
+                : "General news, events, campaigns, sponsors and newsletters can be brought together here. Scores, standings and hockey operations remain in official services."}
             </p>
             <div className="mt-5 rounded-lg border border-border bg-ice px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {lang === "fr" ? "Activation après approbation de l'association" : "Activation after association approval"}

@@ -49,12 +49,12 @@ function AccessPage() {
       <div className="container-site max-w-5xl space-y-10 py-8 md:py-12">
         <div className="rounded-xl border border-border bg-ice p-5">
           <p className="eyebrow text-sport">
-            {lang === "fr" ? "Deux responsabilités distinctes" : "Two separate responsibilities"}
+            {lang === "fr" ? "Le bon service, tout de suite" : "The right service, right away"}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
             {lang === "fr"
-              ? "Les systèmes hockey de l'association demeurent inchangés. GROUPE TAKATAK soutient uniquement l'expérience numérique publique, les communications, le marketing et l'information générale."
-              : "The association's hockey systems remain unchanged. GROUPE TAKATAK supports only the public digital experience, communications, marketing and general information."}
+              ? "Pour les inscriptions et services membres hockey, utilisez Spordle. Pour l'information générale et les communications AHMV, restez sur ce site."
+              : "For hockey registration and member services, use Spordle. For general AHMV information and communications, stay on this site."}
           </p>
         </div>
 
