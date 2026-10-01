@@ -35,6 +35,9 @@ export const EXTERNAL_LINKS = {
   officialSimpleLetterSchedule: "https://scoresheets.ca/tournament.php?id=17",
   officialDoubleLetterSchedule: "https://scoresheets.ca/tournament.php?id=15",
   officialGirlsSchedule: "https://page.spordle.com/fr/ligue-quebecoise-de-hockey-feminin/teams/143558?tab=schedule",
+  m11TournamentSchedule: "https://page.spordle.com/fr/tournoi-provincial-m11-de-verdun/schedule-stats-standings",
+  m11TournamentRules: "https://www.ahmverdun.com/storage/documents/01KF660HB5RE6VFPDN83PAN4PA.docx",
+  m7FestivalSchedule: "https://page.spordle.com/fr/festival-m7-de-verdun/schedule-stats-standings",
 } as const;
 
 export type NavKey =
