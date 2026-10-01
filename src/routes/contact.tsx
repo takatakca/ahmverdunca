@@ -36,6 +36,7 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const { t, lang } = useI18n();
+  const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
 
   return (
     <>
@@ -139,7 +140,7 @@ function ContactPage() {
           </Button>
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+        <section className={showPlannedServices ? "grid gap-6 lg:grid-cols-[1.1fr_0.9fr]" : "grid gap-6"}>
           <div className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
             <p className="eyebrow text-sport-foreground">
               {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
@@ -152,26 +153,32 @@ function ContactPage() {
               {SITE.phoneDisplay}
             </a>
             <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
-              {lang === "fr"
-                ? "Numéro AHMV réservé pour l'information générale. L'assistance vocale automatisée sera offerte seulement lorsqu'elle aura été officiellement activée."
-                : "AHMV number reserved for general information. Automated voice assistance will be offered only after it has been officially activated."}
+              {showPlannedServices
+                ? lang === "fr"
+                  ? "Numéro AHMV réservé pour l'information générale. L'assistance vocale automatisée sera offerte seulement lorsqu'elle aura été officiellement activée."
+                  : "AHMV number reserved for general information. Automated voice assistance will be offered only after it has been officially activated."
+                : lang === "fr"
+                  ? "Appelez ce numéro pour l'information générale AHMV."
+                  : "Call this number for general AHMV information."}
             </p>
           </div>
 
-          <div className="card-elevated p-6 md:p-8">
-            <BellRing className="size-6 text-sport" aria-hidden />
-            <h2 className="heading-card mt-5">
-              {lang === "fr" ? "Info générale & infolettre" : "General info & newsletter"}
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {lang === "fr"
-                ? "Nouvelles générales, événements, campagnes, commanditaires et infolettres pourront être regroupés ici. Les résultats, classements et opérations hockey demeurent dans les services officiels."
-                : "General news, events, campaigns, sponsors and newsletters can be brought together here. Scores, standings and hockey operations remain in official services."}
-            </p>
-            <div className="mt-5 rounded-lg border border-border bg-ice px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {lang === "fr" ? "Activation après approbation de l'association" : "Activation after association approval"}
+          {showPlannedServices && (
+            <div className="card-elevated p-6 md:p-8">
+              <BellRing className="size-6 text-sport" aria-hidden />
+              <h2 className="heading-card mt-5">
+                {lang === "fr" ? "Info générale & infolettre" : "General info & newsletter"}
+              </h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {lang === "fr"
+                  ? "Nouvelles générales, événements, campagnes, commanditaires et infolettres pourront être regroupés ici. Les résultats, classements et opérations hockey demeurent dans les services officiels."
+                  : "General news, events, campaigns, sponsors and newsletters can be brought together here. Scores, standings and hockey operations remain in official services."}
+              </p>
+              <div className="mt-5 rounded-lg border border-border bg-ice px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {lang === "fr" ? "Activation après approbation de l'association" : "Activation after association approval"}
+              </div>
             </div>
-          </div>
+          )}
         </section>
 
         <section>
