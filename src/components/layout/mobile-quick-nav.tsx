@@ -16,8 +16,14 @@ export function MobileQuickNav() {
     { label: lang === "fr" ? "Recherche" : "Search", to: "/recherche" as const, icon: Search },
   ];
 
+  const isActive = (to: string) => {
+    if (to === "/") return pathname === "/";
+    if (to.startsWith("/equipes/")) return pathname.startsWith("/equipes/");
+    return pathname === to || pathname.startsWith(`${to}/`);
+  };
+
   return <nav aria-label={lang === "fr" ? "Accès rapide" : "Quick navigation"} className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] shadow-lg lg:hidden">
-    {links.map(({ label, to, icon: Icon }) => <Link key={label} to={to} className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-center text-[10px] font-semibold ${pathname === to || (to === "/horaires" && pathname === "/horaires") ? "text-sport" : "text-muted-foreground"}`}>
+    {links.map(({ label, to, icon: Icon }) => <Link key={label} to={to} className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-center text-[10px] font-semibold ${isActive(to) ? "text-sport" : "text-muted-foreground"}`}>
       <Icon className="size-5 shrink-0" aria-hidden /> <span className="leading-tight">{label}</span>
     </Link>)}
   </nav>;
