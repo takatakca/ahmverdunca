@@ -23,7 +23,7 @@ export const Route = createFileRoute("/horaires")({
       { property: "og:title", content: "Horaires — AHM Verdun" },
       { property: "og:description", content: "Consultez les activités de la semaine par équipe et par aréna." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: SchedulePage,

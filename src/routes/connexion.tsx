@@ -26,6 +26,7 @@ export const Route = createFileRoute("/connexion")({
 
 function AccessPage() {
   const { lang } = useI18n();
+  const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
 
   return (
     <>
@@ -58,7 +59,7 @@ function AccessPage() {
           </p>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className={showPlannedServices ? "grid gap-5 md:grid-cols-2" : "grid gap-5"}>
           <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
             <p className="eyebrow text-sport-foreground">Spordle</p>
             <h2 className="heading-section mt-2">
@@ -76,23 +77,25 @@ function AccessPage() {
             </Button>
           </section>
 
-          <section className="card-elevated p-6 md:p-8">
-            <Mail className="size-7 text-sport" aria-hidden />
-            <p className="eyebrow mt-6 text-sport">{lang === "fr" ? "Communications" : "Communications"}</p>
-            <h2 className="heading-section mt-2">
-              {lang === "fr" ? "Communications AHMV" : "AHMV communications"}
-            </h2>
-            <p className="mt-3 text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Les infolettres, nouvelles générales, campagnes et préférences de communication seront gérées séparément des opérations hockey."
-                : "Newsletters, general updates, campaigns and communication preferences will be managed separately from hockey operations."}
-            </p>
-            <Button asChild variant="outline" className="mt-6">
-              <Link to="/contact">
-                {lang === "fr" ? "Contacter l'association" : "Contact the association"} <ArrowRight className="size-4" />
-              </Link>
-            </Button>
-          </section>
+          {showPlannedServices && (
+            <section className="card-elevated p-6 md:p-8">
+              <Mail className="size-7 text-sport" aria-hidden />
+              <p className="eyebrow mt-6 text-sport">{lang === "fr" ? "Communications" : "Communications"}</p>
+              <h2 className="heading-section mt-2">
+                {lang === "fr" ? "Communications AHMV" : "AHMV communications"}
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Les infolettres, nouvelles générales, campagnes et préférences de communication seront gérées séparément des opérations hockey."
+                  : "Newsletters, general updates, campaigns and communication preferences will be managed separately from hockey operations."}
+              </p>
+              <Button asChild variant="outline" className="mt-6">
+                <Link to="/contact">
+                  {lang === "fr" ? "Contacter l'association" : "Contact the association"} <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            </section>
+          )}
         </div>
 
         <section>
