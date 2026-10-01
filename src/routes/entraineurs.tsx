@@ -79,7 +79,7 @@ function CoachesPage() {
                 <a href={r.url} target="_blank" rel="noopener noreferrer">
                   {lang === "fr" ? "Ouvrir la ressource" : "Open resource"} <ExternalLink className="size-4" />
                 </a>
-              </Button>}
+              </Button>
             </div>
           ))}
         </div>
