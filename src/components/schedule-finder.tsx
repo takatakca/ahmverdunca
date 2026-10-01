@@ -8,11 +8,15 @@ import {
   Search,
   ShieldCheck,
   Users,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
-import { useI18n } from "@/lib/i18n";
+import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
+import { formatDate, useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
+import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
+import { mapsDirectionsUrl } from "@/lib/site";
 
 export function ScheduleFinder() {
   const { lang, l } = useI18n();
@@ -24,6 +28,15 @@ export function ScheduleFinder() {
   }, [preferredTeam]);
 
   const selected = TEAMS.find((item) => item.slug === team);
+  const today = montrealDateKey();
+  const nowTime = montrealTimeKey();
+  const nextActivity =
+    selected?.code.startsWith("M")
+      ? OFFICIAL_WEEK_ACTIVITIES
+          .filter((item) => item.group.toUpperCase().includes(selected.code.toUpperCase()))
+          .filter((item) => item.date > today || (item.date === today && item.end >= nowTime))
+          .sort((a, b) => `${a.date}T${a.start}`.localeCompare(`${b.date}T${b.start}`))[0]
+      : undefined;
 
   return (
     <section
@@ -186,6 +199,50 @@ export function ScheduleFinder() {
             </Button>
           </div>
         </div>
+
+        {selected && nextActivity && (
+          <div className="mt-4 overflow-hidden rounded-xl border border-sport/25 bg-ice shadow-card">
+            <div className="grid gap-4 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-5">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="eyebrow text-sport">
+                    {lang === "fr" ? "Prochaine activité publiée" : "Next published activity"}
+                  </p>
+                  {nextActivity.status === "cancelled" && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-status-cancelled px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                      <XCircle className="size-3" aria-hidden />
+                      {lang === "fr" ? "Annulée" : "Cancelled"}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-tight text-navy">
+                  {nextActivity.group} · {nextActivity.activity}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {formatDate(nextActivity.date, lang, { weekday: "long", day: "numeric", month: "long" })}
+                  {" · "}
+                  {nextActivity.start}–{nextActivity.end}
+                  {" · "}
+                  {nextActivity.venue}
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 md:flex">
+                <Button asChild variant="outline">
+                  <a href={mapsDirectionsUrl(nextActivity.venue)} target="_blank" rel="noopener noreferrer">
+                    <MapPin className="size-4" />
+                    {lang === "fr" ? "Itinéraire" : "Directions"}
+                  </a>
+                </Button>
+                <Button asChild variant="sport">
+                  <Link to="/horaires" search={{ q: selected.code }}>
+                    <CalendarDays className="size-4" />
+                    {lang === "fr" ? "Horaire" : "Schedule"}
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
