@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink, Mail } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { Button } from "@/components/ui/button";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
@@ -48,11 +47,16 @@ function AccessPage() {
       />
 
       <div className="container-site max-w-5xl space-y-10 py-8 md:py-12">
-        <DemoNotice kind="info">
-          {lang === "fr"
-            ? "GROUPE TAKATAK ne remplace pas les systèmes hockey de l'association. Il soutient le site, les communications, le marketing et l'information générale."
-            : "GROUPE TAKATAK does not replace the association's hockey systems. It supports the website, communications, marketing and general information."}
-        </DemoNotice>
+        <div className="rounded-xl border border-border bg-ice p-5">
+          <p className="eyebrow text-sport">
+            {lang === "fr" ? "Deux responsabilités distinctes" : "Two separate responsibilities"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {lang === "fr"
+              ? "Les systèmes hockey de l'association demeurent inchangés. GROUPE TAKATAK soutient uniquement l'expérience numérique publique, les communications, le marketing et l'information générale."
+              : "The association's hockey systems remain unchanged. GROUPE TAKATAK supports only the public digital experience, communications, marketing and general information."}
+          </p>
+        </div>
 
         <div className="grid gap-5 md:grid-cols-2">
           <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
