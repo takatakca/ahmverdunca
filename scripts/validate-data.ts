@@ -3,6 +3,7 @@ import { ARENAS } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
 import { NEWS } from "../src/data/news";
 import { SCHEDULE } from "../src/data/schedule";
+import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
 
 const errors: string[] = [];
@@ -40,6 +41,7 @@ requireUnique("ARENAS.slug", ARENAS.map((arena) => arena.slug));
 requireUnique("NEWS.slug", NEWS.map((article) => article.slug));
 requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
 requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
+requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
 requireUnique("ALERTS.id", ALERTS.map((alert) => alert.id));
 
 for (const team of TEAMS) {
@@ -65,6 +67,24 @@ for (const event of SCHEDULE) {
   }
   if (event.start >= event.end) {
     errors.push(`Schedule event "${event.id}" must end after it starts.`);
+  }
+}
+
+for (const event of OFFICIAL_WEEK_ACTIVITIES) {
+  if (!validDate(event.date)) {
+    errors.push(`Official week event "${event.id}" has invalid date "${event.date}".`);
+  }
+  if (!validTime(event.start) || !validTime(event.end)) {
+    errors.push(`Official week event "${event.id}" has invalid time range "${event.start}-${event.end}".`);
+  }
+  if (event.start >= event.end) {
+    errors.push(`Official week event "${event.id}" must end after it starts.`);
+  }
+  if (event.date < OFFICIAL_WEEK_META.start || event.date > OFFICIAL_WEEK_META.end) {
+    errors.push(`Official week event "${event.id}" falls outside the published week.`);
+  }
+  if (!event.group.trim() || !event.venue.trim() || !event.activity.trim()) {
+    errors.push(`Official week event "${event.id}" is missing a public label, venue or activity.`);
   }
 }
 
@@ -124,5 +144,6 @@ console.log(
     `News: ${NEWS.length}`,
     `Albums: ${ALBUMS.length}`,
     `Alerts: ${ALERTS.length}`,
+    `Official week events: ${OFFICIAL_WEEK_ACTIVITIES.length}`,
   ].join("\n"),
 );
