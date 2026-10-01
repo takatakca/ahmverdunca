@@ -58,6 +58,11 @@ function SchedulePage() {
     typeof search["arena"] === "string" && ARENAS.some((item) => item.slug === search["arena"])
       ? search["arena"]
       : undefined;
+  const officialTeamQuery = selectedTeam
+    ? TEAMS.find((item) => item.slug === selectedTeam)?.code.startsWith("M")
+      ? TEAMS.find((item) => item.slug === selectedTeam)?.code
+      : undefined
+    : undefined;
 
   const [start, setStart] = useState(() => weekStart(DEMO_TODAY));
   const [team, setTeam] = useState(selectedTeam ?? "all");
@@ -147,7 +152,7 @@ function SchedulePage() {
           </div>
         </section>
 
-        <OfficialWeekSchedule />
+        <OfficialWeekSchedule initialQuery={officialTeamQuery} />
 
         <div className="mt-8">
           <DemoNotice className="mb-6">{t("schedule.demoNotice")}</DemoNotice>
