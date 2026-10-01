@@ -53,7 +53,8 @@ function TeamPage() {
   const upcomingEvents = events.filter((event) => event.date >= DEMO_TODAY);
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
-  const arenas = ARENAS.filter((arena) => team.arenaSlugs.includes(arena.slug));
+  const eventArenaSlugs = new Set(events.map((event) => event.arenaSlug));
+  const arenas = ARENAS.filter((arena) => eventArenaSlugs.has(arena.slug));
   const nextEvent =
     events.find((event) => event.date >= DEMO_TODAY && event.status !== "cancelled") ??
     events.find((event) => event.date >= DEMO_TODAY) ??
