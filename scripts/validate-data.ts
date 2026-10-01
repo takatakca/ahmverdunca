@@ -5,6 +5,10 @@ import { NEWS } from "../src/data/news";
 import { SCHEDULE } from "../src/data/schedule";
 import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
+import { COACH_RESOURCES } from "../src/data/coaches";
+import { RESOURCES } from "../src/data/resources";
+import { SPONSORS } from "../src/data/sponsors";
+import { EXTERNAL_LINKS, MAIN_NAV, MORE_NAV, SITE } from "../src/lib/site";
 
 const errors: string[] = [];
 
@@ -43,6 +47,49 @@ requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
 requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
 requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
 requireUnique("ALERTS.id", ALERTS.map((alert) => alert.id));
+requireUnique("NAV.key", [...MAIN_NAV, ...MORE_NAV].map((item) => item.key));
+requireUnique("NAV.to", [...MAIN_NAV, ...MORE_NAV].map((item) => item.to));
+
+function requireHttps(label: string, value: string) {
+  if (!value.startsWith("https://")) {
+    errors.push(`${label} must use HTTPS: "${value}".`);
+  }
+}
+
+requireHttps("SITE.domain", SITE.domain);
+
+if (SITE.domain.endsWith("/")) {
+  errors.push("SITE.domain must not end with a slash.");
+}
+
+if (!/^\+1\d{10}$/.test(SITE.phoneE164)) {
+  errors.push(`SITE.phoneE164 is not a valid +1 E.164 number: "${SITE.phoneE164}".`);
+}
+
+for (const [key, value] of Object.entries(EXTERNAL_LINKS)) {
+  requireHttps(`EXTERNAL_LINKS.${key}`, value);
+}
+
+for (const resource of COACH_RESOURCES) {
+  requireHttps(`COACH_RESOURCES.${resource.id}.url`, resource.url);
+}
+
+for (const resource of RESOURCES) {
+  requireHttps(`RESOURCES.${resource.id}.url`, resource.url);
+}
+
+for (const sponsor of SPONSORS) {
+  if (sponsor.websiteVerified && !sponsor.website) {
+    errors.push(`Sponsor "${sponsor.name}" is marked websiteVerified without a website.`);
+  }
+  if (sponsor.website) requireHttps(`Sponsor "${sponsor.name}" website`, sponsor.website);
+}
+
+for (const navItem of [...MAIN_NAV, ...MORE_NAV]) {
+  if (!navItem.to.startsWith("/")) {
+    errors.push(`Navigation item "${navItem.key}" must use an internal absolute path.`);
+  }
+}
 
 for (const event of SCHEDULE) {
   if (!teamSlugs.has(event.teamSlug)) {
@@ -137,5 +184,7 @@ console.log(
     `Albums: ${ALBUMS.length}`,
     `Alerts: ${ALERTS.length}`,
     `Official week events: ${OFFICIAL_WEEK_ACTIVITIES.length}`,
+    `Validated external links: ${Object.keys(EXTERNAL_LINKS).length}`,
+    `Navigation routes: ${MAIN_NAV.length + MORE_NAV.length}`,
   ].join("\n"),
 );
