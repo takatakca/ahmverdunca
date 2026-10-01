@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, CheckCircle2 } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  MapPin,
+  Search,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
@@ -20,82 +28,164 @@ export function ScheduleFinder() {
   return (
     <section
       id="mon-equipe"
-      className="relative z-10 border-b border-border bg-background py-7 md:py-9"
-      aria-labelledby="schedule-finder-title"
+      className="relative z-10 border-b border-border bg-background py-8 md:py-10"
+      aria-labelledby="parent-hub-title"
     >
-      <div className="container-site grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-end">
-        <div className="min-w-0">
-          <p className="eyebrow text-sport">
-            {lang === "fr" ? "Accès rapide · Mon équipe" : "Quick access · My team"}
-          </p>
-          <h2
-            id="schedule-finder-title"
-            className="mt-1 font-display text-3xl font-bold uppercase leading-none md:text-4xl"
-          >
-            {lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}
-          </h2>
-          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-            {lang === "fr"
-              ? "Choisissez votre groupe une fois. Le site le gardera sur cet appareil pour retrouver l’horaire plus vite."
-              : "Choose your group once. The site will remember it on this device so you can get back to the schedule faster."}
-          </p>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-          <label className="min-w-0 text-xs font-semibold uppercase text-muted-foreground">
-            {lang === "fr" ? "Mon équipe / catégorie" : "My team / category"}
-            <select
-              aria-label={lang === "fr" ? "Mon équipe ou catégorie" : "My team or category"}
-              className="mt-1.5 h-12 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground"
-              value={team}
-              onChange={(event) => {
-                const value = event.target.value;
-                setTeam(value);
-                savePreferredTeam(value);
-              }}
+      <div className="container-site">
+        <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr] xl:items-start">
+          <div>
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Accès parent" : "Parent access"}
+            </p>
+            <h2
+              id="parent-hub-title"
+              className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-navy md:text-5xl"
             >
-              <option value="">{lang === "fr" ? "Choisir…" : "Choose…"}</option>
-              {TEAMS.map((item) => (
-                <option key={item.slug} value={item.slug}>
-                  {item.code === "F" ? l(item.name) : `${item.code} · ${l(item.name)}`}
-                </option>
-              ))}
-            </select>
-          </label>
+              {lang === "fr" ? "Trouvez-le en quelques secondes" : "Find it in seconds"}
+            </h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
+              {lang === "fr"
+                ? "Horaire, équipe, aréna ou inscription : les quatre actions les plus utilisées sont toujours ici."
+                : "Schedule, team, arena or registration: the four most-used actions are always right here."}
+            </p>
+          </div>
 
-          <Button
-            asChild
-            variant="sport"
-            size="lg"
-            className="w-full sm:w-auto"
-          >
-            <Link to="/horaires" search={team ? { team } : {}}>
-              <CalendarDays className="size-5" />
-              {team
-                ? lang === "fr"
-                  ? "Voir mon horaire"
-                  : "See my schedule"
-                : lang === "fr"
-                  ? "Voir tous les horaires"
-                  : "See all schedules"}
-              <ArrowRight className="size-4" />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            <Link
+              to="/horaires"
+              search={team ? { team } : {}}
+              className="group rounded-xl border border-border bg-ice p-4 transition-all hover:-translate-y-0.5 hover:border-sport/40 hover:bg-background hover:shadow-card"
+            >
+              <CalendarDays className="size-5 text-sport" aria-hidden />
+              <p className="mt-5 font-display text-xl font-bold uppercase text-navy">
+                {lang === "fr" ? "Mon horaire" : "My schedule"}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {selected
+                  ? `${selected.code} · ${l(selected.name)}`
+                  : lang === "fr"
+                    ? "Tous les horaires"
+                    : "All schedules"}
+              </p>
             </Link>
-          </Button>
-        </div>
-      </div>
 
-      <div className="container-site mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
-        {selected && (
-          <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
-            <CheckCircle2 className="size-3.5 text-status-confirmed" aria-hidden />
-            {lang === "fr" ? "Choix mémorisé" : "Saved choice"} · {l(selected.name)}
-          </span>
-        )}
-        <span>
-          {lang === "fr"
-            ? "Votre choix reste uniquement sur cet appareil. Les sous-équipes seront ajoutées lorsque les données officielles seront confirmées."
-            : "Your choice stays on this device only. Sub-teams will be added once official data is confirmed."}
-        </span>
+            {selected ? (
+              <Link
+                to="/equipes/$slug"
+                params={{ slug: selected.slug }}
+                className="group rounded-xl border border-border bg-ice p-4 transition-all hover:-translate-y-0.5 hover:border-sport/40 hover:bg-background hover:shadow-card"
+              >
+                <Users className="size-5 text-sport" aria-hidden />
+                <p className="mt-5 font-display text-xl font-bold uppercase text-navy">
+                  {lang === "fr" ? "Mon équipe" : "My team"}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {selected.code} · {l(selected.name)}
+                </p>
+              </Link>
+            ) : (
+              <Link
+                to="/equipes"
+                className="group rounded-xl border border-border bg-ice p-4 transition-all hover:-translate-y-0.5 hover:border-sport/40 hover:bg-background hover:shadow-card"
+              >
+                <Users className="size-5 text-sport" aria-hidden />
+                <p className="mt-5 font-display text-xl font-bold uppercase text-navy">
+                  {lang === "fr" ? "Mon équipe" : "My team"}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {lang === "fr" ? "Choisir une catégorie" : "Choose a category"}
+                </p>
+              </Link>
+            )}
+
+            <Link
+              to="/arenas"
+              className="group rounded-xl border border-border bg-ice p-4 transition-all hover:-translate-y-0.5 hover:border-sport/40 hover:bg-background hover:shadow-card"
+            >
+              <MapPin className="size-5 text-sport" aria-hidden />
+              <p className="mt-5 font-display text-xl font-bold uppercase text-navy">
+                {lang === "fr" ? "Mon aréna" : "My arena"}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {lang === "fr" ? "Adresse & itinéraire" : "Address & directions"}
+              </p>
+            </Link>
+
+            <Link
+              to="/inscriptions"
+              className="group rounded-xl border border-border bg-ice p-4 transition-all hover:-translate-y-0.5 hover:border-sport/40 hover:bg-background hover:shadow-card"
+            >
+              <ShieldCheck className="size-5 text-sport" aria-hidden />
+              <p className="mt-5 font-display text-xl font-bold uppercase text-navy">
+                {lang === "fr" ? "Inscription" : "Registration"}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {lang === "fr" ? "Accès officiel Spordle" : "Official Spordle access"}
+              </p>
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 rounded-xl border border-border bg-background p-4 shadow-card md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-5">
+          <div className="min-w-0">
+            <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              {lang === "fr" ? "Mémoriser ma catégorie sur cet appareil" : "Remember my category on this device"}
+              <select
+                aria-label={lang === "fr" ? "Mon équipe ou catégorie" : "My team or category"}
+                className="mt-2 h-12 w-full rounded-md border border-input bg-background px-3 text-base text-foreground"
+                value={team}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  setTeam(value);
+                  savePreferredTeam(value);
+                }}
+              >
+                <option value="">{lang === "fr" ? "Choisir une catégorie…" : "Choose a category…"}</option>
+                {TEAMS.map((item) => (
+                  <option key={item.slug} value={item.slug}>
+                    {item.code === "F" ? l(item.name) : `${item.code} · ${l(item.name)}`}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
+              {selected && (
+                <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
+                  <CheckCircle2 className="size-3.5 text-status-confirmed" aria-hidden />
+                  {lang === "fr" ? "Choix mémorisé" : "Saved"} · {selected.code}
+                </span>
+              )}
+              <span>
+                {lang === "fr"
+                  ? "Le choix reste uniquement sur cet appareil."
+                  : "The choice stays only on this device."}
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 md:flex">
+            <Button asChild variant="outline" size="lg">
+              <Link to="/recherche">
+                <Search className="size-4" />
+                {lang === "fr" ? "Rechercher" : "Search"}
+              </Link>
+            </Button>
+            <Button asChild variant="sport" size="lg">
+              <Link to="/horaires" search={team ? { team } : {}}>
+                <CalendarDays className="size-5" />
+                {team
+                  ? lang === "fr"
+                    ? "Voir mon horaire"
+                    : "My schedule"
+                  : lang === "fr"
+                    ? "Tous les horaires"
+                    : "All schedules"}
+                <ArrowRight className="size-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
     </section>
   );

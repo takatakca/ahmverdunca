@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
+import type { TranslationKey } from "@/lib/translations";
 
 export function SiteHeader() {
   const { t, lang } = useI18n();
@@ -68,7 +69,7 @@ export function SiteHeader() {
               className="rounded-md px-3 py-2 font-display text-base font-semibold uppercase tracking-wide text-navy-foreground/80 transition-colors hover:bg-navy-foreground/10 hover:text-navy-foreground"
               activeProps={{ className: "!text-navy-foreground border-b-2 border-sport rounded-b-none" }}
             >
-              {t(`nav.${item.key}` as const)}
+              {t(`nav.${item.key}` as TranslationKey)}
             </Link>
           ))}
           <div className="relative" onMouseLeave={() => setMoreOpen(false)}>
@@ -94,7 +95,7 @@ export function SiteHeader() {
                     className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-secondary"
                     activeProps={{ className: "bg-secondary text-sport" }}
                   >
-                    {t(`nav.${item.key}` as const)}
+                    {t(`nav.${item.key}` as TranslationKey)}
                   </Link>
                 ))}
               </div>
@@ -125,32 +126,68 @@ export function SiteHeader() {
       {/* Mobile menu */}
       {open && (
         <div id="mobile-menu" className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-navy-deep lg:hidden animate-in fade-in slide-in-from-top-2">
-          <nav aria-label="Navigation mobile" className="container-site flex flex-col py-4">
-            {MAIN_NAV.map((item) => (
-              <Link
-                key={item.key}
-                to={item.to}
-                activeOptions={{ exact: item.to === "/" }}
-                className="border-b border-navy-foreground/10 py-4 font-display text-2xl font-bold uppercase text-navy-foreground/90"
-                activeProps={{ className: "text-sport-foreground pl-3 border-l-4 border-l-sport" }}
-              >
-                {t(`nav.${item.key}` as const)}
-              </Link>
-            ))}
-            <p className="eyebrow mt-6 mb-2 text-navy-foreground/50">{t("nav.more")}</p>
-            <div className="grid grid-cols-2 gap-x-4">
-              {MORE_NAV.map((item) => (
+          <nav
+            aria-label={lang === "fr" ? "Navigation mobile" : "Mobile navigation"}
+            className="container-site py-5"
+          >
+            <p className="eyebrow text-sport-foreground">
+              {lang === "fr" ? "Accès rapides" : "Quick access"}
+            </p>
+            <div className="mt-3 grid grid-cols-2 gap-3">
+              {[
+                { key: "schedule", to: "/horaires" },
+                { key: "teams", to: "/equipes" },
+                { key: "registration", to: "/inscriptions" },
+                { key: "arenas", to: "/arenas" },
+              ].map((item) => (
                 <Link
                   key={item.key}
                   to={item.to}
-                  className="py-3 text-base font-medium text-navy-foreground/85"
-                  activeProps={{ className: "text-sport-foreground underline decoration-sport underline-offset-4" }}
+                  className="rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 py-4 font-display text-xl font-bold uppercase text-navy-foreground/90"
+                  activeProps={{ className: "border-sport bg-navy-foreground/[0.08] text-sport-foreground" }}
                 >
-                  {t(`nav.${item.key}` as const)}
+                  {t(`nav.${item.key}` as TranslationKey)}
                 </Link>
               ))}
             </div>
-            <div className="mt-6 flex flex-col gap-3">
+
+            <div className="mt-7 flex items-center justify-between">
+              <p className="eyebrow text-navy-foreground/50">
+                {lang === "fr" ? "Explorer" : "Explore"}
+              </p>
+              <Link
+                to="/recherche"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-foreground/80"
+              >
+                <Search className="size-4" />
+                {t("nav.search")}
+              </Link>
+            </div>
+
+            <div className="mt-2 grid grid-cols-2 gap-x-5">
+              {[
+                { key: "news", to: "/nouvelles" },
+                { key: "tournaments", to: "/tournois" },
+                { key: "gallery", to: "/galerie" },
+                { key: "wllv", to: "/wllv" },
+                { key: "coaches", to: "/entraineurs" },
+                { key: "faq", to: "/faq" },
+                { key: "resources", to: "/ressources" },
+                { key: "partners", to: "/partenaires" },
+                { key: "contact", to: "/contact" },
+              ].map((item) => (
+                <Link
+                  key={item.key}
+                  to={item.to}
+                  className="border-b border-navy-foreground/10 py-3 text-base font-medium text-navy-foreground/85"
+                  activeProps={{ className: "text-sport-foreground" }}
+                >
+                  {t(`nav.${item.key}` as TranslationKey)}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-7 flex flex-col gap-3">
               <Button asChild variant="sport" size="lg">
                 <Link to="/connexion">{t("nav.login")}</Link>
               </Button>

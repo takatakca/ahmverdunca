@@ -9,7 +9,6 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
@@ -315,11 +314,13 @@ function TeamPage() {
             ))}
           </div>
 
-          <DemoNotice kind="connect" className="mt-4">
-            {lang === "fr"
-              ? "Cette intégration sociale n'est pas active dans la démonstration actuelle."
-              : "This social integration is not active in the current demonstration."}
-          </DemoNotice>
+          <div className="mt-4 rounded-xl border border-border bg-ice p-4">
+            <p className="text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Les connexions sociales par équipe seront activées seulement après autorisation de l'association et configuration des permissions dans GROUPE TAKATAK."
+                : "Team social connections will be activated only after association approval and permission setup in GROUPE TAKATAK."}
+            </p>
+          </div>
         </section>
 
         <section>

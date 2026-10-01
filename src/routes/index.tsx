@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "AHM Verdun — Le hockey commence ici | Saison 2026–2027" },
-      { name: "description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun. Maquette de préproduction." },
+      { name: "description", content: "Horaires, équipes, inscriptions, nouvelles, arénas et ressources de l'Association du hockey mineur de Verdun." },
       { property: "og:title", content: "AHM Verdun — Le hockey commence ici" },
       { property: "og:description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun." },
       { property: "og:type", content: "website" },
@@ -261,7 +261,7 @@ function Home() {
       {/* Gallery */}
       <section className="container-site py-12 md:py-16">
         <SectionHeading
-          eyebrow={t("common.demo")}
+          eyebrow={lang === "fr" ? "Archives AHMV" : "AHMV archives"}
           title={t("home.moments")}
           action={<Button asChild variant="outline" size="sm"><Link to="/galerie">{t("common.seeAll")}</Link></Button>}
         />
@@ -371,9 +371,9 @@ function Home() {
                   <p className="text-sm font-semibold leading-tight text-navy-foreground/90">
                     {sponsor.name}
                   </p>
-                  {!sponsor.logoApproved && (
+                  {sponsor.websiteVerified && (
                     <p className="mt-2 text-[10px] uppercase tracking-wider text-navy-foreground/45">
-                      {lang === "fr" ? "Logo à valider" : "Logo to approve"}
+                      {lang === "fr" ? "Lien partenaire" : "Partner link"}
                     </p>
                   )}
                 </div>
