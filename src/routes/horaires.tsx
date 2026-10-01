@@ -64,7 +64,7 @@ function SchedulePage() {
       return;
     }
     if (preferredTeam) setTeam(preferredTeam);
-  }, [selectedTeam, preferredTeam]);
+  }, [selectedTeam, preferredTeam, savePreferredTeam]);
 
   const days = useMemo(() => Array.from({ length: 7 }, (_, i) => addDays(start, i)), [start]);
 
