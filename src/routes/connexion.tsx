@@ -8,13 +8,13 @@ import { useI18n } from "@/lib/i18n";
 export const Route = createFileRoute("/connexion")({
   head: () => ({
     meta: [
-      { title: "Accès hockey — AHM Verdun" },
+      { title: "Services hockey — AHM Verdun" },
       {
         name: "description",
         content:
           "Accédez aux services hockey officiels de l'AHM Verdun. Les communications numériques restent distinctes des opérations hockey.",
       },
-      { property: "og:title", content: "Accès hockey — AHM Verdun" },
+      { property: "og:title", content: "Services hockey — AHM Verdun" },
       {
         property: "og:description",
         content: "Accès simple vers la plateforme officielle utilisée pour l'inscription et les services hockey.",
@@ -66,8 +66,8 @@ function AccessPage() {
             </h2>
             <p className="mt-3 text-sm text-navy-foreground/75">
               {lang === "fr"
-                ? "Pour l'inscription hockey et les services membres déjà gérés dans Spordle, continuez sur la plateforme officielle."
-                : "For hockey registration and member services already managed in Spordle, continue to the official platform."}
+                ? "Pour les services membres déjà gérés dans Spordle, continuez sur la plateforme officielle. Pour une nouvelle inscription AHMV, utilisez la page Inscriptions du site."
+                : "For member services already managed in Spordle, continue to the official platform. For a new AHMV registration, use this site's Registration page."}
             </p>
             <Button asChild variant="sport" size="lg" className="mt-6">
               <a href={EXTERNAL_LINKS.spordleLogin} target="_blank" rel="noopener noreferrer">
