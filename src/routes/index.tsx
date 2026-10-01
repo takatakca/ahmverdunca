@@ -264,7 +264,7 @@ function Home() {
             <Trophy className="mb-auto size-8 text-sport-foreground" />
             <p className="eyebrow text-navy-foreground/60">{t("common.demo")}</p>
             <p className="mt-2 font-display text-3xl font-bold uppercase">{lang === "fr" ? "Centre des tournois AHMV" : "AHMV tournament centre"}</p>
-            <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? "Calendrier, inscriptions, résultats et visibilité des partenaires réunis dans un même espace." : "Schedules, registration, results and partner visibility in one place."}</p>
+            <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? "Calendrier, accès aux inscriptions et résultats officiels, nouvelles et visibilité des partenaires réunis dans un même espace." : "Schedule, access to official registration and results, news and partner visibility in one place."}</p>
           </div>
         </div>
       </section>
