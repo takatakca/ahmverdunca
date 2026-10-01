@@ -1,16 +1,21 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, Facebook, Instagram, MapPin, Radio } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  Facebook,
+  Instagram,
+  MapPin,
+  Radio,
+  ShieldCheck,
+} from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { PlaceholderImage } from "@/components/placeholder-image";
-import { EventCard } from "@/components/event-list";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
-import { DEMO_TODAY, SCHEDULE } from "@/data/schedule";
 import { NEWS } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
-import { ARENAS } from "@/data/arenas";
-import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
+import { formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 
 export const Route = createFileRoute("/equipes/$slug")({
@@ -49,19 +54,8 @@ function TeamPage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
   const team = getTeam(slug)!;
-  const events = SCHEDULE.filter((event) => event.teamSlug === slug);
-  const upcomingEvents = events.filter((event) => event.date >= DEMO_TODAY);
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
-  const eventArenaSlugs = new Set(events.map((event) => event.arenaSlug));
-  const arenas = ARENAS.filter((arena) => eventArenaSlugs.has(arena.slug));
-  const nextEvent =
-    events.find((event) => event.date >= DEMO_TODAY && event.status !== "cancelled") ??
-    events.find((event) => event.date >= DEMO_TODAY) ??
-    events[0];
-  const nextArena = nextEvent
-    ? ARENAS.find((arena) => arena.slug === nextEvent.arenaSlug)
-    : undefined;
 
   return (
     <>
@@ -74,7 +68,7 @@ function TeamPage() {
             <Button asChild variant="sport">
               <Link to="/horaires" search={{ team: slug }}>
                 <CalendarDays className="size-4" />
-                {t("teams.schedule")}
+                {lang === "fr" ? "Voir les horaires" : "View schedules"}
               </Link>
             </Button>
             <Button asChild variant="outline-light">
@@ -87,7 +81,26 @@ function TeamPage() {
       />
 
       <div className="container-site space-y-14 py-8 md:py-12">
-        <DemoNotice>{t("teams.divisionsNote")}</DemoNotice>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="rounded-xl border border-border bg-ice p-5">
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Structure d'équipe" : "Team structure"}
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Les sous-équipes et divisions officielles seront affichées lorsque leur structure sera confirmée. Aucune équipe n'est inventée ici."
+                : "Official sub-teams and divisions will appear once their structure is confirmed. No team is invented here."}
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-ice p-5">
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Confidentialité" : "Privacy"}
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {t("teams.privacyNote")}
+            </p>
+          </div>
+        </div>
 
         <section
           aria-labelledby="team-command-title"
@@ -96,77 +109,41 @@ function TeamPage() {
           <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
             <div className="competition-panel p-6 text-navy-foreground md:p-8">
               <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Prochaine activité" : "Next activity"}
+                {lang === "fr" ? "Centre équipe" : "Team centre"}
               </p>
               <h2
                 id="team-command-title"
-                className="mt-2 font-display text-3xl font-extrabold uppercase leading-none md:text-4xl"
+                className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl"
               >
-                {nextEvent
-                  ? formatDate(nextEvent.date, lang, {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "long",
-                    })
-                  : lang === "fr"
-                    ? "Horaire à venir"
-                    : "Schedule coming soon"}
+                {team.code}
               </h2>
+              <p className="mt-4 max-w-2xl text-sm text-navy-foreground/75 md:text-base">
+                {lang === "fr"
+                  ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
+                  : "A simple starting point for families: schedules, arenas, registration, news and public media."}
+              </p>
 
-              {nextEvent ? (
-                <div className="mt-6 grid gap-5 sm:grid-cols-[auto_1fr] sm:items-end">
-                  <div>
-                    <p className="font-display text-5xl font-extrabold tabular-nums text-sport-foreground">
-                      {nextEvent.start}
-                    </p>
-                    <p className="mt-1 text-sm text-navy-foreground/65">
-                      {nextEvent.end ? `→ ${nextEvent.end}` : ""}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="font-display text-2xl font-bold uppercase">
-                      {t(`type.${nextEvent.type}`)}
-                    </p>
-                    <p className="mt-2 flex items-center gap-2 text-sm text-navy-foreground/75">
-                      <MapPin className="size-4 text-sport-foreground" aria-hidden />
-                      {nextArena?.name ?? nextEvent.rink ?? t("common.toValidate")}
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <p className="mt-4 max-w-xl text-sm text-navy-foreground/70">
-                  {lang === "fr"
-                    ? "Aucune activité officielle n’est encore connectée pour cette équipe."
-                    : "No official activity is connected for this team yet."}
-                </p>
-              )}
-
-              <Button asChild variant="outline-light" className="mt-7">
-                <Link to="/horaires" search={{ team: slug }}>
-                  {lang === "fr" ? "Voir la semaine complète" : "View full week"}
-                  <ArrowRight className="size-4" />
-                </Link>
-              </Button>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <Button asChild variant="sport">
+                  <Link to="/horaires" search={{ team: slug }}>
+                    <CalendarDays className="size-4" />
+                    {lang === "fr" ? "Horaires officiels" : "Official schedules"}
+                  </Link>
+                </Button>
+                <Button asChild variant="outline-light">
+                  <Link to="/arenas">
+                    <MapPin className="size-4" />
+                    {lang === "fr" ? "Arénas & itinéraires" : "Arenas & directions"}
+                  </Link>
+                </Button>
+              </div>
             </div>
 
             <div className="p-6 md:p-8">
               <p className="eyebrow text-sport">
-                {lang === "fr" ? "Centre équipe" : "Team centre"}
+                {lang === "fr" ? "Accès rapide" : "Quick access"}
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr"
-                  ? "Tout ce qu’un parent cherche pour cette catégorie, sans retourner dans le menu général."
-                  : "Everything a parent needs for this category without returning to the main menu."}
-              </p>
-
-              <div className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-                <a
-                  href="#horaires-equipe"
-                  className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
-                >
-                  {lang === "fr" ? "Activités" : "Activities"}
-                  <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                </a>
+              <div className="mt-5 grid gap-2">
                 <a
                   href="#nouvelles-equipe"
                   className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
@@ -188,6 +165,13 @@ function TeamPage() {
                   {lang === "fr" ? "Réseaux sociaux" : "Social"}
                   <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
                 </a>
+                <Link
+                  to="/inscriptions"
+                  className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                >
+                  {lang === "fr" ? "Inscriptions" : "Registration"}
+                  <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                </Link>
               </div>
             </div>
           </div>
@@ -195,46 +179,37 @@ function TeamPage() {
 
         <section id="horaires-equipe">
           <SectionHeading
-            eyebrow={t("common.demoData")}
-            title={t("teams.upcoming")}
-            action={
-              <Button asChild variant="outline" size="sm">
-                <Link to="/horaires" search={{ team: slug }}>
-                  {lang === "fr" ? "Horaire complet" : "Full schedule"}
-                </Link>
-              </Button>
+            eyebrow={lang === "fr" ? "Source officielle" : "Official source"}
+            title={lang === "fr" ? "Horaires" : "Schedules"}
+            description={
+              lang === "fr"
+                ? "Les horaires et résultats restent sous l'autorité des systèmes hockey officiels. Cette page vous dirige vers le bon accès sans créer de données parallèles."
+                : "Schedules and results remain under the authority of official hockey systems. This page directs you to the right place without creating parallel data."
             }
           />
-          {upcomingEvents.length ? (
-            <div className="space-y-3">
-              {upcomingEvents.slice(0, 6).map((event) => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground">{t("schedule.noEvents")}</p>
-          )}
-        </section>
-
-        <section id="arenas-equipe">
-          <SectionHeading title={t("teams.arenas")} />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {arenas.map((arena) => (
-              <Link
-                key={arena.slug}
-                to="/arenas/$slug"
-                params={{ slug: arena.slug }}
-                className="card-elevated group p-5 hover:text-sport"
-              >
-                <MapPin className="size-5 text-sport" aria-hidden />
-                <h3 className="heading-card mt-5">{arena.name}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{l(arena.borough)}</p>
-                <span className="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
-                  {lang === "fr" ? "Voir l’aréna" : "View arena"}
-                  <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Link>
-            ))}
+          <div className="grid gap-4 md:grid-cols-2">
+            <Link to="/horaires" search={{ team: slug }} className="card-elevated group p-6">
+              <CalendarDays className="size-6 text-sport" aria-hidden />
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                {lang === "fr" ? "Consulter les horaires" : "View schedules"}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Horaire hebdomadaire AHMV et passerelles vers les calendriers officiels."
+                  : "AHMV weekly schedule and gateways to official calendars."}
+              </p>
+            </Link>
+            <Link to="/arenas" className="card-elevated group p-6">
+              <MapPin className="size-6 text-sport" aria-hidden />
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                {lang === "fr" ? "Trouver un aréna" : "Find an arena"}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Adresses et itinéraires regroupés dans un seul endroit."
+                  : "Addresses and directions grouped in one place."}
+              </p>
+            </Link>
           </div>
         </section>
 
@@ -262,7 +237,11 @@ function TeamPage() {
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground">{t("common.noResults")}</p>
+            <p className="rounded-xl border border-border bg-ice p-5 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Aucune nouvelle vérifiée n'est encore associée à cette catégorie."
+                : "No verified news is associated with this category yet."}
+            </p>
           )}
         </section>
 
@@ -291,18 +270,22 @@ function TeamPage() {
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground">{t("common.noResults")}</p>
+            <p className="rounded-xl border border-border bg-ice p-5 text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Aucun album public validé n'est encore associé à cette catégorie."
+                : "No approved public album is associated with this category yet."}
+            </p>
           )}
         </section>
 
         <section id="social-equipe">
           <SectionHeading
-            eyebrow={lang === "fr" ? "Aperçu GROUPE TAKATAK" : "GROUPE TAKATAK preview"}
+            eyebrow={lang === "fr" ? "GROUPE TAKATAK — prochaine étape" : "GROUPE TAKATAK — next step"}
             title={lang === "fr" ? "Dans le vestiaire" : "Inside the team"}
             description={
               lang === "fr"
-                ? "Les comptes réels de cette équipe pourront être reliés ici après autorisation. Aucun faux contenu social n’est affiché."
-                : "The team’s real accounts can be connected here after approval. No fake social content is shown."
+                ? "Les comptes sociaux autorisés de cette équipe pourront être reliés ici plus tard. Aucun faux fil social n'est affiché."
+                : "Authorized social accounts for this team can connect here later. No fake social feed is shown."
             }
           />
 
@@ -325,8 +308,8 @@ function TeamPage() {
                 <h3 className="heading-card mt-8">{label}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {lang === "fr"
-                    ? "Publications, photos, nouvelles générales et événements de l’équipe pourront apparaître ici depuis le dashboard GROUPE TAKATAK."
-                    : "Posts, photos, general news and team events can appear here from the GROUPE TAKATAK dashboard."}
+                    ? "Publications, photos, nouvelles générales et événements pourront être préparés dans GROUPE TAKATAK selon les permissions accordées."
+                    : "Posts, photos, general news and events can be prepared in GROUPE TAKATAK according to granted permissions."}
                 </p>
               </div>
             ))}
@@ -334,16 +317,40 @@ function TeamPage() {
 
           <DemoNotice kind="connect" className="mt-4">
             {lang === "fr"
-              ? "Les futurs accès sociaux seront limités à leur périmètre autorisé. Cette connexion n’est pas active dans la maquette."
-              : "Future social access will be limited to its authorized scope. This connection is not active in the prototype."}
+              ? "Cette intégration sociale n'est pas active dans la démonstration actuelle."
+              : "This social integration is not active in the current demonstration."}
           </DemoNotice>
         </section>
 
         <section>
-          <SectionHeading title={t("teams.documents")} />
-          <DemoNotice kind="info">
-            {t("common.notAvailable")} — {t("common.toValidate")}
-          </DemoNotice>
+          <SectionHeading
+            eyebrow={lang === "fr" ? "Ressources publiques" : "Public resources"}
+            title={lang === "fr" ? "Besoin d'autre chose?" : "Need something else?"}
+          />
+          <div className="grid gap-4 md:grid-cols-2">
+            <Link to="/ressources" className="card-elevated group p-6">
+              <ShieldCheck className="size-6 text-sport" aria-hidden />
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                {lang === "fr" ? "Ressources hockey" : "Hockey resources"}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Hockey Québec, Hockey Canada, aide financière et liens officiels."
+                  : "Hockey Québec, Hockey Canada, financial assistance and official links."}
+              </p>
+            </Link>
+            <Link to="/faq" className="card-elevated group p-6">
+              <ArrowRight className="size-6 text-sport" aria-hidden />
+              <h3 className="heading-card mt-5 group-hover:text-sport">
+                F.A.Q.
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Réponses rapides aux questions les plus fréquentes des familles."
+                  : "Quick answers to families' most common questions."}
+              </p>
+            </Link>
+          </div>
         </section>
       </div>
     </>
