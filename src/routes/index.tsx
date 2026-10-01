@@ -58,9 +58,9 @@ function Home() {
               <Link to="/horaires"><CalendarDays className="size-5" /> {t("home.ctaSchedule")}</Link>
             </Button>
             <Button asChild variant="outline-light" size="lg">
-              <a href={EXTERNAL_LINKS.spordleRegister} target="_blank" rel="noopener noreferrer">
-                {t("home.ctaRegister")} <ExternalLink className="size-4" />
-              </a>
+              <Link to="/inscriptions">
+                {t("home.ctaRegister")} <ArrowRight className="size-4" />
+              </Link>
             </Button>
           </div>
         </div>
