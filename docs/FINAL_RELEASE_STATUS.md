@@ -50,7 +50,7 @@ The current public architecture does **not** recreate hockey operations. Spordle
 - Demo/illustrative media cannot silently become public production media.
 - Unapproved team social accounts are hidden.
 - Planned newsletter/voice-service messaging is preview-only.
-- Protected photo albums retain official AHMV source links without copying media involving minors.
+- Protected photo albums retain legacy AHMV source references for pre-production verification without copying media involving minors; those retired same-domain source buttons are not exposed after public cutover.
 - Empty public filter categories are hidden instead of showing dead/empty states.
 - FAQ answers awaiting official validation remain available for pre-production review but are excluded from the indexed public FAQ and public search.
 - Critical filter state is exposed to assistive technologies.
