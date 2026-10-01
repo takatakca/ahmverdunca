@@ -121,7 +121,13 @@ export function VoiceSearchButton({
 
     recognitionRef.current = recognition;
     setListening(true);
-    recognition.start();
+
+    try {
+      recognition.start();
+    } catch {
+      recognitionRef.current = null;
+      setListening(false);
+    }
   };
 
   return (
