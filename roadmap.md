@@ -1,0 +1,4 @@
+- [ ] Mettre l'horaire et Mon équipe à portée immédiate sur l'accueil, sans changer l'image ni les sections existantes.
+- [ ] Ajouter l'accès rapide mobile et conserver localement la catégorie préférée.
+- [ ] Améliorer les filtres et les vues mobile/ordinateur des horaires fictifs, avec liens utiles.
+- [ ] Vérifier l'expérience sur téléphone et ordinateur, les langues et les autres pages.

@@ -83,7 +83,7 @@ const dict = {
 
   // Schedule
   "schedule.title": { fr: "Horaires", en: "Schedules" },
-  "schedule.subtitle": { fr: "Entraînements, matchs et événements de la saison, consultables sur téléphone.", en: "Practices, games and events, readable on your phone." },
+  "schedule.subtitle": { fr: "Trouvez rapidement les activités de votre équipe.", en: "Quickly find your team's activities." },
   "schedule.prevWeek": { fr: "Semaine précédente", en: "Previous week" },
   "schedule.nextWeek": { fr: "Semaine suivante", en: "Next week" },
   "schedule.today": { fr: "Semaine courante", en: "Current week" },

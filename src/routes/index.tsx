@@ -14,6 +14,8 @@ import { EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 import heroHockey from "@/assets/hero-hockey.jpg";
+import { ScheduleFinder } from "@/components/schedule-finder";
+import { usePreferredTeam } from "@/lib/team-preference";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,8 +33,9 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t, l, lang } = useI18n();
+  const { preferredTeam } = usePreferredTeam();
   const alerts = ALERTS.filter((a) => !a.archived);
-  const upcoming = SCHEDULE.filter((e) => e.date >= DEMO_TODAY).slice(0, 4);
+  const upcoming = SCHEDULE.filter((e) => e.date >= DEMO_TODAY && (!preferredTeam || e.teamSlug === preferredTeam)).slice(0, 4);
   const news = NEWS.slice(0, 3);
 
   return (
@@ -41,7 +44,7 @@ function Home() {
       <section className="relative isolate">
         <img src={heroHockey} alt="" width={1600} height={912} className="absolute inset-0 size-full object-cover" />
         <div className="hero-gradient absolute inset-0" aria-hidden />
-        <div className="container-site relative flex min-h-[78vh] flex-col justify-end py-14 text-navy-foreground md:min-h-[82vh] md:py-20">
+         <div className="container-site relative flex min-h-[58vh] flex-col justify-end py-10 text-navy-foreground md:min-h-[70vh] md:py-16">
           <p className="eyebrow mb-4 flex items-center gap-2 text-navy-foreground/80">
             <span className="inline-block h-px w-8 bg-sport" />
             {t("common.season")} {SITE.season}
@@ -62,6 +65,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+       <ScheduleFinder />
 
       {/* Alerts */}
       {alerts.length > 0 && (
@@ -98,8 +103,9 @@ function Home() {
             action={<Button asChild variant="outline-light" size="sm"><Link to="/horaires">{t("common.seeAll")}</Link></Button>}
           />
           <DemoNotice className="mb-5">{t("home.upcomingNote")}</DemoNotice>
+           {preferredTeam && <p className="mb-4 text-sm text-navy-foreground/80">{lang === "fr" ? "Mon équipe" : "My team"} · {l(TEAMS.find((team) => team.slug === preferredTeam)?.name)}</p>}
           <div className="space-y-3 text-foreground">
-            {upcoming.map((e) => <EventCard key={e.id} event={e} />)}
+             {upcoming.length ? upcoming.map((e) => <EventCard key={e.id} event={e} />) : <p className="py-5 text-sm text-navy-foreground/80">{t("schedule.noEventsWeek")}</p>}
           </div>
         </div>
       </section>
