@@ -1,11 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, ExternalLink, MapPin, Navigation } from "lucide-react";
+import { ArrowLeft, CalendarDays, ExternalLink, MapPin, Navigation } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { DemoNotice } from "@/components/demo-notice";
 import { EventCard } from "@/components/event-list";
 import { Button } from "@/components/ui/button";
 import { getArena } from "@/data/arenas";
-import { SCHEDULE } from "@/data/schedule";
+import { DEMO_TODAY, SCHEDULE } from "@/data/schedule";
 import { mapsDirectionsUrl } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 
@@ -36,7 +36,9 @@ function ArenaPage() {
   const { slug } = Route.useLoaderData();
   const { t, l } = useI18n();
   const a = getArena(slug)!;
-  const events = SCHEDULE.filter((e) => e.arenaSlug === slug);
+  const events = SCHEDULE.filter(
+    (event) => event.arenaSlug === slug && event.date >= DEMO_TODAY,
+  );
 
   return (
     <>
@@ -51,9 +53,17 @@ function ArenaPage() {
                 <Navigation className="size-4" /> {t("common.directions")}
               </a>
             </Button>
+            <Button asChild variant="outline-light">
+              <Link to="/horaires" search={{ arena: slug }}>
+                <CalendarDays className="size-4" />
+                {t("schedule.title")}
+              </Link>
+            </Button>
             {a.website && (
               <Button asChild variant="outline-light">
-                <a href={a.website} target="_blank" rel="noopener noreferrer">{t("common.officialSite")} <ExternalLink className="size-4" /></a>
+                <a href={a.website} target="_blank" rel="noopener noreferrer">
+                  {t("common.officialSite")} <ExternalLink className="size-4" />
+                </a>
               </Button>
             )}
           </>
@@ -72,9 +82,24 @@ function ArenaPage() {
         </div>
 
         <section>
-          <SectionHeading eyebrow={t("common.demoData")} title={t("home.upcoming")} />
+          <SectionHeading
+            eyebrow={t("common.demoData")}
+            title={t("home.upcoming")}
+            action={
+              <Button asChild variant="outline" size="sm">
+                <Link to="/horaires" search={{ arena: slug }}>
+                  <CalendarDays className="size-4" />
+                  {t("common.seeAll")}
+                </Link>
+              </Button>
+            }
+          />
           {events.length ? (
-            <div className="space-y-3">{events.slice(0, 8).map((e) => <EventCard key={e.id} event={e} />)}</div>
+            <div className="space-y-3">
+              {events.slice(0, 8).map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
           ) : (
             <p className="text-muted-foreground">{t("schedule.noEvents")}</p>
           )}
