@@ -11,6 +11,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AddToCalendarButton } from "@/components/add-to-calendar-button";
 import { TEAMS } from "@/data/teams";
 import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -229,7 +230,16 @@ export function ScheduleFinder() {
                   {nextActivity.venue}
                 </p>
               </div>
-              <div className="grid grid-cols-2 gap-2 md:flex">
+              <div className="flex flex-wrap gap-2 md:justify-end">
+                {nextActivity.status !== "cancelled" && (
+                  <AddToCalendarButton
+                    title={`${nextActivity.group} — ${nextActivity.activity}`}
+                    date={nextActivity.date}
+                    start={nextActivity.start}
+                    end={nextActivity.end}
+                    location={nextActivity.venue}
+                  />
+                )}
                 <Button asChild variant="outline">
                   <a href={mapsDirectionsUrl(nextActivity.venue)} target="_blank" rel="noopener noreferrer">
                     <MapPin className="size-4" />
