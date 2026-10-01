@@ -62,6 +62,7 @@ function GalleryPage() {
           <div className="scrollbar-none flex gap-2 overflow-x-auto pb-1">
             <button
               type="button"
+              aria-pressed={season === "all"}
               onClick={() => setSeason("all")}
               className={cn(
                 "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide",
@@ -74,6 +75,7 @@ function GalleryPage() {
               <button
                 key={value}
                 type="button"
+                aria-pressed={season === value}
                 onClick={() => setSeason(value)}
                 className={cn(
                   "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide",
