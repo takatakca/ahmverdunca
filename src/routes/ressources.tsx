@@ -55,6 +55,11 @@ function ResourcesPage() {
                 {r.name} <ExternalLink className="size-4 shrink-0" aria-hidden />
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">{l(r.description)}</p>
+              {r.note && (
+                <p className="mt-3 rounded-md bg-ice px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+                  {l(r.note)}
+                </p>
+              )}
               {!r.urlVerified && <p className="mt-3 text-xs italic text-demo-foreground">Lien à confirmer avec l'association.</p>}
             </a>
           ))}
