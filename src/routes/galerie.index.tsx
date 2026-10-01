@@ -110,7 +110,7 @@ function GalleryPage() {
                 <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-navy">
                   <Images className="size-3.5" aria-hidden />
                   {album.photosPending
-                    ? (lang === "fr" ? "Médias à valider" : "Media pending approval")
+                    ? (lang === "fr" ? "Médias protégés" : "Protected media")
                     : (lang === "fr" ? "Voir l'album" : "View album")}
                 </p>
               </div>
