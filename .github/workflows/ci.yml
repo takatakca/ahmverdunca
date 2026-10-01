@@ -1,6 +1,8 @@
 name: AHM Verdun CI
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -28,7 +30,8 @@ jobs:
         run: bunx tsc --noEmit
 
       - name: Lint application logic
-        run: bunx eslint . --rule 'prettier/prettier: off'
+        run: |
+          bunx eslint . --rule 'prettier/prettier: off'
 
       - name: Build
         run: bun run build
