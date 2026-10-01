@@ -50,6 +50,7 @@ function TeamPage() {
   const { t, l, lang } = useI18n();
   const team = getTeam(slug)!;
   const events = SCHEDULE.filter((event) => event.teamSlug === slug);
+  const upcomingEvents = events.filter((event) => event.date >= DEMO_TODAY);
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
   const arenas = ARENAS.filter((arena) => team.arenaSlugs.includes(arena.slug));
@@ -203,9 +204,9 @@ function TeamPage() {
               </Button>
             }
           />
-          {events.length ? (
+          {upcomingEvents.length ? (
             <div className="space-y-3">
-              {events.slice(0, 6).map((event) => (
+              {upcomingEvents.slice(0, 6).map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>
