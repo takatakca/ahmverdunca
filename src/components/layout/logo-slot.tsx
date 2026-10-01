@@ -7,6 +7,9 @@ export function LogoSlot({ className, size = "sm" }: { className?: string; size?
     <img
       src={logoAsset.url}
       alt="Association du hockey mineur de Verdun"
+      width={size === "sm" ? 40 : 96}
+      height={size === "sm" ? 40 : 96}
+      decoding="async"
       className={cn(
         "shrink-0 rounded-md object-contain",
         size === "sm" ? "size-10" : "size-24",
