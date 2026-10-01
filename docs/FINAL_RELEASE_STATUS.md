@@ -42,7 +42,7 @@ The current public architecture does **not** recreate hockey operations. Spordle
 - CI rejects committed runtime environment files.
 - Server-only secrets are separated from public `VITE_` variables.
 - HTML defaults to `noindex, nofollow` until explicit launch approval.
-- Matching `X-Robots-Tag` headers are applied server-side.
+- Matching `X-Robots-Tag` headers are applied server-side; intentionally noindex search and HTML error responses remain noindex even after global indexing is enabled.
 - Baseline browser hardening headers are enabled.
 - Sitemap is generated from the current content model.
 - CI validates `robots.txt`, canonical sitemap domain, duplicate URLs and required public routes.
@@ -50,7 +50,9 @@ The current public architecture does **not** recreate hockey operations. Spordle
 - Demo/illustrative media cannot silently become public production media.
 - Unapproved team social accounts are hidden.
 - Planned newsletter/voice-service messaging is preview-only.
-- Protected photo albums retain official AHMV source links without copying media involving minors.
+- Protected photo albums retain official AHMV source references without copying media involving minors; same-domain legacy source links stay hidden on the indexed replacement site.
+- Legacy AHMV home, schedules, news and album paths are redirected during domain cutover so existing bookmarks/search results do not become dead ends.
+- The reserved AHMV phone remains hidden from indexed production until carrier/system activation is explicitly confirmed.
 - Empty public filter categories are hidden instead of showing dead/empty states.
 - FAQ answers awaiting official validation remain available for pre-production review but are excluded from the indexed public FAQ and public search.
 - Critical filter state is exposed to assistive technologies.
@@ -94,7 +96,8 @@ These are not code defects and must not be fabricated:
 - approved official hero/news/gallery media and permissions involving minors;
 - authorization for analytics, Search Console, Google Business Profile and social integrations;
 - authorization/credentials for newsletter, voice or other future communication services;
-- production hosting/DNS cutover from the current site to the new application.
+- production hosting/DNS cutover from the current site to the new application;
+- final production-hostname mobile/desktop smoke test (interactive browser automation was not available in this repository session).
 
 Until those approvals exist, the code intentionally uses safe fallbacks.
 
@@ -105,10 +108,10 @@ Until those approvals exist, the code intentionally uses safe fallbacks.
 3. Confirm the final public media, privacy approval, sponsor assets and association contact details.
 4. Confirm the current weekly schedule source/update process.
 5. Perform the approved hosting/DNS cutover for `ahmverdun.com`.
-6. Verify HTTPS, redirects, `/robots.txt`, `/sitemap.xml`, 404 behavior and server headers on the actual production domain.
+6. Verify HTTPS, legacy redirects, `/robots.txt`, `/sitemap.xml`, 404 behavior, `/recherche` noindex behavior and server headers on the actual production domain.
 7. Set `VITE_PUBLIC_INDEXING=true` only after the new production domain is confirmed correct.
 8. Rebuild/redeploy and verify the HTML robots meta plus `X-Robots-Tag`.
-9. Connect only the analytics/social/search tools explicitly authorized by the association.
+9. Set `SITE.phonePublic=true` only after the reserved number is active and a real inbound-call test succeeds; then connect only analytics/social/search tools explicitly authorized by the association.
 10. Submit/refresh the sitemap in the approved search-console account.
 
 ## 8. Operating rule after launch
