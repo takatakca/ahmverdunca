@@ -65,13 +65,27 @@ function Home() {
           <p className="mt-2 text-sm text-navy-foreground/65">{t("home.heroSub")} — {SITE.city}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="sport" size="lg">
-              <Link to="/horaires"><CalendarDays className="size-5" /> {t("home.ctaSchedule")}</Link>
-            </Button>
-            <Button asChild variant="outline-light" size="lg">
-              <Link to="/inscriptions">
-                {t("home.ctaRegister")} <ArrowRight className="size-4" />
+              <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
+                <CalendarDays className="size-5" />
+                {preferredTeam
+                  ? (lang === "fr" ? "Voir mon horaire" : "View my schedule")
+                  : t("home.ctaSchedule")}
               </Link>
             </Button>
+            {preferredTeam ? (
+              <Button asChild variant="outline-light" size="lg">
+                <Link to="/equipes/$slug" params={{ slug: preferredTeam }}>
+                  <Users className="size-4" />
+                  {lang === "fr" ? "Mon équipe" : "My team"}
+                </Link>
+              </Button>
+            ) : (
+              <Button asChild variant="outline-light" size="lg">
+                <Link to="/inscriptions">
+                  {t("home.ctaRegister")} <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </section>

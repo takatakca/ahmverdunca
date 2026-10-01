@@ -45,7 +45,7 @@ export function ScheduleFinder() {
       aria-labelledby="parent-hub-title"
     >
       <div className="container-site">
-        <div className="grid gap-6 xl:grid-cols-[0.85fr_1.15fr] xl:items-start">
+        <div className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr] xl:items-start">
           <div>
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Accès parent" : "Parent access"}
@@ -67,18 +67,21 @@ export function ScheduleFinder() {
             <Link
               to="/horaires"
               search={team ? { team } : {}}
-              className="group rounded-xl border border-border bg-ice p-4 transition-all hover:-translate-y-0.5 hover:border-sport/40 hover:bg-background hover:shadow-card"
+              className="group col-span-2 rounded-xl bg-navy p-5 text-navy-foreground shadow-card transition-all hover:-translate-y-0.5 hover:bg-navy-deep hover:shadow-card-hover lg:col-span-1"
             >
-              <CalendarDays className="size-5 text-sport" aria-hidden />
-              <p className="mt-5 font-display text-xl font-bold uppercase text-navy">
+              <div className="flex items-center justify-between">
+                <CalendarDays className="size-6 text-sport-foreground" aria-hidden />
+                <ArrowRight className="size-4 text-navy-foreground/60 transition-transform group-hover:translate-x-1" aria-hidden />
+              </div>
+              <p className="mt-5 font-display text-2xl font-bold uppercase">
                 {lang === "fr" ? "Mon horaire" : "My schedule"}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-navy-foreground/65">
                 {selected
                   ? `${selected.code} · ${l(selected.name)}`
                   : lang === "fr"
-                    ? "Tous les horaires"
-                    : "All schedules"}
+                    ? "Voir les activités"
+                    : "View activities"}
               </p>
             </Link>
 
@@ -142,7 +145,7 @@ export function ScheduleFinder() {
         <div className="mt-6 grid gap-4 rounded-xl border border-border bg-background p-4 shadow-card md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-5">
           <div className="min-w-0">
             <label className="block text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {lang === "fr" ? "Mémoriser ma catégorie sur cet appareil" : "Remember my category on this device"}
+              {lang === "fr" ? "Quelle est votre catégorie?" : "What is your category?"}
               <select
                 aria-label={lang === "fr" ? "Mon équipe ou catégorie" : "My team or category"}
                 className="mt-2 h-12 w-full rounded-md border border-input bg-background px-3 text-base text-foreground"
@@ -171,8 +174,8 @@ export function ScheduleFinder() {
               )}
               <span>
                 {lang === "fr"
-                  ? "Le choix reste uniquement sur cet appareil."
-                  : "The choice stays only on this device."}
+                  ? "On la mémorise sur cet appareil pour accélérer vos prochaines visites."
+                  : "We remember it on this device to make future visits faster."}
               </span>
             </div>
           </div>
