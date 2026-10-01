@@ -127,6 +127,9 @@ export function SiteHeader() {
             <Link to="/recherche">
               <Search className="size-4" />
               <span>{t("nav.search")}</span>
+              <kbd className="ml-1 rounded border border-navy-foreground/20 px-1.5 py-0.5 font-sans text-[10px] font-semibold text-navy-foreground/50">
+                /
+              </kbd>
             </Link>
           </Button>
           <Button
