@@ -166,12 +166,12 @@ function RegistrationPage() {
 
         <section>
           <SectionHeading
-            eyebrow="GROUPE TAKATAK"
+            eyebrow={lang === "fr" ? "Communications AHMV" : "AHMV communications"}
             title={lang === "fr" ? "Infolettres et communications" : "Newsletters and communications"}
             description={
               lang === "fr"
-                ? "Une couche distincte pour les nouvelles générales, événements, rappels et campagnes autorisées."
-                : "A separate layer for general news, events, reminders and authorized campaigns."
+                ? "Un espace distinct pour les nouvelles générales, événements, rappels et communications autorisées."
+                : "A separate space for general news, events, reminders and authorized communications."
             }
           />
           <div className="grid gap-4 md:grid-cols-2">
@@ -182,8 +182,8 @@ function RegistrationPage() {
               </h3>
               <p className="mt-2 text-sm text-muted-foreground">
                 {lang === "fr"
-                  ? "Le futur branchement TAKATAK permettra de choisir les communications que vous souhaitez recevoir, avec consentement explicite."
-                  : "The future TAKATAK connection will let you choose which communications you want to receive, with explicit consent."}
+                  ? "Lorsque ce service sera activé, vous pourrez choisir les communications que vous souhaitez recevoir, avec consentement explicite."
+                  : "When this service is activated, you will be able to choose which communications you want to receive, with explicit consent."}
               </p>
             </div>
             <div className="card-elevated p-6">
