@@ -13,6 +13,8 @@ import type { TranslationKey } from "@/lib/translations";
 
 export function SiteHeader() {
   const { t, lang } = useI18n();
+  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
+  const showPhone = !publicLaunch || SITE.phonePublic;
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -64,13 +66,15 @@ export function SiteHeader() {
                 {lang === "fr" ? "Mon équipe" : "My team"} · {savedTeam.code}
               </Link>
             )}
-            <a
-              href={`tel:${SITE.phoneE164}`}
-              className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
-            >
-              <PhoneCall className="size-3.5" aria-hidden />
-              {SITE.phoneDisplay}
-            </a>
+            {showPhone && (
+              <a
+                href={`tel:${SITE.phoneE164}`}
+                className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
+              >
+                <PhoneCall className="size-3.5" aria-hidden />
+                {SITE.phoneDisplay}
+              </a>
+            )}
             <LangSwitch />
           </div>
         </div>
@@ -248,12 +252,14 @@ export function SiteHeader() {
               <Button asChild variant="outline-light" size="lg">
                 <Link to="/connexion">{t("nav.login")}</Link>
               </Button>
-              <Button asChild variant="outline-light" size="lg">
-                <a href={`tel:${SITE.phoneE164}`}>
-                  <PhoneCall className="size-4" />
-                  {SITE.phoneDisplay}
-                </a>
-              </Button>
+              {showPhone && (
+                <Button asChild variant="outline-light" size="lg">
+                  <a href={`tel:${SITE.phoneE164}`}>
+                    <PhoneCall className="size-4" />
+                    {SITE.phoneDisplay}
+                  </a>
+                </Button>
+              )}
               <div className="flex items-center justify-between rounded-md border border-navy-foreground/15 px-4 py-3">
                 <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
                 <LangSwitch />
