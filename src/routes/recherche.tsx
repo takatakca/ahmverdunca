@@ -1,14 +1,19 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Mic, PhoneCall, Search } from "lucide-react";
+import { ArrowRight, CalendarDays, Mic, PhoneCall, Search } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
 import { ARENAS } from "@/data/arenas";
 import { NEWS } from "@/data/news";
 import { FAQ } from "@/data/faq";
+import { ALBUMS } from "@/data/gallery";
+import { RESOURCES } from "@/data/resources";
+import { COACH_RESOURCES } from "@/data/coaches";
+import { SPONSORS } from "@/data/sponsors";
+import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
 import { SITE } from "@/lib/site";
-import { useI18n } from "@/lib/i18n";
+import { formatShortDate, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/recherche")({
   head: () => ({
@@ -17,7 +22,7 @@ export const Route = createFileRoute("/recherche")({
       {
         name: "description",
         content:
-          "Rechercher une équipe, un aréna, une nouvelle, une inscription, une ressource ou une question fréquente sur le site de l'AHM Verdun.",
+          "Rechercher une équipe, un horaire, un aréna, une nouvelle, une ressource, un album ou une question fréquente sur le site de l'AHM Verdun.",
       },
       { property: "og:title", content: "Recherche — AHM Verdun" },
       { property: "og:description", content: "Trouvez rapidement l'information AHM Verdun." },
@@ -26,61 +31,251 @@ export const Route = createFileRoute("/recherche")({
   component: SearchPage,
 });
 
-type Hit = { key: string; label: string; kind: string; to: string; slug?: string };
+type Hit = {
+  key: string;
+  label: string;
+  kind: string;
+  detail?: string;
+  to?: string;
+  slug?: string;
+  href?: string;
+};
 
 const STATIC_PAGES = [
-  { key: "registration", fr: "Inscriptions 2026–2027 Spordle", en: "2026–2027 registration Spordle", to: "/inscriptions" },
-  { key: "schedule", fr: "Horaires de la semaine", en: "Weekly schedules", to: "/horaires" },
-  { key: "tournaments", fr: "Tournois AHM Verdun", en: "AHM Verdun tournaments", to: "/tournois" },
-  { key: "partners", fr: "Partenaires et commanditaires", en: "Partners and sponsors", to: "/partenaires" },
-  { key: "coaches", fr: "Zone entraîneurs", en: "Coaches zone", to: "/entraineurs" },
-  { key: "resources", fr: "Ressources hockey et aide financière", en: "Hockey resources and financial assistance", to: "/ressources" },
-  { key: "gallery", fr: "Photos et vidéos", en: "Photos and videos", to: "/galerie" },
-  { key: "wllv", fr: "WLLV AA/BB Chacals", en: "WLLV AA/BB Chacals", to: "/wllv" },
-  { key: "contact", fr: "Contact AHM Verdun", en: "Contact AHM Verdun", to: "/contact" },
+  {
+    key: "registration",
+    fr: "Inscriptions 2026–2027 Spordle",
+    en: "2026–2027 registration Spordle",
+    keywords: "inscription inscrire enfant spordle paiement registration register",
+    to: "/inscriptions",
+  },
+  {
+    key: "schedule",
+    fr: "Horaires de la semaine",
+    en: "Weekly schedules",
+    keywords: "horaire calendrier pratique match partie schedule calendar game practice",
+    to: "/horaires",
+  },
+  {
+    key: "tournaments",
+    fr: "Tournois AHM Verdun",
+    en: "AHM Verdun tournaments",
+    keywords: "tournoi m11 festival tournament",
+    to: "/tournois",
+  },
+  {
+    key: "partners",
+    fr: "Partenaires et commanditaires",
+    en: "Partners and sponsors",
+    keywords: "commanditaire sponsor partenaire publicité visibilité partner",
+    to: "/partenaires",
+  },
+  {
+    key: "coaches",
+    fr: "Zone entraîneurs",
+    en: "Coaches zone",
+    keywords: "entraineur entraîneur coach formation soigneur respect sport",
+    to: "/entraineurs",
+  },
+  {
+    key: "resources",
+    fr: "Ressources hockey et aide financière",
+    en: "Hockey resources and financial assistance",
+    keywords: "ressource aide financière financement kidsport bon départ hockey canada quebec",
+    to: "/ressources",
+  },
+  {
+    key: "gallery",
+    fr: "Photos et vidéos",
+    en: "Photos and videos",
+    keywords: "photo video galerie album gallery media",
+    to: "/galerie",
+  },
+  {
+    key: "wllv",
+    fr: "WLLV AA/BB Chacals",
+    en: "WLLV AA/BB Chacals",
+    keywords: "wllv chacals aa bb double lettre",
+    to: "/wllv",
+  },
+  {
+    key: "contact",
+    fr: "Contact AHM Verdun",
+    en: "Contact AHM Verdun",
+    keywords: "contact téléphone telephone courriel email aide question",
+    to: "/contact",
+  },
+  {
+    key: "faq",
+    fr: "Questions fréquentes",
+    en: "Frequently asked questions",
+    keywords: "faq questions aide help",
+    to: "/faq",
+  },
+  {
+    key: "arenas",
+    fr: "Arénas et itinéraires",
+    en: "Arenas and directions",
+    keywords: "arena aréna glace adresse maps itinéraire direction",
+    to: "/arenas",
+  },
 ] as const;
+
+function normalize(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
 
 function SearchPage() {
   const { t, l, lang } = useI18n();
   const [q, setQ] = useState("");
 
   const hits = useMemo<Hit[]>(() => {
-    const needle = q.trim().toLowerCase();
+    const needle = normalize(q.trim());
     if (needle.length < 2) return [];
+
     const out: Hit[] = [];
 
-    TEAMS.forEach((x) => {
-      if (`${l(x.name)} ${x.code} équipe team horaire schedule`.toLowerCase().includes(needle)) {
-        out.push({ key: `t-${x.slug}`, label: l(x.name), kind: t("nav.teams"), to: "/equipes/$slug", slug: x.slug });
+    TEAMS.forEach((item) => {
+      const haystack = normalize(
+        `${l(item.name)} ${item.code} ${l(item.ages)} ${l(item.description)} équipe team horaire schedule`,
+      );
+      if (haystack.includes(needle)) {
+        out.push({
+          key: `team-${item.slug}`,
+          label: l(item.name),
+          kind: t("nav.teams"),
+          detail: l(item.ages),
+          to: "/equipes/$slug",
+          slug: item.slug,
+        });
       }
     });
 
-    ARENAS.forEach((x) => {
-      if (`${x.name} ${l(x.borough)} aréna arena adresse direction itinéraire`.toLowerCase().includes(needle)) {
-        out.push({ key: `a-${x.slug}`, label: x.name, kind: t("nav.arenas"), to: "/arenas/$slug", slug: x.slug });
+    ARENAS.forEach((item) => {
+      const haystack = normalize(
+        `${item.name} ${l(item.borough)} ${item.address} aréna arena adresse direction itinéraire maps`,
+      );
+      if (haystack.includes(needle)) {
+        out.push({
+          key: `arena-${item.slug}`,
+          label: item.name,
+          kind: t("nav.arenas"),
+          detail: item.address,
+          to: "/arenas/$slug",
+          slug: item.slug,
+        });
       }
     });
 
-    NEWS.forEach((x) => {
-      if (`${l(x.title)} ${l(x.excerpt)} nouvelles news`.toLowerCase().includes(needle)) {
-        out.push({ key: `n-${x.slug}`, label: l(x.title), kind: t("nav.news"), to: "/nouvelles/$slug", slug: x.slug });
+    OFFICIAL_WEEK_ACTIVITIES.filter((item) =>
+      normalize(`${item.group} ${item.activity} ${item.venue} ${item.date} ${item.start}`).includes(needle),
+    )
+      .slice(0, 8)
+      .forEach((item) => {
+        out.push({
+          key: `schedule-${item.id}`,
+          label: `${item.group} · ${item.start}`,
+          kind: lang === "fr" ? "Horaire officiel" : "Official schedule",
+          detail: `${item.activity} · ${item.venue} · ${formatShortDate(item.date, lang)}`,
+          href: `/horaires?q=${encodeURIComponent(item.group)}`,
+        });
+      });
+
+    NEWS.forEach((item) => {
+      if (normalize(`${l(item.title)} ${l(item.excerpt)} nouvelles news`).includes(needle)) {
+        out.push({
+          key: `news-${item.slug}`,
+          label: l(item.title),
+          kind: t("nav.news"),
+          detail: formatShortDate(item.date, lang),
+          to: "/nouvelles/$slug",
+          slug: item.slug,
+        });
       }
     });
 
-    FAQ.forEach((x) => {
-      if (`${l(x.question)} ${l(x.answer)} faq question aide help`.toLowerCase().includes(needle)) {
-        out.push({ key: `f-${x.id}`, label: l(x.question), kind: t("nav.faq"), to: "/faq" });
+    FAQ.forEach((item) => {
+      if (normalize(`${l(item.question)} ${l(item.answer)} faq question aide help`).includes(needle)) {
+        out.push({
+          key: `faq-${item.id}`,
+          label: l(item.question),
+          kind: t("nav.faq"),
+          detail: l(item.answer),
+          to: "/faq",
+        });
+      }
+    });
+
+    ALBUMS.forEach((item) => {
+      if (normalize(`${l(item.title)} ${l(item.description)} ${l(item.eventType)} album photo video`).includes(needle)) {
+        out.push({
+          key: `album-${item.slug}`,
+          label: l(item.title),
+          kind: t("nav.gallery"),
+          detail: `${item.season} · ${l(item.eventType)}`,
+          to: "/galerie/$slug",
+          slug: item.slug,
+        });
+      }
+    });
+
+    RESOURCES.forEach((item) => {
+      if (normalize(`${item.name} ${l(item.description)} ${item.note ? l(item.note) : ""}`).includes(needle)) {
+        out.push({
+          key: `resource-${item.id}`,
+          label: item.name,
+          kind: t("nav.resources"),
+          detail: l(item.description),
+          to: "/ressources",
+        });
+      }
+    });
+
+    COACH_RESOURCES.forEach((item) => {
+      if (normalize(`${l(item.title)} ${l(item.description)} entraineur coach formation soigneur`).includes(needle)) {
+        out.push({
+          key: `coach-${item.id}`,
+          label: l(item.title),
+          kind: t("nav.coaches"),
+          detail: l(item.description),
+          to: "/entraineurs",
+        });
+      }
+    });
+
+    SPONSORS.forEach((item) => {
+      if (normalize(`${item.name} commanditaire sponsor partenaire partner`).includes(needle)) {
+        out.push({
+          key: `sponsor-${item.name}`,
+          label: item.name,
+          kind: t("nav.partners"),
+          to: "/partenaires",
+        });
       }
     });
 
     STATIC_PAGES.forEach((page) => {
       const label = lang === "fr" ? page.fr : page.en;
-      if (`${page.fr} ${page.en}`.toLowerCase().includes(needle)) {
-        out.push({ key: `p-${page.key}`, label, kind: lang === "fr" ? "Page" : "Page", to: page.to });
+      if (normalize(`${page.fr} ${page.en} ${page.keywords}`).includes(needle)) {
+        out.push({
+          key: `page-${page.key}`,
+          label,
+          kind: lang === "fr" ? "Page" : "Page",
+          to: page.to,
+        });
       }
     });
 
-    return out;
+    const seen = new Set<string>();
+    return out.filter((item) => {
+      const key = normalize(`${item.kind}|${item.label}|${item.href ?? item.to ?? ""}`);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 24);
   }, [q, l, t, lang]);
 
   return (
@@ -88,17 +283,29 @@ function SearchPage() {
       <PageHeader
         eyebrow={lang === "fr" ? "Trouver en quelques secondes" : "Find it in seconds"}
         title={t("search.title")}
-        description={t("search.hint")}
+        description={
+          lang === "fr"
+            ? "Une seule recherche pour les équipes, horaires, arénas, nouvelles, ressources, albums, partenaires et questions fréquentes."
+            : "One search across teams, schedules, arenas, news, resources, albums, partners and frequently asked questions."
+        }
       />
+
       <div className="container-site py-8 md:py-12">
         <div className="relative">
-          <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" aria-hidden />
+          <Search
+            className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
           <input
             autoFocus
             type="search"
             value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t("search.placeholder")}
+            onChange={(event) => setQ(event.target.value)}
+            placeholder={
+              lang === "fr"
+                ? "Ex. M11, Denis Savard, Spordle, aide financière…"
+                : "Ex. U11, Denis Savard, Spordle, financial assistance…"
+            }
             aria-label={t("common.search")}
             className="h-14 w-full rounded-lg border border-input bg-background pl-12 pr-4 text-base shadow-sm"
           />
@@ -107,13 +314,23 @@ function SearchPage() {
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
           <div className="rounded-xl border border-border bg-ice px-4 py-3">
             <p className="text-sm text-muted-foreground">
-              {lang === "fr"
-                ? "Recherche instantanée sur les équipes, arénas, nouvelles, FAQ et pages principales."
-                : "Instant search across teams, arenas, news, FAQ and key pages."}
+              {q.trim().length >= 2
+                ? lang === "fr"
+                  ? `${hits.length} résultat${hits.length > 1 ? "s" : ""} trouvé${hits.length > 1 ? "s" : ""}`
+                  : `${hits.length} result${hits.length === 1 ? "" : "s"} found`
+                : lang === "fr"
+                  ? "Tapez au moins deux caractères. La recherche reste locale au site."
+                  : "Type at least two characters. Search stays local to the site."}
             </p>
           </div>
+
           <div className="flex flex-wrap gap-2">
-            <Button type="button" variant="outline" disabled title={lang === "fr" ? "Intégration à venir" : "Coming integration"}>
+            <Button
+              type="button"
+              variant="outline"
+              disabled
+              title={lang === "fr" ? "Intégration à venir" : "Coming integration"}
+            >
               <Mic className="size-4" />
               {lang === "fr" ? "Recherche vocale bientôt" : "Voice search soon"}
             </Button>
@@ -128,9 +345,11 @@ function SearchPage() {
 
         {!q.trim() && (
           <div className="mt-8">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Accès populaires" : "Popular shortcuts"}</p>
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Accès populaires" : "Popular shortcuts"}
+            </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              {STATIC_PAGES.slice(0, 6).map((page) => (
+              {STATIC_PAGES.slice(0, 7).map((page) => (
                 <Link
                   key={page.key}
                   to={page.to}
@@ -143,21 +362,75 @@ function SearchPage() {
           </div>
         )}
 
-        <div className="mt-8 space-y-3" aria-live="polite">
-          {q.trim().length >= 2 && hits.length === 0 && <p className="text-muted-foreground">{t("common.noResults")}</p>}
-          {hits.map((h) =>
-            h.slug ? (
-              <Link key={h.key} to={h.to} params={{ slug: h.slug }} className="card-elevated block p-4 hover:text-sport">
-                <p className="eyebrow text-sport">{h.kind}</p>
-                <p className="heading-card mt-1">{h.label}</p>
-              </Link>
-            ) : (
-              <Link key={h.key} to={h.to} className="card-elevated block p-4 hover:text-sport">
-                <p className="eyebrow text-sport">{h.kind}</p>
-                <p className="heading-card mt-1">{h.label}</p>
-              </Link>
-            ),
+        <div className="mt-8 grid gap-3" aria-live="polite">
+          {q.trim().length >= 2 && hits.length === 0 && (
+            <div className="rounded-xl border border-border bg-ice p-6">
+              <p className="heading-card">
+                {lang === "fr" ? "Aucun résultat trouvé" : "No results found"}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Essayez une catégorie comme M11, un aréna, Spordle, entraîneur ou aide financière."
+                  : "Try a category such as U11, an arena, Spordle, coach or financial assistance."}
+              </p>
+            </div>
           )}
+
+          {hits.map((hit) => {
+            const card = (
+              <>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="eyebrow text-sport">{hit.kind}</p>
+                    <p className="heading-card mt-1.5">{hit.label}</p>
+                    {hit.detail && (
+                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{hit.detail}</p>
+                    )}
+                  </div>
+                  {hit.kind === (lang === "fr" ? "Horaire officiel" : "Official schedule") ? (
+                    <CalendarDays className="mt-1 size-5 shrink-0 text-sport" aria-hidden />
+                  ) : (
+                    <ArrowRight className="mt-1 size-5 shrink-0 text-sport" aria-hidden />
+                  )}
+                </div>
+              </>
+            );
+
+            if (hit.href) {
+              return (
+                <a
+                  key={hit.key}
+                  href={hit.href}
+                  className="card-elevated block p-5 transition-transform hover:-translate-y-0.5"
+                >
+                  {card}
+                </a>
+              );
+            }
+
+            if (hit.slug && hit.to) {
+              return (
+                <Link
+                  key={hit.key}
+                  to={hit.to}
+                  params={{ slug: hit.slug }}
+                  className="card-elevated block p-5 transition-transform hover:-translate-y-0.5"
+                >
+                  {card}
+                </Link>
+              );
+            }
+
+            return (
+              <Link
+                key={hit.key}
+                to={hit.to ?? "/"}
+                className="card-elevated block p-5 transition-transform hover:-translate-y-0.5"
+              >
+                {card}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </>
