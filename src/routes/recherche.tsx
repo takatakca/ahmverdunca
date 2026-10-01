@@ -40,6 +40,7 @@ type Hit = {
   to?: string;
   slug?: string;
   href?: string;
+  external?: boolean;
 };
 
 const STATIC_PAGES = [
@@ -205,7 +206,7 @@ function SearchPage() {
           label: l(item.question),
           kind: t("nav.faq"),
           detail: l(item.answer),
-          to: "/faq",
+          href: `/faq?item=${encodeURIComponent(item.id)}#${encodeURIComponent(item.id)}`,
         });
       }
     });
@@ -230,7 +231,9 @@ function SearchPage() {
           label: item.name,
           kind: t("nav.resources"),
           detail: l(item.description),
-          to: "/ressources",
+          ...(item.urlVerified
+            ? { href: item.url, external: true }
+            : { to: "/ressources" }),
         });
       }
     });
@@ -242,7 +245,8 @@ function SearchPage() {
           label: l(item.title),
           kind: t("nav.coaches"),
           detail: l(item.description),
-          to: "/entraineurs",
+          href: item.url,
+          external: true,
         });
       }
     });
@@ -253,7 +257,9 @@ function SearchPage() {
           key: `sponsor-${item.name}`,
           label: item.name,
           kind: t("nav.partners"),
-          to: "/partenaires",
+          ...(item.website && item.websiteVerified
+            ? { href: item.website, external: true }
+            : { to: "/partenaires" }),
         });
       }
     });
@@ -395,6 +401,8 @@ function SearchPage() {
                 <a
                   key={hit.key}
                   href={hit.href}
+                  target={hit.external ? "_blank" : undefined}
+                  rel={hit.external ? "noopener noreferrer" : undefined}
                   className="card-elevated block p-5 transition-transform hover:-translate-y-0.5"
                 >
                   {card}
