@@ -4,6 +4,7 @@ import {
   BellRing,
   CalendarDays,
   HandHeart,
+  Mail,
   MapPin,
   Megaphone,
   PhoneCall,
@@ -110,13 +111,32 @@ function ContactPage() {
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
               {lang === "fr"
-                ? "Partenaires actuels et futur espace de visibilité, renouvellement et campagnes."
-                : "Current partners and future visibility, renewal and campaign space."}
+                ? "Partenaires actuels, visibilité et demandes de commandite."
+                : "Current partners, visibility and sponsorship inquiries."}
             </p>
             <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
               {lang === "fr" ? "Voir les partenaires" : "View partners"} <ArrowRight className="size-3.5" />
             </span>
           </Link>
+        </section>
+
+        <section className="rounded-xl border border-border bg-ice p-5 md:flex md:items-center md:justify-between md:gap-6">
+          <div>
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Opérations & bénévolat" : "Operations & volunteering"}
+            </p>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              {lang === "fr"
+                ? "Pour les rôles opérationnels et de recrutement actuellement publiés par l’AHM Verdun, utilisez le contact fonctionnel ci-dessous."
+                : "For operational and recruitment roles currently published by AHM Verdun, use the functional contact below."}
+            </p>
+          </div>
+          <Button asChild variant="outline" className="mt-4 shrink-0 md:mt-0">
+            <a href={`mailto:${SITE.operationsEmail}`}>
+              <Mail className="size-4" />
+              {SITE.operationsEmail}
+            </a>
+          </Button>
         </section>
 
         <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
