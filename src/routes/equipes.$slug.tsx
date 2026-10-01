@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Facebook,
   Instagram,
+  Mail,
   MapPin,
   ShieldCheck,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import { ALBUMS } from "@/data/gallery";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 import { usePreferredTeam } from "@/lib/team-preference";
+import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/equipes/$slug")({
   loader: ({ params }) => {
@@ -137,20 +139,24 @@ function TeamPage() {
                 {lang === "fr" ? "Accès rapide" : "Quick access"}
               </p>
               <div className="mt-5 grid gap-2">
-                <a
-                  href="#nouvelles-equipe"
-                  className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
-                >
-                  {lang === "fr" ? "Nouvelles" : "News"}
-                  <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                </a>
-                <a
-                  href="#photos-equipe"
-                  className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
-                >
-                  {lang === "fr" ? "Photos" : "Photos"}
-                  <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                </a>
+                {news.length > 0 && (
+                  <a
+                    href="#nouvelles-equipe"
+                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  >
+                    {lang === "fr" ? "Nouvelles" : "News"}
+                    <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                  </a>
+                )}
+                {albums.length > 0 && (
+                  <a
+                    href="#photos-equipe"
+                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  >
+                    {lang === "fr" ? "Photos" : "Photos"}
+                    <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                  </a>
+                )}
                 {socialLinks.length > 0 && (
                   <a
                     href="#social-equipe"
@@ -167,6 +173,15 @@ function TeamPage() {
                   {lang === "fr" ? "Inscriptions" : "Registration"}
                   <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
                 </Link>
+                {slug === "feminin" && (
+                  <a
+                    href={`mailto:${SITE.girlsHockeyEmail}`}
+                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  >
+                    {lang === "fr" ? "Questions hockey féminin" : "Girls' hockey questions"}
+                    <Mail className="size-4 text-sport" />
+                  </a>
+                )}
               </div>
             </div>
           </div>
