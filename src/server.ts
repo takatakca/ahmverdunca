@@ -36,7 +36,13 @@ const LEGACY_REDIRECTS: Record<string, string> = {
 
 function legacyRedirect(request: Request) {
   const url = new URL(request.url);
-  const target = LEGACY_REDIRECTS[url.pathname];
+  const target =
+    LEGACY_REDIRECTS[url.pathname] ??
+    (/^\/news\/\d+$/.test(url.pathname)
+      ? "/nouvelles"
+      : /^\/albums\/\d+$/.test(url.pathname)
+        ? "/galerie"
+        : undefined);
   if (!target) return null;
   return Response.redirect(new URL(target, url.origin), 308);
 }
