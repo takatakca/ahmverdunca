@@ -11,15 +11,21 @@ let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 const PUBLIC_INDEXING_ENABLED = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
-function applyIndexingHeader(response: Response) {
-  const contentType = response.headers.get("content-type") ?? "";
-  if (!contentType.includes("text/html")) return response;
-
+function applyResponseHeaders(response: Response) {
   const headers = new Headers(response.headers);
-  headers.set(
-    "X-Robots-Tag",
-    PUBLIC_INDEXING_ENABLED ? "index, follow" : "noindex, nofollow",
-  );
+  const contentType = headers.get("content-type") ?? "";
+
+  // Baseline browser hardening that is safe for the public AHMV experience.
+  headers.set("X-Content-Type-Options", "nosniff");
+  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  headers.set("X-Frame-Options", "SAMEORIGIN");
+
+  if (contentType.includes("text/html")) {
+    headers.set(
+      "X-Robots-Tag",
+      PUBLIC_INDEXING_ENABLED ? "index, follow" : "noindex, nofollow",
+    );
+  }
 
   return new Response(response.body, {
     status: response.status,
@@ -68,10 +74,10 @@ export default {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return applyIndexingHeader(await normalizeCatastrophicSsrResponse(response));
+      return applyResponseHeaders(await normalizeCatastrophicSsrResponse(response));
     } catch (error) {
       console.error(error);
-      return applyIndexingHeader(new Response(renderErrorPage(), {
+      return applyResponseHeaders(new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
       }));
