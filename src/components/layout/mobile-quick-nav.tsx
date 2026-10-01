@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { CalendarDays, Home, Menu, Newspaper, Users } from "lucide-react";
+import { CalendarDays, Home, Newspaper, Search, Users } from "lucide-react";
 import { TEAMS } from "@/data/teams";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { useI18n } from "@/lib/i18n";
@@ -13,7 +13,7 @@ export function MobileQuickNav() {
     { label: lang === "fr" ? "Horaire" : "Schedule", to: "/horaires" as const, icon: CalendarDays },
     { label: lang === "fr" ? "Mon équipe" : "My team", to: preferredTeam && TEAMS.some((team) => team.slug === preferredTeam) ? `/equipes/${preferredTeam}` : "/equipes", icon: Users },
     { label: lang === "fr" ? "Nouvelles" : "News", to: "/nouvelles" as const, icon: Newspaper },
-    { label: lang === "fr" ? "Plus" : "More", to: "/ressources" as const, icon: Menu },
+    { label: lang === "fr" ? "Recherche" : "Search", to: "/recherche" as const, icon: Search },
   ];
 
   return <nav aria-label={lang === "fr" ? "Accès rapide" : "Quick navigation"} className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] shadow-lg lg:hidden">
