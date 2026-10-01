@@ -11,6 +11,8 @@ export const SITE = {
   city: "Verdun (Montréal), Québec",
   // Official email NOT confirmed — do not display a specific address as official.
   officialEmailConfirmed: false,
+  // Functional operations/recruitment contact published by AHMV in 2026; not the general association email.
+  operationsEmail: "operation@ahmverdun.com",
   phoneDisplay: "1 (581) 666-6AHM",
   phoneE164: "+15816666246",
   voiceAssistantStatus: "planned",
