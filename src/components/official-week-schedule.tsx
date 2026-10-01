@@ -66,9 +66,9 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   );
 }
 
-export function OfficialWeekSchedule() {
+export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: string }) {
   const { lang } = useI18n();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
