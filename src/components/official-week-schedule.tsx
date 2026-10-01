@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ExternalLink, MapPin, Search, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
+import { AddToCalendarButton } from "@/components/add-to-calendar-button";
+import { ShareButton } from "@/components/share-button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
@@ -59,11 +61,23 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
         </p>
       </div>
 
-      <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
-        <a href={mapsDirectionsUrl(item.venue)} target="_blank" rel="noopener noreferrer">
-          {lang === "fr" ? "Itinéraire" : "Directions"}
-        </a>
-      </Button>
+      <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-1">
+        <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
+          <a href={mapsDirectionsUrl(item.venue)} target="_blank" rel="noopener noreferrer">
+            {lang === "fr" ? "Itinéraire" : "Directions"}
+          </a>
+        </Button>
+        {!cancelled && (
+          <AddToCalendarButton
+            id={item.id}
+            date={item.date}
+            start={item.start}
+            end={item.end}
+            title={`AHMV — ${item.group} · ${item.activity}`}
+            location={item.venue}
+          />
+        )}
+      </div>
     </article>
   );
 }
@@ -119,11 +133,21 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
               : "Faithful transcription of the AHMV weekly PDF published September 29, 2026. No category was inferred or renamed."}
           </p>
         </div>
-        <Button asChild variant="outline">
-          <a href={OFFICIAL_WEEK_META.sourceUrl} target="_blank" rel="noopener noreferrer">
-            PDF officiel <ExternalLink className="size-4" />
-          </a>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <ShareButton
+            title={lang === "fr" ? "Horaire AHM Verdun" : "AHM Verdun schedule"}
+            text={
+              lang === "fr"
+                ? "Horaire hebdomadaire officiel AHM Verdun"
+                : "Official AHM Verdun weekly schedule"
+            }
+          />
+          <Button asChild variant="outline">
+            <a href={OFFICIAL_WEEK_META.sourceUrl} target="_blank" rel="noopener noreferrer">
+              PDF officiel <ExternalLink className="size-4" />
+            </a>
+          </Button>
+        </div>
       </div>
 
       <div className="p-4 md:p-6">
