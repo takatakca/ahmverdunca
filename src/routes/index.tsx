@@ -1,5 +1,4 @@
 import { canonicalLink } from "@/lib/seo";
-import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
