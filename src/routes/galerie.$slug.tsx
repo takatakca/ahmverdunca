@@ -43,29 +43,32 @@ function AlbumPage() {
           <ArrowLeft className="size-4" /> {t("common.back")}
         </Link>
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
-          {al.coverUrl ? (
-            <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
-              <img
-                src={al.coverUrl}
-                alt={l(al.title)}
-                loading="eager"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(7,16,43,0.7)_100%)]" />
-              <p className="absolute bottom-4 left-4 right-4 text-[10px] font-bold uppercase tracking-[0.16em] text-white/85">
-                {lang === "fr" ? "Aperçu provenant des archives publiques AHMV" : "Preview from AHMV public archives"}
-              </p>
-            </div>
-          ) : (
+          <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
             <SportArtwork
               index={al.season.slice(-2)}
               kicker={`${l(al.eventType)} · ${formatDate(al.date, lang)}`}
               title={l(al.title)}
               code="ARCH"
-              aspect="aspect-[4/3]"
+              aspect="absolute inset-0"
+              className="absolute inset-0"
             />
-          )}
+            {al.coverUrl && (
+              <img
+                src={al.coverUrl}
+                alt={l(al.title)}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 z-[1] size-full object-cover"
+                onError={(event) => { event.currentTarget.style.display = "none"; }}
+              />
+            )}
+            <div className="absolute inset-0 z-[2] bg-[linear-gradient(180deg,transparent_55%,rgba(7,16,43,0.7)_100%)]" />
+            <p className="absolute bottom-4 left-4 right-4 z-[3] text-[10px] font-bold uppercase tracking-[0.16em] text-white/85">
+              {al.coverUrl
+                ? (lang === "fr" ? "Aperçu provenant des archives publiques AHMV" : "Preview from AHMV public archives")
+                : (lang === "fr" ? "Archive AHMV" : "AHMV archive")}
+            </p>
+          </div>
           <aside className="broadcast-rail self-start border border-navy/12 bg-background p-6 pl-8">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
