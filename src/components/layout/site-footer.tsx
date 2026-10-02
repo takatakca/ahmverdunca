@@ -8,7 +8,7 @@ import { LangSwitch } from "./lang-switch";
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
-  const showPhone = !publicLaunch || SITE.phonePublic;
+  const showPhone = SITE.phonePublic;
 
   return (
     <footer className="relative mt-auto overflow-hidden bg-competition text-navy-foreground">
