@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink, Mail } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -7,6 +8,7 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/connexion")({
   head: () => ({
+    links: canonicalLink("/connexion"),
     meta: [
       { title: "Services hockey — AHM Verdun" },
       {
