@@ -44,35 +44,47 @@ function AlbumPage() {
           <ArrowLeft className="size-4" /> {t("common.back")}
         </Link>
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
-          <SportArtwork
-            index={al.season.slice(-2)}
-            kicker={`${l(al.eventType)} · ${formatDate(al.date, lang)}`}
-            title={l(al.title)}
-            code="ARCH"
-            aspect="aspect-[4/3]"
-          />
+          {al.coverUrl ? (
+            <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
+              <img
+                src={al.coverUrl}
+                alt={l(al.title)}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(7,16,43,0.7)_100%)]" />
+              <p className="absolute bottom-4 left-4 right-4 text-[10px] font-bold uppercase tracking-[0.16em] text-white/85">
+                {lang === "fr" ? "Aperçu provenant des archives publiques AHMV" : "Preview from AHMV public archives"}
+              </p>
+            </div>
+          ) : (
+            <SportArtwork
+              index={al.season.slice(-2)}
+              kicker={`${l(al.eventType)} · ${formatDate(al.date, lang)}`}
+              title={l(al.title)}
+              code="ARCH"
+              aspect="aspect-[4/3]"
+            />
+          )}
           <aside className="broadcast-rail self-start border border-navy/12 bg-background p-6 pl-8">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
             </p>
             <h2 className="heading-card mt-3">
-              {al.photosPending
-                ? (lang === "fr" ? "Médias en validation" : "Media under review")
-                : (lang === "fr" ? "Album public" : "Public album")}
+              {al.coverUrl
+                ? (lang === "fr" ? "Aperçu d’archive restauré" : "Archive preview restored")
+                : (lang === "fr" ? "Archive publique AHMV" : "Public AHMV archive")}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              {al.photosPending
-                ? (lang === "fr"
-                    ? "Les photos complètes de cet album ne sont pas encore publiées dans cette nouvelle expérience. Elles seront ajoutées seulement après validation des fichiers et des autorisations applicables."
-                    : "The full set of photos for this album is not yet published in this new experience. Media will be added only after file and applicable consent validation.")
-                : (lang === "fr"
-                    ? "Cet album est prêt à être consulté."
-                    : "This album is ready to browse.")}
+              {lang === "fr"
+                ? "Cette fiche conserve l’archive dans la nouvelle expérience AHMV. Utilisez le lien ci-dessous pour consulter l’album public d’origine et l’ensemble des photos disponibles."
+                : "This page preserves the archive in the new AHMV experience. Use the link below to view the original public album and all available photos."}
             </p>
-            {al.sourceUrl && !publicLaunch && (
+            {al.sourceUrl && (
               <Button asChild variant="outline" className="mt-5 w-full">
                 <a href={al.sourceUrl} target="_blank" rel="noopener noreferrer">
-                  {lang === "fr" ? "Voir l'album officiel AHMV" : "View official AHMV album"}
+                  {lang === "fr" ? "Voir l’album AHMV d’origine" : "View original AHMV album"}
                   <ExternalLink className="size-4" />
                 </a>
               </Button>
