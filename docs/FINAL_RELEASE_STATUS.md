@@ -1,6 +1,6 @@
 # AHM Verdun — Final release status
 
-**Date:** 2026-10-01  
+**Date:** 2026-10-02  
 **Project:** AHM Verdun 2026–2027  
 **Digital delivery:** GROUPE TAKATAK  
 **Target domain:** https://ahmverdun.com
@@ -25,7 +25,7 @@ The current public architecture does **not** recreate hockey operations. Spordle
 - News centre
 - Photo/video archive with official AHMV album fallbacks
 - Coach and volunteer resources
-- Arena directory and individual arena pages
+- Arena directory and individual arena pages, including current Saint-Charles schedule coverage
 - FAQ and local site search
 - Hockey resources and financial-assistance links
 - Partners and sponsorship presentation
@@ -47,6 +47,8 @@ The current public architecture does **not** recreate hockey operations. Spordle
 - Sitemap is generated from the current content model.
 - CI validates `robots.txt`, canonical sitemap domain, duplicate URLs and required public routes.
 - CI validates content integrity, references, dates, times and HTTPS links.
+- CI requires every venue in the integrated official weekly schedule to resolve to a verified arena address.
+- CI pins the mirrored public team-directory count so a team cannot disappear silently.
 - Demo/illustrative media cannot silently become public production media.
 - Unapproved team social accounts are hidden.
 - Planned newsletter/voice-service messaging is preview-only.
@@ -80,8 +82,14 @@ Every pull request and push to `main` runs:
 3. TypeScript type check
 4. Content/data integrity validation
 5. Public SEO/sitemap validation
-6. ESLint
-7. Production build
+6. Runtime response-policy validation
+7. Supabase public-key safety validation
+8. No-synthetic-media policy validation
+9. Canonical SEO coverage validation
+10. External-link safety validation
+11. ESLint
+12. Production build
+13. Production release-artifact validation
 
 A release candidate should not be merged when any gate fails.
 
