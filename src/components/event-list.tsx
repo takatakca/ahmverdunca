@@ -72,7 +72,7 @@ export function EventCard({ event, compact = false }: { event: ScheduleEvent; co
         {arena && (
           <>
             <Button asChild variant="outline" size="sm" className={compact ? "h-8 min-h-8 px-2 text-[10px]" : ""}><Link to="/arenas/$slug" params={{ slug: arena.slug }}><Clock className="size-3.5" aria-hidden />{t("common.viewArena")}</Link></Button>
-            <Button asChild variant="outline" size="sm" className={compact ? "h-8 min-h-8 px-2 text-[10px]" : ""}><a href={mapsDirectionsUrl(arena.name)} target="_blank" rel="noopener noreferrer"><Navigation className="size-3.5" aria-hidden />{t("common.directions")}</a></Button>
+            <Button asChild variant="outline" size="sm" className={compact ? "h-8 min-h-8 px-2 text-[10px]" : ""}><a href={mapsDirectionsUrl(arena.address)} target="_blank" rel="noopener noreferrer"><Navigation className="size-3.5" aria-hidden />{t("common.directions")}</a></Button>
           </>
         )}
       </div>
