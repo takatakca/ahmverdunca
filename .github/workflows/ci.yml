@@ -47,6 +47,9 @@ jobs:
       - name: Validate runtime response policy
         run: bun run check:runtime-policy
 
+      - name: Validate Supabase public-key safety
+        run: bun run check:supabase-key-safety
+
       - name: Validate canonical SEO coverage
         run: bun run check:canonical
 
