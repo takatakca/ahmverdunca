@@ -20,7 +20,7 @@ const secured = applyPublicResponsePolicy(
     status: 200,
     headers: { "content-type": "text/html; charset=utf-8" },
   }),
-  new Request("https://ahmverdun.com/"),
+  new Request("https://ahmverdun.ca/"),
   true,
 );
 
