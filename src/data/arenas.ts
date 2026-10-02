@@ -26,6 +26,19 @@ export const ARENAS: Arena[] = [
     zone: "verdun",
   },
   {
+    slug: "saint-charles",
+    name: "Aréna Saint-Charles",
+    borough: { fr: "Le Sud-Ouest", en: "Le Sud-Ouest" },
+    address: "1055, rue d'Hibernia, Montréal (Québec) H3K 2V3",
+    addressVerified: true,
+    website: "https://montreal.ca/lieux/centre-saint-charles",
+    facilities: {
+      fr: "Aréna du Centre Saint-Charles à Pointe-Saint-Charles.",
+      en: "Arena inside Centre Saint-Charles in Pointe-Saint-Charles.",
+    },
+    zone: "sud-ouest",
+  },
+  {
     slug: "samuel-moskovitch",
     name: "Aréna Samuel Moskovitch",
     borough: { fr: "Côte Saint-Luc", en: "Côte Saint-Luc" },
@@ -146,3 +159,33 @@ export const ARENA_ZONES: { id: Arena["zone"]; label: Localized }[] = [
 ];
 
 export const getArena = (slug: string) => ARENAS.find((a) => a.slug === slug);
+
+function normalizeVenueName(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("fr-CA")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+export function arenaDirectionsTargetForVenue(venue: string) {
+  const normalizedVenue = normalizeVenueName(venue);
+
+  if (normalizedVenue.includes("denis savard")) {
+    return getArena("auditorium-de-verdun")?.address ?? venue;
+  }
+
+  if (normalizedVenue.includes("st charles") || normalizedVenue.includes("saint charles")) {
+    return getArena("saint-charles")?.address ?? venue;
+  }
+
+  const arena = ARENAS.find((item) => {
+    const normalizedName = normalizeVenueName(item.name);
+    return normalizedName === normalizedVenue
+      || normalizedName.includes(normalizedVenue)
+      || normalizedVenue.includes(normalizedName);
+  });
+
+  return arena?.address ?? venue;
+}
