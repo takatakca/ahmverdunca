@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink, Handshake, Megaphone, RefreshCw } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -7,6 +8,7 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/partenaires")({
   head: () => ({
+    links: canonicalLink("/partenaires"),
     meta: [
       { title: "Partenaires et commanditaires — AHM Verdun" },
       {
