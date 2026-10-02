@@ -1,5 +1,4 @@
 import { canonicalLink } from "@/lib/seo";
-import { canonicalLink } from "@/lib/seo";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, Images } from "lucide-react";
