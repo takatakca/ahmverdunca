@@ -104,6 +104,12 @@ jobs:
           printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
           tar -C .output -czf "ahmverdun-${RELEASE_SHA}.tar.gz" .
 
+      - name: Capture previous release
+        run: |
+          set -euo pipefail
+          PREVIOUS="$(ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "readlink '$AHMV_APP_ROOT/current' 2>/dev/null || true")"
+          echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+
       - name: Upload release
         env:
           RELEASE_SHA: ${{ inputs.release_sha }}
@@ -139,3 +145,14 @@ jobs:
             exit 1
           }
           echo "Preproduction release $RELEASE_SHA is healthy and protected from indexing."
+
+      - name: Roll back failed activation
+        if: failure() && env.previous_release != ''
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_MOCHAHOST_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          echo "Restoring previous release: $previous_release"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "ln -sfn '$previous_release' '$AHMV_APP_ROOT/current'"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "$RESTART_COMMAND"
