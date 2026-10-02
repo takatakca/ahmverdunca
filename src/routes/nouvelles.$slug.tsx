@@ -2,11 +2,10 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { PlaceholderImage } from "@/components/placeholder-image";
+import { SportArtwork } from "@/components/sport-artwork";
 import { getArticle, NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { getTeam } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
-import { img } from "@/lib/images";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 
@@ -57,15 +56,39 @@ function ArticlePage() {
 
         <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <article>
-            <PlaceholderImage src={img(a.image)} alt={l(a.title)} className="rounded-xl" />
-            <p className="mt-4 text-sm text-muted-foreground">{t("article.author")} {a.author}</p>
+            <SportArtwork
+              index={String(a.legacyId ?? "01").padStart(2, "0")}
+              kicker={category ? l(category.label) : "AHMV"}
+              title={l(a.title)}
+              code="NEWS"
+              aspect="aspect-[16/8]"
+            />
+            <div className="mt-0 grid gap-px border-x border-b border-navy/12 bg-navy/12 sm:grid-cols-3">
+              <div className="bg-background p-4">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{lang === "fr" ? "Publication" : "Published"}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-navy">{newsDateLabel(a, lang)}</p>
+              </div>
+              <div className="bg-background p-4">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{t("article.author")}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-navy">{a.author}</p>
+              </div>
+              <div className="bg-background p-4">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{lang === "fr" ? "Saison" : "Season"}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-navy">{a.season}</p>
+              </div>
+            </div>
             {lang === "en" && !a.body.en && (
               <div className="mt-4 rounded-lg border border-border bg-ice px-4 py-3 text-sm text-muted-foreground">
                 {t("article.noEnglish")}
               </div>
             )}
-            <div className="mt-5 space-y-4 text-base leading-relaxed text-foreground/90">
-              {body.map((p, i) => <p key={i}>{p}</p>)}
+            <div className="mt-8 border-t-2 border-navy pt-7">
+              <p className="eyebrow text-sport">{lang === "fr" ? "Le communiqué" : "The update"}</p>
+              <div className="mt-5 space-y-5 text-base leading-[1.78] text-foreground/90 md:text-lg">
+                {body.map((p, i) => (
+                  <p key={i} className={i === 0 ? "text-lg font-medium leading-[1.7] text-navy md:text-xl" : undefined}>{p}</p>
+                ))}
+              </div>
             </div>
             {a.links && a.links.length > 0 && (
               <div className="mt-7 border-y border-border py-5">
@@ -99,7 +122,7 @@ function ArticlePage() {
             )}
           </article>
 
-          <aside className="space-y-8">
+          <aside className="space-y-8 lg:border-l lg:border-navy/12 lg:pl-8">
             {teams.length > 0 && (
               <div>
                 <p className="eyebrow mb-3 text-sport">{t("article.teams")}</p>
