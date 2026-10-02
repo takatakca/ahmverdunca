@@ -1,0 +1,158 @@
+name: Deploy AHM Verdun preproduction
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: "Full green main commit SHA to deploy"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ahmverdun-preproduction
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: preproduction
+    timeout-minutes: 20
+
+    env:
+      VITE_PUBLIC_INDEXING: "false"
+      AHMV_HOST: ${{ secrets.AHMV_MOCHAHOST_HOST }}
+      AHMV_PORT: ${{ secrets.AHMV_MOCHAHOST_SSH_PORT }}
+      AHMV_USER: ${{ secrets.AHMV_MOCHAHOST_USER }}
+      AHMV_APP_ROOT: ${{ secrets.AHMV_MOCHAHOST_APP_ROOT }}
+      AHMV_PREVIEW_URL: ${{ secrets.AHMV_PREPRODUCTION_URL }}
+
+    steps:
+      - name: Validate requested release is current main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$REQUESTED_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "release_sha must be a full 40-character lowercase Git SHA"
+            exit 1
+          }
+          MAIN_SHA="$(gh api repos/${GITHUB_REPOSITORY}/commits/main --jq .sha)"
+          test "$REQUESTED_SHA" = "$MAIN_SHA" || {
+            echo "Refusing stale/non-main release: requested=$REQUESTED_SHA main=$MAIN_SHA"
+            exit 1
+          }
+
+      - name: Checkout exact release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.release_sha }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Full release gate
+        run: |
+          set -euo pipefail
+          bunx tsc --noEmit
+          bun run check:data
+          bun run check:seo
+          bun run check:runtime-policy
+          bun run check:canonical
+          bun run check:external-links
+          bun run lint
+          bun run build
+          bun run check:release-artifact
+
+      - name: Verify required deployment secrets
+        run: |
+          set -euo pipefail
+          for name in AHMV_HOST AHMV_PORT AHMV_USER AHMV_APP_ROOT AHMV_PREVIEW_URL; do
+            test -n "${!name:-}" || { echo "Missing required secret-backed value: $name"; exit 1; }
+          done
+          [[ "$AHMV_PORT" =~ ^[0-9]+$ ]] || { echo "SSH port must be numeric"; exit 1; }
+          [[ "$AHMV_APP_ROOT" = /* ]] || { echo "AHMV app root must be an absolute path"; exit 1; }
+          [[ "$AHMV_PREVIEW_URL" =~ ^https://[^/]+$ ]] || { echo "Preproduction URL must be an HTTPS origin without a path"; exit 1; }
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AHMV_MOCHAHOST_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.AHMV_MOCHAHOST_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Package immutable release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
+          tar -C .output -czf "ahmverdun-${RELEASE_SHA}.tar.gz" .
+
+      - name: Capture previous release
+        run: |
+          set -euo pipefail
+          PREVIOUS="$(ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "readlink '$AHMV_APP_ROOT/current' 2>/dev/null || true")"
+          echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+
+      - name: Upload release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "mkdir -p '$AHMV_APP_ROOT/releases/$RELEASE_SHA'"
+          scp -P "$AHMV_PORT" "ahmverdun-${RELEASE_SHA}.tar.gz" \
+            "$AHMV_USER@$AHMV_HOST:$AHMV_APP_ROOT/releases/$RELEASE_SHA/release.tar.gz"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "cd '$AHMV_APP_ROOT/releases/$RELEASE_SHA' && tar -xzf release.tar.gz && rm release.tar.gz && ln -sfn '$AHMV_APP_ROOT/releases/$RELEASE_SHA' '$AHMV_APP_ROOT/current'"
+
+      - name: Restart application
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_MOCHAHOST_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          test -n "$RESTART_COMMAND" || { echo "Missing AHMV_MOCHAHOST_RESTART_COMMAND"; exit 1; }
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "$RESTART_COMMAND"
+
+      - name: Verify preproduction health
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          sleep 5
+          curl --fail --silent --show-error --retry 5 --retry-delay 3 "$AHMV_PREVIEW_URL/healthz"
+          HEADERS="$(mktemp)"
+          curl --fail --silent --show-error --retry 5 --retry-delay 3 -D "$HEADERS" -o /dev/null "$AHMV_PREVIEW_URL/"
+          grep -qi '^x-robots-tag: noindex, nofollow' "$HEADERS" || {
+            echo "Preproduction is not protected by noindex."
+            cat "$HEADERS"
+            exit 1
+          }
+          echo "Preproduction release $RELEASE_SHA is healthy and protected from indexing."
+
+      - name: Roll back failed activation
+        if: failure() && env.previous_release != ''
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_MOCHAHOST_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          echo "Restoring previous release: $previous_release"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "ln -sfn '$previous_release' '$AHMV_APP_ROOT/current'"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "$RESTART_COMMAND"
