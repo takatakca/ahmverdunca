@@ -1,5 +1,4 @@
 import { canonicalLink } from "@/lib/seo";
-import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, ExternalLink, Info, Mail, ShieldCheck } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
