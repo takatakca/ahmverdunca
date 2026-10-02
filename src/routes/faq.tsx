@@ -1,12 +1,21 @@
 import { canonicalLink } from "@/lib/seo";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
+import { Search, XCircle } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { FAQ, FAQ_TOPICS } from "@/data/faq";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+
+function normalizeSearch(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("fr-CA")
+    .trim();
+}
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -51,7 +60,7 @@ function FaqPage() {
   const list = visibleFaq.filter(
     (f) =>
       (topic === "all" || f.topic === topic) &&
-      (q.trim() === "" || `${l(f.question)} ${l(f.answer)}`.toLowerCase().includes(q.toLowerCase())),
+      (normalizeSearch(q) === "" || normalizeSearch(`${l(f.question)} ${l(f.answer)}`).includes(normalizeSearch(q))),
   );
 
   return (
@@ -81,16 +90,37 @@ function FaqPage() {
         </div>
 
         <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
-          <input
-            type="search"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={t("search.placeholder")}
-            aria-label={t("common.search")}
-            className="h-12 w-full rounded-md border border-input bg-background px-4 text-base"
-          />
+          <label className="relative block">
+            <span className="sr-only">{t("common.search")}</span>
+            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <input
+              type="search"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={t("search.placeholder")}
+              className="h-12 w-full rounded-md border border-input bg-background pl-11 pr-11 text-base"
+            />
+            {q ? (
+              <button
+                type="button"
+                onClick={() => setQ("")}
+                className="absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-ice hover:text-foreground"
+                aria-label={lang === "fr" ? "Effacer la recherche" : "Clear search"}
+              >
+                <XCircle className="size-4" aria-hidden />
+              </button>
+            ) : null}
+          </label>
           <VoiceSearchButton onTranscript={setQ} />
         </div>
+
+        {q.trim() ? (
+          <p className="mt-3 text-sm font-semibold text-muted-foreground" aria-live="polite">
+            {lang === "fr"
+              ? `${list.length} réponse${list.length === 1 ? "" : "s"} trouvée${list.length === 1 ? "" : "s"}`
+              : `${list.length} answer${list.length === 1 ? "" : "s"} found`}
+          </p>
+        ) : null}
 
         <div className="scrollbar-none -mx-1 my-6 flex gap-2 overflow-x-auto px-1 pb-1">
           {[{ id: "all", label: { fr: "Tous les sujets", en: "All topics" } }, ...visibleTopics].map((c) => (
