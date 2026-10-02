@@ -1,23 +1,33 @@
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Trophy, Users } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  CalendarDays,
+  ExternalLink,
+  Facebook,
+  Instagram,
+  MapPin,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceholderImage } from "@/components/placeholder-image";
-import { SectionHeading } from "@/components/page-header";
 import { ALERTS } from "@/data/alerts";
 import { TEAMS } from "@/data/teams";
 import { NEWS } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
+import { ARENAS } from "@/data/arenas";
 import { SPONSORS } from "@/data/sponsors";
-import { EXTERNAL_LINKS, SITE } from "@/lib/site";
+import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
-import { cn } from "@/lib/utils";
 import heroHockey from "@/assets/hero-hockey.jpg";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { montrealDateKey } from "@/lib/montreal-date";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,12 +50,13 @@ function Home() {
   const today = montrealDateKey();
   const alerts = ALERTS.filter((alert) => !alert.archived && alert.expiresAt >= today);
   const news = NEWS.slice(0, 3);
+  const featuredArena = ARENAS[0];
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative isolate bg-navy-deep">
+      {/* Cinematic opening */}
+      <section className="relative isolate min-h-[74svh] overflow-hidden bg-navy-deep text-navy-foreground md:min-h-[82svh]">
         {!publicLaunch && (
           <img
             src={heroHockey}
@@ -55,69 +66,135 @@ function Home() {
             loading="eager"
             decoding="async"
             fetchPriority="high"
-            className="absolute inset-0 size-full object-cover"
+            className="hero-zoom absolute inset-0 size-full object-cover object-center"
           />
         )}
-        <div className="hero-gradient absolute inset-0" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.97)_0%,rgba(7,16,43,0.82)_38%,rgba(7,16,43,0.34)_72%,rgba(7,16,43,0.72)_100%)]" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(7,16,43,0.1)_46%,rgba(7,16,43,0.96)_100%)]" aria-hidden />
+        <div className="arena-light" aria-hidden />
+        <div className="light-beam left-[14%]" aria-hidden />
+        <div className="light-beam left-[62%] [animation-delay:2.8s]" aria-hidden />
+
         {!publicLaunch && (
-          <span className="absolute right-4 top-4 z-10 rounded-full border border-white/10 bg-navy-deep/55 px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.12em] text-navy-foreground/80 backdrop-blur-sm md:right-8 md:top-8">
+          <span className="absolute right-4 top-4 z-10 border border-white/15 bg-navy-deep/55 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-navy-foreground/80 backdrop-blur-sm md:right-8 md:top-8">
             {t("common.demo")}
           </span>
         )}
-         <div className="container-site relative flex min-h-[52vh] flex-col justify-end py-10 text-navy-foreground md:min-h-[62vh] md:py-14">
-          <p className="eyebrow mb-4 flex items-center gap-2 text-navy-foreground/80">
-            <span className="inline-block h-px w-8 bg-sport" />
-            {t("common.season")} {SITE.season}
-          </p>
-          <p className="font-display text-2xl font-bold uppercase md:text-3xl">AHM Verdun</p>
-          <h1 className="heading-hero mt-2 max-w-4xl">{t("home.heroTitle")}</h1>
-          <p className="mt-5 max-w-xl text-lg text-navy-foreground/85">{lang === "fr" ? "Développement • Compétition • Communauté" : "Development • Competition • Community"}</p>
-          <p className="mt-2 text-sm text-navy-foreground/65">{t("home.heroSub")} — {SITE.city}</p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="sport" size="lg">
-              <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
-                <CalendarDays className="size-5" />
-                {preferredTeam
-                  ? (lang === "fr" ? "Voir mon horaire" : "View my schedule")
-                  : t("home.ctaSchedule")}
-              </Link>
-            </Button>
-            {preferredTeam ? (
-              <Button asChild variant="outline-light" size="lg">
-                <Link to="/equipes/$slug" params={{ slug: preferredTeam }}>
-                  <Users className="size-4" />
-                  {lang === "fr" ? "Mon équipe" : "My team"}
+
+        <div className="container-site relative flex min-h-[74svh] flex-col justify-end pb-10 pt-24 md:min-h-[82svh] md:pb-14">
+          <div className="max-w-6xl">
+            <div className="rise flex flex-wrap items-center gap-3">
+              <span className="h-px w-10 bg-sport" aria-hidden />
+              <p className="eyebrow text-sport-foreground">
+                {t("common.season")} {SITE.season} · {SITE.city}
+              </p>
+            </div>
+
+            <p className="rise mt-5 font-display text-2xl font-bold uppercase tracking-[0.08em] text-navy-foreground/80 [animation-delay:80ms] md:text-3xl">
+              AHM Verdun
+            </p>
+
+            <h1 className="display-mega rise mt-2 max-w-[9ch] text-navy-foreground [animation-delay:140ms]">
+              {t("home.heroTitle")}
+            </h1>
+
+            <div className="rise mt-6 flex max-w-3xl flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold uppercase tracking-[0.16em] text-navy-foreground/70 [animation-delay:220ms] md:text-base">
+              <span>{lang === "fr" ? "Hockey mineur" : "Minor hockey"}</span>
+              <span className="size-1 rounded-full bg-sport" aria-hidden />
+              <span>{lang === "fr" ? "Familles" : "Families"}</span>
+              <span className="size-1 rounded-full bg-sport" aria-hidden />
+              <span>{lang === "fr" ? "Équipes" : "Teams"}</span>
+              <span className="size-1 rounded-full bg-sport" aria-hidden />
+              <span>{lang === "fr" ? "Communauté" : "Community"}</span>
+            </div>
+
+            <div className="rise mt-8 flex flex-col gap-3 sm:flex-row [animation-delay:280ms]">
+              <Button asChild variant="sport" size="lg" className="min-h-12 px-6">
+                <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
+                  <CalendarDays className="size-5" />
+                  {preferredTeam
+                    ? lang === "fr"
+                      ? "Voir mon horaire"
+                      : "View my schedule"
+                    : t("home.ctaSchedule")}
                 </Link>
               </Button>
-            ) : (
-              <Button asChild variant="outline-light" size="lg">
-                <Link to="/inscriptions">
-                  {t("home.ctaRegister")} <ArrowRight className="size-4" />
-                </Link>
+              <Button asChild variant="outline-light" size="lg" className="min-h-12 px-6">
+                {preferredTeam ? (
+                  <Link to="/equipes/$slug" params={{ slug: preferredTeam }}>
+                    <Users className="size-4" />
+                    {lang === "fr" ? "Mon équipe" : "My team"}
+                  </Link>
+                ) : (
+                  <Link to="/inscriptions">
+                    {t("home.ctaRegister")} <ArrowRight className="size-4" />
+                  </Link>
+                )}
               </Button>
-            )}
+            </div>
+          </div>
+
+          <div className="mt-10 grid gap-3 border-t border-navy-foreground/15 pt-5 sm:grid-cols-3">
+            <div>
+              <p className="eyebrow text-navy-foreground/45">{lang === "fr" ? "Priorité parent" : "Parent priority"}</p>
+              <p className="mt-1 font-display text-xl font-bold uppercase">{lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}</p>
+            </div>
+            <div>
+              <p className="eyebrow text-navy-foreground/45">{lang === "fr" ? "Association" : "Association"}</p>
+              <p className="mt-1 font-display text-xl font-bold uppercase">Verdun · Montréal</p>
+            </div>
+            <div>
+              <p className="eyebrow text-navy-foreground/45">{lang === "fr" ? "Saison" : "Season"}</p>
+              <p className="mt-1 font-display text-xl font-bold uppercase">{SITE.season}</p>
+            </div>
           </div>
         </div>
       </section>
 
-       <ScheduleFinder />
+      {/* Current / important strip */}
+      <section className="border-b border-navy/10 bg-ice">
+        <div className="container-site flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="shrink-0 bg-sport px-2.5 py-1 font-display text-xs font-bold uppercase tracking-[0.12em] text-sport-foreground">
+              {lang === "fr" ? "Cette semaine" : "This week"}
+            </span>
+            <p className="truncate text-sm font-semibold text-navy">
+              {alerts[0]
+                ? l(alerts[0].title)
+                : lang === "fr"
+                  ? "Horaires, équipes et informations AHMV au même endroit."
+                  : "Schedules, teams and AHMV information in one place."}
+            </p>
+          </div>
+          <div className="flex shrink-0 gap-4 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            <Link to="/horaires" className="hover:text-sport">{lang === "fr" ? "Horaires" : "Schedules"}</Link>
+            <Link to="/equipes" className="hover:text-sport">{lang === "fr" ? "Équipes" : "Teams"}</Link>
+            <Link to="/nouvelles" className="hover:text-sport">{lang === "fr" ? "Nouvelles" : "News"}</Link>
+          </div>
+        </div>
+      </section>
+
+      <ScheduleFinder />
 
       {/* Alerts */}
       {alerts.length > 0 && (
-        <section className="container-site py-7 md:py-9">
-          <p className="eyebrow mb-3 text-sport">{t("home.alerts")}</p>
-          <div className="space-y-3">
+        <section className="border-y border-status-cancelled/20 bg-status-cancelled-soft">
+          <div className="container-site py-5">
             {alerts.map((a) => (
-              <div key={a.id} className="flex flex-col gap-4 border-l-4 border-l-sport bg-status-cancelled-soft p-5 md:flex-row md:items-center md:justify-between">
-                <div>
-                <p className="flex items-center gap-2 font-display text-lg font-bold uppercase text-sport">
-                  <AlertTriangle className="size-5" aria-hidden /> {l(a.title)}
-                </p>
-                <p className="mt-1.5 text-sm text-foreground/90">{l(a.message)}</p>
-                <p className="mt-2 text-xs text-muted-foreground">{t("common.published")} {formatDate(a.publishedAt, lang)}</p>
+              <div key={a.id} className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="flex min-w-0 items-start gap-3">
+                  <AlertTriangle className="mt-0.5 size-5 shrink-0 text-status-cancelled" aria-hidden />
+                  <div>
+                    <p className="font-display text-xl font-extrabold uppercase text-status-cancelled">{l(a.title)}</p>
+                    <p className="mt-1 text-sm text-foreground/80">{l(a.message)}</p>
+                  </div>
                 </div>
                 {a.linkTo && a.linkTo.split("/").pop() && (
-                  <Link to="/nouvelles/$slug" params={{ slug: a.linkTo.split("/").pop() ?? "" }} className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-sport hover:underline">
+                  <Link
+                    to="/nouvelles/$slug"
+                    params={{ slug: a.linkTo.split("/").pop() ?? "" }}
+                    className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-status-cancelled hover:underline"
+                  >
                     {t("common.readMore")} <ArrowRight className="size-4" />
                   </Link>
                 )}
@@ -127,130 +204,122 @@ function Home() {
         </section>
       )}
 
-      {/* This week — official published source */}
       <OfficialWeekPreview />
 
       {/* Team universe */}
-      <section className="rink-lines bg-ice py-12 md:py-16">
-        <div className="container-site">
-        <SectionHeading
-          eyebrow={t("home.teamUniverseHint")}
-          title={t("home.teamUniverse")}
-          action={<Button asChild variant="outline" size="sm"><Link to="/equipes">{t("common.seeAll")}</Link></Button>}
-        />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {TEAMS.map((team, index) => (
-            <Link
-              key={team.slug}
-              to="/equipes/$slug"
-              params={{ slug: team.slug }}
-              className={cn(
-                "group relative min-h-44 overflow-hidden rounded-lg border bg-card p-5 shadow-card transition-all hover:-translate-y-1 hover:shadow-card-hover",
-                preferredTeam === team.slug
-                  ? "border-sport ring-2 ring-sport/20"
-                  : "border-navy/10",
-              )}
-            >
-              <span className="absolute right-2 top-0 font-display text-7xl font-extrabold text-navy/5">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              {preferredTeam === team.slug && (
-                <span className="absolute left-4 top-4 rounded-full bg-sport px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sport-foreground">
-                  {lang === "fr" ? "Mon équipe" : "My team"}
-                </span>
-              )}
-              <Users
+      <section className="relative overflow-hidden bg-navy-deep py-14 text-navy-foreground md:py-20">
+        <div className="arena-light opacity-40" aria-hidden />
+        <div className="container-site relative">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="eyebrow text-sport-foreground">{t("home.teamUniverseHint")}</p>
+              <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] md:text-7xl">
+                {t("home.teamUniverse")}
+              </h2>
+            </div>
+            <Button asChild variant="outline-light" size="sm">
+              <Link to="/equipes">{t("common.seeAll")} <ArrowRight className="size-4" /></Link>
+            </Button>
+          </div>
+
+          <div className="scrollbar-none mt-9 flex snap-x gap-px overflow-x-auto border-y border-navy-foreground/15">
+            {TEAMS.map((team, index) => (
+              <Link
+                key={team.slug}
+                to="/equipes/$slug"
+                params={{ slug: team.slug }}
                 className={cn(
-                  "size-5 text-sport",
-                  preferredTeam === team.slug && "mt-8",
+                  "group relative min-h-64 min-w-[190px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-5 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[220px]",
+                  preferredTeam === team.slug && "bg-sport/15",
                 )}
-                aria-hidden
-              />
-              <span className="mt-7 block font-display text-4xl font-extrabold uppercase text-navy">
-                {team.code}
-              </span>
-              <span className="mt-1 block text-xs font-semibold text-muted-foreground">
-                {l(team.ages)}
-              </span>
-              <ArrowRight className="absolute bottom-4 right-4 size-5 text-sport transition-transform group-hover:translate-x-1" />
-            </Link>
-          ))}
-        </div>
+              >
+                <span className="font-display text-6xl font-extrabold text-navy-foreground/8">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div className="absolute inset-x-5 bottom-5">
+                  {preferredTeam === team.slug && (
+                    <span className="mb-3 inline-block bg-sport px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
+                      {lang === "fr" ? "Mon équipe" : "My team"}
+                    </span>
+                  )}
+                  <p className="font-display text-5xl font-extrabold uppercase leading-none">{team.code}</p>
+                  <p className="mt-2 text-sm font-semibold text-navy-foreground/65">{l(team.ages)}</p>
+                  <div className="mt-4 flex items-center justify-between border-t border-navy-foreground/15 pt-3 text-xs font-semibold uppercase tracking-[0.12em] text-navy-foreground/55">
+                    <span>{team.code === "F" ? l(team.name) : lang === "fr" ? "Voir la catégorie" : "View category"}</span>
+                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Newsroom */}
-      <section className="bg-ice py-12 md:py-16">
+      <section className="bg-background py-14 md:py-20">
         <div className="container-site">
-          <SectionHeading
-            eyebrow={lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}
-            title={t("home.news")}
-            action={
-              <Button asChild variant="outline" size="sm">
-                <Link to="/nouvelles">
-                  {t("common.seeAll")} <ArrowRight className="size-4" />
-                </Link>
-              </Button>
-            }
-          />
+          <div className="flex flex-col gap-4 border-b-2 border-navy pb-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="eyebrow text-sport">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
+              <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-none text-navy md:text-6xl">
+                {t("home.news")}
+              </h2>
+            </div>
+            <Button asChild variant="outline" size="sm">
+              <Link to="/nouvelles">{t("common.seeAll")} <ArrowRight className="size-4" /></Link>
+            </Button>
+          </div>
 
           {news[0] && (
-            <div className="grid gap-5 lg:grid-cols-[1.45fr_0.85fr]">
+            <div className="mt-7 grid gap-0 overflow-hidden border border-navy/10 lg:grid-cols-[1.65fr_0.85fr]">
               <Link
                 to="/nouvelles/$slug"
                 params={{ slug: news[0].slug }}
-                className="card-elevated group overflow-hidden"
+                className="group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
                 <PlaceholderImage
                   src={img(news[0].image)}
                   alt={l(news[0].title)}
-                  aspect="aspect-[16/9]"
+                  aspect="absolute inset-0"
+                  className="absolute inset-0"
                 />
-                <div className="p-6 md:p-7">
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_18%,rgba(7,16,43,0.12)_45%,rgba(7,16,43,0.96)_100%)]" />
+                <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground md:p-9">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="rounded-full bg-sport px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-sport-foreground">
+                    <span className="bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
                       {lang === "fr" ? "À la une" : "Featured"}
                     </span>
-                    <p className="eyebrow text-sport">
-                      {formatShortDate(news[0].date, lang)}
-                    </p>
+                    <span className="eyebrow text-navy-foreground/65">{formatShortDate(news[0].date, lang)}</span>
                   </div>
-                  <h3 className="mt-4 font-display text-3xl font-extrabold uppercase leading-none text-navy group-hover:text-sport md:text-4xl">
+                  <h3 className="mt-4 max-w-4xl font-display text-4xl font-extrabold uppercase leading-[0.9] md:text-6xl">
                     {l(news[0].title)}
                   </h3>
-                  <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
+                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-navy-foreground/70 md:text-base">
                     {l(news[0].excerpt)}
                   </p>
-                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-sport">
-                    {t("common.readMore")}
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.12em] text-sport-foreground">
+                    {t("common.readMore")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                   </span>
                 </div>
               </Link>
 
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
-                {news.slice(1).map((article) => (
+              <div className="grid divide-y divide-navy/10">
+                {news.slice(1).map((article, index) => (
                   <Link
                     key={article.slug}
                     to="/nouvelles/$slug"
                     params={{ slug: article.slug }}
-                    className="card-elevated group grid overflow-hidden sm:grid-cols-[0.9fr_1.1fr] lg:grid-cols-[0.8fr_1.2fr]"
+                    className="group flex min-h-52 flex-col justify-between bg-ice p-6 transition-colors hover:bg-background md:p-7"
                   >
-                    <PlaceholderImage
-                      src={img(article.image)}
-                      alt={l(article.title)}
-                      aspect="aspect-[4/3] sm:aspect-auto sm:min-h-full"
-                    />
-                    <div className="p-5">
-                      <p className="eyebrow text-sport">
-                        {formatShortDate(article.date, lang)}
-                      </p>
-                      <h3 className="heading-card mt-2 group-hover:text-sport">
+                    <div className="flex items-start justify-between gap-4">
+                      <p className="eyebrow text-sport">{formatShortDate(article.date, lang)}</p>
+                      <span className="font-display text-4xl font-extrabold text-navy/8">0{index + 2}</span>
+                    </div>
+                    <div>
+                      <h3 className="font-display text-3xl font-extrabold uppercase leading-[0.92] text-navy group-hover:text-sport">
                         {l(article.title)}
                       </h3>
-                      <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
-                        {l(article.excerpt)}
-                      </p>
+                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{l(article.excerpt)}</p>
                     </div>
                   </Link>
                 ))}
@@ -260,116 +329,186 @@ function Home() {
         </div>
       </section>
 
-      {/* Tournament preview */}
-      <section className="border-y border-border bg-background py-12 md:py-16">
-        <div className="container-site grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+      {/* Tournament bridge */}
+      <section className="border-y border-navy/10 bg-ice">
+        <div className="container-site grid gap-6 py-8 md:grid-cols-[auto_1fr_auto] md:items-center">
+          <div className="flex size-16 items-center justify-center bg-sport text-sport-foreground">
+            <Trophy className="size-7" />
+          </div>
           <div>
             <p className="eyebrow text-sport">{lang === "fr" ? "Événement officiel" : "Official event"}</p>
-            <h2 className="heading-section mt-2">{t("home.tournaments")}</h2>
-            <p className="mt-4 max-w-lg text-muted-foreground">
+            <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-navy">
+              {lang === "fr" ? "30e Tournoi Provincial M11 de Verdun" : "30th Verdun Provincial U11 Tournament"}
+            </p>
+            <p className="mt-2 text-sm text-muted-foreground">
               {lang === "fr"
-                ? "La 30e édition du Tournoi Provincial M11 de Verdun se tiendra du 18 au 31 janvier 2027. Le site AHMV sert de passerelle vers l'information officielle."
-                : "The 30th Verdun Provincial U11 Tournament runs January 18–31, 2027. The AHMV site acts as a gateway to official information."}
+                ? "18–31 janvier 2027 · passerelle vers le site officiel, les horaires et les classements."
+                : "January 18–31, 2027 · gateway to the official site, schedules and standings."}
             </p>
-            <Button asChild variant="outline" className="mt-6"><Link to="/tournois"><Trophy className="size-4" /> {lang === "fr" ? "Voir le tournoi" : "View tournament"}</Link></Button>
           </div>
-          <div className="competition-panel flex min-h-64 flex-col justify-end rounded-lg p-6 text-navy-foreground md:p-8">
-            <Trophy className="mb-auto size-8 text-sport-foreground" />
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "30e édition" : "30th edition"}</p>
-            <p className="mt-2 font-display text-3xl font-bold uppercase">{lang === "fr" ? "Tournoi Provincial M11 de Verdun" : "Verdun Provincial U11 Tournament"}</p>
-            <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? "18–31 janvier 2027 · Auditorium de Verdun · horaires et classements sur le site officiel." : "January 18–31, 2027 · Verdun Auditorium · schedules and standings on the official site."}</p>
-          </div>
+          <Button asChild variant="outline">
+            <Link to="/tournois">{lang === "fr" ? "Voir le tournoi" : "View tournament"} <ArrowRight className="size-4" /></Link>
+          </Button>
         </div>
       </section>
 
-      {/* Gallery */}
-      <section className="container-site py-12 md:py-16">
-        <SectionHeading
-          eyebrow={lang === "fr" ? "Archives AHMV" : "AHMV archives"}
-          title={t("home.moments")}
-          action={<Button asChild variant="outline" size="sm"><Link to="/galerie">{t("common.seeAll")}</Link></Button>}
-        />
-        <div className="grid gap-4 sm:grid-cols-3">
-          {ALBUMS.map((al) => (
-            <Link key={al.slug} to="/galerie/$slug" params={{ slug: al.slug }} className="group relative overflow-hidden rounded-lg first:sm:col-span-2 first:sm:row-span-2">
-              <PlaceholderImage src={img(al.cover)} alt={l(al.title)} aspect="aspect-[4/3]" />
-              <div className="absolute inset-x-0 bottom-0 bg-navy-deep/90 p-4 text-navy-foreground">
-                <h3 className="heading-card">{l(al.title)}</h3>
-                <p className="mt-1 text-xs text-navy-foreground/65">{formatShortDate(al.date, lang)} · {l(al.eventType)}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Official social channels */}
-      <section className="bg-ice py-12 md:py-16">
+      {/* Gallery / community */}
+      <section className="bg-navy-deep py-14 text-navy-foreground md:py-20">
         <div className="container-site">
-          <SectionHeading eyebrow={t("home.socialPreview")} title={t("home.social")} description={t("home.socialNote")} />
-          <div className="grid gap-4 md:grid-cols-3">
-            <a
-              href={EXTERNAL_LINKS.instagram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
-            >
-              <div className="flex items-center justify-between">
-                <Instagram className="size-6 text-navy" aria-hidden />
-                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
-              </div>
-              <h3 className="heading-card mt-8">Instagram</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr" ? "Compte AHM Verdun" : "AHM Verdun account"}
-              </p>
-            </a>
-            <a
-              href={EXTERNAL_LINKS.facebook}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
-            >
-              <div className="flex items-center justify-between">
-                <Facebook className="size-6 text-navy" aria-hidden />
-                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
-              </div>
-              <h3 className="heading-card mt-8">Facebook</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr" ? "Page AHM Verdun" : "AHM Verdun page"}
-              </p>
-            </a>
-            <Link
-              to="/arenas"
-              className="border-t-4 border-t-sport bg-card p-6 shadow-card transition-transform hover:-translate-y-0.5"
-            >
-              <div className="flex items-center justify-between">
-                <MapPin className="size-6 text-navy" aria-hidden />
-                <ArrowRight className="size-4 text-muted-foreground" aria-hidden />
-              </div>
-              <h3 className="heading-card mt-8">Google / Maps</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr" ? "Arénas et itinéraires" : "Arenas and directions"}
-              </p>
-            </Link>
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Communauté · Médias" : "Community · Media"}</p>
+              <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.88] md:text-7xl">
+                {t("home.moments")}
+              </h2>
+            </div>
+            <Button asChild variant="outline-light" size="sm">
+              <Link to="/galerie">{t("common.seeAll")} <ArrowRight className="size-4" /></Link>
+            </Button>
+          </div>
+
+          <div className="mt-8 grid auto-rows-[170px] gap-2 sm:grid-cols-2 sm:auto-rows-[220px] lg:grid-cols-4 lg:auto-rows-[230px]">
+            {ALBUMS.map((album, index) => (
+              <Link
+                key={album.slug}
+                to="/galerie/$slug"
+                params={{ slug: album.slug }}
+                className={cn(
+                  "group relative overflow-hidden bg-navy",
+                  index === 0 && "sm:row-span-2 lg:col-span-2 lg:row-span-2",
+                  index === 1 && "lg:col-span-2",
+                )}
+              >
+                <PlaceholderImage
+                  src={img(album.cover)}
+                  alt={l(album.title)}
+                  aspect="absolute inset-0"
+                  className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.025]"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_20%,rgba(7,16,43,0.88)_100%)]" />
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <p className="eyebrow text-sport-foreground">{l(album.eventType)}</p>
+                  <h3 className={cn("mt-2 font-display font-extrabold uppercase leading-none", index === 0 ? "text-4xl md:text-5xl" : "text-2xl")}>
+                    {l(album.title)}
+                  </h3>
+                  <p className="mt-2 text-xs text-navy-foreground/55">{formatShortDate(album.date, lang)}</p>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* WLLV bridge */}
-      <section className="competition-panel py-12 text-navy-foreground md:py-16">
-        <div className="container-site flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Hockey compétitif AA / BB" : "Competitive AA / BB hockey"}
-            </p>
-            <h2 className="heading-section mt-2">{t("home.wllvTitle")}</h2>
-            <p className="mt-3 max-w-2xl text-navy-foreground/70">{t("home.wllvNote")}</p>
+      {/* Arenas */}
+      <section className="bg-background py-14 md:py-20">
+        <div className="container-site">
+          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="eyebrow text-sport">{lang === "fr" ? "Où nous jouons" : "Where we play"}</p>
+              <h2 className="mt-2 font-display text-6xl font-extrabold uppercase leading-[0.85] tracking-[-0.035em] text-navy md:text-7xl">
+                {lang === "fr" ? "Les arénas" : "Arenas"}
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground">
+                {lang === "fr"
+                  ? "Adresses vérifiées, itinéraires et installations utilisées autour de Verdun et Montréal."
+                  : "Verified addresses, directions and facilities used around Verdun and Montreal."}
+              </p>
+              <Button asChild variant="outline" className="mt-6">
+                <Link to="/arenas">{lang === "fr" ? "Voir les 12 arénas" : "View all 12 arenas"} <ArrowRight className="size-4" /></Link>
+              </Button>
+            </div>
+
+            {featuredArena && (
+              <div className="border-t-4 border-sport bg-ice">
+                <div className="grid md:grid-cols-[1.15fr_0.85fr]">
+                  <div className="p-6 md:p-8">
+                    <p className="eyebrow text-sport">{lang === "fr" ? "Aréna principal" : "Featured arena"}</p>
+                    <h3 className="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy md:text-5xl">
+                      {featuredArena.name}
+                    </h3>
+                    <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
+                      <MapPin className="mt-0.5 size-4 shrink-0 text-sport" />
+                      {featuredArena.address}
+                    </p>
+                    {featuredArena.facilities && (
+                      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{l(featuredArena.facilities)}</p>
+                    )}
+                    <div className="mt-6 flex flex-wrap gap-2">
+                      <Button asChild variant="sport">
+                        <a href={mapsDirectionsUrl(featuredArena.address)} target="_blank" rel="noopener noreferrer">
+                          <MapPin className="size-4" /> {lang === "fr" ? "Itinéraire" : "Directions"}
+                        </a>
+                      </Button>
+                      <Button asChild variant="outline">
+                        <Link to="/arenas/$slug" params={{ slug: featuredArena.slug }}>
+                          {lang === "fr" ? "Fiche aréna" : "Arena details"} <ArrowRight className="size-4" />
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="divide-y divide-navy/10 border-t border-navy/10 md:border-l md:border-t-0">
+                    {ARENAS.slice(1, 5).map((arena, index) => (
+                      <Link
+                        key={arena.slug}
+                        to="/arenas/$slug"
+                        params={{ slug: arena.slug }}
+                        className="group flex min-h-24 items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-background"
+                      >
+                        <div className="min-w-0">
+                          <p className="eyebrow text-muted-foreground">0{index + 2} · {l(arena.borough)}</p>
+                          <p className="mt-1 truncate font-display text-xl font-bold uppercase text-navy">{arena.name}</p>
+                        </div>
+                        <ArrowRight className="size-4 shrink-0 text-sport transition-transform group-hover:translate-x-1" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
+        </div>
+      </section>
+
+      {/* Social strip */}
+      <section className="border-y border-navy/10 bg-ice">
+        <div className="container-site flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="eyebrow text-sport">{t("home.socialPreview")}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{t("home.socialNote")}</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <a href={EXTERNAL_LINKS.instagram} target="_blank" rel="noopener noreferrer">
+                <Instagram className="size-4" /> Instagram <ExternalLink className="size-3" />
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <a href={EXTERNAL_LINKS.facebook} target="_blank" rel="noopener noreferrer">
+                <Facebook className="size-4" /> Facebook <ExternalLink className="size-3" />
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* WLLV */}
+      <section className="competition-panel relative overflow-hidden py-16 text-navy-foreground md:py-24">
+        <div className="pointer-events-none absolute right-[-2vw] top-1/2 -translate-y-1/2 font-display text-[28vw] font-extrabold leading-none text-navy-foreground/[0.035]">
+          AA
+        </div>
+        <div className="container-site relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+          <div>
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Parcours compétitif" : "Competitive pathway"}</p>
+            <h2 className="mt-3 font-display text-6xl font-extrabold uppercase leading-[0.82] tracking-[-0.035em] md:text-8xl">
+              WLLV
+              <span className="outline-text ml-3">AA / BB</span>
+            </h2>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/65">{t("home.wllvNote")}</p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
             <Button asChild variant="outline-light" size="lg">
-              <Link to="/wllv">
-                {lang === "fr" ? "Comprendre le parcours" : "Understand the pathway"}
-                <ArrowRight className="size-4" />
-              </Link>
+              <Link to="/wllv">{lang === "fr" ? "Comprendre le parcours" : "Understand the pathway"} <ArrowRight className="size-4" /></Link>
             </Button>
             <Button asChild variant="sport" size="lg">
               <a href={EXTERNAL_LINKS.wllv} target="_blank" rel="noopener noreferrer">
@@ -380,58 +519,54 @@ function Home() {
         </div>
       </section>
 
-      {/* Sponsors */}
-      <section className="navy-texture py-12 text-navy-foreground md:py-16">
+      {/* Partners */}
+      <section className="navy-texture overflow-hidden py-12 text-navy-foreground md:py-16">
         <div className="container-site">
-          <p className="eyebrow text-sport-foreground/80">
-            {lang === "fr" ? "Partenaires AHMV" : "AHMV partners"}
-          </p>
-          <h2 className="heading-section mt-2">{t("home.sponsors")}</h2>
-          <p className="mt-3 max-w-2xl text-sm text-navy-foreground/75">{t("home.sponsorsNote")}</p>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-            {SPONSORS.map((sponsor) => {
-              const content = (
-                <div>
-                  <p className="text-sm font-semibold leading-tight text-navy-foreground/90">
-                    {sponsor.name}
-                  </p>
-                  {sponsor.websiteVerified && (
-                    <p className="mt-2 text-[10px] uppercase tracking-wider text-navy-foreground/45">
-                      {lang === "fr" ? "Lien partenaire" : "Partner link"}
-                    </p>
-                  )}
-                </div>
-              );
+          <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="eyebrow text-sport-foreground/80">{lang === "fr" ? "Communauté" : "Community"}</p>
+              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl">
+                {t("home.sponsors")}
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm text-navy-foreground/60">{t("home.sponsorsNote")}</p>
+            </div>
+            <Button asChild variant="outline-light" size="sm">
+              <Link to="/contact">{lang === "fr" ? "Devenir partenaire" : "Become a partner"}</Link>
+            </Button>
+          </div>
 
+          <div className="mt-8 flex flex-wrap border-l border-t border-navy-foreground/15">
+            {SPONSORS.map((sponsor) => {
+              const classes = "flex min-h-20 min-w-[220px] flex-1 items-center border-b border-r border-navy-foreground/15 px-5 py-4 text-sm font-semibold text-navy-foreground/80 transition-colors hover:bg-navy-foreground/[0.05] hover:text-navy-foreground";
               return sponsor.website ? (
-                <a
-                  key={sponsor.name}
-                  href={sponsor.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex min-h-24 items-center justify-center rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 text-center transition-colors hover:border-sport-foreground/50 hover:bg-navy-foreground/[0.08]"
-                  aria-label={`${sponsor.name} — ${lang === "fr" ? "site partenaire" : "partner site"}`}
-                >
-                  {content}
+                <a key={sponsor.name} href={sponsor.website} target="_blank" rel="noopener noreferrer" className={classes}>
+                  {sponsor.name}
                 </a>
               ) : (
-                <div
-                  key={sponsor.name}
-                  className="flex min-h-24 items-center justify-center rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 text-center"
-                >
-                  {content}
-                </div>
+                <div key={sponsor.name} className={classes}>{sponsor.name}</div>
               );
             })}
           </div>
-          <div className="mt-7 flex flex-col gap-3 border-t border-navy-foreground/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
-            <p className="max-w-2xl text-sm text-navy-foreground/65">
-              {lang === "fr"
-                ? "Pour soutenir AHM Verdun ou discuter d’une commandite, communiquez directement avec l’association."
-                : "To support AHM Verdun or discuss sponsorship, contact the association directly."}
+        </div>
+      </section>
+
+      {/* Final action */}
+      <section className="bg-sport text-sport-foreground">
+        <div className="container-site flex flex-col gap-6 py-9 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="eyebrow text-sport-foreground/70">{lang === "fr" ? "Votre prochaine étape" : "Your next step"}</p>
+            <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl">
+              {lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}
             </p>
-            <Button asChild variant="outline-light">
-              <Link to="/contact">{lang === "fr" ? "Devenir partenaire" : "Become a partner"}</Link>
+          </div>
+          <div className="flex flex-col gap-2 sm:flex-row">
+            <Button asChild variant="outline-light" size="lg" className="border-white/45">
+              <Link to="/equipes"><Users className="size-4" /> {lang === "fr" ? "Les équipes" : "Teams"}</Link>
+            </Button>
+            <Button asChild variant="secondary" size="lg">
+              <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
+                <CalendarDays className="size-5" /> {lang === "fr" ? "Voir les horaires" : "View schedules"}
+              </Link>
             </Button>
           </div>
         </div>

@@ -23,18 +23,26 @@ export function CommunicationsPreview() {
     const timer = window.setTimeout(() => {
       setOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 2200);
+    }, 320);
 
     return () => window.clearTimeout(timer);
   }, [publicLaunch]);
 
   useEffect(() => {
     if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
+
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [open]);
 
   if (!open || publicLaunch) return null;
@@ -50,56 +58,91 @@ export function CommunicationsPreview() {
   };
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/70 p-0 backdrop-blur-sm sm:items-center sm:p-6" role="presentation">
+    <div
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/80 backdrop-blur-md sm:items-center sm:p-5"
+      role="presentation"
+    >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="communications-preview-title"
-        className="relative max-h-[92dvh] w-full overflow-y-auto border-t-4 border-sport bg-background shadow-2xl sm:max-w-2xl sm:rounded-xl sm:border sm:border-t-4"
+        className="relative grid max-h-[100dvh] w-full overflow-hidden bg-background shadow-[0_40px_100px_-30px_rgba(0,0,0,0.65)] sm:max-h-[92dvh] sm:max-w-5xl sm:grid-cols-[1.05fr_0.95fr] sm:border sm:border-white/10"
       >
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="tap-target absolute right-3 top-3 z-10 inline-flex items-center justify-center rounded-full bg-navy-deep/8 text-foreground transition-colors hover:bg-navy-deep/12"
+          className="tap-target absolute right-3 top-3 z-30 inline-flex items-center justify-center rounded-full border border-white/15 bg-navy-deep/55 text-white backdrop-blur-md transition-colors hover:bg-navy-deep/75"
           aria-label={lang === "fr" ? "Fermer" : "Close"}
         >
           <X className="size-5" />
         </button>
 
-        <div className="grid md:grid-cols-[0.88fr_1.12fr]">
-          <div className="navy-texture flex min-h-44 flex-col justify-between p-6 text-navy-foreground sm:p-8">
-            <div className="flex items-center gap-4">
-              <LogoSlot size="lg" className="size-20 drop-shadow-[0_10px_28px_rgba(0,0,0,0.32)]" />
-              <div>
-                <p className="font-display text-2xl font-extrabold uppercase leading-none">AHM Verdun</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-navy-foreground/60">
-                  {lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}
-                </p>
+        <div className="relative min-h-[42dvh] overflow-hidden bg-navy-deep p-6 text-navy-foreground sm:min-h-[640px] sm:p-8 md:p-10">
+          <div className="arena-light" aria-hidden />
+          <div className="light-beam left-[6%]" aria-hidden />
+          <div className="light-beam left-[58%] [animation-delay:2.6s]" aria-hidden />
+          <div className="ice-grain absolute inset-0 opacity-40" aria-hidden />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,15,39,0.08)_0%,rgba(6,15,39,0.72)_68%,rgba(6,15,39,0.96)_100%)]" aria-hidden />
+
+          <div className="relative z-10 flex h-full flex-col">
+            <div className="flex items-start justify-between gap-4 pr-12">
+              <div className="flex items-center gap-4">
+                <LogoSlot size="lg" className="size-20 drop-shadow-[0_16px_30px_rgba(0,0,0,0.38)] sm:size-24" />
+                <div>
+                  <p className="font-display text-2xl font-extrabold uppercase leading-none sm:text-3xl">AHM Verdun</p>
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/55">
+                    {lang === "fr" ? "Hockey mineur · Verdun" : "Minor hockey · Verdun"}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="mt-8 border-l-2 border-sport pl-4">
+            <div className="mt-auto pt-10">
               <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Numéro AHMV réservé — service d'information à venir" : "Reserved AHMV number — information service upcoming"}
+                {lang === "fr" ? "Numéro AHMV réservé" : "Reserved AHMV number"}
               </p>
-              <p className="mt-2 font-display text-2xl font-bold tracking-tight">{SITE.phoneDisplay}</p>
-              <p className="mt-1 text-xs text-navy-foreground/55">+1 581 666 6246</p>
+              <p className="mt-3 font-display text-[clamp(2.8rem,7vw,5.5rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.035em]">
+                1 (581)<br />
+                666-6AHM
+              </p>
+              <p className="mt-3 text-sm font-semibold tracking-[0.1em] text-navy-foreground/60">+1 581 666 6246</p>
+
+              <div className="mt-6 border-l-2 border-sport pl-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-sport-foreground">
+                  {lang === "fr" ? "Service d'information à venir" : "Information service upcoming"}
+                </p>
+                <p className="mt-2 max-w-sm text-sm leading-relaxed text-navy-foreground/60">
+                  {lang === "fr"
+                    ? "Le numéro est réservé pour la future expérience d'information AHMV. Il n'est pas présenté comme un service automatisé actif."
+                    : "The number is reserved for the future AHMV information experience. It is not presented as a live automated service."}
+                </p>
+              </div>
             </div>
           </div>
+        </div>
 
-          <div className="p-6 sm:p-8">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Info AHMV" : "AHMV updates"}</p>
-            <h2 id="communications-preview-title" className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.92] text-navy">
-              {lang === "fr" ? "Restez connecté à AHM Verdun" : "Stay connected to AHM Verdun"}
-            </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              {lang === "fr"
-                ? "Horaires, nouvelles et informations importantes directement avec vous."
-                : "Schedules, news and important information, delivered directly to you."}
+        <div className="max-h-[58dvh] overflow-y-auto p-6 sm:max-h-none sm:p-8 md:p-10">
+          <p className="eyebrow text-sport">{lang === "fr" ? "Info AHMV" : "AHMV updates"}</p>
+          <h2
+            id="communications-preview-title"
+            className="mt-3 max-w-[10ch] font-display text-5xl font-extrabold uppercase leading-[0.84] tracking-[-0.03em] text-navy sm:text-6xl"
+          >
+            {lang === "fr" ? "Restez connecté" : "Stay connected"}
+          </h2>
+          <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+            {lang === "fr"
+              ? "Horaires, nouvelles et informations importantes d'AHM Verdun, réunis dans une expérience simple pour les familles."
+              : "Schedules, news and important AHM Verdun information, brought together in a simple family experience."}
+          </p>
+
+          <div className="mt-7 border-y border-navy/10 py-5">
+            <p className="eyebrow text-muted-foreground">{lang === "fr" ? "Priorité parent" : "Parent priority"}</p>
+            <p className="mt-2 font-display text-2xl font-extrabold uppercase text-navy">
+              {lang === "fr" ? "Recevoir les horaires" : "Receive schedules"}
             </p>
 
             {subscribed ? (
-              <div className="mt-6 border-l-4 border-sport bg-ice p-4">
+              <div className="mt-4 border-l-4 border-sport bg-ice p-4">
                 <p className="font-semibold text-navy">
                   {lang === "fr" ? "Aperçu confirmé." : "Preview confirmed."}
                 </p>
@@ -110,56 +153,60 @@ export function CommunicationsPreview() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={submitPreview} className="mt-6 space-y-3">
-                <label className="block text-sm font-semibold text-navy" htmlFor="communications-preview-email">
-                  {lang === "fr" ? "Recevoir les horaires" : "Receive schedules"}
-                </label>
-                <div className="flex flex-col gap-2 sm:flex-row">
-                  <div className="relative flex-1">
-                    <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-                    <input
-                      id="communications-preview-email"
-                      type="email"
-                      required
-                      placeholder={lang === "fr" ? "votre@courriel.ca" : "you@email.ca"}
-                      className="h-11 w-full rounded-md border bg-background pl-10 pr-3 text-sm outline-none transition-shadow focus:ring-2 focus:ring-sport"
-                    />
-                  </div>
-                  <Button type="submit" variant="sport" className="h-11">
-                    {lang === "fr" ? "M'inscrire" : "Sign me up"}
-                  </Button>
+              <form onSubmit={submitPreview} className="mt-4">
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+                  <input
+                    id="communications-preview-email"
+                    type="email"
+                    required
+                    placeholder={lang === "fr" ? "votre@courriel.ca" : "you@email.ca"}
+                    className="h-12 w-full border border-input bg-background pl-10 pr-3 text-sm outline-none transition-shadow focus:ring-2 focus:ring-sport"
+                  />
                 </div>
-                <p className="text-[11px] leading-relaxed text-muted-foreground">
+                <Button type="submit" variant="sport" size="lg" className="mt-3 w-full justify-between">
+                  <span>{lang === "fr" ? "M'inscrire" : "Sign me up"}</span>
+                  <ArrowRightIcon />
+                </Button>
+                <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
                   {lang === "fr"
                     ? "Démonstration visuelle seulement — aucune adresse n'est enregistrée ni transmise."
                     : "Visual demo only — no address is stored or transmitted."}
                 </p>
               </form>
             )}
+          </div>
 
-            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-              <Button asChild variant="outline" className="flex-1">
-                <Link to="/horaires" onClick={() => setOpen(false)}>
-                  <CalendarDays className="size-4" />
-                  {lang === "fr" ? "Voir les horaires maintenant" : "View schedules now"}
-                </Link>
-              </Button>
-              <Button variant="ghost" className="flex-1" onClick={dismissForever}>
-                {lang === "fr" ? "Ne plus afficher" : "Don't show again"}
-              </Button>
-            </div>
+          <div className="mt-6 grid gap-2 sm:grid-cols-2">
+            <Button asChild variant="outline" size="lg">
+              <Link to="/horaires" onClick={() => setOpen(false)}>
+                <CalendarDays className="size-4" />
+                {lang === "fr" ? "Voir les horaires" : "View schedules"}
+              </Link>
+            </Button>
+            <Button variant="ghost" size="lg" onClick={dismissForever}>
+              {lang === "fr" ? "Ne plus afficher" : "Don't show again"}
+            </Button>
+          </div>
 
-            <div className="mt-5 flex items-start gap-2 border-t pt-4 text-xs text-muted-foreground">
-              <PhoneCall className="mt-0.5 size-3.5 shrink-0 text-sport" aria-hidden />
-              <p>
-                {lang === "fr"
-                  ? "Le numéro AHMV est réservé. L'expérience téléphonique automatisée n'est pas encore annoncée comme service actif."
-                  : "The AHMV number is reserved. Automated phone information is not yet presented as a live service."}
-              </p>
-            </div>
+          <div className="mt-5 flex items-start gap-2 text-xs text-muted-foreground">
+            <PhoneCall className="mt-0.5 size-3.5 shrink-0 text-sport" aria-hidden />
+            <p>
+              {lang === "fr"
+                ? "Canal de communication en démonstration. Aucune donnée n'est enregistrée."
+                : "Communication channel shown as a demo. No data is stored."}
+            </p>
           </div>
         </div>
       </section>
     </div>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="size-4" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </svg>
   );
 }
