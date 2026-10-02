@@ -122,7 +122,7 @@ const dict = {
   "teams.arenas": { fr: "Arénas utilisés", en: "Arenas used" },
   "teams.documents": { fr: "Documents publics", en: "Public documents" },
   "teams.external": { fr: "Services externes", en: "External services" },
-  "teams.divisionsNote": { fr: "Les divisions et sous-équipes réelles seront ajoutées après validation de la structure officielle.", en: "Actual divisions and sub-teams will be added once the official structure is validated." },
+  "teams.divisionsNote": { fr: "Les équipes et niveaux du répertoire public AHMV sont regroupés ici par catégorie. Aucun alignement de joueurs ni renseignement personnel n’est recopié.", en: "Teams and levels from the public AHMV directory are grouped here by category. No player roster or personal information is copied." },
   "teams.privacyNote": { fr: "Aucune donnée personnelle des joueurs n'est publiée sur ce site.", en: "No player personal data is published on this site." },
   "teams.ages": { fr: "Âges", en: "Ages" },
 
