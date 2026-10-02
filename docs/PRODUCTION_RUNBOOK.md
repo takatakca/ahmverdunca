@@ -3,9 +3,17 @@
 **Target:** https://ahmverdun.com  
 **Rule:** deploy privately first with `VITE_PUBLIC_INDEXING=false`. Do not change hockey-operation systems.
 
+## 0. Release source of truth
+
+- GitHub `main` is the release source of truth.
+- Record the exact approved GitHub SHA before deployment.
+- A Lovable/editor preview must not be treated as the release candidate unless its reported commit SHA matches that approved GitHub SHA.
+- Never publish a stale preview simply because it renders successfully.
+- If a hosting/editor platform is behind `main`, synchronize it first, then rerun the complete CI/smoke-test gate against the synchronized candidate.
+
 ## 1. Before DNS/cutover
 
-- Confirm the candidate commit is the intended `main` commit.
+- Confirm the candidate commit is the intended `main` commit and record its full SHA.
 - Require a green AHM Verdun CI run for that exact commit.
 - Keep `VITE_PUBLIC_INDEXING=false`.
 - Confirm the production environment contains only required secrets and public variables.
