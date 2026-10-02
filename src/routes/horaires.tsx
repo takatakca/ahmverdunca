@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, ExternalLink, RotateCcw } from "lucide-react";
@@ -17,6 +18,7 @@ import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
 
 export const Route = createFileRoute("/horaires")({
   head: () => ({
+    links: canonicalLink("/horaires"),
     meta: [
       { title: "Horaires — AHM Verdun" },
       { name: "description", content: "Entraînements, matchs et événements de l'AHM Verdun par semaine, avec filtres par équipe, aréna et type d'activité." },
