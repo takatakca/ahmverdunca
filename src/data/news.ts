@@ -944,10 +944,243 @@ export const NEWS: NewsArticle[] = [
     "season": "2025-2026",
     "sourceUrl": "https://www.ahmverdun.com/news/2",
     "contentPending": false
-  }
+  },
+{
+  "legacyId": 20,
+  "slug": "aga-2026-archive",
+  "title": {
+    "fr": "AGA 2026",
+    "en": "2026 Annual General Meeting"
+  },
+  "excerpt": {
+    "fr": "Archive de l’avis d’assemblée générale annuelle du 8 mai 2026 à l’Auditorium de Verdun.",
+    "en": "Archive of the May 8, 2026 Annual General Meeting notice at the Verdun Auditorium."
+  },
+  "body": {
+    "fr": [
+      "L’AHM Verdun annonçait son assemblée générale annuelle le 8 mai 2026 à 19 h, à l’Auditorium de Verdun.",
+      "Les postes de président et de directeur des opérations étaient annoncés en élection. La date limite de dépôt des candidatures était le 24 avril à minuit.",
+      "Selon l’avis publié, les candidats à ces postes devaient être des membres individuels âgés d’au moins 18 ans et avoir été membre, entraîneur, gérant d’équipe ou membre associé de l’AHMV pendant au moins trois ans au cours des six années précédentes."
+    ],
+    "en": [
+      "AHM Verdun announced its Annual General Meeting for May 8, 2026 at 7 p.m. at the Verdun Auditorium.",
+      "The president and director of operations positions were announced for election. The nomination deadline was April 24 at midnight.",
+      "According to the published notice, candidates had to be individual members at least 18 years old and have served as a member, coach, team manager or associate member of AHMV for at least three of the previous six years."
+    ]
+  },
+  "publishedLabel": {
+    "fr": "Printemps 2026",
+    "en": "Spring 2026"
+  },
+  "author": "AHM Verdun Communication",
+  "category": "association",
+  "teamSlugs": [],
+  "season": "2025-2026",
+  "sourceUrl": "https://www.ahmverdun.com/news/20",
+  "contentPending": false
+},
+{
+  "legacyId": 18,
+  "slug": "3-contre-3-archive",
+  "title": {
+    "fr": "3 contre 3 — archive",
+    "en": "3-on-3 — archive"
+  },
+  "excerpt": {
+    "fr": "Archive de l’annonce de hockey 3 contre 3 avec plages M11, M13 et M15/M18.",
+    "en": "Archive of the 3-on-3 hockey announcement for U11, U13 and U15/U18."
+  },
+  "body": {
+    "fr": [
+      "Cette publication d’archive annonçait un début le mardi 5 mai.",
+      "Les plages indiquées étaient 18 h à 19 h pour M11, 19 h à 20 h pour M13 et 20 h à 21 h pour M15/M18."
+    ],
+    "en": [
+      "This archive post announced a start on Tuesday, May 5.",
+      "Published times were 6–7 p.m. for U11, 7–8 p.m. for U13 and 8–9 p.m. for U15/U18."
+    ]
+  },
+  "publishedLabel": {
+    "fr": "Printemps 2026",
+    "en": "Spring 2026"
+  },
+  "author": "AHM Verdun Communication",
+  "category": "camps",
+  "teamSlugs": [
+    "m11",
+    "m13",
+    "m15",
+    "m18"
+  ],
+  "season": "2025-2026",
+  "sourceUrl": "https://www.ahmverdun.com/news/18",
+  "contentPending": false
+},
+{
+  "legacyId": 16,
+  "slug": "camp-hockey-a3-ete-2026-archive",
+  "title": {
+    "fr": "Camp de Hockey A3 — été 2026",
+    "en": "A3 Hockey Camp — summer 2026"
+  },
+  "excerpt": {
+    "fr": "Archive proposant les camps A3 Hockey à Westmount et au Lower Canada College pendant l’absence du camp d’été à Verdun.",
+    "en": "Archive pointing families to A3 Hockey camps in Westmount and at Lower Canada College while Verdun’s summer camp was unavailable."
+  },
+  "body": {
+    "fr": [
+      "L’AHM Verdun indiquait que son camp de hockey à Verdun ne serait pas offert durant l’été 2026 et proposait comme solution de remplacement les programmes d’A3 Hockey.",
+      "Les camps annoncés devaient se tenir au Centre des loisirs de Westmount et au Lower Canada College, sous la supervision d’Alexandre Dandenault, copropriétaire d’A3 Hockey.",
+      "Les dates publiées étaient : du 29 juin au 3 juillet 2026 pour un groupe féminin seulement, puis du 6 au 10 juillet, du 13 au 17 juillet, du 20 au 24 juillet et du 27 au 31 juillet 2026."
+    ],
+    "en": [
+      "AHM Verdun stated that its Verdun hockey camp would not be offered in summer 2026 and suggested A3 Hockey programs as a nearby alternative.",
+      "The announced camps were to run at the Westmount Recreation Centre and Lower Canada College under the supervision of A3 Hockey co-owner Alexandre Dandenault.",
+      "Published dates were June 29–July 3, 2026 for a girls-only group, then July 6–10, July 13–17, July 20–24 and July 27–31, 2026."
+    ]
+  },
+  "publishedLabel": {
+    "fr": "Printemps 2026",
+    "en": "Spring 2026"
+  },
+  "author": "AHM Verdun Communication",
+  "category": "camps",
+  "teamSlugs": [],
+  "season": "2025-2026",
+  "sourceUrl": "https://www.ahmverdun.com/news/16",
+  "contentPending": false
+},
+{
+  "legacyId": 15,
+  "slug": "cabane-panache-2026-archive",
+  "title": {
+    "fr": "Cabane Panache 2026 — appel aux bénévoles",
+    "en": "Cabane Panache 2026 — volunteer call"
+  },
+  "excerpt": {
+    "fr": "Archive d’un appel aux bénévoles pour Cabane Panache, du 19 au 22 mars 2026 sur la rue Wellington.",
+    "en": "Archive of a volunteer call for Cabane Panache, March 19–22, 2026 on Wellington Street."
+  },
+  "body": {
+    "fr": [
+      "L’AHM Verdun avait relayé un appel de Cabane Panache pour recruter des bénévoles à l’occasion de la 14e édition du festival, du jeudi 19 au dimanche 22 mars 2026 sur la rue Wellington à Verdun.",
+      "L’annonce décrivait un événement gratuit accessible par le métro De l’Église, avec concerts, restauration, tire d’érable, jeux et animations.",
+      "Les postes mentionnés comprenaient notamment l’accueil et l’information, l’animation de jeux, l’entretien du site, l’escouade écoresponsable, le soutien à la programmation, la photographie et le soutien au quartier général.",
+      "L’annonce indiquait aussi des avantages pour les bénévoles et renvoyait vers le site de Promenade Wellington et un formulaire de candidature."
+    ],
+    "en": [
+      "AHM Verdun relayed a Cabane Panache volunteer call for the festival’s 14th edition, March 19–22, 2026 on Wellington Street in Verdun.",
+      "The notice described a free event accessible from De l’Église metro, with concerts, food, maple taffy, games and activities.",
+      "Volunteer roles included welcome and information, games, site maintenance, an eco team, programming assistance, photography and headquarters support.",
+      "The notice also described volunteer benefits and linked to Promenade Wellington and an application form."
+    ]
+  },
+  "publishedLabel": {
+    "fr": "Mars 2026",
+    "en": "March 2026"
+  },
+  "author": "AHM Verdun Communication",
+  "category": "association",
+  "teamSlugs": [],
+  "season": "2025-2026",
+  "sourceUrl": "https://www.ahmverdun.com/news/15",
+  "links": [
+    {
+      "label": {
+        "fr": "Cabane Panache — bénévolat",
+        "en": "Cabane Panache — volunteering"
+      },
+      "url": "https://www.promenadewellington.com/fr/evenement/cabane-panache-14e-edition/#benevolat"
+    },
+    {
+      "label": {
+        "fr": "Formulaire de candidature",
+        "en": "Volunteer application form"
+      },
+      "url": "https://forms.gle/jBotUaVdLMvjN6Ka7"
+    },
+    {
+      "label": {
+        "fr": "Aperçu vidéo",
+        "en": "Video preview"
+      },
+      "url": "https://www.youtube.com/watch?v=jCLHmK9C5Dw"
+    }
+  ],
+  "contentPending": false
+},
+{
+  "legacyId": 9,
+  "slug": "festival-magh-archive",
+  "title": {
+    "fr": "Festival MAGH — archive",
+    "en": "MAGH Festival — archive"
+  },
+  "excerpt": {
+    "fr": "Archive d’un appel à une équipe MAGH 2 pour participer au Festival MAGH.",
+    "en": "Archive of a call for a MAGH 2 team to participate in the MAGH Festival."
+  },
+  "body": {
+    "fr": [
+      "L’association recherchait une équipe MAGH 2 pour son Festival MAGH annoncé les 10 et 11 janvier.",
+      "La publication consultée ne précisait pas l’année dans son texte; cette archive conserve donc l’information telle qu’elle était publiée sans en déduire une date complète."
+    ],
+    "en": [
+      "The association was looking for a MAGH 2 team for its MAGH Festival announced for January 10 and 11.",
+      "The archived post did not specify the year in its text, so this record preserves the published information without inferring a complete date."
+    ]
+  },
+  "publishedLabel": {
+    "fr": "Archive",
+    "en": "Archive"
+  },
+  "author": "AHM Verdun Communication",
+  "category": "tournaments",
+  "teamSlugs": [
+    "m7"
+  ],
+  "season": "archive",
+  "sourceUrl": "https://www.ahmverdun.com/news/9",
+  "contentPending": false
+},
+{
+  "legacyId": 3,
+  "slug": "journee-portes-ouvertes-hockey-feminin-archive",
+  "title": {
+    "fr": "Journée porte ouverte hockey féminin — archive",
+    "en": "Girls’ hockey open house — archive"
+  },
+  "excerpt": {
+    "fr": "Archive remerciant les participantes, familles, entraîneurs et joueuses des Stingers de Concordia après une deuxième journée portes ouvertes.",
+    "en": "Archive thanking participants, families, coaches and Concordia Stingers players after a second girls’ hockey open house."
+  },
+  "body": {
+    "fr": [
+      "Cette publication remerciait les joueuses, les parents, les entraîneurs ainsi que les joueuses des Stingers de Concordia pour leur participation à la deuxième journée portes ouvertes de hockey féminin.",
+      "Pour obtenir de l’information sur le programme de hockey féminin, l’AHMV dirigeait les familles vers hockeyfeminin@ahmverdun.com."
+    ],
+    "en": [
+      "This post thanked players, parents, coaches and Concordia Stingers players for participating in the second girls’ hockey open house.",
+      "For information about the girls’ hockey program, AHMV directed families to hockeyfeminin@ahmverdun.com."
+    ]
+  },
+  "publishedLabel": {
+    "fr": "Archive 2026",
+    "en": "2026 archive"
+  },
+  "author": "Jean-Francois Auger",
+  "category": "feminine",
+  "teamSlugs": [
+    "feminin"
+  ],
+  "season": "2025-2026",
+  "sourceUrl": "https://www.ahmverdun.com/news/3",
+  "contentPending": false
+}
 ];
 
 export const CURRENT_LEGACY_NEWS_IDS = [39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 14] as const;
+export const DISCOVERED_ARCHIVE_NEWS_IDS = [20, 19, 18, 16, 15, 9, 4, 3, 2] as const;
 
 export function newsDateLabel(article: NewsArticle, lang: "fr" | "en") {
   if (article.date) {

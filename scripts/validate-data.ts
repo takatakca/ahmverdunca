@@ -1,11 +1,11 @@
 import { ALERTS } from "../src/data/alerts";
 import { ARENAS } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
-import { CURRENT_LEGACY_NEWS_IDS, NEWS } from "../src/data/news";
+import { CURRENT_LEGACY_NEWS_IDS, DISCOVERED_ARCHIVE_NEWS_IDS, NEWS } from "../src/data/news";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory";
 import { REQUIRED_ARENA_COUNT, REQUIRED_PUBLIC_ALBUM_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
-import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
+import { LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
 import { COACH_RESOURCES } from "../src/data/coaches";
 import { RESOURCES } from "../src/data/resources";
@@ -114,6 +114,10 @@ for (const document of WEEKLY_SCHEDULE_DOCUMENTS) {
     errors.push(`Weekly schedule document week ${document.week} has an invalid date.`);
   }
 }
+for (const document of LEGACY_SCHEDULE_DOCUMENTS) {
+  requireHttps(`LEGACY_SCHEDULE_DOCUMENTS "${document.title}"`, document.sourceUrl);
+  if (!document.fileSize.trim()) errors.push(`Legacy schedule document "${document.title}" is missing its published file size.`);
+}
 
 if (!validDate(OFFICIAL_WEEK_META.start) || !validDate(OFFICIAL_WEEK_META.end) || !validDate(OFFICIAL_WEEK_META.publishedAt)) {
   errors.push("OFFICIAL_WEEK_META contains an invalid start, end or publication date.");
@@ -215,6 +219,9 @@ for (const article of NEWS) {
 const mirroredLegacyIds = new Set(NEWS.flatMap((article) => article.legacyId === undefined ? [] : [article.legacyId]));
 for (const legacyId of CURRENT_LEGACY_NEWS_IDS) {
   if (!mirroredLegacyIds.has(legacyId)) errors.push(`Current legacy news ID ${legacyId} is missing from NEWS.`);
+}
+for (const legacyId of DISCOVERED_ARCHIVE_NEWS_IDS) {
+  if (!mirroredLegacyIds.has(legacyId)) errors.push(`Discovered archive news ID ${legacyId} is missing from NEWS.`);
 }
 if (ARENAS.length !== REQUIRED_ARENA_COUNT) {
   errors.push(`Expected ${REQUIRED_ARENA_COUNT} mirrored public arenas, found ${ARENAS.length}.`);
