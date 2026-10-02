@@ -77,7 +77,7 @@ const organizationJsonLd = JSON.stringify({
   name: SITE.name.fr,
   alternateName: SITE.name.en,
   url: SITE.domain,
-  ...(!PUBLIC_INDEXING_ENABLED || SITE.phonePublic ? { telephone: SITE.phoneE164 } : {}),
+  ...(SITE.phonePublic ? { telephone: SITE.phoneE164 } : {}),
   sport: "Ice Hockey",
   areaServed: "Verdun, Montréal, Québec, Canada",
   sameAs: [EXTERNAL_LINKS.facebook, EXTERNAL_LINKS.instagram],

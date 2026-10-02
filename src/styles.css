@@ -133,6 +133,8 @@
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+    min-width: 320px;
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
@@ -350,7 +352,7 @@
   text-transform: uppercase;
   line-height: 0.82;
   letter-spacing: -0.035em;
-  font-size: clamp(3.6rem, 13vw, 11.5rem);
+  font-size: clamp(3.15rem, 11vw, 9.75rem);
 }
 
 @utility outline-text {

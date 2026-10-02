@@ -37,19 +37,19 @@ function GalleryPage() {
         title={lang === "fr" ? "Photos et vidéos" : "Photos & videos"}
         description={
           lang === "fr"
-            ? "Les albums publics de l’association sont conservés par saison. En attendant la validation des médias et des consentements, l’expérience utilise une direction graphique AHMV plutôt que des images artificielles."
-            : "The association's public albums are preserved by season. Until media and consent validation is complete, the experience uses AHMV graphic art rather than artificial imagery."
+            ? "Les archives publiques AHMV sont regroupées par saison. Les aperçus vérifiés disponibles sur l’ancien site sont maintenant restaurés ici; les albums complets restent accessibles à leur source officielle."
+            : "Public AHMV archives are grouped by season. Verified previews available on the previous site are now restored here, while full albums remain accessible from their official source."
         }
       />
 
       <div className="container-site py-9 md:py-14">
         <section className="grid gap-0 overflow-hidden border border-navy/12 lg:grid-cols-[0.7fr_1.3fr]">
           <div className="bg-navy p-6 text-navy-foreground md:p-8">
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Protection des jeunes" : "Youth privacy"}</p>
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Archives AHMV vérifiées" : "Verified AHMV archives"}</p>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/70">
               {lang === "fr"
-                ? "Aucune photo de mineur n’est importée automatiquement. Les albums restent référencés et les médias seront publiés uniquement après validation des fichiers et des autorisations applicables."
-                : "No youth photo is imported automatically. Albums remain referenced and media will be published only after file and applicable-consent validation."}
+                ? "Nous réutilisons uniquement des aperçus déjà publiés publiquement par l’AHM Verdun. Lorsqu’un aperçu local n’est pas encore restauré, la fiche renvoie vers l’album AHMV d’origine."
+                : "We reuse only previews already published publicly by AHM Verdun. When a local preview has not yet been restored, the album page links back to the original AHMV archive."}
             </p>
           </div>
           <div className="rink-surface p-6 md:p-8">
@@ -103,18 +103,29 @@ function GalleryPage() {
                 index === 1 && "lg:col-span-2",
               )}
             >
-              <SportArtwork
-                index={String(index + 1).padStart(2, "0")}
-                kicker={`${l(album.eventType)} · ${formatShortDate(album.date, lang)}`}
-                title={l(album.title)}
-                code={album.season.slice(-2)}
-                aspect="absolute inset-0"
-                className="absolute inset-0"
-              />
+              {album.coverUrl ? (
+                <img
+                  src={album.coverUrl}
+                  alt={l(album.title)}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                />
+              ) : (
+                <SportArtwork
+                  index={String(index + 1).padStart(2, "0")}
+                  kicker={`${l(album.eventType)} · ${formatShortDate(album.date, lang)}`}
+                  title={l(album.title)}
+                  code={album.season.slice(-2)}
+                  aspect="absolute inset-0"
+                  className="absolute inset-0"
+                />
+              )}
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(7,16,43,0.62)_100%)]" />
               <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t border-navy-foreground/12 bg-competition/85 px-5 py-3 text-navy-foreground backdrop-blur-sm">
                 <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em]">
                   <Images className="size-3.5 text-sport-foreground" />
-                  {album.photosPending ? (lang === "fr" ? "Archive protégée" : "Protected archive") : (lang === "fr" ? "Voir l’album" : "View album")}
+                  {album.coverUrl ? (lang === "fr" ? "Aperçu AHMV" : "AHMV preview") : (lang === "fr" ? "Archive AHMV" : "AHMV archive")}
                 </span>
                 <ArrowRight className="size-4 text-sport-foreground transition-transform group-hover:translate-x-1" />
               </div>

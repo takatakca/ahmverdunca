@@ -12,6 +12,8 @@ const forbidden = [
   "gallery-tournament.jpg",
 ];
 
+const forbiddenRuntimePatterns = ["/__l5e/", ".asset.json"];
+
 const failures: string[] = [];
 
 function visit(directory: string) {
@@ -30,15 +32,23 @@ function visit(directory: string) {
         failures.push(`${relative(process.cwd(), path)} references disabled synthetic asset ${asset}.`);
       }
     }
+
+    for (const pattern of forbiddenRuntimePatterns) {
+      if (source.includes(pattern)) {
+        failures.push(
+          `${relative(process.cwd(), path)} references production-incompatible runtime asset pattern ${pattern}.`,
+        );
+      }
+    }
   }
 }
 
 visit(root);
 
 if (failures.length) {
-  console.error("Synthetic-media policy validation failed:");
+  console.error("Media policy validation failed:");
   for (const failure of failures) console.error(`- ${failure}`);
   process.exit(1);
 }
 
-console.log("Synthetic-media policy validation passed: disabled generated assets are not referenced by application code.");
+console.log("Media policy validation passed: no disabled synthetic assets or Lovable-only runtime asset paths are referenced by application code.");

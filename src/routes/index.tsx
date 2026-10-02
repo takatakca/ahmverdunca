@@ -17,6 +17,7 @@ import { ALERTS } from "@/data/alerts";
 import { TEAMS } from "@/data/teams";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { ARENAS } from "@/data/arenas";
 import { SPONSORS } from "@/data/sponsors";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
@@ -36,7 +37,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "AHM Verdun — Le hockey commence ici" },
       { property: "og:description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:image", content: OFFICIAL_MEDIA.tournamentM11Primary.url },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,
@@ -53,9 +55,18 @@ function Home() {
 
   return (
     <>
-      {/* Arena opening — graphic system only, no synthetic photography */}
-      <section className="relative isolate min-h-[76svh] overflow-hidden bg-competition text-navy-foreground md:min-h-[84svh]">
-        <div className="technical-grid absolute inset-0 opacity-45" aria-hidden />
+      {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
+      <section className="relative isolate min-h-[68svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[72svh] md:min-h-[80svh]">
+        <img
+          src={OFFICIAL_MEDIA.tournamentM11Primary.url}
+          alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+          fetchPriority="high"
+          decoding="async"
+          className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-60"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.96)_0%,rgba(7,16,43,0.78)_45%,rgba(7,16,43,0.48)_100%)]" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.18)_0%,rgba(7,16,43,0.32)_45%,rgba(7,16,43,0.96)_100%)]" aria-hidden />
+        <div className="technical-grid absolute inset-0 opacity-25" aria-hidden />
         <div className="absolute inset-y-0 left-[17%] w-px bg-navy-foreground/8" aria-hidden />
         <div className="absolute inset-y-0 left-1/2 w-[3px] bg-sport/65" aria-hidden />
         <div className="absolute inset-y-0 right-[17%] w-px bg-navy-foreground/8" aria-hidden />
@@ -70,8 +81,16 @@ function Home() {
             {t("common.demo")}
           </span>
         )}
+        <a
+          href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="absolute left-4 top-4 z-10 border border-white/15 bg-navy-deep/65 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm hover:bg-navy-deep md:left-8 md:top-8"
+        >
+          {lang === "fr" ? "Archive AHMV · Tournoi M11 2025" : "AHMV archive · 2025 U11 Tournament"}
+        </a>
 
-        <div className="container-site relative flex min-h-[74svh] flex-col justify-end pb-10 pt-24 md:min-h-[82svh] md:pb-14">
+        <div className="container-site relative flex min-h-[66svh] flex-col justify-end pb-8 pt-20 sm:min-h-[70svh] md:min-h-[78svh] md:pb-12">
           <div className="max-w-6xl">
             <div className="rise flex flex-wrap items-center gap-3">
               <span className="h-px w-10 bg-sport" aria-hidden />
@@ -371,14 +390,24 @@ function Home() {
                   index === 1 && "lg:col-span-2",
                 )}
               >
-                <SportArtwork
-                  index={String(index + 1).padStart(2, "0")}
-                  kicker={l(album.eventType)}
-                  title={l(album.title)}
-                  code="ARCH"
-                  aspect="absolute inset-0"
-                  className="absolute inset-0"
-                />
+                {album.coverUrl ? (
+                  <img
+                    src={album.coverUrl}
+                    alt={l(album.title)}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                  />
+                ) : (
+                  <SportArtwork
+                    index={String(index + 1).padStart(2, "0")}
+                    kicker={l(album.eventType)}
+                    title={l(album.title)}
+                    code="ARCH"
+                    aspect="absolute inset-0"
+                    className="absolute inset-0"
+                  />
+                )}
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_20%,rgba(7,16,43,0.88)_100%)]" />
                 <div className="absolute inset-x-0 bottom-0 p-5">
                   <p className="eyebrow text-sport-foreground">{l(album.eventType)}</p>
@@ -408,7 +437,7 @@ function Home() {
                   : "Verified addresses, directions and facilities used around Verdun and Montreal."}
               </p>
               <Button asChild variant="outline" className="mt-6">
-                <Link to="/arenas">{lang === "fr" ? "Voir les 12 arénas" : "View all 12 arenas"} <ArrowRight className="size-4" /></Link>
+                <Link to="/arenas">{lang === "fr" ? `Voir les ${ARENAS.length} arénas` : `View all ${ARENAS.length} arenas`} <ArrowRight className="size-4" /></Link>
               </Button>
             </div>
 
