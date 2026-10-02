@@ -20,7 +20,7 @@ import { ALBUMS } from "@/data/gallery";
 import { ARENAS } from "@/data/arenas";
 import { SPONSORS } from "@/data/sponsors";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
-import { formatDate, useI18n } from "@/lib/i18n";
+import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 import heroHockey from "@/assets/hero-hockey.jpg";
 import { ScheduleFinder } from "@/components/schedule-finder";
