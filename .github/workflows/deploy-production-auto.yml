@@ -22,7 +22,7 @@ jobs:
 
     runs-on: ubuntu-latest
     environment: production
-    timeout-minutes: 25
+    timeout-minutes: 30
 
     env:
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
@@ -67,37 +67,58 @@ jobs:
         run: |
           set -euo pipefail
 
-          for name in AHMV_HOST AHMV_PORT AHMV_USER AHMV_APP_ROOT AHMV_PRODUCTION_URL; do
+          for name in \
+            AHMV_HOST \
+            AHMV_PORT \
+            AHMV_USER \
+            AHMV_APP_ROOT \
+            AHMV_PRODUCTION_URL
+          do
             test -n "${!name:-}" || {
-              echo "Missing required value: $name"
+              echo "ERROR: Missing required value: $name"
               exit 1
             }
           done
 
           [[ "$AHMV_PORT" =~ ^[0-9]+$ ]] || {
-            echo "SSH port must be numeric"
+            echo "ERROR: SSH port must be numeric."
             exit 1
           }
 
           [[ "$AHMV_APP_ROOT" = /* ]] || {
-            echo "Application root must be an absolute path"
+            echo "ERROR: Application root must be an absolute path."
             exit 1
           }
 
           [[ "$AHMV_PRODUCTION_URL" =~ ^https://[^/]+$ ]] || {
-            echo "Production URL must be a HTTPS origin without a trailing path"
+            echo "ERROR: Production URL must be a HTTPS origin without a trailing path."
             exit 1
           }
 
-      - name: Configure SSH
+          if [ "$AHMV_PRODUCTION_URL" != "https://ahmverdun.ca" ]; then
+            echo "ERROR: AHMV_PRODUCTION_URL must be exactly:"
+            echo "https://ahmverdun.ca"
+            exit 1
+          fi
+
+          echo "Deployment configuration validated."
+
+      - name: Configure resilient SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.AHMV_PRODUCTION_SSH_PRIVATE_KEY }}
           KNOWN_HOSTS: ${{ secrets.AHMV_PRODUCTION_KNOWN_HOSTS }}
         run: |
           set -euo pipefail
 
-          test -n "$SSH_PRIVATE_KEY"
-          test -n "$KNOWN_HOSTS"
+          test -n "$SSH_PRIVATE_KEY" || {
+            echo "ERROR: AHMV_PRODUCTION_SSH_PRIVATE_KEY is empty."
+            exit 1
+          }
+
+          test -n "$KNOWN_HOSTS" || {
+            echo "ERROR: AHMV_PRODUCTION_KNOWN_HOSTS is empty."
+            exit 1
+          }
 
           install -m 700 -d ~/.ssh
 
@@ -106,6 +127,119 @@ jobs:
 
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+
+          cat > ~/.ssh/config <<EOF
+          Host ahmv-production
+            HostName ${AHMV_HOST}
+            User ${AHMV_USER}
+            Port ${AHMV_PORT}
+            IdentityFile ~/.ssh/id_ed25519
+            IdentitiesOnly yes
+            BatchMode yes
+            StrictHostKeyChecking yes
+            UserKnownHostsFile ~/.ssh/known_hosts
+            ConnectTimeout 30
+            ConnectionAttempts 3
+            ServerAliveInterval 15
+            ServerAliveCountMax 4
+            TCPKeepAlive yes
+          EOF
+
+          chmod 600 ~/.ssh/config
+
+          cat > "$RUNNER_TEMP/ahmv-ssh" <<'EOF'
+          #!/usr/bin/env bash
+
+          set -uo pipefail
+
+          MAX_ATTEMPTS=5
+          attempt=1
+          last_status=255
+
+          while [ "$attempt" -le "$MAX_ATTEMPTS" ]; do
+            echo "SSH attempt ${attempt}/${MAX_ATTEMPTS}..." >&2
+
+            set +e
+            ssh ahmv-production "$@"
+            last_status=$?
+            set -e
+
+            if [ "$last_status" -eq 0 ]; then
+              exit 0
+            fi
+
+            echo "SSH attempt ${attempt} failed with exit code ${last_status}." >&2
+
+            if [ "$last_status" -ne 255 ]; then
+              echo "Remote command failed with a non-transport error. Not retrying." >&2
+              exit "$last_status"
+            fi
+
+            if [ "$attempt" -lt "$MAX_ATTEMPTS" ]; then
+              delay=$((attempt * 5))
+              echo "Transient SSH failure detected. Retrying in ${delay} seconds..." >&2
+              sleep "$delay"
+            fi
+
+            attempt=$((attempt + 1))
+          done
+
+          echo "SSH connection failed after ${MAX_ATTEMPTS} attempts." >&2
+          exit "$last_status"
+          EOF
+
+          chmod +x "$RUNNER_TEMP/ahmv-ssh"
+
+          cat > "$RUNNER_TEMP/ahmv-scp" <<'EOF'
+          #!/usr/bin/env bash
+
+          set -uo pipefail
+
+          MAX_ATTEMPTS=5
+          attempt=1
+          last_status=1
+
+          while [ "$attempt" -le "$MAX_ATTEMPTS" ]; do
+            echo "SCP attempt ${attempt}/${MAX_ATTEMPTS}..." >&2
+
+            set +e
+            scp "$@"
+            last_status=$?
+            set -e
+
+            if [ "$last_status" -eq 0 ]; then
+              exit 0
+            fi
+
+            echo "SCP attempt ${attempt} failed with exit code ${last_status}." >&2
+
+            if [ "$attempt" -lt "$MAX_ATTEMPTS" ]; then
+              delay=$((attempt * 5))
+              echo "Retrying SCP transfer in ${delay} seconds..." >&2
+              sleep "$delay"
+            fi
+
+            attempt=$((attempt + 1))
+          done
+
+          echo "SCP transfer failed after ${MAX_ATTEMPTS} attempts." >&2
+          exit "$last_status"
+          EOF
+
+          chmod +x "$RUNNER_TEMP/ahmv-scp"
+
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+
+      - name: Test production SSH connection
+        run: |
+          set -euo pipefail
+
+          echo "Testing production SSH connection..."
+
+          ahmv-ssh \
+            "printf 'AHM Verdun production SSH connection OK\n'"
+
+          echo "Production SSH connection verified."
 
       - name: Create immutable release package
         run: |
@@ -118,109 +252,300 @@ jobs:
           printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
           printf '%s\n' "$RELEASE_KEY" > .output/RELEASE_KEY
 
-          tar -C .output -czf "ahmverdun-${RELEASE_KEY}.tar.gz" .
+          tar \
+            -C .output \
+            -czf "ahmverdun-${RELEASE_KEY}.tar.gz" \
+            .
 
-          sha256sum "ahmverdun-${RELEASE_KEY}.tar.gz" \
+          sha256sum \
+            "ahmverdun-${RELEASE_KEY}.tar.gz" \
             > "ahmverdun-${RELEASE_KEY}.sha256"
+
+          test -s "ahmverdun-${RELEASE_KEY}.tar.gz"
+          test -s "ahmverdun-${RELEASE_KEY}.sha256"
+
+          echo "Release package created:"
+          ls -lh \
+            "ahmverdun-${RELEASE_KEY}.tar.gz" \
+            "ahmverdun-${RELEASE_KEY}.sha256"
 
       - name: Capture previous release
         run: |
           set -euo pipefail
 
+          echo "Reading current production release..."
+
           PREVIOUS="$(
-            ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
-              "readlink '$AHMV_APP_ROOT/current' 2>/dev/null || true"
+            ahmv-ssh \
+              "if [ -L '$AHMV_APP_ROOT/current' ]; then
+                 readlink '$AHMV_APP_ROOT/current'
+               fi"
           )"
 
-          echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+          PREVIOUS="$(
+            printf '%s' "$PREVIOUS" |
+            tr -d '\r\n'
+          )"
+
+          if [ -n "$PREVIOUS" ]; then
+            echo "Previous release detected."
+            echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+          else
+            echo "No previous release detected."
+            echo "This appears to be the first deployment using this release structure."
+            echo "previous_release=" >> "$GITHUB_ENV"
+          fi
+
+      - name: Prepare remote release directory
+        run: |
+          set -euo pipefail
+
+          ahmv-ssh \
+            "mkdir -p '$AHMV_APP_ROOT/releases/$RELEASE_KEY'"
 
       - name: Upload release
         run: |
           set -euo pipefail
 
-          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
-            "mkdir -p '$AHMV_APP_ROOT/releases/$RELEASE_KEY'"
+          echo "Uploading release package..."
 
-          scp -P "$AHMV_PORT" \
+          ahmv-scp \
             "ahmverdun-${RELEASE_KEY}.tar.gz" \
-            "$AHMV_USER@$AHMV_HOST:$AHMV_APP_ROOT/releases/$RELEASE_KEY/release.tar.gz"
+            "ahmv-production:$AHMV_APP_ROOT/releases/$RELEASE_KEY/release.tar.gz"
 
-          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
-            "cd '$AHMV_APP_ROOT/releases/$RELEASE_KEY' &&
-             tar -xzf release.tar.gz &&
-             rm -f release.tar.gz"
+          echo "Release package uploaded."
+
+      - name: Extract release
+        run: |
+          set -euo pipefail
+
+          echo "Extracting release on production server..."
+
+          ahmv-ssh \
+            "set -e
+             cd '$AHMV_APP_ROOT/releases/$RELEASE_KEY'
+             test -s release.tar.gz
+             tar -xzf release.tar.gz
+             rm -f release.tar.gz
+             test -f RELEASE_SHA
+             test -f RELEASE_KEY
+             test -d server
+             test -d public
+             test -f server/index.mjs || test -f server/index.js"
+
+          echo "Remote release extracted and validated."
+
+      - name: Verify uploaded release marker
+        run: |
+          set -euo pipefail
+
+          REMOTE_SHA="$(
+            ahmv-ssh \
+              "cat '$AHMV_APP_ROOT/releases/$RELEASE_KEY/RELEASE_SHA'"
+          )"
+
+          REMOTE_SHA="$(
+            printf '%s' "$REMOTE_SHA" |
+            tr -d '\r\n'
+          )"
+
+          if [ "$REMOTE_SHA" != "$RELEASE_SHA" ]; then
+            echo "ERROR: Uploaded release SHA does not match expected SHA."
+            echo "Expected: $RELEASE_SHA"
+            echo "Received: $REMOTE_SHA"
+            exit 1
+          fi
+
+          REMOTE_RELEASE_KEY="$(
+            ahmv-ssh \
+              "cat '$AHMV_APP_ROOT/releases/$RELEASE_KEY/RELEASE_KEY'"
+          )"
+
+          REMOTE_RELEASE_KEY="$(
+            printf '%s' "$REMOTE_RELEASE_KEY" |
+            tr -d '\r\n'
+          )"
+
+          if [ "$REMOTE_RELEASE_KEY" != "$RELEASE_KEY" ]; then
+            echo "ERROR: Uploaded release key does not match expected release key."
+            echo "Expected: $RELEASE_KEY"
+            echo "Received: $REMOTE_RELEASE_KEY"
+            exit 1
+          fi
+
+          echo "Uploaded release markers verified."
 
       - name: Activate release
         run: |
           set -euo pipefail
 
-          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
-            "rm -f '$AHMV_APP_ROOT/current.new' &&
-             ln -s '$AHMV_APP_ROOT/releases/$RELEASE_KEY' '$AHMV_APP_ROOT/current.new' &&
+          echo "Activating production release..."
+
+          ahmv-ssh \
+            "set -e
+             rm -f '$AHMV_APP_ROOT/current.new'
+             ln -s '$AHMV_APP_ROOT/releases/$RELEASE_KEY' '$AHMV_APP_ROOT/current.new'
              mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'"
+
+          echo "Release activated."
 
       - name: Verify active release marker
         run: |
           set -euo pipefail
 
           ACTIVE_SHA="$(
-            ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            ahmv-ssh \
               "cat '$AHMV_APP_ROOT/current/RELEASE_SHA'"
           )"
 
-          test "$ACTIVE_SHA" = "$RELEASE_SHA"
+          ACTIVE_SHA="$(
+            printf '%s' "$ACTIVE_SHA" |
+            tr -d '\r\n'
+          )"
+
+          if [ "$ACTIVE_SHA" != "$RELEASE_SHA" ]; then
+            echo "ERROR: Active release SHA does not match deployment SHA."
+            echo "Expected: $RELEASE_SHA"
+            echo "Received: $ACTIVE_SHA"
+            exit 1
+          fi
+
+          ACTIVE_RELEASE_KEY="$(
+            ahmv-ssh \
+              "cat '$AHMV_APP_ROOT/current/RELEASE_KEY'"
+          )"
+
+          ACTIVE_RELEASE_KEY="$(
+            printf '%s' "$ACTIVE_RELEASE_KEY" |
+            tr -d '\r\n'
+          )"
+
+          if [ "$ACTIVE_RELEASE_KEY" != "$RELEASE_KEY" ]; then
+            echo "ERROR: Active release key does not match deployment release key."
+            echo "Expected: $RELEASE_KEY"
+            echo "Received: $ACTIVE_RELEASE_KEY"
+            exit 1
+          fi
+
+          echo "Active production release verified."
 
       - name: Restart Passenger
         run: |
           set -euo pipefail
 
-          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+          echo "Requesting Passenger restart..."
+
+          ahmv-ssh \
             "mkdir -p '$AHMV_APP_ROOT/tmp' &&
              touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+
+          echo "Passenger restart requested."
 
       - name: Verify health
         run: |
           set -euo pipefail
 
+          echo "Waiting for application restart..."
           sleep 5
 
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --retry 5 \
-            --retry-delay 3 \
-            "$AHMV_PRODUCTION_URL/healthz"
+          echo "Checking:"
+          echo "$AHMV_PRODUCTION_URL/healthz"
+
+          HEALTH_BODY="$(
+            curl \
+              --fail \
+              --silent \
+              --show-error \
+              --location \
+              --connect-timeout 15 \
+              --max-time 30 \
+              --retry 8 \
+              --retry-delay 3 \
+              --retry-all-errors \
+              "$AHMV_PRODUCTION_URL/healthz"
+          )"
+
+          echo "$HEALTH_BODY"
+
+          printf '%s' "$HEALTH_BODY" |
+            grep -q '"ok"[[:space:]]*:[[:space:]]*true' || {
+              echo "ERROR: Health endpoint did not report ok=true."
+              exit 1
+            }
+
+          printf '%s' "$HEALTH_BODY" |
+            grep -q '"service"[[:space:]]*:[[:space:]]*"ahmverdun-web"' || {
+              echo "ERROR: Health endpoint returned an unexpected service name."
+              exit 1
+            }
+
+          echo "Production health check passed."
 
       - name: Verify production homepage
         run: |
           set -euo pipefail
 
           HEADERS="$(mktemp)"
+          BODY="$(mktemp)"
 
           curl \
             --fail \
             --silent \
             --show-error \
-            --retry 5 \
+            --location \
+            --connect-timeout 15 \
+            --max-time 30 \
+            --retry 8 \
             --retry-delay 3 \
+            --retry-all-errors \
             -D "$HEADERS" \
-            -o /dev/null \
+            -o "$BODY" \
             "$AHMV_PRODUCTION_URL/"
 
-          grep -qi '^x-content-type-options: nosniff' "$HEADERS"
-          grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$HEADERS"
-          grep -qi '^x-frame-options: SAMEORIGIN' "$HEADERS"
+          echo "Checking production security headers..."
+
+          grep -qi '^x-content-type-options:[[:space:]]*nosniff' "$HEADERS" || {
+            echo "ERROR: Missing X-Content-Type-Options: nosniff"
+            cat "$HEADERS"
+            exit 1
+          }
+
+          grep -qi '^referrer-policy:[[:space:]]*strict-origin-when-cross-origin' "$HEADERS" || {
+            echo "ERROR: Missing Referrer-Policy: strict-origin-when-cross-origin"
+            cat "$HEADERS"
+            exit 1
+          }
+
+          grep -qi '^x-frame-options:[[:space:]]*SAMEORIGIN' "$HEADERS" || {
+            echo "ERROR: Missing X-Frame-Options: SAMEORIGIN"
+            cat "$HEADERS"
+            exit 1
+          }
 
           if [ "$VITE_PUBLIC_INDEXING" = "true" ]; then
-            if grep -qi '^x-robots-tag: noindex, nofollow' "$HEADERS"; then
+            if grep -qi '^x-robots-tag:.*noindex' "$HEADERS"; then
               echo "ERROR: Production homepage is unexpectedly noindex."
               cat "$HEADERS"
               exit 1
             fi
+
+            echo "Public indexing is enabled and homepage is indexable."
           else
-            grep -qi '^x-robots-tag: noindex, nofollow' "$HEADERS"
+            grep -qi '^x-robots-tag:.*noindex' "$HEADERS" || {
+              echo "ERROR: Public indexing is disabled but homepage is not protected by noindex."
+              cat "$HEADERS"
+              exit 1
+            }
+
+            echo "Public indexing is disabled and homepage is correctly noindex."
           fi
+
+          test -s "$BODY" || {
+            echo "ERROR: Production homepage returned an empty body."
+            exit 1
+          }
+
+          echo "Production homepage verification passed."
 
       - name: Verify search remains noindex
         run: |
@@ -232,35 +557,159 @@ jobs:
             --fail \
             --silent \
             --show-error \
-            --retry 5 \
+            --location \
+            --connect-timeout 15 \
+            --max-time 30 \
+            --retry 8 \
             --retry-delay 3 \
+            --retry-all-errors \
             -D "$HEADERS" \
             -o /dev/null \
             "$AHMV_PRODUCTION_URL/recherche"
 
-          grep -qi '^x-robots-tag: noindex' "$HEADERS"
+          grep -qi '^x-robots-tag:.*noindex' "$HEADERS" || {
+            echo "ERROR: /recherche must remain noindex."
+            cat "$HEADERS"
+            exit 1
+          }
 
-      - name: Roll back failed deployment
-        if: failure() && env.previous_release != ''
+          echo "/recherche remains correctly protected by noindex."
+
+      - name: Verify robots.txt
         run: |
           set -euo pipefail
 
-          echo "Rolling back to: $previous_release"
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --connect-timeout 15 \
+            --max-time 30 \
+            --retry 5 \
+            --retry-delay 3 \
+            --retry-all-errors \
+            "$AHMV_PRODUCTION_URL/robots.txt" \
+            -o "$RUNNER_TEMP/robots.txt"
 
-          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
-            "rm -f '$AHMV_APP_ROOT/current.new' &&
-             ln -s '$previous_release' '$AHMV_APP_ROOT/current.new' &&
-             mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current' &&
-             mkdir -p '$AHMV_APP_ROOT/tmp' &&
+          test -s "$RUNNER_TEMP/robots.txt" || {
+            echo "ERROR: robots.txt is empty."
+            exit 1
+          }
+
+          echo "robots.txt verification passed."
+
+      - name: Verify sitemap.xml
+        run: |
+          set -euo pipefail
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --connect-timeout 15 \
+            --max-time 30 \
+            --retry 5 \
+            --retry-delay 3 \
+            --retry-all-errors \
+            "$AHMV_PRODUCTION_URL/sitemap.xml" \
+            -o "$RUNNER_TEMP/sitemap.xml"
+
+          test -s "$RUNNER_TEMP/sitemap.xml" || {
+            echo "ERROR: sitemap.xml is empty."
+            exit 1
+          }
+
+          grep -q 'https://ahmverdun.ca' "$RUNNER_TEMP/sitemap.xml" || {
+            echo "ERROR: sitemap.xml does not contain the correct ahmverdun.ca domain."
+            exit 1
+          }
+
+          echo "sitemap.xml verification passed."
+
+      - name: Roll back failed deployment
+        if: failure()
+        run: |
+          set -euo pipefail
+
+          if [ -z "${previous_release:-}" ]; then
+            echo "No previous release was captured."
+            echo "Automatic rollback is not possible."
+            exit 0
+          fi
+
+          echo "Deployment failed."
+          echo "Rolling back to previous release:"
+          echo "$previous_release"
+
+          ahmv-ssh \
+            "set -e
+             test -e '$previous_release'
+             rm -f '$AHMV_APP_ROOT/current.new'
+             ln -s '$previous_release' '$AHMV_APP_ROOT/current.new'
+             mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'
+             mkdir -p '$AHMV_APP_ROOT/tmp'
              touch '$AHMV_APP_ROOT/tmp/restart.txt'"
 
+          echo "Previous release restored."
+          echo "Waiting for Passenger restart..."
+          sleep 5
+
+          echo "Verifying rollback health..."
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --location \
+            --connect-timeout 15 \
+            --max-time 30 \
+            --retry 8 \
+            --retry-delay 3 \
+            --retry-all-errors \
+            "$AHMV_PRODUCTION_URL/healthz"
+
+          echo
+          echo "Rollback completed successfully."
+
       - name: Keep newest five releases
+        if: success()
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+
+          echo "Cleaning old releases..."
+
+          ahmv-ssh \
+            "set -e
+             mkdir -p '$AHMV_APP_ROOT/releases'
+             cd '$AHMV_APP_ROOT/releases'
+             ls -1dt */ 2>/dev/null |
+             tail -n +6 |
+             xargs -r rm -rf"
+
+          echo "Old release cleanup completed."
+
+      - name: Deployment summary
         if: success()
         run: |
           set -euo pipefail
 
-          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
-            "cd '$AHMV_APP_ROOT/releases' &&
-             ls -1dt */ 2>/dev/null |
-             tail -n +6 |
-             xargs -r rm -rf"
+          echo "=========================================="
+          echo "AHM VERDUN PRODUCTION DEPLOYMENT SUCCESS"
+          echo "=========================================="
+          echo
+          echo "Domain:"
+          echo "$AHMV_PRODUCTION_URL"
+          echo
+          echo "Release SHA:"
+          echo "$RELEASE_SHA"
+          echo
+          echo "Release key:"
+          echo "$RELEASE_KEY"
+          echo
+          echo "Health:"
+          echo "$AHMV_PRODUCTION_URL/healthz"
+          echo
+          echo "Production deployment completed successfully."
