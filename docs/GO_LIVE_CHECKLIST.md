@@ -18,8 +18,11 @@ This project is intentionally safe for proposal/pre-production use by default.
 - [x] Spordle, WLLV, standings/results and other hockey-operation systems remain external sources of truth.
 - [x] Legacy same-domain routes are redirected to current destinations for domain cutover.
 - [x] The reserved phone is hidden from indexed production until explicitly activated.
+- [x] Production deployment is manual, environment-protected, pinned to the exact current green `main` SHA and has automatic rollback on failed activation.
 
 ## Association / production approvals still required before indexing
+
+- [ ] Configure and protect the GitHub `production` environment plus the AHMV-specific production deployment secrets documented in `MOCHAHOST_PRODUCTION.md`.
 
 - [ ] Confirm the official AHM Verdun general email.
 - [ ] Confirm the official mailing address.
