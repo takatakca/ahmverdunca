@@ -2,7 +2,7 @@
 
 The original project brief is retained below for history, but the implementation has progressed far beyond the initial visual-prototype stage.
 
-The current public-site code is feature-complete for the approved information/gateway scope, with CI-enforced data, SEO, security and build checks. Public indexing remains deliberately disabled until the association and production-launch requirements are approved.
+The current public-site code is feature-complete for the approved information/gateway scope, with CI-enforced data, SEO, security and build checks. Public indexing remains deliberately disabled until the association and production-launch requirements are approved. GitHub `main` is the release source of truth; do not publish an editor/preview build unless its commit SHA matches the approved green `main` release.
 
 - Final release dossier: `docs/FINAL_RELEASE_STATUS.md`
 - Go-live checklist: `docs/GO_LIVE_CHECKLIST.md`
