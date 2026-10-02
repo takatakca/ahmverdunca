@@ -263,3 +263,83 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Visual remake: arena motion primitives ---------- */
+@keyframes arena-sweep {
+  0% { transform: translateX(-60%) rotate(12deg); opacity: 0; }
+  20% { opacity: 0.55; }
+  60% { opacity: 0.35; }
+  100% { transform: translateX(160%) rotate(12deg); opacity: 0; }
+}
+@keyframes arena-drift {
+  0%, 100% { transform: translate3d(-4%, -2%, 0) scale(1); }
+  50% { transform: translate3d(4%, 3%, 0) scale(1.08); }
+}
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes slow-zoom {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+
+@utility arena-light {
+  position: absolute;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 35% at 20% 30%, color-mix(in oklab, var(--color-sport) 38%, transparent), transparent 70%),
+    radial-gradient(45% 40% at 80% 70%, color-mix(in oklab, var(--color-navy) 90%, transparent), transparent 70%),
+    radial-gradient(30% 30% at 60% 15%, color-mix(in oklab, var(--color-navy-foreground) 10%, transparent), transparent 70%);
+  animation: arena-drift 14s ease-in-out infinite;
+}
+
+@utility light-beam {
+  position: absolute;
+  top: -30%;
+  bottom: -30%;
+  width: 22%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-navy-foreground) 14%, transparent), transparent);
+  filter: blur(6px);
+  animation: arena-sweep 7s ease-in-out infinite;
+}
+
+@utility ice-grain {
+  background-image:
+    repeating-linear-gradient(115deg, color-mix(in oklab, var(--color-navy-foreground) 3%, transparent) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(25deg, color-mix(in oklab, var(--color-navy-foreground) 2%, transparent) 0 1px, transparent 1px 13px);
+}
+
+@utility rise {
+  animation: rise-in 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@utility ticker-track {
+  display: flex;
+  width: max-content;
+  animation: ticker 40s linear infinite;
+}
+
+@utility hero-zoom {
+  animation: slow-zoom 2400ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@utility display-mega {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.82;
+  letter-spacing: -0.035em;
+  font-size: clamp(3.6rem, 13vw, 11.5rem);
+}
+
+@utility outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in oklab, var(--color-navy-foreground) 70%, transparent);
+}
