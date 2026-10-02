@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { applyPublicResponsePolicy } from "./lib/response-policy";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -47,35 +48,6 @@ function legacyRedirect(request: Request) {
   return Response.redirect(new URL(target, url.origin), 308);
 }
 
-function applyResponseHeaders(response: Response, request: Request) {
-  const headers = new Headers(response.headers);
-  const contentType = headers.get("content-type") ?? "";
-
-  // Baseline browser hardening that is safe for the public AHMV experience.
-  headers.set("X-Content-Type-Options", "nosniff");
-  headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  headers.set("X-Frame-Options", "SAMEORIGIN");
-
-  if (contentType.includes("text/html")) {
-    const pathname = new URL(request.url).pathname;
-    const routeMustStayNoindex = pathname === "/recherche" || response.status >= 400;
-    headers.set(
-      "X-Robots-Tag",
-      PUBLIC_INDEXING_ENABLED && !routeMustStayNoindex
-        ? "index, follow"
-        : routeMustStayNoindex
-          ? "noindex, follow"
-          : "noindex, nofollow",
-    );
-  }
-
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  });
-}
-
 async function getServerEntry(): Promise<ServerEntry> {
   if (!serverEntryPromise) {
     serverEntryPromise = import("@tanstack/react-start/server-entry").then(
@@ -113,19 +85,31 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    const url = new URL(request.url);
+    if (url.pathname === "/healthz") {
+      return new Response(JSON.stringify({ ok: true, service: "ahmverdun-web" }), {
+        status: 200,
+        headers: {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "X-Robots-Tag": "noindex, nofollow",
+        },
+      });
+    }
+
     const redirectResponse = legacyRedirect(request);
-    if (redirectResponse) return applyResponseHeaders(redirectResponse, request);
+    if (redirectResponse) return applyPublicResponsePolicy(redirectResponse, request, PUBLIC_INDEXING_ENABLED);
 
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return applyResponseHeaders(await normalizeCatastrophicSsrResponse(response), request);
+      return applyPublicResponsePolicy(await normalizeCatastrophicSsrResponse(response), request, PUBLIC_INDEXING_ENABLED);
     } catch (error) {
       console.error(error);
-      return applyResponseHeaders(new Response(renderErrorPage(), {
+      return applyPublicResponsePolicy(new Response(renderErrorPage(), {
         status: 500,
         headers: { "content-type": "text/html; charset=utf-8" },
-      }), request);
+      }), request, PUBLIC_INDEXING_ENABLED);
     }
   },
 };
