@@ -12,8 +12,8 @@ export const SITE = {
   // Official email NOT confirmed — do not display a specific address as official.
   officialEmailConfirmed: false,
   // Functional operations/recruitment contact published by AHMV in 2026; not the general association email.
-  operationsEmail: "operation@ahmverdun.com",
-  girlsHockeyEmail: "hockeyfeminin@ahmverdun.com",
+  operationsEmail: "operation@ahmverdun.ca",
+  girlsHockeyEmail: "hockeyfeminin@ahmverdun.ca",
   phonePublic: false,
   phoneDisplay: "1 (581) 666-6AHM",
   phoneE164: "+15816666246",
