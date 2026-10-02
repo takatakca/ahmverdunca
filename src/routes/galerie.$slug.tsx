@@ -34,7 +34,6 @@ function AlbumPage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
   const al = getAlbum(slug)!;
-  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
   return (
     <>
