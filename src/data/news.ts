@@ -1179,7 +1179,8 @@ export const NEWS: NewsArticle[] = [
 }
 ];
 
-export const CURRENT_LEGACY_NEWS_IDS = [39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 14] as const;\nexport const DISCOVERED_ARCHIVE_NEWS_IDS = [20, 19, 18, 16, 15, 9, 4, 3, 2] as const;
+export const CURRENT_LEGACY_NEWS_IDS = [39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 14] as const;
+export const DISCOVERED_ARCHIVE_NEWS_IDS = [20, 19, 18, 16, 15, 9, 4, 3, 2] as const;
 
 export function newsDateLabel(article: NewsArticle, lang: "fr" | "en") {
   if (article.date) {
