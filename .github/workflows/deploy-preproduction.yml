@@ -36,11 +36,10 @@ jobs:
           REQUESTED_SHA: ${{ inputs.release_sha }}
         run: |
           set -euo pipefail
-          case "$REQUESTED_SHA" in
-            [0-9a-f][0-9a-f][0-9a-f][0-9a-f]*) ;;
-            *) echo "release_sha must be a full lowercase Git SHA"; exit 1 ;;
-          esac
-          test "${#REQUESTED_SHA}" -eq 40
+          [[ "$REQUESTED_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "release_sha must be a full 40-character lowercase Git SHA"
+            exit 1
+          }
           MAIN_SHA="$(gh api repos/${GITHUB_REPOSITORY}/commits/main --jq .sha)"
           test "$REQUESTED_SHA" = "$MAIN_SHA" || {
             echo "Refusing stale/non-main release: requested=$REQUESTED_SHA main=$MAIN_SHA"
@@ -79,6 +78,9 @@ jobs:
           for name in AHMV_HOST AHMV_PORT AHMV_USER AHMV_APP_ROOT AHMV_PREVIEW_URL; do
             test -n "${!name:-}" || { echo "Missing required secret-backed value: $name"; exit 1; }
           done
+          [[ "$AHMV_PORT" =~ ^[0-9]+$ ]] || { echo "SSH port must be numeric"; exit 1; }
+          [[ "$AHMV_APP_ROOT" = /* ]] || { echo "AHMV app root must be an absolute path"; exit 1; }
+          [[ "$AHMV_PREVIEW_URL" =~ ^https://[^/]+$ ]] || { echo "Preproduction URL must be an HTTPS origin without a path"; exit 1; }
 
       - name: Configure SSH
         env:
