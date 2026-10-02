@@ -14,6 +14,7 @@
     "check:seo": "bun run generate:sitemap && bun scripts/validate-public-seo.ts",
     "check:runtime-policy": "bun scripts/validate-runtime-policy.ts",
     "check:canonical": "bun scripts/validate-canonical-seo.ts",
+    "check:external-links": "bun scripts/validate-external-link-safety.ts",
     "generate:sitemap": "bun scripts/generate-sitemap.ts"
   },
   "overrides": {
