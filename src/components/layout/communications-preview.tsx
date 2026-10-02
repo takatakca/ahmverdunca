@@ -80,10 +80,10 @@ export function CommunicationsPreview() {
 
             <div className="mt-8 border-l-2 border-sport pl-4">
               <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Canal d'information à venir" : "Upcoming information channel"}
+                {lang === "fr" ? "Numéro AHMV réservé — service d'information à venir" : "Reserved AHMV number — information service upcoming"}
               </p>
               <p className="mt-2 font-display text-2xl font-bold tracking-tight">{SITE.phoneDisplay}</p>
-              <p className="mt-1 text-xs text-navy-foreground/55">{SITE.phoneE164}</p>
+              <p className="mt-1 text-xs text-navy-foreground/55">+1 581 666 6246</p>
             </div>
           </div>
 

@@ -13,6 +13,24 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto bg-navy-deep text-navy-foreground">
       <div className="h-1 w-full bg-sport" aria-hidden />
+      <div className="border-b border-navy-foreground/10">
+        <div className="container-site flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="eyebrow text-sport-foreground/80">{lang === "fr" ? "Action no 1 des familles" : "Families' #1 action"}</p>
+            <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none tracking-tight sm:text-4xl">
+              {lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/horaires" className="inline-flex min-h-11 items-center rounded-md bg-sport px-5 font-display text-base font-bold uppercase tracking-wide text-sport-foreground transition-transform hover:-translate-y-0.5">
+              {lang === "fr" ? "Voir les horaires" : "View schedules"}
+            </Link>
+            <Link to="/equipes" className="inline-flex min-h-11 items-center rounded-md border border-navy-foreground/25 px-5 font-display text-base font-bold uppercase tracking-wide text-navy-foreground/90 transition-colors hover:bg-navy-foreground/10">
+              {lang === "fr" ? "Les équipes" : "Teams"}
+            </Link>
+          </div>
+        </div>
+      </div>
       <div className="container-site grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-4 lg:py-16">
         <div className="lg:col-span-1">
           <div className="flex items-center gap-3">
