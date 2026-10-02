@@ -11,6 +11,27 @@ export interface OfficialWeekActivity {
   status: OfficialActivityStatus;
 }
 
+export const WEEKLY_SCHEDULE_DOCUMENTS = [
+  {
+    week: 4,
+    start: "2026-09-28",
+    end: "2026-10-04",
+    publishedAt: "2026-09-29",
+    title: "Horaire AHMV 2026-27 — Semaine 4",
+    sourceUrl: "https://ahmverdun.com/storage/5pW35UlsUj1CAOp9lljaN4JAnw5ayAEH70vcajXy.pdf",
+    fileSize: "129.56 KB",
+  },
+  {
+    week: 5,
+    start: "2026-10-05",
+    end: "2026-10-11",
+    publishedAt: "2026-09-30",
+    title: "Horaire AHMV 2026-27 — Semaine 5",
+    sourceUrl: "https://ahmverdun.com/storage/qpfqchDJUtgBnlzuSR9Cig3o0Oeb9gzfphCqlErY.pdf",
+    fileSize: "112.46 KB",
+  },
+] as const;
+
 export const OFFICIAL_WEEK_META = {
   start: "2026-09-28",
   end: "2026-10-04",

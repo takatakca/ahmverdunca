@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { TEAMS } from "@/data/teams";
 import { ARENAS } from "@/data/arenas";
-import { NEWS } from "@/data/news";
+import { NEWS, newsDateLabel } from "@/data/news";
 import { FAQ } from "@/data/faq";
 import { ALBUMS } from "@/data/gallery";
 import { RESOURCES } from "@/data/resources";
@@ -201,7 +201,7 @@ function SearchPage() {
           key: `news-${item.slug}`,
           label: l(item.title),
           kind: t("nav.news"),
-          detail: formatShortDate(item.date, lang),
+          detail: newsDateLabel(item, lang),
           to: "/nouvelles/$slug",
           slug: item.slug,
         });

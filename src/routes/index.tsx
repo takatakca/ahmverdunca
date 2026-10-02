@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { ALERTS } from "@/data/alerts";
 import { TEAMS } from "@/data/teams";
-import { NEWS } from "@/data/news";
+import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { ARENAS } from "@/data/arenas";
 import { SPONSORS } from "@/data/sponsors";
@@ -289,7 +289,7 @@ function Home() {
                     <span className="bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
                       {lang === "fr" ? "À la une" : "Featured"}
                     </span>
-                    <span className="eyebrow text-navy-foreground/65">{formatShortDate(news[0].date, lang)}</span>
+                    <span className="eyebrow text-navy-foreground/65">{newsDateLabel(news[0], lang)}</span>
                   </div>
                   <h3 className="mt-4 max-w-4xl font-display text-4xl font-extrabold uppercase leading-[0.9] md:text-6xl">
                     {l(news[0].title)}
@@ -312,7 +312,7 @@ function Home() {
                     className="group flex min-h-52 flex-col justify-between bg-ice p-6 transition-colors hover:bg-background md:p-7"
                   >
                     <div className="flex items-start justify-between gap-4">
-                      <p className="eyebrow text-sport">{formatShortDate(article.date, lang)}</p>
+                      <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
                       <span className="font-display text-4xl font-extrabold text-navy/8">0{index + 2}</span>
                     </div>
                     <div>

@@ -7,6 +7,7 @@ import { ShareButton } from "@/components/share-button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
+  WEEKLY_SCHEDULE_DOCUMENTS,
   type OfficialWeekActivity,
 } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -170,11 +171,16 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
             }
           />
           {!publicLaunch && (
-            <Button asChild variant="outline">
-              <a href={OFFICIAL_WEEK_META.sourceUrl} target="_blank" rel="noopener noreferrer">
-                PDF officiel <ExternalLink className="size-4" />
-              </a>
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              {WEEKLY_SCHEDULE_DOCUMENTS.map((document) => (
+                <Button key={document.week} asChild variant={document.week === 5 ? "sport" : "outline"} size="sm">
+                  <a href={document.sourceUrl} target="_blank" rel="noopener noreferrer">
+                    {lang === "fr" ? `Semaine ${document.week}` : `Week ${document.week}`}
+                    <ExternalLink className="size-4" />
+                  </a>
+                </Button>
+              ))}
+            </div>
           )}
         </div>
       </div>

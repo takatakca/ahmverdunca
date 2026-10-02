@@ -4,8 +4,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { PlaceholderImage } from "@/components/placeholder-image";
-import { NEWS, NEWS_CATEGORIES } from "@/data/news";
-import { formatShortDate, useI18n } from "@/lib/i18n";
+import { NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
+import { useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 import { cn } from "@/lib/utils";
 
@@ -116,7 +116,7 @@ function NewsPage() {
                     {lang === "fr" ? "À la une" : "Featured"}
                   </span>
                   <span className="eyebrow text-sport">
-                    {formatShortDate(featured.date, lang)}
+                    {newsDateLabel(featured, lang)}
                   </span>
                 </div>
                 <h2 className="mt-4 font-display text-3xl font-extrabold uppercase leading-none text-navy group-hover:text-sport md:text-5xl">
@@ -147,7 +147,7 @@ function NewsPage() {
                   />
                   <div className="p-5">
                     <p className="eyebrow text-sport">
-                      {formatShortDate(article.date, lang)}
+                      {newsDateLabel(article, lang)}
                     </p>
                     <h2 className="heading-card mt-2 group-hover:text-sport">
                       {l(article.title)}
@@ -174,7 +174,7 @@ function NewsPage() {
                 <PlaceholderImage src={img(article.image)} alt={l(article.title)} />
                 <div className="p-5">
                   <p className="eyebrow text-sport">
-                    {formatShortDate(article.date, lang)}
+                    {newsDateLabel(article, lang)}
                   </p>
                   <h2 className="heading-card mt-2 group-hover:text-sport">
                     {l(article.title)}
