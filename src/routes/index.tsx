@@ -56,7 +56,7 @@ function Home() {
   return (
     <>
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
-      <section className="relative isolate min-h-[68svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[72svh] md:min-h-[80svh]">
+      <section className="relative isolate min-h-[62svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[66svh] md:min-h-[72svh]">
         <img
           src={OFFICIAL_MEDIA.tournamentM11Primary.url}
           alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
@@ -90,7 +90,7 @@ function Home() {
           {lang === "fr" ? "Archive AHMV · Tournoi M11 2025" : "AHMV archive · 2025 U11 Tournament"}
         </a>
 
-        <div className="container-site relative flex min-h-[66svh] flex-col justify-end pb-8 pt-20 sm:min-h-[70svh] md:min-h-[78svh] md:pb-12">
+        <div className="container-site relative flex min-h-[60svh] flex-col justify-end pb-8 pt-16 sm:min-h-[64svh] md:min-h-[70svh] md:pb-10">
           <div className="max-w-6xl">
             <div className="rise flex flex-wrap items-center gap-3">
               <span className="h-px w-10 bg-sport" aria-hidden />
@@ -99,7 +99,7 @@ function Home() {
               </p>
             </div>
 
-            <p className="rise mt-5 font-display text-2xl font-bold uppercase tracking-[0.08em] text-navy-foreground/80 [animation-delay:80ms] md:text-3xl">
+            <p className="rise mt-4 font-display text-xl font-bold uppercase tracking-[0.08em] text-navy-foreground/80 [animation-delay:80ms] sm:text-2xl md:text-3xl">
               AHM Verdun
             </p>
 
@@ -107,7 +107,7 @@ function Home() {
               {t("home.heroTitle")}
             </h1>
 
-            <div className="rise mt-6 flex max-w-3xl flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold uppercase tracking-[0.16em] text-navy-foreground/70 [animation-delay:220ms] md:text-base">
+            <div className="rise mt-5 flex max-w-3xl flex-wrap items-center gap-x-3 gap-y-2 text-xs font-semibold uppercase tracking-[0.13em] text-navy-foreground/75 [animation-delay:220ms] sm:text-sm md:text-base">
               <span>{lang === "fr" ? "Hockey mineur" : "Minor hockey"}</span>
               <span className="size-1 rounded-full bg-sport" aria-hidden />
               <span>{lang === "fr" ? "Familles" : "Families"}</span>
@@ -117,7 +117,7 @@ function Home() {
               <span>{lang === "fr" ? "Communauté" : "Community"}</span>
             </div>
 
-            <div className="rise mt-8 flex flex-col gap-3 sm:flex-row [animation-delay:280ms]">
+            <div className="rise mt-6 flex flex-col gap-3 sm:flex-row [animation-delay:280ms]">
               <Button asChild variant="sport" size="lg" className="min-h-12 px-6">
                 <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
                   <CalendarDays className="size-5" />
@@ -143,7 +143,7 @@ function Home() {
             </div>
           </div>
 
-          <div className="mt-10 grid gap-3 border-t border-navy-foreground/15 pt-5 sm:grid-cols-3">
+          <div className="mt-7 grid gap-3 border-t border-navy-foreground/15 pt-4 sm:grid-cols-3">
             <div>
               <p className="eyebrow text-navy-foreground/45">{lang === "fr" ? "Priorité parent" : "Parent priority"}</p>
               <p className="mt-1 font-display text-xl font-bold uppercase">{lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}</p>
@@ -216,13 +216,13 @@ function Home() {
       <OfficialWeekPreview />
 
       {/* Team universe */}
-      <section className="relative overflow-hidden bg-navy-deep py-14 text-navy-foreground md:py-20">
+      <section className="relative overflow-hidden bg-navy-deep py-10 text-navy-foreground md:py-14">
         <div className="arena-light opacity-40" aria-hidden />
         <div className="container-site relative">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="eyebrow text-sport-foreground">{t("home.teamUniverseHint")}</p>
-              <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] md:text-7xl">
+              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] tracking-[-0.025em] sm:text-5xl md:text-6xl">
                 {t("home.teamUniverse")}
               </h2>
             </div>
@@ -231,18 +231,18 @@ function Home() {
             </Button>
           </div>
 
-          <div className="scrollbar-none mt-9 flex snap-x gap-px overflow-x-auto border-y border-navy-foreground/15">
+          <div className="scrollbar-none mt-7 flex snap-x gap-px overflow-x-auto border-y border-navy-foreground/15">
             {TEAMS.map((team, index) => (
               <Link
                 key={team.slug}
                 to="/equipes/$slug"
                 params={{ slug: team.slug }}
                 className={cn(
-                  "group relative min-h-64 min-w-[190px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-5 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[220px]",
+                  "group relative min-h-56 min-w-[170px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-4 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[205px]",
                   preferredTeam === team.slug && "bg-sport/15",
                 )}
               >
-                <span className="font-display text-6xl font-extrabold text-navy-foreground/8">
+                <span className="font-display text-5xl font-extrabold text-navy-foreground/8">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="absolute inset-x-5 bottom-5">
@@ -251,7 +251,7 @@ function Home() {
                       {lang === "fr" ? "Mon équipe" : "My team"}
                     </span>
                   )}
-                  <p className="font-display text-5xl font-extrabold uppercase leading-none">{team.code}</p>
+                  <p className="font-display text-4xl font-extrabold uppercase leading-none sm:text-5xl">{team.code}</p>
                   <p className="mt-2 text-sm font-semibold text-navy-foreground/65">{l(team.ages)}</p>
                   <div className="mt-4 flex items-center justify-between border-t border-navy-foreground/15 pt-3 text-xs font-semibold uppercase tracking-[0.12em] text-navy-foreground/55">
                     <span>{team.code === "F" ? l(team.name) : lang === "fr" ? "Voir la catégorie" : "View category"}</span>
@@ -265,12 +265,12 @@ function Home() {
       </section>
 
       {/* Newsroom */}
-      <section className="bg-background py-14 md:py-20">
+      <section className="bg-background py-10 md:py-14">
         <div className="container-site">
           <div className="flex flex-col gap-4 border-b-2 border-navy pb-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="eyebrow text-sport">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
-              <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-none text-navy md:text-6xl">
+              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-navy sm:text-5xl md:text-6xl">
                 {t("home.news")}
               </h2>
             </div>
@@ -302,7 +302,7 @@ function Home() {
                     </span>
                     <span className="eyebrow text-navy-foreground/65">{newsDateLabel(news[0], lang)}</span>
                   </div>
-                  <h3 className="mt-4 max-w-4xl font-display text-4xl font-extrabold uppercase leading-[0.9] md:text-6xl">
+                  <h3 className="mt-4 max-w-4xl font-display text-3xl font-extrabold uppercase leading-[0.94] sm:text-4xl md:text-5xl">
                     {l(news[0].title)}
                   </h3>
                   <p className="mt-4 max-w-2xl text-sm leading-relaxed text-navy-foreground/70 md:text-base">
@@ -364,12 +364,12 @@ function Home() {
       </section>
 
       {/* Gallery / community */}
-      <section className="bg-navy-deep py-14 text-navy-foreground md:py-20">
+      <section className="bg-navy-deep py-10 text-navy-foreground md:py-14">
         <div className="container-site">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Communauté · Médias" : "Community · Media"}</p>
-              <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.88] md:text-7xl">
+              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] sm:text-5xl md:text-6xl">
                 {t("home.moments")}
               </h2>
             </div>
@@ -523,7 +523,7 @@ function Home() {
         <div className="container-site relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <div>
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Parcours compétitif" : "Competitive pathway"}</p>
-            <h2 className="mt-3 font-display text-6xl font-extrabold uppercase leading-[0.82] tracking-[-0.035em] md:text-8xl">
+            <h2 className="mt-3 font-display text-5xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-6xl md:text-7xl">
               WLLV
               <span className="outline-text ml-3">AA / BB</span>
             </h2>
