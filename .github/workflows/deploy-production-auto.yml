@@ -1,0 +1,266 @@
+name: Auto deploy AHM Verdun production
+
+on:
+  workflow_run:
+    workflows:
+      - AHM Verdun CI
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ahmverdun-production-auto
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main'
+
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 25
+
+    env:
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      AHMV_HOST: ${{ secrets.AHMV_PRODUCTION_HOST }}
+      AHMV_PORT: ${{ secrets.AHMV_PRODUCTION_SSH_PORT }}
+      AHMV_USER: ${{ secrets.AHMV_PRODUCTION_USER }}
+      AHMV_APP_ROOT: ${{ secrets.AHMV_PRODUCTION_APP_ROOT }}
+      AHMV_PRODUCTION_URL: ${{ secrets.AHMV_PRODUCTION_URL }}
+      VITE_PUBLIC_INDEXING: ${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}
+
+    steps:
+      - name: Checkout exact green release
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Full release gate
+        run: |
+          set -euo pipefail
+
+          bunx tsc --noEmit
+          bun run check:data
+          bun run check:seo
+          bun run check:runtime-policy
+          bun run check:supabase-key-safety
+          bun run check:media-policy
+          bun run check:canonical
+          bun run check:external-links
+          bunx eslint . --rule 'prettier/prettier: off'
+          bun run build
+          bun run check:release-artifact
+
+      - name: Validate deployment configuration
+        run: |
+          set -euo pipefail
+
+          for name in AHMV_HOST AHMV_PORT AHMV_USER AHMV_APP_ROOT AHMV_PRODUCTION_URL; do
+            test -n "${!name:-}" || {
+              echo "Missing required value: $name"
+              exit 1
+            }
+          done
+
+          [[ "$AHMV_PORT" =~ ^[0-9]+$ ]] || {
+            echo "SSH port must be numeric"
+            exit 1
+          }
+
+          [[ "$AHMV_APP_ROOT" = /* ]] || {
+            echo "Application root must be an absolute path"
+            exit 1
+          }
+
+          [[ "$AHMV_PRODUCTION_URL" =~ ^https://[^/]+$ ]] || {
+            echo "Production URL must be a HTTPS origin without a trailing path"
+            exit 1
+          }
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AHMV_PRODUCTION_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.AHMV_PRODUCTION_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$KNOWN_HOSTS"
+
+          install -m 700 -d ~/.ssh
+
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Create immutable release package
+        run: |
+          set -euo pipefail
+
+          RELEASE_KEY="${RELEASE_SHA}-${GITHUB_RUN_ID}"
+
+          echo "RELEASE_KEY=$RELEASE_KEY" >> "$GITHUB_ENV"
+
+          printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
+          printf '%s\n' "$RELEASE_KEY" > .output/RELEASE_KEY
+
+          tar -C .output -czf "ahmverdun-${RELEASE_KEY}.tar.gz" .
+
+          sha256sum "ahmverdun-${RELEASE_KEY}.tar.gz" \
+            > "ahmverdun-${RELEASE_KEY}.sha256"
+
+      - name: Capture previous release
+        run: |
+          set -euo pipefail
+
+          PREVIOUS="$(
+            ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+              "readlink '$AHMV_APP_ROOT/current' 2>/dev/null || true"
+          )"
+
+          echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+
+      - name: Upload release
+        run: |
+          set -euo pipefail
+
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "mkdir -p '$AHMV_APP_ROOT/releases/$RELEASE_KEY'"
+
+          scp -P "$AHMV_PORT" \
+            "ahmverdun-${RELEASE_KEY}.tar.gz" \
+            "$AHMV_USER@$AHMV_HOST:$AHMV_APP_ROOT/releases/$RELEASE_KEY/release.tar.gz"
+
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "cd '$AHMV_APP_ROOT/releases/$RELEASE_KEY' &&
+             tar -xzf release.tar.gz &&
+             rm -f release.tar.gz"
+
+      - name: Activate release
+        run: |
+          set -euo pipefail
+
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "rm -f '$AHMV_APP_ROOT/current.new' &&
+             ln -s '$AHMV_APP_ROOT/releases/$RELEASE_KEY' '$AHMV_APP_ROOT/current.new' &&
+             mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'"
+
+      - name: Verify active release marker
+        run: |
+          set -euo pipefail
+
+          ACTIVE_SHA="$(
+            ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+              "cat '$AHMV_APP_ROOT/current/RELEASE_SHA'"
+          )"
+
+          test "$ACTIVE_SHA" = "$RELEASE_SHA"
+
+      - name: Restart Passenger
+        run: |
+          set -euo pipefail
+
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "mkdir -p '$AHMV_APP_ROOT/tmp' &&
+             touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+
+      - name: Verify health
+        run: |
+          set -euo pipefail
+
+          sleep 5
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --retry 5 \
+            --retry-delay 3 \
+            "$AHMV_PRODUCTION_URL/healthz"
+
+      - name: Verify production homepage
+        run: |
+          set -euo pipefail
+
+          HEADERS="$(mktemp)"
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --retry 5 \
+            --retry-delay 3 \
+            -D "$HEADERS" \
+            -o /dev/null \
+            "$AHMV_PRODUCTION_URL/"
+
+          grep -qi '^x-content-type-options: nosniff' "$HEADERS"
+          grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$HEADERS"
+          grep -qi '^x-frame-options: SAMEORIGIN' "$HEADERS"
+
+          if [ "$VITE_PUBLIC_INDEXING" = "true" ]; then
+            if grep -qi '^x-robots-tag: noindex, nofollow' "$HEADERS"; then
+              echo "ERROR: Production homepage is unexpectedly noindex."
+              cat "$HEADERS"
+              exit 1
+            fi
+          else
+            grep -qi '^x-robots-tag: noindex, nofollow' "$HEADERS"
+          fi
+
+      - name: Verify search remains noindex
+        run: |
+          set -euo pipefail
+
+          HEADERS="$(mktemp)"
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --retry 5 \
+            --retry-delay 3 \
+            -D "$HEADERS" \
+            -o /dev/null \
+            "$AHMV_PRODUCTION_URL/recherche"
+
+          grep -qi '^x-robots-tag: noindex' "$HEADERS"
+
+      - name: Roll back failed deployment
+        if: failure() && env.previous_release != ''
+        run: |
+          set -euo pipefail
+
+          echo "Rolling back to: $previous_release"
+
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "rm -f '$AHMV_APP_ROOT/current.new' &&
+             ln -s '$previous_release' '$AHMV_APP_ROOT/current.new' &&
+             mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current' &&
+             mkdir -p '$AHMV_APP_ROOT/tmp' &&
+             touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+
+      - name: Keep newest five releases
+        if: success()
+        run: |
+          set -euo pipefail
+
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" \
+            "cd '$AHMV_APP_ROOT/releases' &&
+             ls -1dt */ 2>/dev/null |
+             tail -n +6 |
+             xargs -r rm -rf"
