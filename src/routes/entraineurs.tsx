@@ -1,4 +1,5 @@
 import { canonicalLink } from "@/lib/seo";
+import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink, ShieldAlert } from "lucide-react";
