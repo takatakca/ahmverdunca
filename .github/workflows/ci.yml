@@ -50,6 +50,9 @@ jobs:
       - name: Validate Supabase public-key safety
         run: bun run check:supabase-key-safety
 
+      - name: Validate no-synthetic-media policy
+        run: bun run check:media-policy
+
       - name: Validate canonical SEO coverage
         run: bun run check:canonical
 
