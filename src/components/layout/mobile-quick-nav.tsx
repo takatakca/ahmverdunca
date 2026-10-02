@@ -22,8 +22,8 @@ export function MobileQuickNav() {
     return pathname === to || pathname.startsWith(`${to}/`);
   };
 
-  return <nav aria-label={lang === "fr" ? "Accès rapide" : "Quick navigation"} className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-border bg-background pb-[env(safe-area-inset-bottom)] shadow-lg lg:hidden">
-    {links.map(({ label, to, icon: Icon }) => <Link key={label} to={to} className={`flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-center text-[10px] font-semibold ${isActive(to) ? "text-sport" : "text-muted-foreground"}`}>
+  return <nav aria-label={lang === "fr" ? "Accès rapide" : "Quick navigation"} className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-border bg-background/96 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_32px_-24px_rgba(7,16,43,0.55)] backdrop-blur-xl lg:hidden">
+    {links.map(({ label, to, icon: Icon }) => <Link key={label} to={to} className={`relative flex min-h-14 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-center text-[10px] font-semibold before:absolute before:inset-x-3 before:top-0 before:h-0.5 ${isActive(to) ? "text-sport before:bg-sport" : "text-muted-foreground before:bg-transparent"}`}>
       <Icon className="size-5 shrink-0" aria-hidden /> <span className="leading-tight">{label}</span>
     </Link>)}
   </nav>;
