@@ -178,10 +178,11 @@
 
 @utility heading-card {
   font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.01em;
-  font-size: 1.375rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  font-size: 1.5rem;
 }
 
 @utility eyebrow {
@@ -193,13 +194,26 @@
 }
 
 @utility card-elevated {
+  position: relative;
+  overflow: hidden;
   background: var(--color-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-card);
-  transition: box-shadow 200ms ease, transform 200ms ease;
+  border: 1px solid color-mix(in oklab, var(--color-navy) 13%, transparent);
+  border-radius: 0;
+  box-shadow: 0 12px 34px -30px color-mix(in oklab, var(--color-navy) 55%, transparent);
+  transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-sport) 0 2.75rem, transparent 2.75rem);
+    pointer-events: none;
+  }
   &:hover {
-    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--color-sport) 35%, var(--color-border));
+    box-shadow: 0 20px 46px -32px color-mix(in oklab, var(--color-navy) 65%, transparent);
   }
 }
 
