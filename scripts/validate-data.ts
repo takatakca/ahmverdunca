@@ -1,9 +1,11 @@
 import { ALERTS } from "../src/data/alerts";
 import { ARENAS } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
-import { NEWS } from "../src/data/news";
+import { CURRENT_LEGACY_NEWS_IDS, NEWS } from "../src/data/news";
+import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory";
+import { REQUIRED_ARENA_COUNT, REQUIRED_PUBLIC_ALBUM_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
-import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "../src/data/official-week";
+import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
 import { COACH_RESOURCES } from "../src/data/coaches";
 import { RESOURCES } from "../src/data/resources";
@@ -64,6 +66,8 @@ const faqSourcePaths = new Set([
 requireUnique("TEAMS.slug", TEAMS.map((team) => team.slug));
 requireUnique("ARENAS.slug", ARENAS.map((arena) => arena.slug));
 requireUnique("NEWS.slug", NEWS.map((article) => article.slug));
+requireUnique("NEWS.legacyId", NEWS.flatMap((article) => article.legacyId === undefined ? [] : [String(article.legacyId)]));
+requireUnique("PUBLIC_TEAM_DIRECTORY.entry", PUBLIC_TEAM_DIRECTORY.map((entry) => `${entry.categorySlug}:${entry.level}:${entry.name}`));
 requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
 requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
 requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
@@ -104,6 +108,12 @@ for (const [key, value] of Object.entries(EXTERNAL_LINKS)) {
 }
 
 requireHttps("OFFICIAL_WEEK_META.sourceUrl", OFFICIAL_WEEK_META.sourceUrl);
+for (const document of WEEKLY_SCHEDULE_DOCUMENTS) {
+  requireHttps(`WEEKLY_SCHEDULE_DOCUMENTS week ${document.week}`, document.sourceUrl);
+  if (!validDate(document.start) || !validDate(document.end) || !validDate(document.publishedAt)) {
+    errors.push(`Weekly schedule document week ${document.week} has an invalid date.`);
+  }
+}
 
 if (!validDate(OFFICIAL_WEEK_META.start) || !validDate(OFFICIAL_WEEK_META.end) || !validDate(OFFICIAL_WEEK_META.publishedAt)) {
   errors.push("OFFICIAL_WEEK_META contains an invalid start, end or publication date.");
@@ -188,13 +198,33 @@ for (const event of OFFICIAL_WEEK_ACTIVITIES) {
 
 for (const article of NEWS) {
   if (article.sourceUrl) requireHttps(`News article "${article.slug}" sourceUrl`, article.sourceUrl);
-  if (!validDate(article.date)) {
+  if (article.date && !validDate(article.date)) {
     errors.push(`News article "${article.slug}" has invalid date "${article.date}".`);
   }
+  if (!article.date && !article.publishedLabel) {
+    errors.push(`News article "${article.slug}" must have an exact date or a publishedLabel.`);
+  }
+  for (const link of article.links ?? []) requireHttps(`News article "${article.slug}" related link`, link.url);
   for (const teamSlug of article.teamSlugs) {
     if (!teamSlugs.has(teamSlug)) {
       errors.push(`News article "${article.slug}" references unknown team "${teamSlug}".`);
     }
+  }
+}
+
+const mirroredLegacyIds = new Set(NEWS.flatMap((article) => article.legacyId === undefined ? [] : [article.legacyId]));
+for (const legacyId of CURRENT_LEGACY_NEWS_IDS) {
+  if (!mirroredLegacyIds.has(legacyId)) errors.push(`Current legacy news ID ${legacyId} is missing from NEWS.`);
+}
+if (ARENAS.length !== REQUIRED_ARENA_COUNT) {
+  errors.push(`Expected ${REQUIRED_ARENA_COUNT} mirrored public arenas, found ${ARENAS.length}.`);
+}
+if (ALBUMS.length !== REQUIRED_PUBLIC_ALBUM_COUNT) {
+  errors.push(`Expected ${REQUIRED_PUBLIC_ALBUM_COUNT} mirrored public albums, found ${ALBUMS.length}.`);
+}
+for (const entry of PUBLIC_TEAM_DIRECTORY) {
+  if (!teamSlugs.has(entry.categorySlug)) {
+    errors.push(`Public team directory entry "${entry.name}" references unknown category "${entry.categorySlug}".`);
   }
 }
 
