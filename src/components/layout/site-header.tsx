@@ -50,7 +50,7 @@ export function SiteHeader() {
   const isMoreActive = MORE_NAV.some((n) => pathname.startsWith(n.to));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-navy-foreground/10 bg-navy-deep text-navy-foreground shadow-md">
+    <header className="sticky top-0 z-50 border-b border-navy-foreground/10 bg-navy-deep/95 text-navy-foreground shadow-[0_12px_32px_-24px_rgba(0,0,0,0.8)] backdrop-blur-xl">
       {/* Top utility bar (desktop) */}
       <div className="hidden border-b border-navy-foreground/10 lg:block">
         <div className="container-site flex h-9 items-center justify-between text-xs">
@@ -67,26 +67,37 @@ export function SiteHeader() {
               </Link>
             )}
             {showPhone && (
-              <a
-                href={`tel:${SITE.phoneE164}`}
-                className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
-              >
-                <PhoneCall className="size-3.5" aria-hidden />
-                {SITE.phoneDisplay}
-              </a>
+              SITE.phonePublic ? (
+                <a
+                  href={`tel:${SITE.phoneE164}`}
+                  className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
+                >
+                  <PhoneCall className="size-3.5" aria-hidden />
+                  {SITE.phoneDisplay}
+                </a>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 text-navy-foreground/60" title={lang === "fr" ? "Numéro réservé — activation à venir" : "Reserved number — activation upcoming"}>
+                  <PhoneCall className="size-3.5" aria-hidden />
+                  {SITE.phoneDisplay}
+                  <span className="text-[9px] uppercase tracking-wider text-sport-foreground">{lang === "fr" ? "bientôt" : "soon"}</span>
+                </span>
+              )
             )}
             <LangSwitch />
           </div>
         </div>
       </div>
 
-      <div className="container-site flex h-16 items-center justify-between gap-4 lg:h-[72px]">
-        <Link to="/" className="flex items-center gap-3" aria-label={t("nav.home")}>
-          <LogoSlot />
-          <span className="hidden flex-col leading-none sm:flex">
-            <span className="font-display text-xl font-bold uppercase tracking-tight">AHM Verdun</span>
-            <span className="text-[11px] uppercase tracking-[0.18em] text-navy-foreground/60">
-              {lang === "fr" ? "Hockey mineur" : "Minor hockey"}
+      <div className="container-site flex h-[72px] items-center justify-between gap-3 lg:h-20">
+        <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label={t("nav.home")}>
+          <LogoSlot className="drop-shadow-[0_10px_22px_rgba(0,0,0,0.28)] transition-transform duration-300 group-hover:scale-[1.03]" />
+          <span className="hidden min-w-0 items-center gap-3 sm:flex">
+            <span className="h-8 w-px bg-navy-foreground/20" aria-hidden />
+            <span className="flex min-w-0 flex-col leading-none">
+              <span className="font-display text-[1.35rem] font-extrabold uppercase tracking-tight">AHM Verdun</span>
+              <span className="mt-1 truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/55">
+                {lang === "fr" ? "Hockey mineur · Verdun" : "Minor hockey · Verdun"}
+              </span>
             </span>
           </span>
         </Link>
@@ -154,10 +165,16 @@ export function SiteHeader() {
             asChild
             variant="ghost"
             size="icon"
-            className="text-navy-foreground hover:bg-navy-foreground/10 md:hidden"
+            className="hidden text-navy-foreground hover:bg-navy-foreground/10 xs:inline-flex md:hidden"
             aria-label={t("nav.search")}
           >
             <Link to="/recherche"><Search className="size-5" /></Link>
+          </Button>
+          <Button asChild variant="sport" size="sm" className="px-2.5 sm:hidden">
+            <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
+              <CalendarDays className="size-4" />
+              <span className="text-xs">{lang === "fr" ? "Horaire" : "Schedule"}</span>
+            </Link>
           </Button>
           <Button asChild variant="sport" size="sm" className="hidden sm:inline-flex">
             <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
@@ -253,12 +270,20 @@ export function SiteHeader() {
                 <Link to="/connexion">{t("nav.login")}</Link>
               </Button>
               {showPhone && (
-                <Button asChild variant="outline-light" size="lg">
-                  <a href={`tel:${SITE.phoneE164}`}>
+                SITE.phonePublic ? (
+                  <Button asChild variant="outline-light" size="lg">
+                    <a href={`tel:${SITE.phoneE164}`}>
+                      <PhoneCall className="size-4" />
+                      {SITE.phoneDisplay}
+                    </a>
+                  </Button>
+                ) : (
+                  <div className="flex min-h-11 items-center justify-center gap-2 rounded-md border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/75">
                     <PhoneCall className="size-4" />
                     {SITE.phoneDisplay}
-                  </a>
-                </Button>
+                    <span className="text-[10px] uppercase tracking-wider text-sport-foreground">{lang === "fr" ? "à venir" : "coming soon"}</span>
+                  </div>
+                )
               )}
               <div className="flex items-center justify-between rounded-md border border-navy-foreground/15 px-4 py-3">
                 <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>

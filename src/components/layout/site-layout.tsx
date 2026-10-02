@@ -4,6 +4,7 @@ import { SiteFooter } from "./site-footer";
 import { PreprodBanner } from "./preprod-banner";
 import { MobileQuickNav } from "./mobile-quick-nav";
 import { GlobalSearchShortcut } from "@/components/global-search-shortcut";
+import { CommunicationsPreview } from "./communications-preview";
 import { useI18n } from "@/lib/i18n";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
@@ -20,6 +21,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <main id="contenu" className="flex-1">{children}</main>
       <SiteFooter />
       <MobileQuickNav />
+      <CommunicationsPreview />
     </div>
   );
 }
