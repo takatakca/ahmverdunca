@@ -2,11 +2,10 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { PlaceholderImage } from "@/components/placeholder-image";
+import { SportArtwork } from "@/components/sport-artwork";
 import { Button } from "@/components/ui/button";
 import { getAlbum } from "@/data/gallery";
 import { formatDate, useI18n } from "@/lib/i18n";
-import { img } from "@/lib/images";
 
 export const Route = createFileRoute("/galerie/$slug")({
   loader: ({ params }) => {
@@ -45,13 +44,14 @@ function AlbumPage() {
           <ArrowLeft className="size-4" /> {t("common.back")}
         </Link>
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
-          <PlaceholderImage
-            src={img(al.cover)}
-            alt={l(al.title)}
-            className="rounded-xl"
+          <SportArtwork
+            index={al.season.slice(-2)}
+            kicker={`${l(al.eventType)} · ${formatDate(al.date, lang)}`}
+            title={l(al.title)}
+            code="ARCH"
             aspect="aspect-[4/3]"
           />
-          <aside className="card-elevated self-start p-6">
+          <aside className="broadcast-rail self-start border border-navy/12 bg-background p-6 pl-8">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
             </p>
