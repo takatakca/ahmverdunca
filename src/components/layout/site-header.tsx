@@ -13,8 +13,7 @@ import type { TranslationKey } from "@/lib/translations";
 
 export function SiteHeader() {
   const { t, lang } = useI18n();
-  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
-  const showPhone = !publicLaunch || SITE.phonePublic;
+  const showPhone = SITE.phonePublic;
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
