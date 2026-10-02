@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/page-header";
 import { TEAMS } from "@/data/teams";
@@ -7,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/equipes/")({
   head: () => ({
+    links: canonicalLink("/equipes"),
     meta: [
       { title: "Équipes et catégories — AHM Verdun" },
       { name: "description", content: "M5 à M18, Junior et hockey féminin : toutes les catégories de l'AHM Verdun pour la saison 2026–2027." },
