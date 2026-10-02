@@ -10,11 +10,13 @@ export interface Album {
   teamSlugs: string[];
   eventType: Localized;
   cover?: string;
+  /** Verified public archive preview already published by AHM Verdun. */
+  coverUrl?: string;
   /** Number of photos in the official album — unknown until media are provided. */
   photoCount?: number;
-  /** Official legacy AHMV album while local media remain under consent review. */
+  /** Public legacy AHMV album retained as the complete archive source. */
   sourceUrl?: string;
-  /** Photos pending official files + consent review for minors. */
+  /** Full local migration is still incomplete even when a verified cover is available. */
   photosPending: boolean;
 }
 
@@ -52,7 +54,8 @@ export const ALBUMS: Album[] = [
     teamSlugs: ["m11"],
     eventType: { fr: "Tournoi", en: "Tournament" },
     cover: "gallery-tournament",
-    sourceUrl: "https://ahmverdun.com/albums/1",
+    coverUrl: OFFICIAL_MEDIA.tournamentM11Secondary.url,
+    sourceUrl: OFFICIAL_MEDIA.tournamentM11Secondary.sourceUrl,
     photosPending: true,
   },
   {
@@ -63,7 +66,8 @@ export const ALBUMS: Album[] = [
     season: "2024-2025",
     teamSlugs: [],
     eventType: { fr: "Communauté", en: "Community" },
-    sourceUrl: "https://ahmverdun.com/albums/2",
+    coverUrl: OFFICIAL_MEDIA.volunteerArchive.url,
+    sourceUrl: OFFICIAL_MEDIA.volunteerArchive.sourceUrl,
     photosPending: true,
   },
 ];
