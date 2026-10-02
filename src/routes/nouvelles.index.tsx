@@ -1,4 +1,5 @@
 import { canonicalLink } from "@/lib/seo";
+import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
