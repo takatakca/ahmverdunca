@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/galerie/$slug")({
     const al = getAlbum(loaderData.slug)!;
     const title = `${al.title.fr} — AHM Verdun`;
     return {
+      links: canonicalLink(`/galerie/${loaderData.slug}`),
       meta: [
         { title },
         { name: "description", content: al.description.fr },
