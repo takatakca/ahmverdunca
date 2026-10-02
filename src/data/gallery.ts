@@ -1,4 +1,5 @@
-import type { Localized } from "@/lib/i18n";\nimport { OFFICIAL_MEDIA } from "@/data/official-media";
+import type { Localized } from "@/lib/i18n";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 
 export interface Album {
   slug: string;
