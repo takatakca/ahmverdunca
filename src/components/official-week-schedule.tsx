@@ -12,6 +12,7 @@ import {
   type OfficialWeekActivity,
 } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
+import { arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { mapsDirectionsUrl } from "@/lib/site";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
@@ -77,7 +78,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
 
       <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-1">
         <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
-          <a href={mapsDirectionsUrl(item.venue)} target="_blank" rel="noopener noreferrer">
+          <a href={mapsDirectionsUrl(arenaDirectionsTargetForVenue(item.venue))} target="_blank" rel="noopener noreferrer">
             {lang === "fr" ? "Itinéraire" : "Directions"}
           </a>
         </Button>

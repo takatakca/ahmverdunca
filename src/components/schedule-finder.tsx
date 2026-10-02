@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
+import { arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -199,7 +200,7 @@ export function ScheduleFinder() {
             </div>
             <div className="mt-4 flex shrink-0 flex-wrap gap-2 md:mt-0">
               <Button asChild variant="outline-light">
-                <a href={mapsDirectionsUrl(nextActivity.venue)} target="_blank" rel="noopener noreferrer">
+                <a href={mapsDirectionsUrl(arenaDirectionsTargetForVenue(nextActivity.venue))} target="_blank" rel="noopener noreferrer">
                   <MapPin className="size-4" />
                   {lang === "fr" ? "Itinéraire" : "Directions"}
                 </a>

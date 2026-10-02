@@ -9,6 +9,7 @@ import { TEAMS } from "@/data/teams";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { mapsDirectionsUrl } from "@/lib/site";
+import { arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { officialScheduleTermsForTeam } from "@/lib/official-schedule-team";
 import { cn } from "@/lib/utils";
@@ -158,7 +159,7 @@ export function OfficialWeekPreview() {
                       <span className="truncate">{item.venue}</span>
                     </p>
                     <a
-                      href={mapsDirectionsUrl(item.venue)}
+                      href={mapsDirectionsUrl(arenaDirectionsTargetForVenue(item.venue))}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport hover:underline"
