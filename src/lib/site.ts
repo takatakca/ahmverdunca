@@ -7,7 +7,7 @@ export const SITE = {
   shortName: "AHMV",
   name: { fr: "Association du hockey mineur de Verdun", en: "Verdun Minor Hockey Association" },
   season: "2026–2027",
-  domain: "https://ahmverdun.com",
+  domain: "https://ahmverdun.ca",
   city: "Verdun (Montréal), Québec",
   // Official email NOT confirmed — do not display a specific address as official.
   officialEmailConfirmed: false,
