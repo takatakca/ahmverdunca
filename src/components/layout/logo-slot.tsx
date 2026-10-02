@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 /**
  * Production-safe AHMV wordmark.
  *
- * The previous component depended on Lovable's private /__l5e asset route,
+ * The previous component depended on a Lovable-only private asset route,
  * which does not exist on MochaHost. Keep this mark self-contained so the
  * association identity is always visible even when no external media loads.
  */
