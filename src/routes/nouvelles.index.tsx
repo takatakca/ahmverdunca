@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/nouvelles/")({
   head: () => ({
+    links: canonicalLink("/nouvelles"),
     meta: [
       { title: "Nouvelles et communiqués — AHM Verdun" },
       {
