@@ -132,8 +132,8 @@ jobs:
           }
 
           if [ "$PUBLIC_INDEXING" = "true" ]; then
-            test "$AHMV_PRODUCTION_URL" = "https://ahmverdun.com" || {
-              echo "Public indexing may only be enabled on https://ahmverdun.com"
+            test "$AHMV_PRODUCTION_URL" = "https://ahmverdun.ca" || {
+              echo "Public indexing may only be enabled on https://ahmverdun.ca"
               exit 1
             }
           fi
