@@ -1,5 +1,4 @@
 import { canonicalLink } from "@/lib/seo";
-import { canonicalLink } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, ExternalLink, FileText, Trophy, Users } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
