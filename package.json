@@ -16,7 +16,8 @@
     "check:canonical": "bun scripts/validate-canonical-seo.ts",
     "check:external-links": "bun scripts/validate-external-link-safety.ts",
     "generate:sitemap": "bun scripts/generate-sitemap.ts",
-    "check:release-artifact": "bun scripts/validate-release-artifact.ts"
+    "check:release-artifact": "bun scripts/validate-release-artifact.ts",
+    "check:supabase-key-safety": "bun scripts/validate-supabase-client-key.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"

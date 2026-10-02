@@ -66,6 +66,7 @@ jobs:
           bun run check:data
           bun run check:seo
           bun run check:runtime-policy
+          bun run check:supabase-key-safety
           bun run check:canonical
           bun run check:external-links
           bun run lint
