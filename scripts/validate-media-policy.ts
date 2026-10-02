@@ -12,7 +12,7 @@ const forbidden = [
   "gallery-tournament.jpg",
 ];
 
-const failures: string[] = [];
+const forbiddenRuntimePatterns = ["/__l5e/", ".asset.json"];\n\nconst failures: string[] = [];
 
 function visit(directory: string) {
   for (const name of readdirSync(directory)) {
@@ -41,4 +41,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log("Synthetic-media policy validation passed: disabled generated assets are not referenced by application code.");
+console.log("Media policy validation passed: no disabled synthetic assets or Lovable-only runtime asset paths are referenced by application code.");
