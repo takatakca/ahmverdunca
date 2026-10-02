@@ -38,10 +38,14 @@ export function SiteHeader() {
     setMoreOpen(false);
   }, [pathname]);
 
-  // Lock the page behind the mobile navigation.
+  // Lock the page behind the mobile navigation without losing the previous
+  // body state. The menu is modal-like on phones and must not allow the page
+  // underneath to scroll.
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (!open) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = previousOverflow; };
   }, [open]);
 
   // Keep the mobile panel exactly below the rendered header. This avoids
@@ -69,6 +73,18 @@ export function SiteHeader() {
       window.removeEventListener("scroll", updateMobileMenuTop);
     };
   }, [open, scrolled]);
+
+  // Do not keep a phone/tablet overlay alive after crossing the desktop
+  // breakpoint (rotation, foldables, window resizing).
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    const closeMobileMenuOnDesktop = (event: MediaQueryListEvent | MediaQueryList) => {
+      if (event.matches) setOpen(false);
+    };
+    closeMobileMenuOnDesktop(media);
+    media.addEventListener("change", closeMobileMenuOnDesktop);
+    return () => media.removeEventListener("change", closeMobileMenuOnDesktop);
+  }, []);
 
   // Let keyboard users close either navigation menu immediately.
   useEffect(() => {
@@ -221,7 +237,7 @@ export function SiteHeader() {
           </Button>
           <button
             type="button"
-            className="tap-target inline-flex items-center justify-center rounded-md text-navy-foreground hover:bg-navy-foreground/10 lg:hidden"
+            className="tap-target inline-flex size-11 shrink-0 items-center justify-center border border-navy-foreground/15 text-navy-foreground hover:bg-navy-foreground/10 lg:hidden"
             aria-label={open ? t("nav.close") : t("nav.menu")}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -236,10 +252,11 @@ export function SiteHeader() {
       {open && (
         <div
           id="mobile-menu"
-          className="technical-grid fixed inset-x-0 z-40 overflow-y-auto overscroll-contain bg-competition lg:hidden animate-in fade-in slide-in-from-top-2"
+          className="technical-grid fixed inset-x-0 z-[60] overflow-y-auto overscroll-contain bg-competition pb-[env(safe-area-inset-bottom)] lg:hidden animate-in fade-in slide-in-from-top-2"
           style={{
             top: mobileMenuTop,
             bottom: "calc(3.5rem + env(safe-area-inset-bottom))",
+            maxHeight: `calc(100dvh - ${mobileMenuTop}px - 3.5rem - env(safe-area-inset-bottom))`,
           }}
         >
           <nav
