@@ -1,7 +1,7 @@
 import { SITE } from "./site";
 
 export function canonicalUrl(pathname: string) {
-  const path = pathname === "/" ? "" : pathname.startsWith("/") ? pathname : `/${pathname}`;
+  const path = pathname.startsWith("/") ? pathname : `/${pathname}`;
   return `${SITE.domain}${path}`;
 }
 
