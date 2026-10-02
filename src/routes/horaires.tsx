@@ -21,9 +21,9 @@ export const Route = createFileRoute("/horaires")({
     links: canonicalLink("/horaires"),
     meta: [
       { title: "Horaires — AHM Verdun" },
-      { name: "description", content: "Entraînements, matchs et événements de l'AHM Verdun par semaine, avec filtres par équipe, aréna et type d'activité." },
+      { name: "description", content: "Horaire hebdomadaire publié par l'AHM Verdun, recherche rapide et accès aux calendriers sportifs officiels." },
       { property: "og:title", content: "Horaires — AHM Verdun" },
-      { property: "og:description", content: "Consultez les activités de la semaine par équipe et par aréna." },
+      { property: "og:description", content: "Consultez l'horaire hebdomadaire AHMV et accédez aux calendriers sportifs officiels." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
