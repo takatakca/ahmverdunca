@@ -6,6 +6,7 @@ import { AddToCalendarButton } from "@/components/add-to-calendar-button";
 import { ShareButton } from "@/components/share-button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
+  LEGACY_SCHEDULE_DOCUMENTS,
   OFFICIAL_WEEK_META,
   WEEKLY_SCHEDULE_DOCUMENTS,
   type OfficialWeekActivity,
@@ -277,6 +278,31 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
             ))}
           </div>
         )}
+
+        <details className="mt-6 border-t border-border pt-4">
+          <summary className="cursor-pointer text-xs font-bold uppercase tracking-[0.14em] text-navy">
+            {lang === "fr" ? "Archives documentaires du site précédent" : "Previous-site document archive"}
+          </summary>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {LEGACY_SCHEDULE_DOCUMENTS.map((document) => (
+              <a
+                key={document.sourceUrl}
+                href={document.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-between gap-3 border border-navy/12 bg-background px-4 py-3 text-sm font-semibold text-navy hover:border-sport hover:text-sport"
+              >
+                <span>
+                  {document.label[lang]}
+                  <span className="mt-0.5 block text-[10px] font-normal uppercase tracking-[0.12em] text-muted-foreground">
+                    {document.fileSize}
+                  </span>
+                </span>
+                <ExternalLink className="size-4 shrink-0" />
+              </a>
+            ))}
+          </div>
+        </details>
 
         <p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
           {weekExpired
