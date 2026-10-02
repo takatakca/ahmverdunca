@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { CalendarDays, ChevronDown, Menu, PhoneCall, Search, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
@@ -18,6 +18,8 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuTop, setMobileMenuTop] = useState(72);
+  const headerRef = useRef<HTMLElement>(null);
 
   // Subtle compaction once the parent starts scrolling.
   useEffect(() => {
@@ -36,11 +38,37 @@ export function SiteHeader() {
     setMoreOpen(false);
   }, [pathname]);
 
-  // Lock scroll when the mobile menu is open.
+  // Lock the page behind the mobile navigation.
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
+
+  // Keep the mobile panel exactly below the rendered header. This avoids
+  // overlap when the preproduction banner is visible and while the sticky
+  // header compacts on scroll.
+  useEffect(() => {
+    if (!open) return;
+
+    const updateMobileMenuTop = () => {
+      const bottom = headerRef.current?.getBoundingClientRect().bottom ?? 72;
+      setMobileMenuTop(Math.max(0, Math.round(bottom)));
+    };
+
+    updateMobileMenuTop();
+
+    const observer = new ResizeObserver(updateMobileMenuTop);
+    if (headerRef.current) observer.observe(headerRef.current);
+
+    window.addEventListener("resize", updateMobileMenuTop);
+    window.addEventListener("scroll", updateMobileMenuTop, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateMobileMenuTop);
+      window.removeEventListener("scroll", updateMobileMenuTop);
+    };
+  }, [open, scrolled]);
 
   // Let keyboard users close either navigation menu immediately.
   useEffect(() => {
@@ -59,7 +87,7 @@ export function SiteHeader() {
   const isMoreActive = MORE_NAV.some((n) => pathname.startsWith(n.to));
 
   return (
-    <header className="sticky top-0 z-50 border-b border-navy-foreground/10 bg-navy-deep/95 text-navy-foreground shadow-[0_12px_32px_-24px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+    <header ref={headerRef} className="sticky top-0 z-50 border-b border-navy-foreground/10 bg-navy-deep/95 text-navy-foreground shadow-[0_12px_32px_-24px_rgba(0,0,0,0.8)] backdrop-blur-xl">
       {/* Top utility bar (desktop) */}
       <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
@@ -206,7 +234,14 @@ export function SiteHeader() {
 
       {/* Mobile menu */}
       {open && (
-        <div id="mobile-menu" className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-navy-deep lg:hidden animate-in fade-in slide-in-from-top-2">
+        <div
+          id="mobile-menu"
+          className="fixed inset-x-0 z-40 overflow-y-auto overscroll-contain bg-navy-deep lg:hidden animate-in fade-in slide-in-from-top-2"
+          style={{
+            top: mobileMenuTop,
+            bottom: "calc(3.5rem + env(safe-area-inset-bottom))",
+          }}
+        >
           <nav
             aria-label={lang === "fr" ? "Navigation mobile" : "Mobile navigation"}
             className="container-site py-5"
