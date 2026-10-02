@@ -44,6 +44,9 @@ jobs:
       - name: Validate public SEO artifacts
         run: bun run check:seo
 
+      - name: Validate runtime response policy
+        run: bun run check:runtime-policy
+
       - name: Lint application logic
         run: |
           bunx eslint . --rule 'prettier/prettier: off'
