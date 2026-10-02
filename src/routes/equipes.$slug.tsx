@@ -14,10 +14,11 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { PlaceholderImage } from "@/components/placeholder-image";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
+import { teamsForCategory } from "@/data/team-directory";
 import { getTeamSocialLinks } from "@/data/team-social";
-import { NEWS } from "@/data/news";
+import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
-import { formatShortDate, useI18n } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { SITE } from "@/lib/site";
@@ -64,6 +65,7 @@ function TeamPage() {
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
   const socialLinks = getTeamSocialLinks(slug);
+  const publicTeams = teamsForCategory(slug);
 
   return (
     <>
@@ -189,6 +191,26 @@ function TeamPage() {
           </div>
         </section>
 
+        {publicTeams.length > 0 && (
+          <section aria-labelledby="public-team-directory-title">
+            <SectionHeading
+              eyebrow={lang === "fr" ? "Répertoire public 2026–2027" : "2026–2027 public directory"}
+              title={lang === "fr" ? "Équipes publiées" : "Published teams"}
+              description={lang === "fr"
+                ? "Noms et niveaux actuellement affichés dans le répertoire public AHM Verdun. Aucun alignement de joueurs ni donnée personnelle n’est recopié."
+                : "Names and levels currently shown in AHM Verdun’s public directory. No player roster or personal information is mirrored."}
+            />
+            <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+              {publicTeams.map((entry) => (
+                <div key={`${entry.level}-${entry.name}`} className="bg-background p-5">
+                  <p className="eyebrow text-sport">{entry.level}</p>
+                  <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-none text-navy">{entry.name}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section id="horaires-equipe">
           <SectionHeading
             eyebrow={lang === "fr" ? "Source officielle" : "Official source"}
@@ -239,7 +261,7 @@ function TeamPage() {
                   <PlaceholderImage src={img(article.image)} alt={l(article.title)} />
                   <div className="p-5">
                     <p className="eyebrow text-sport">
-                      {formatShortDate(article.date, lang)}
+                      {newsDateLabel(article, lang)}
                     </p>
                     <h3 className="heading-card mt-2 group-hover:text-sport">
                       {l(article.title)}
