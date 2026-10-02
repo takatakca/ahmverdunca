@@ -1,5 +1,5 @@
 import { ALERTS } from "../src/data/alerts";
-import { ARENAS } from "../src/data/arenas";
+import { ARENAS, arenaDirectionsTargetForVenue } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
 import { CURRENT_LEGACY_NEWS_IDS, DISCOVERED_ARCHIVE_NEWS_IDS, NEWS } from "../src/data/news";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory";
@@ -225,6 +225,11 @@ for (const legacyId of DISCOVERED_ARCHIVE_NEWS_IDS) {
 }
 if (ARENAS.length !== REQUIRED_ARENA_COUNT) {
   errors.push(`Expected ${REQUIRED_ARENA_COUNT} mirrored public arenas, found ${ARENAS.length}.`);
+}
+for (const venue of new Set(OFFICIAL_WEEK_ACTIVITIES.map((item) => item.venue))) {
+  if (arenaDirectionsTargetForVenue(venue) === venue) {
+    errors.push(`Official weekly venue "${venue}" has no verified arena address mapping.`);
+  }
 }
 if (ALBUMS.length !== REQUIRED_PUBLIC_ALBUM_COUNT) {
   errors.push(`Expected ${REQUIRED_PUBLIC_ALBUM_COUNT} mirrored public albums, found ${ALBUMS.length}.`);
