@@ -3,7 +3,7 @@ import { ARENAS, arenaDirectionsTargetForVenue } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
 import { CURRENT_LEGACY_NEWS_IDS, DISCOVERED_ARCHIVE_NEWS_IDS, NEWS } from "../src/data/news";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory";
-import { REQUIRED_ARENA_COUNT, REQUIRED_PUBLIC_ALBUM_COUNT } from "../src/data/content-mirror";
+import { REQUIRED_ARENA_COUNT, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
 import { LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
@@ -233,6 +233,9 @@ for (const venue of new Set(OFFICIAL_WEEK_ACTIVITIES.map((item) => item.venue)))
 }
 if (ALBUMS.length !== REQUIRED_PUBLIC_ALBUM_COUNT) {
   errors.push(`Expected ${REQUIRED_PUBLIC_ALBUM_COUNT} mirrored public albums, found ${ALBUMS.length}.`);
+}
+if (PUBLIC_TEAM_DIRECTORY.length !== REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT) {
+  errors.push(`Expected ${REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT} mirrored public team entries, found ${PUBLIC_TEAM_DIRECTORY.length}.`);
 }
 for (const entry of PUBLIC_TEAM_DIRECTORY) {
   if (!teamSlugs.has(entry.categorySlug)) {
