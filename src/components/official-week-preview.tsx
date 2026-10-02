@@ -54,8 +54,8 @@ export function OfficialWeekPreview() {
   const isPersonalized = personalized.length > 0 && savedTeam;
 
   return (
-    <section className="competition-panel py-12 text-navy-foreground md:py-16">
-      <div className="container-site">
+    <section className="competition-panel relative overflow-hidden py-12 text-navy-foreground md:py-18">\n      <div className="technical-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden />
+      <div className="container-site relative">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow text-sport-foreground">
@@ -71,7 +71,7 @@ export function OfficialWeekPreview() {
                   ? "Horaires"
                   : "Schedules"}
             </p>
-            <h2 className="heading-section mt-2">
+            <h2 className="mt-2 font-display text-[clamp(3rem,6vw,5.8rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.04em]">
               {isPersonalized
                 ? lang === "fr"
                   ? `${savedTeam.code === "F" ? l(savedTeam.name) : savedTeam.code} · Cette semaine`
@@ -116,7 +116,7 @@ export function OfficialWeekPreview() {
                 <article
                   key={item.id}
                   className={cn(
-                    "rounded-lg border border-navy-foreground/15 bg-background p-4 text-foreground shadow-card",
+                    "border border-navy-foreground/15 bg-background p-5 text-foreground",
                     cancelled && "border-status-cancelled/50 bg-status-cancelled-soft",
                   )}
                 >
@@ -143,7 +143,7 @@ export function OfficialWeekPreview() {
                       </p>
                     </div>
                     {cancelled && (
-                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-status-cancelled px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                      <span className="inline-flex shrink-0 items-center gap-1 bg-status-cancelled px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
                         <XCircle className="size-3" aria-hidden />
                         {lang === "fr" ? "Annulée" : "Cancelled"}
                       </span>

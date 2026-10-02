@@ -87,7 +87,7 @@ export function SiteHeader() {
   const isMoreActive = MORE_NAV.some((n) => pathname.startsWith(n.to));
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 border-b border-navy-foreground/10 bg-navy-deep/95 text-navy-foreground shadow-[0_12px_32px_-24px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+    <header ref={headerRef} className="sticky top-0 z-50 border-b border-navy-foreground/12 bg-competition/96 text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)] backdrop-blur-xl">
       {/* Top utility bar (desktop) */}
       <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
@@ -146,8 +146,8 @@ export function SiteHeader() {
               key={item.key}
               to={item.to}
               activeOptions={{ exact: item.to === "/" }}
-              className="rounded-md px-3 py-2 font-display text-base font-semibold uppercase tracking-wide text-navy-foreground/80 transition-colors hover:bg-navy-foreground/10 hover:text-navy-foreground"
-              activeProps={{ className: "!text-navy-foreground border-b-2 border-sport rounded-b-none" }}
+              className="border-b-2 border-transparent px-3 py-2 font-display text-sm font-bold uppercase tracking-[0.08em] text-navy-foreground/72 transition-colors hover:border-navy-foreground/20 hover:text-navy-foreground"
+              activeProps={{ className: "!text-navy-foreground !border-sport" }}
             >
               {t(`nav.${item.key}` as TranslationKey)}
             </Link>
@@ -160,19 +160,19 @@ export function SiteHeader() {
               onClick={() => setMoreOpen((v) => !v)}
               onMouseEnter={() => setMoreOpen(true)}
               className={cn(
-                "flex items-center gap-1 rounded-md px-3 py-2 font-display text-base font-semibold uppercase tracking-wide text-navy-foreground/80 transition-colors hover:bg-navy-foreground/10 hover:text-navy-foreground",
-                isMoreActive && "text-navy-foreground border-b-2 border-sport rounded-b-none",
+                "flex items-center gap-1 border-b-2 border-transparent px-3 py-2 font-display text-sm font-bold uppercase tracking-[0.08em] text-navy-foreground/72 transition-colors hover:border-navy-foreground/20 hover:text-navy-foreground",
+                isMoreActive && "border-sport text-navy-foreground",
               )}
             >
               {t("nav.more")} <ChevronDown className={cn("size-4 transition-transform", moreOpen && "rotate-180")} />
             </button>
             {moreOpen && (
-              <div className="absolute right-0 top-full w-64 rounded-b-lg border border-border bg-popover p-2 text-popover-foreground shadow-xl animate-in fade-in slide-in-from-top-1">
+              <div className="absolute right-0 top-full w-72 border border-navy/10 border-t-sport bg-background p-2 text-foreground shadow-xl animate-in fade-in slide-in-from-top-1">
                 {MORE_NAV.map((item) => (
                   <Link
                     key={item.key}
                     to={item.to}
-                    className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-secondary"
+                    className="block border-b border-navy/8 px-3 py-3 text-sm font-semibold last:border-b-0 hover:bg-ice hover:text-sport"
                     activeProps={{ className: "bg-secondary text-sport" }}
                   >
                     {t(`nav.${item.key}` as TranslationKey)}
@@ -236,7 +236,7 @@ export function SiteHeader() {
       {open && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 z-40 overflow-y-auto overscroll-contain bg-navy-deep lg:hidden animate-in fade-in slide-in-from-top-2"
+          className="technical-grid fixed inset-x-0 z-40 overflow-y-auto overscroll-contain bg-competition lg:hidden animate-in fade-in slide-in-from-top-2"
           style={{
             top: mobileMenuTop,
             bottom: "calc(3.5rem + env(safe-area-inset-bottom))",
@@ -259,8 +259,8 @@ export function SiteHeader() {
                 <Link
                   key={item.key}
                   to={item.to}
-                  className="rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] px-4 py-4 font-display text-xl font-bold uppercase text-navy-foreground/90"
-                  activeProps={{ className: "border-sport bg-navy-foreground/[0.08] text-sport-foreground" }}
+                  className="relative overflow-hidden border border-navy-foreground/15 bg-navy-foreground/[0.035] px-4 py-5 font-display text-xl font-extrabold uppercase leading-none text-navy-foreground/90"
+                  activeProps={{ className: "border-sport bg-sport/10 text-sport-foreground" }}
                 >
                   {t(`nav.${item.key}` as TranslationKey)}
                 </Link>

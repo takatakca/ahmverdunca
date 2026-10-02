@@ -52,7 +52,7 @@ function RegistrationPage() {
       />
 
       <div className="container-site space-y-12 py-8 md:py-12">
-        <div className="rounded-xl border border-border bg-ice p-5">
+        <div className="broadcast-rail border border-navy/12 bg-ice p-5 pl-7">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "Parcours officiel" : "Official pathway"}
           </p>
@@ -115,7 +115,7 @@ function RegistrationPage() {
           </div>
         </section>
 
-        <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
+        <section className="competition-panel relative overflow-hidden border border-navy-foreground/10 p-6 text-navy-foreground md:p-8">
           <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
               <p className="eyebrow text-sport-foreground">

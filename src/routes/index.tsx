@@ -12,7 +12,7 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PlaceholderImage } from "@/components/placeholder-image";
+import { SportArtwork } from "@/components/sport-artwork";
 import { ALERTS } from "@/data/alerts";
 import { TEAMS } from "@/data/teams";
 import { NEWS, newsDateLabel } from "@/data/news";
@@ -21,8 +21,6 @@ import { ARENAS } from "@/data/arenas";
 import { SPONSORS } from "@/data/sponsors";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
-import { img } from "@/lib/images";
-import heroHockey from "@/assets/hero-hockey.jpg";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -55,25 +53,17 @@ function Home() {
 
   return (
     <>
-      {/* Cinematic opening */}
-      <section className="relative isolate min-h-[74svh] overflow-hidden bg-navy-deep text-navy-foreground md:min-h-[82svh]">
-        {!publicLaunch && (
-          <img
-            src={heroHockey}
-            alt=""
-            width={1600}
-            height={912}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-            className="hero-zoom absolute inset-0 size-full object-cover object-center"
-          />
-        )}
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.97)_0%,rgba(7,16,43,0.82)_38%,rgba(7,16,43,0.34)_72%,rgba(7,16,43,0.72)_100%)]" aria-hidden />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_0%,rgba(7,16,43,0.1)_46%,rgba(7,16,43,0.96)_100%)]" aria-hidden />
-        <div className="arena-light" aria-hidden />
-        <div className="light-beam left-[14%]" aria-hidden />
-        <div className="light-beam left-[62%] [animation-delay:2.8s]" aria-hidden />
+      {/* Arena opening — graphic system only, no synthetic photography */}
+      <section className="relative isolate min-h-[76svh] overflow-hidden bg-competition text-navy-foreground md:min-h-[84svh]">
+        <div className="technical-grid absolute inset-0 opacity-45" aria-hidden />
+        <div className="absolute inset-y-0 left-[17%] w-px bg-navy-foreground/8" aria-hidden />
+        <div className="absolute inset-y-0 left-1/2 w-[3px] bg-sport/65" aria-hidden />
+        <div className="absolute inset-y-0 right-[17%] w-px bg-navy-foreground/8" aria-hidden />
+        <div className="absolute left-1/2 top-1/2 size-[min(58vw,44rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sport/24" aria-hidden />
+        <div className="absolute left-1/2 top-1/2 size-[min(24vw,18rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-navy-foreground/10" aria-hidden />
+        <div className="giant-watermark pointer-events-none absolute -right-[5vw] top-[18%] select-none" aria-hidden>Verdun</div>
+        <div className="arena-light opacity-45" aria-hidden />
+        <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
         {!publicLaunch && (
           <span className="absolute right-4 top-4 z-10 border border-white/15 bg-navy-deep/55 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-navy-foreground/80 backdrop-blur-sm md:right-8 md:top-8">
@@ -277,11 +267,13 @@ function Home() {
                 params={{ slug: news[0].slug }}
                 className="group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
-                <PlaceholderImage
-                  src={img(news[0].image)}
-                  alt={l(news[0].title)}
+                <SportArtwork
+                  index={String(news[0].legacyId ?? "01").padStart(2, "0")}
+                  kicker={newsDateLabel(news[0], lang)}
+                  title={l(news[0].title)}
+                  code="NEWS"
                   aspect="absolute inset-0"
-                  className="absolute inset-0"
+                  className="absolute inset-0 opacity-95"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_18%,rgba(7,16,43,0.12)_45%,rgba(7,16,43,0.96)_100%)]" />
                 <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground md:p-9">
@@ -379,11 +371,13 @@ function Home() {
                   index === 1 && "lg:col-span-2",
                 )}
               >
-                <PlaceholderImage
-                  src={img(album.cover)}
-                  alt={l(album.title)}
+                <SportArtwork
+                  index={String(index + 1).padStart(2, "0")}
+                  kicker={l(album.eventType)}
+                  title={l(album.title)}
+                  code="ARCH"
                   aspect="absolute inset-0"
-                  className="absolute inset-0 transition-transform duration-500 group-hover:scale-[1.025]"
+                  className="absolute inset-0"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_20%,rgba(7,16,43,0.88)_100%)]" />
                 <div className="absolute inset-x-0 bottom-0 p-5">

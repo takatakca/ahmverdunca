@@ -17,7 +17,8 @@
     "check:external-links": "bun scripts/validate-external-link-safety.ts",
     "generate:sitemap": "bun scripts/generate-sitemap.ts",
     "check:release-artifact": "bun scripts/validate-release-artifact.ts",
-    "check:supabase-key-safety": "bun scripts/validate-supabase-client-key.ts"
+    "check:supabase-key-safety": "bun scripts/validate-supabase-client-key.ts",
+    "check:media-policy": "bun scripts/validate-media-policy.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"

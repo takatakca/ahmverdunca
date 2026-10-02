@@ -38,7 +38,7 @@ function CoachesPage() {
         }
       />
       <div className="container-site py-8 md:py-12">
-        <div className="mb-6 rounded-xl border border-border bg-ice p-5">
+        <div className="broadcast-rail mb-7 border border-navy/12 bg-ice p-5 pl-7">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "Ressources externes" : "External resources"}
           </p>
@@ -57,7 +57,7 @@ function CoachesPage() {
               aria-pressed={cat === c.id}
               onClick={() => setCat(c.id)}
               className={cn(
-                "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
+                "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors",
                 cat === c.id ? "border-sport bg-sport text-sport-foreground" : "border-input hover:bg-secondary",
               )}
             >
@@ -72,7 +72,7 @@ function CoachesPage() {
               <div className="flex items-start justify-between gap-3">
                 <h2 className="heading-card">{l(r.title)}</h2>
                 {r.sensitive && (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-status-cancelled-soft px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-status-cancelled">
+                  <span className="inline-flex shrink-0 items-center gap-1 bg-status-cancelled-soft px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-status-cancelled">
                     <ShieldAlert className="size-3" aria-hidden />
                     {lang === "fr" ? "Données sensibles" : "Sensitive data"}
                   </span>
