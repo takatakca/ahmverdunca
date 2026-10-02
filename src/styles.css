@@ -350,7 +350,7 @@
   text-transform: uppercase;
   line-height: 0.82;
   letter-spacing: -0.035em;
-  font-size: clamp(3.6rem, 13vw, 11.5rem);
+  font-size: clamp(3.15rem, 11vw, 9.75rem);
 }
 
 @utility outline-text {
