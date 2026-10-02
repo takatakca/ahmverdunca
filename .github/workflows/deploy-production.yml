@@ -213,15 +213,41 @@ jobs:
           curl --fail --silent --show-error --retry 5 --retry-delay 3             "$AHMV_PRODUCTION_URL/healthz"
 
           ROOT_HEADERS="$(mktemp)"
+          ROOT_BODY="$(mktemp)"
           SEARCH_HEADERS="$(mktemp)"
 
-          curl --fail --silent --show-error --retry 5 --retry-delay 3             -D "$ROOT_HEADERS" -o /dev/null "$AHMV_PRODUCTION_URL/"
+          curl --fail --silent --show-error --retry 5 --retry-delay 3             -D "$ROOT_HEADERS" -o "$ROOT_BODY" "$AHMV_PRODUCTION_URL/"
 
           curl --fail --silent --show-error --retry 5 --retry-delay 3             -D "$SEARCH_HEADERS" -o /dev/null "$AHMV_PRODUCTION_URL/recherche"
 
           curl --fail --silent --show-error --retry 5 --retry-delay 3             -o /dev/null "$AHMV_PRODUCTION_URL/robots.txt"
 
           curl --fail --silent --show-error --retry 5 --retry-delay 3             -o /dev/null "$AHMV_PRODUCTION_URL/sitemap.xml"
+
+          test -s "$ROOT_BODY" || {
+            echo "Production homepage returned an empty body"
+            exit 1
+          }
+
+          if grep -Fq '/__l5e/' "$ROOT_BODY"; then
+            echo "Production HTML still references a Lovable-only /__l5e/ asset path"
+            exit 1
+          fi
+
+          ASSET_PATHS="$(
+            grep -Eo '/[^"[:space:]]+\.(css|js)(\?[^"[:space:]]*)?' "$ROOT_BODY" |
+            sort -u ||
+            true
+          )"
+          test -n "$ASSET_PATHS" || {
+            echo "No local CSS/JS assets were discovered in production HTML"
+            exit 1
+          }
+
+          while IFS= read -r asset; do
+            test -n "$asset" || continue
+            curl --fail --silent --show-error --location --retry 5 --retry-delay 2               -o /dev/null "$AHMV_PRODUCTION_URL$asset"
+          done <<< "$ASSET_PATHS"
 
           grep -qi '^x-content-type-options: nosniff' "$ROOT_HEADERS"
           grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$ROOT_HEADERS"

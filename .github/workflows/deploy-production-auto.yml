@@ -35,12 +35,12 @@ jobs:
 
     steps:
       - name: Checkout exact green release
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version: 1.4.2
 
@@ -545,7 +545,31 @@ jobs:
             exit 1
           }
 
-          echo "Production homepage verification passed."
+          if grep -Fq '/__l5e/' "$BODY"; then
+            echo "ERROR: Production HTML still references a Lovable-only /__l5e/ asset path."
+            grep -Fo '/__l5e/[^"[:space:]]*' "$BODY" | head -20 || true
+            exit 1
+          fi
+
+          ASSET_PATHS="$(
+            grep -Eo '/[^"[:space:]]+\.(css|js)(\?[^"[:space:]]*)?' "$BODY" |
+            sort -u ||
+            true
+          )"
+
+          test -n "$ASSET_PATHS" || {
+            echo "ERROR: No local CSS/JS assets were discovered in production HTML."
+            exit 1
+          }
+
+          echo "Checking production CSS/JS assets..."
+          while IFS= read -r asset; do
+            test -n "$asset" || continue
+            echo "  $asset"
+            curl               --fail               --silent               --show-error               --location               --connect-timeout 15               --max-time 30               --retry 5               --retry-delay 2               --retry-all-errors               -o /dev/null               "$AHMV_PRODUCTION_URL$asset"
+          done <<< "$ASSET_PATHS"
+
+          echo "Production homepage and critical CSS/JS asset verification passed."
 
       - name: Verify search remains noindex
         run: |
