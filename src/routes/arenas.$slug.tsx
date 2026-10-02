@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import {
   ArrowLeft,
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/arenas/$slug")({
     const description = `Adresse et itinéraire pour ${arena.name} (${arena.borough.fr}).`;
 
     return {
+      links: canonicalLink(`/arenas/${loaderData.slug}`),
       meta: [
         { title },
         { name: "description", content: description },

@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ExternalLink, MapPin, Navigation } from "lucide-react";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/arenas/")({
   head: () => ({
+    links: canonicalLink("/arenas"),
     meta: [
       { title: "Arénas et itinéraires — AHM Verdun" },
       {

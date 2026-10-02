@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, ExternalLink, Info, Mail, ShieldCheck } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -8,6 +9,7 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/inscriptions")({
   head: () => ({
+    links: canonicalLink("/inscriptions"),
     meta: [
       { title: "Inscriptions 2026–2027 — AHM Verdun" },
       {

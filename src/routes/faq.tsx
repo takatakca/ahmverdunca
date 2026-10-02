@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { PageHeader } from "@/components/page-header";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
+    links: canonicalLink("/faq"),
     meta: [
       { title: "Questions fréquentes — AHM Verdun" },
       { name: "description", content: "Réponses aux questions des familles : inscriptions, horaires, annulations, équipement, arénas et bénévolat." },

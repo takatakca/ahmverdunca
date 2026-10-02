@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink, ShieldAlert } from "lucide-react";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/entraineurs")({
   head: () => ({
+    links: canonicalLink("/entraineurs"),
     meta: [
       { title: "Zone entraîneurs — AHM Verdun" },
       { name: "description", content: "Formations, formulaires et démarches pour les entraîneurs et bénévoles de l'AHM Verdun." },

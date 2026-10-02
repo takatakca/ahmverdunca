@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/page-header";
 import { ShieldCheck } from "lucide-react";
@@ -5,6 +6,7 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/confidentialite")({
   head: () => ({
+    links: canonicalLink("/confidentialite"),
     meta: [
       { title: "Confidentialité — AHM Verdun" },
       {

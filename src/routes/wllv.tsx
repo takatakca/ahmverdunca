@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, ExternalLink, ShieldCheck } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -7,6 +8,7 @@ import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/wllv")({
   head: () => ({
+    links: canonicalLink("/wllv"),
     meta: [
       { title: "Hockey AA/BB — WLLV Les Chacals | AHM Verdun" },
       {

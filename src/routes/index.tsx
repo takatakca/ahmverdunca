@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AlertTriangle, ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, Trophy, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import { montrealDateKey } from "@/lib/montreal-date";
 
 export const Route = createFileRoute("/")({
   head: () => ({
+    links: canonicalLink("/"),
     meta: [
       { title: "AHM Verdun — Le hockey commence ici | Saison 2026–2027" },
       { name: "description", content: "Horaires, équipes, inscriptions, nouvelles, arénas et ressources de l'Association du hockey mineur de Verdun." },

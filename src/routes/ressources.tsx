@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ExternalLink } from "lucide-react";
@@ -8,6 +9,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/ressources")({
   head: () => ({
+    links: canonicalLink("/ressources"),
     meta: [
       { title: "Ressources hockey — AHM Verdun" },
       { name: "description", content: "Liens utiles pour les familles : Hockey Québec, Hockey Canada, Spordle, WLLV, programmes d'aide financière." },

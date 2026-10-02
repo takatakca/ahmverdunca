@@ -1,3 +1,4 @@
+import { canonicalLink } from "@/lib/seo";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CalendarDays, Images } from "lucide-react";
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/galerie/")({
   head: () => ({
+    links: canonicalLink("/galerie"),
     meta: [
       { title: "Photos et vidéos — AHM Verdun" },
       { name: "description", content: "Albums photos et vidéos des équipes et événements de l'AHM Verdun, organisés par saison." },
