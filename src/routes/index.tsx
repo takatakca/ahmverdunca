@@ -16,7 +16,7 @@ import { SportArtwork } from "@/components/sport-artwork";
 import { ALERTS } from "@/data/alerts";
 import { TEAMS } from "@/data/teams";
 import { NEWS, newsDateLabel } from "@/data/news";
-import { ALBUMS } from "@/data/gallery";
+import { ALBUMS } from "@/data/gallery";\nimport { OFFICIAL_MEDIA } from "@/data/official-media";
 import { ARENAS } from "@/data/arenas";
 import { SPONSORS } from "@/data/sponsors";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
@@ -71,7 +71,7 @@ function Home() {
           </span>
         )}
 
-        <div className="container-site relative flex min-h-[74svh] flex-col justify-end pb-10 pt-24 md:min-h-[82svh] md:pb-14">
+        <div className="container-site relative flex min-h-[66svh] flex-col justify-end pb-8 pt-20 sm:min-h-[70svh] md:min-h-[78svh] md:pb-12">
           <div className="max-w-6xl">
             <div className="rise flex flex-wrap items-center gap-3">
               <span className="h-px w-10 bg-sport" aria-hidden />
@@ -371,14 +371,24 @@ function Home() {
                   index === 1 && "lg:col-span-2",
                 )}
               >
-                <SportArtwork
-                  index={String(index + 1).padStart(2, "0")}
-                  kicker={l(album.eventType)}
-                  title={l(album.title)}
-                  code="ARCH"
-                  aspect="absolute inset-0"
-                  className="absolute inset-0"
-                />
+                {album.coverUrl ? (
+                  <img
+                    src={album.coverUrl}
+                    alt={l(album.title)}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                  />
+                ) : (
+                  <SportArtwork
+                    index={String(index + 1).padStart(2, "0")}
+                    kicker={l(album.eventType)}
+                    title={l(album.title)}
+                    code="ARCH"
+                    aspect="absolute inset-0"
+                    className="absolute inset-0"
+                  />
+                )}
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_20%,rgba(7,16,43,0.88)_100%)]" />
                 <div className="absolute inset-x-0 bottom-0 p-5">
                   <p className="eyebrow text-sport-foreground">{l(album.eventType)}</p>
@@ -408,7 +418,7 @@ function Home() {
                   : "Verified addresses, directions and facilities used around Verdun and Montreal."}
               </p>
               <Button asChild variant="outline" className="mt-6">
-                <Link to="/arenas">{lang === "fr" ? "Voir les 12 arénas" : "View all 12 arenas"} <ArrowRight className="size-4" /></Link>
+                <Link to="/arenas">{lang === "fr" ? `Voir les ${ARENAS.length} arénas` : `View all ${ARENAS.length} arenas`} <ArrowRight className="size-4" /></Link>
               </Button>
             </div>
 
