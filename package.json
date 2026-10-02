@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "check:data": "bun scripts/validate-data.ts",
     "check:seo": "bun run generate:sitemap && bun scripts/validate-public-seo.ts",
+    "check:runtime-policy": "bun scripts/validate-runtime-policy.ts",
     "generate:sitemap": "bun scripts/generate-sitemap.ts"
   },
   "overrides": {

@@ -10,7 +10,8 @@ This project is intentionally safe for proposal/pre-production use by default.
 - [x] `robots.txt` is validated against the canonical sitemap URL.
 - [x] Preview builds default to `noindex, nofollow`.
 - [x] Server responses apply matching `X-Robots-Tag` behavior, including permanent noindex handling for Search and HTML error responses.
-- [x] Baseline browser security headers are enabled.
+- [x] Baseline browser security headers are enabled and runtime response policy is regression-tested in CI.
+- [x] A lightweight `/healthz` endpoint is available for production health monitoring without invoking hockey operations.
 - [x] Demo/illustrative media are prevented from silently appearing as approved public media.
 - [x] Unapproved team social accounts and inactive communication services are hidden from public launch mode.
 - [x] Public gallery records with protected media require an official source URL.
@@ -29,7 +30,7 @@ This project is intentionally safe for proposal/pre-production use by default.
 - [ ] Approve any analytics, Search Console, Google Business Profile and social integrations.
 - [ ] Complete the approved production hosting/DNS cutover for `ahmverdun.com`.
 - [ ] Activate and test the reserved phone with a real inbound call, then set `SITE.phonePublic=true`.
-- [ ] Verify `/robots.txt`, `/sitemap.xml`, `/recherche` noindex headers, title/meta previews, legacy redirects and social sharing on the actual new production deployment.
+- [ ] Verify `/healthz`, `/robots.txt`, `/sitemap.xml`, `/recherche` noindex headers, title/meta previews, legacy redirects and social sharing on the actual new production deployment.
 - [ ] Run the full CI workflow and perform the final mobile/desktop smoke test against the production hostname.
 - [ ] Set `VITE_PUBLIC_INDEXING=true` only after every item above that affects public release is approved.
 

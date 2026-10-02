@@ -6,6 +6,7 @@ The current public-site code is feature-complete for the approved information/ga
 
 - Final release dossier: `docs/FINAL_RELEASE_STATUS.md`
 - Go-live checklist: `docs/GO_LIVE_CHECKLIST.md`
+- Production cutover/rollback runbook: `docs/PRODUCTION_RUNBOOK.md`
 - GROUPE TAKATAK / hockey-operation boundary: `docs/TAKATAK_INTEGRATION_BOUNDARY.md`
 
 Do not treat the historical Phase 1 language below as the current implementation status.
