@@ -20,8 +20,13 @@
 - Do not enable analytics, advertising, social publishing, newsletter, voice or TAKATAK integrations without explicit authorization.
 - Keep `SITE.phonePublic=false` until a real inbound call succeeds.
 - Confirm association approvals listed in `GO_LIVE_CHECKLIST.md`.
+- Confirm the GitHub `production` environment and secrets from `MOCHAHOST_PRODUCTION.md` are configured and protected.
+- Use the manual **Deploy AHM Verdun production** workflow; do not upload an untracked build by hand.
 
-## 2. Private production smoke test
+## 2. Private production deployment and smoke test
+
+Run **Deploy AHM Verdun production** with the exact current green `main` SHA and `public_indexing=false`. The workflow must finish successfully before DNS/cutover work continues.
+
 
 Test the candidate deployment before public DNS cutover:
 
@@ -73,12 +78,13 @@ Expected before public indexing approval:
 
 Only after all applicable approval items are complete:
 
-1. Set `VITE_PUBLIC_INDEXING=true`.
-2. Rebuild and redeploy the exact approved release.
-3. Confirm the homepage HTML and HTTP header are indexable.
-4. Confirm `/recherche` and HTTP error pages remain noindex.
-5. Confirm sitemap and robots use the canonical HTTPS domain.
-6. Only then submit/refresh the sitemap in the authorized search-console account.
+1. Re-run **Deploy AHM Verdun production** for the exact current green `main` SHA with `public_indexing=true`.
+2. Enter `PUBLIC-INDEXING-APPROVED` in the workflow launch-confirmation field; this is a deliberate technical safeguard, not a substitute for the association approvals above.
+3. Confirm the workflow passes its health, security-header and indexing-policy checks on `https://ahmverdun.com`.
+4. Confirm the homepage HTML and HTTP header are indexable.
+5. Confirm `/recherche` and HTTP error pages remain noindex.
+6. Confirm sitemap and robots use the canonical HTTPS domain.
+7. Only then submit/refresh the sitemap in the authorized search-console account.
 
 ## 5. Phone activation
 
