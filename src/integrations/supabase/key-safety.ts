@@ -2,8 +2,11 @@ function decodeJwtRole(value: string): string | null {
   const parts = value.split(".");
   if (parts.length !== 3 || typeof globalThis.atob !== "function") return null;
 
+  const payloadPart = parts[1];
+  if (!payloadPart) return null;
+
   try {
-    const payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const payload = payloadPart.replace(/-/g, "+").replace(/_/g, "/");
     const padded = payload.padEnd(Math.ceil(payload.length / 4) * 4, "=");
     const parsed = JSON.parse(globalThis.atob(padded)) as { role?: unknown };
     return typeof parsed.role === "string" ? parsed.role : null;
