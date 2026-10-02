@@ -17,6 +17,15 @@ export function SiteHeader() {
   const showPhone = !publicLaunch || SITE.phonePublic;
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Subtle compaction once the parent starts scrolling.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { preferredTeam } = usePreferredTeam();
   const savedTeam = TEAMS.find((team) => team.slug === preferredTeam);
@@ -52,7 +61,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-navy-foreground/10 bg-navy-deep/95 text-navy-foreground shadow-[0_12px_32px_-24px_rgba(0,0,0,0.8)] backdrop-blur-xl">
       {/* Top utility bar (desktop) */}
-      <div className="hidden border-b border-navy-foreground/10 lg:block">
+      <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
           <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
           <div className="flex items-center gap-4">
@@ -88,7 +97,7 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className="container-site flex h-[72px] items-center justify-between gap-3 lg:h-20">
+      <div className={cn("container-site flex items-center justify-between gap-3 transition-[height] duration-300", scrolled ? "h-16 lg:h-[68px]" : "h-[72px] lg:h-20")}>
         <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label={t("nav.home")}>
           <LogoSlot className="drop-shadow-[0_10px_22px_rgba(0,0,0,0.28)] transition-transform duration-300 group-hover:scale-[1.03]" />
           <span className="hidden min-w-0 items-center gap-3 sm:flex">
