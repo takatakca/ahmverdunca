@@ -7,6 +7,7 @@ import { ShareButton } from "@/components/share-button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
+  WEEKLY_SCHEDULE_DOCUMENTS,
   type OfficialWeekActivity,
 } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
