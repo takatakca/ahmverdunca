@@ -52,13 +52,21 @@ function ContactPage() {
             : "Choose the right access point for your need. Hockey operations remain in their official systems; this site simply makes the path easier for families."
         }
         actions={
-          showPhone ? (
+          SITE.phonePublic ? (
             <Button asChild variant="sport">
               <a href={`tel:${SITE.phoneE164}`}>
                 <PhoneCall className="size-4" />
                 {SITE.phoneDisplay}
               </a>
             </Button>
+          ) : showPlannedServices ? (
+            <span className="inline-flex min-h-11 items-center gap-2 rounded-md border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/80">
+              <PhoneCall className="size-4" />
+              {SITE.phoneDisplay}
+              <span className="text-[10px] uppercase tracking-wider text-sport-foreground">
+                {lang === "fr" ? "à venir" : "coming soon"}
+              </span>
+            </span>
           ) : undefined
         }
       />
@@ -152,13 +160,23 @@ function ContactPage() {
               <p className="eyebrow text-sport-foreground">
                 {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
               </p>
-              <a
-                href={`tel:${SITE.phoneE164}`}
-                className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
-              >
-                <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
-                {SITE.phoneDisplay}
-              </a>
+              {SITE.phonePublic ? (
+                <a
+                  href={`tel:${SITE.phoneE164}`}
+                  className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
+                >
+                  <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
+                  {SITE.phoneDisplay}
+                </a>
+              ) : (
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
+                  <span className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">{SITE.phoneDisplay}</span>
+                  <span className="border border-sport-foreground/35 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
+                    {lang === "fr" ? "Réservé · activation à venir" : "Reserved · activation upcoming"}
+                  </span>
+                </div>
+              )}
               <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
                 {showPlannedServices
                   ? lang === "fr"
