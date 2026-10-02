@@ -1,5 +1,4 @@
 import { canonicalLink } from "@/lib/seo";
-import { canonicalLink } from "@/lib/seo";
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight, ExternalLink, RotateCcw } from "lucide-react";
