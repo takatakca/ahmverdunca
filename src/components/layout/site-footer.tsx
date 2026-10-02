@@ -19,13 +19,13 @@ export function SiteFooter() {
 
       <div className="relative border-y border-navy-foreground/12">
         <div className="container-site grid md:grid-cols-[0.72fr_1.28fr]">
-          <div className="border-b border-navy-foreground/12 py-8 md:border-b-0 md:border-r md:py-10 md:pr-10">
+          <div className="border-b border-navy-foreground/12 py-7 md:border-b-0 md:border-r md:py-8 md:pr-10">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Le raccourci des familles" : "Families' shortcut"}</p>
-            <p className="mt-3 font-display text-5xl font-extrabold uppercase leading-[0.82] tracking-[-0.04em] sm:text-6xl">
+            <p className="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-5xl">
               {lang === "fr" ? "Mon horaire." : "My schedule."}
             </p>
           </div>
-          <div className="flex flex-col justify-center gap-5 py-8 md:py-10 md:pl-10 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-col justify-center gap-5 py-7 md:py-8 md:pl-10 lg:flex-row lg:items-center lg:justify-between">
             <p className="max-w-xl text-sm leading-relaxed text-navy-foreground/62 md:text-base">
               {lang === "fr"
                 ? "Pratiques, matchs, arénas et accès officiels : l’information utile avant de partir pour la glace."
@@ -50,7 +50,7 @@ export function SiteFooter() {
       </div>
 
       <div className="container-site relative grid gap-0 py-0 lg:grid-cols-[1.25fr_0.75fr_0.75fr_0.9fr]">
-        <div className="border-b border-navy-foreground/10 py-10 lg:border-b-0 lg:border-r lg:py-14 lg:pr-10">
+        <div className="border-b border-navy-foreground/10 py-8 lg:border-b-0 lg:border-r lg:py-10 lg:pr-10">
           <div className="flex items-center gap-4">
             <LogoSlot className="drop-shadow-[0_12px_26px_rgba(0,0,0,0.28)]" />
             <div>
@@ -87,7 +87,7 @@ export function SiteFooter() {
           )}
         </div>
 
-        <div className="border-b border-navy-foreground/10 py-9 lg:border-b-0 lg:border-r lg:px-8 lg:py-14">
+        <div className="border-b border-navy-foreground/10 py-9 lg:border-b-0 lg:border-r lg:px-8 lg:py-10">
           <p className="eyebrow mb-5 text-sport-foreground/85">{t("footer.quick")}</p>
           <ul className="space-y-0">
             {MAIN_NAV.map((item, index) => (
@@ -103,7 +103,7 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        <div className="border-b border-navy-foreground/10 py-9 lg:border-b-0 lg:border-r lg:px-8 lg:py-14">
+        <div className="border-b border-navy-foreground/10 py-9 lg:border-b-0 lg:border-r lg:px-8 lg:py-10">
           <p className="eyebrow mb-5 text-sport-foreground/85">{t("footer.more")}</p>
           <ul className="space-y-0">
             {MORE_NAV.map((item) => (
@@ -116,7 +116,7 @@ export function SiteFooter() {
           </ul>
         </div>
 
-        <div className="py-9 lg:py-14 lg:pl-8">
+        <div className="py-9 lg:py-10 lg:pl-8">
           <p className="eyebrow mb-5 text-sport-foreground/85">{lang === "fr" ? "Accès officiels" : "Official access"}</p>
           <div className="space-y-3">
             <a href={EXTERNAL_LINKS.wllv} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between border-b border-navy-foreground/10 pb-3 text-sm text-navy-foreground/72 hover:text-navy-foreground">
