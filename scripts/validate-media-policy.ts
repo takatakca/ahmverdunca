@@ -12,7 +12,9 @@ const forbidden = [
   "gallery-tournament.jpg",
 ];
 
-const forbiddenRuntimePatterns = ["/__l5e/", ".asset.json"];\n\nconst failures: string[] = [];
+const forbiddenRuntimePatterns = ["/__l5e/", ".asset.json"];
+
+const failures: string[] = [];
 
 function visit(directory: string) {
   for (const name of readdirSync(directory)) {
