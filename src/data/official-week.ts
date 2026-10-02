@@ -32,6 +32,15 @@ export const WEEKLY_SCHEDULE_DOCUMENTS = [
   },
 ] as const;
 
+export const LEGACY_SCHEDULE_DOCUMENTS = [
+  {
+    title: "20 AVRIL AU 26 AVRIL.xlsx",
+    label: { fr: "20 au 26 avril — archive du site précédent", en: "April 20–26 — previous-site archive" },
+    sourceUrl: "https://ahmverdun.com/storage/MBd5CgZswbeyVJXUfO6K9MAOUwCsGa1FZ3EEUCeg.xlsx",
+    fileSize: "53.66 KB",
+  },
+] as const;
+
 export const OFFICIAL_WEEK_META = {
   start: "2026-09-28",
   end: "2026-10-04",
