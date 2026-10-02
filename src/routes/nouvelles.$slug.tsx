@@ -3,9 +3,9 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { PlaceholderImage } from "@/components/placeholder-image";
-import { getArticle, NEWS, NEWS_CATEGORIES } from "@/data/news";
+import { getArticle, NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { getTeam } from "@/data/teams";
-import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 import { img } from "@/lib/images";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
@@ -46,7 +46,7 @@ function ArticlePage() {
   return (
     <>
       <PageHeader
-        eyebrow={`${category ? l(category.label) : ""} · ${formatDate(a.date, lang)}`}
+        eyebrow={`${category ? l(category.label) : ""} · ${newsDateLabel(a, lang)}`}
         title={l(a.title)}
         description={l(a.excerpt)}
       />
@@ -67,6 +67,20 @@ function ArticlePage() {
             <div className="mt-5 space-y-4 text-base leading-relaxed text-foreground/90">
               {body.map((p, i) => <p key={i}>{p}</p>)}
             </div>
+            {a.links && a.links.length > 0 && (
+              <div className="mt-7 border-y border-border py-5">
+                <p className="eyebrow text-sport">{lang === "fr" ? "Liens officiels associés" : "Related official links"}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {a.links.map((link) => (
+                    <Button key={link.url} asChild variant="outline" size="sm">
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        {l(link.label)} <ExternalLink className="size-4" />
+                      </a>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="mt-6 flex flex-wrap gap-2">
               <ShareButton title={l(a.title)} text={l(a.excerpt)} />
               {a.sourceUrl && !publicLaunch && (
@@ -103,7 +117,7 @@ function ArticlePage() {
               <div className="space-y-4">
                 {related.map((r) => (
                   <Link key={r.slug} to="/nouvelles/$slug" params={{ slug: r.slug }} className="card-elevated block p-4 hover:text-sport">
-                    <p className="eyebrow text-sport">{formatShortDate(r.date, lang)}</p>
+                    <p className="eyebrow text-sport">{newsDateLabel(r, lang)}</p>
                     <p className="heading-card mt-1.5">{l(r.title)}</p>
                   </Link>
                 ))}
