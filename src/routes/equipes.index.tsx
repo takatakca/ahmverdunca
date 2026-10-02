@@ -1,4 +1,5 @@
 import { canonicalLink } from "@/lib/seo";
+import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/page-header";
 import { TEAMS } from "@/data/teams";
