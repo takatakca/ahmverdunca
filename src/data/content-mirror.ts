@@ -36,5 +36,6 @@ export const REQUIRED_COACH_RESOURCE_TITLES = [
   "Soigneur — entraîneur-chef seulement",
 ] as const;
 
-export const REQUIRED_ARENA_COUNT = 12;
+// 12 facilities from the legacy arena directory + Saint-Charles, now referenced by the current official weekly schedule.
+export const REQUIRED_ARENA_COUNT = 13;
 export const REQUIRED_PUBLIC_ALBUM_COUNT = 4;
