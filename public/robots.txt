@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://ahmverdun.com/sitemap.xml
+Sitemap: https://ahmverdun.ca/sitemap.xml
