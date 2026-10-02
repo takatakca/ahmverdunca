@@ -16,6 +16,14 @@ import { mapsDirectionsUrl } from "@/lib/site";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
 
+function normalizeSearch(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("fr-CA")
+    .trim();
+}
+
 function displayTime(value: string) {
   const [hourRaw, minute] = value.split(":");
   const hour = Number(hourRaw);
@@ -118,10 +126,10 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
   }, [initialQuery]);
 
   const filtered = useMemo(() => {
-    const needle = query.trim().toLowerCase();
+    const needle = normalizeSearch(query);
     if (!needle) return OFFICIAL_WEEK_ACTIVITIES;
     return OFFICIAL_WEEK_ACTIVITIES.filter((item) =>
-      `${item.group} ${item.activity} ${item.venue}`.toLowerCase().includes(needle),
+      normalizeSearch(`${item.group} ${item.activity} ${item.venue} ${item.date} ${item.start} ${item.end}`).includes(needle),
     );
   }, [query]);
 
@@ -230,11 +238,29 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                   ? "M11, Louves, Chacals, Denis Savard…"
                   : "U11, Louves, Chacals, Denis Savard…"
               }
-              className="h-12 w-full rounded-lg border border-input bg-background pl-11 pr-4 text-base"
+              className="h-12 w-full rounded-lg border border-input bg-background pl-11 pr-11 text-base"
             />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                className="absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-ice hover:text-foreground"
+                aria-label={lang === "fr" ? "Effacer la recherche" : "Clear search"}
+              >
+                <XCircle className="size-4" aria-hidden />
+              </button>
+            )}
           </label>
           <VoiceSearchButton onTranscript={setQuery} />
         </div>
+
+        {query.trim() && (
+          <p className="mt-3 text-sm font-semibold text-muted-foreground" aria-live="polite">
+            {lang === "fr"
+              ? `${displayed.length} résultat${displayed.length === 1 ? "" : "s"} dans l’horaire publié`
+              : `${displayed.length} result${displayed.length === 1 ? "" : "s"} in the published schedule`}
+          </p>
+        )}
 
         {hasPast && !query.trim() && (
           <div className="mt-3 flex justify-end">
