@@ -50,6 +50,9 @@ jobs:
       - name: Validate canonical SEO coverage
         run: bun run check:canonical
 
+      - name: Validate external-link safety
+        run: bun run check:external-links
+
       - name: Lint application logic
         run: |
           bunx eslint . --rule 'prettier/prettier: off'
