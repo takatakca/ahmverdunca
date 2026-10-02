@@ -50,7 +50,7 @@ function NewsPage() {
         }
       />
 
-      <div className="container-site py-9 md:py-14">
+      <div className="container-site py-8 md:py-11">
         <div className="grid gap-6 border-b border-navy/15 pb-7 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="max-w-3xl">
             <p className="eyebrow text-sport">{lang === "fr" ? "Contenu public migré" : "Migrated public content"}</p>
@@ -101,12 +101,12 @@ function NewsPage() {
               kicker={newsDateLabel(featured, lang)}
               title={l(featured.title)}
               code="AHMV"
-              aspect="min-h-[320px] lg:min-h-[520px]"
+              aspect="min-h-[280px] lg:min-h-[460px]"
             />
             <Link
               to="/nouvelles/$slug"
               params={{ slug: featured.slug }}
-              className="group flex flex-col justify-between bg-background p-6 md:p-9 lg:p-12"
+              className="group flex flex-col justify-between bg-background p-6 md:p-8 lg:p-10"
             >
               <div>
                 <div className="flex flex-wrap items-center gap-3">
