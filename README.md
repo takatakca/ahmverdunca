@@ -8,6 +8,7 @@ The current public-site code is feature-complete for the approved information/ga
 - Go-live checklist: `docs/GO_LIVE_CHECKLIST.md`
 - Production cutover/rollback runbook: `docs/PRODUCTION_RUNBOOK.md`
 - MochaHost preproduction setup: `docs/MOCHAHOST_PREPRODUCTION.md`
+- MochaHost production setup: `docs/MOCHAHOST_PRODUCTION.md`
 - GROUPE TAKATAK / hockey-operation boundary: `docs/TAKATAK_INTEGRATION_BOUNDARY.md`
 
 Do not treat the historical Phase 1 language below as the current implementation status.
