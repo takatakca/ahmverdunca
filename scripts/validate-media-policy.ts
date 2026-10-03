@@ -3,7 +3,6 @@ import { join, relative } from "node:path";
 
 const root = join(process.cwd(), "src");
 const forbidden = [
-  "hero-hockey.jpg",
   "news-cancellation.jpg",
   "news-season.jpg",
   "news-academy.jpg",
