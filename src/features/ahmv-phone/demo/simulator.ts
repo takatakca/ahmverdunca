@@ -28,10 +28,10 @@ export interface PhoneDemoOutput {
 }
 
 function entitlementFor(access: DemoAccess) {
-  if (access === "premium") return localEntitlement("premium");
-  if (access === "trial") return localEntitlement("trial", "2099-11-02T00:00:00Z");
-  if (access === "expired") return localEntitlement("trial", "2099-09-01T00:00:00Z");
-  return localEntitlement("guest");
+  if (access === "premium") return localEntitlement("premium", undefined, PHONE_DEMO_NOW);
+  if (access === "trial") return localEntitlement("trial", "2099-11-02T00:00:00Z", PHONE_DEMO_NOW);
+  if (access === "expired") return localEntitlement("trial", "2099-09-01T00:00:00Z", PHONE_DEMO_NOW);
+  return localEntitlement("guest", undefined, PHONE_DEMO_NOW);
 }
 
 function normalizeDemoTeam(query: string) {
