@@ -46,6 +46,9 @@ for (const url of locations) {
   if (!url.startsWith(`${SITE.domain}/`) && url !== SITE.domain) {
     errors.push(`sitemap URL is outside the canonical domain: ${url}`);
   }
+  if (url.includes("ahmverdun.com")) {
+    errors.push(`sitemap URL uses the retired .com production domain: ${url}`);
+  }
 }
 
 for (const route of requiredPublicRoutes) {
