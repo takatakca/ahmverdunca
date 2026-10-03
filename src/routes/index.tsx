@@ -27,6 +27,7 @@ import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { AhmvRealHockeyWall } from "@/components/home/ahmv-real-hockey-wall";
+import { AhmvCommunityFeed } from "@/components/home/ahmv-community-feed";
 import { HomeParentCommand } from "@/components/home/home-parent-command";
 import { LogoSlot } from "@/components/layout/logo-slot";
 import { AdSenseSlot } from "@/components/adsense-slot";
@@ -229,6 +230,8 @@ function Home() {
       <HomeParentCommand />
 
       <AhmvRealHockeyWall />
+
+      <AhmvCommunityFeed />
 
       {/* Team universe */}
       <section className="relative overflow-hidden bg-navy-deep py-10 text-navy-foreground md:py-14">
