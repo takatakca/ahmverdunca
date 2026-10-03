@@ -6,6 +6,7 @@ import { getArticle, NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { getTeam } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
+import { SITE } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
@@ -42,9 +43,25 @@ function ArticlePage() {
   const body = lang === "en" && a.body.en ? a.body.en : a.body.fr;
   const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
   const teams = a.teamSlugs.map(getTeam).filter(Boolean);
+  const articleUrl = `${SITE.domain}/nouvelles/${a.slug}`;
+  const newsJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: l(a.title),
+    description: l(a.excerpt),
+    mainEntityOfPage: articleUrl,
+    url: articleUrl,
+    ...(a.date ? { datePublished: a.date } : {}),
+    publisher: {
+      "@type": "SportsOrganization",
+      name: SITE.name.fr,
+      url: SITE.domain,
+    },
+  });
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: newsJsonLd }} />
       <PageHeader
         eyebrow={`${category ? l(category.label) : ""} · ${newsDateLabel(a, lang)}`}
         title={l(a.title)}
