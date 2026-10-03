@@ -158,18 +158,9 @@ export function SiteFooter() {
             </div>
           </div>
           {showPhone && (
-            phonePublic ? (
-              <a href={`tel:${phoneE164}`} className="mt-5 inline-block font-display text-xl font-bold text-navy-foreground hover:text-sport-foreground">
-                {phoneDisplay}
-              </a>
-            ) : (
-              <p className="mt-5 font-display text-xl font-bold text-navy-foreground/72">
-                {phoneDisplay}
-                <span className="ml-2 align-middle text-[9px] font-sans uppercase tracking-[0.18em] text-sport-foreground">
-                  {lang === "fr" ? "canal à venir" : "channel upcoming"}
-                </span>
-              </p>
-            )
+            <a href={`tel:${phoneE164}`} className="mt-5 inline-block font-display text-xl font-bold text-navy-foreground hover:text-sport-foreground">
+              {phoneDisplay}
+            </a>
           )}
         </div>
 
