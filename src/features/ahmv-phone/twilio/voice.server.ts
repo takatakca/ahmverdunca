@@ -7,6 +7,7 @@ import {
   normalizePhoneE164,
   safeTouchPhoneContact,
 } from "../contacts/store.server.ts";
+import { normalizeNanpDtmf } from "../contacts/phone-input.ts";
 import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
 import { sendTransactionalSms } from "../messaging/send.server.ts";
 import { nextEventService } from "../schedules/service.ts";
@@ -130,7 +131,12 @@ export async function handleTwilioVoice(
       return xmlResponse(voice.toString());
     }
 
-    const wantsSms = digit === "1" && Boolean(caller);
+    if (digit === "1" && !caller) {
+      voice.redirect({ method: "POST" }, action("collect-phone", 0, true));
+      return xmlResponse(voice.toString());
+    }
+
+    const wantsSms = digit === "1";
     if (caller) {
       await safeTouchPhoneContact({
         phoneE164: caller,
@@ -140,6 +146,88 @@ export async function handleTwilioVoice(
       });
     }
     voice.redirect({ method: "POST" }, action("menu", 0, wantsSms));
+    return xmlResponse(voice.toString());
+  }
+
+  if (step === "collect-phone") {
+    const gather = voice.gather({
+      input: ["dtmf"],
+      numDigits: 10,
+      action: action("collect-phone-answer", attempt, true),
+      method: "POST",
+      timeout: 8,
+    });
+    gather.say(
+      { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
+      lang === "fr"
+        ? "Je n'ai pas accès à votre numéro. Entrez maintenant les dix chiffres du cellulaire où vous voulez recevoir le texto."
+        : "I cannot access your number. Enter the ten digits of the mobile phone where you want to receive the text message.",
+    );
+    voice.hangup();
+    return xmlResponse(voice.toString());
+  }
+
+  if (step === "collect-phone-answer") {
+    const suppliedPhone = normalizeNanpDtmf(params["Digits"]);
+
+    if (!suppliedPhone) {
+      if (attempt < 1) {
+        voice.redirect(
+          { method: "POST" },
+          action("collect-phone", attempt + 1, true),
+        );
+      } else {
+        say(
+          lang === "fr"
+            ? "Le numéro n'a pas pu être validé. Vous pouvez texter votre équipe directement au même numéro AHMV. Merci."
+            : "The number could not be validated. You can text your team directly to the same AHMV number. Thank you.",
+        );
+        await safeRecordPhoneInteraction({
+          channel: "voice",
+          providerReferenceHash: ref,
+          intent: "manual-sms-number",
+          outcome: "invalid-number",
+        });
+        voice.hangup();
+      }
+      return xmlResponse(voice.toString());
+    }
+
+    const suppliedContact = await safeTouchPhoneContact({
+      phoneE164: suppliedPhone,
+      language: lang,
+      smsRequested: true,
+      settings,
+    });
+
+    const sent = await sendTransactionalSms({
+      to: suppliedPhone,
+      body: compactSmsFallback(lang),
+      purpose: "voice-manual-number-fallback",
+      contactId: suppliedContact?.id,
+      settings,
+    });
+
+    say(
+      sent.sent
+        ? lang === "fr"
+          ? "Parfait. Je vous ai envoyé un texto. Répondez simplement avec votre équipe et nous continuons par texto. Merci."
+          : "Perfect. I sent you a text. Simply reply with your team and we will continue by text. Thank you."
+        : lang === "fr"
+          ? "Je n'ai pas pu envoyer le texto. Vous pouvez texter votre équipe directement au numéro AHMV. Merci."
+          : "I could not send the text. You can text your team directly to the AHMV number. Thank you.",
+    );
+
+    await safeRecordPhoneInteraction({
+      contactId: suppliedContact?.id,
+      channel: "voice",
+      providerReferenceHash: ref,
+      intent: "manual-sms-number",
+      outcome: sent.sent ? "sent" : "failed",
+      metadata: { callerIdUnavailable: true },
+    });
+    log(sent.sent ? "manual-sms-sent" : "manual-sms-failed");
+    voice.hangup();
     return xmlResponse(voice.toString());
   }
 
