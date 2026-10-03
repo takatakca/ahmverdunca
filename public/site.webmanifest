@@ -14,5 +14,37 @@
       "sizes": "any",
       "type": "image/png"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Horaires",
+      "short_name": "Horaires",
+      "description": "Voir les horaires AHMV",
+      "url": "/horaires"
+    },
+    {
+      "name": "Équipes",
+      "short_name": "Équipes",
+      "description": "Ouvrir les équipes AHMV",
+      "url": "/equipes"
+    },
+    {
+      "name": "Arénas",
+      "short_name": "Arénas",
+      "description": "Adresses et itinéraires",
+      "url": "/arenas"
+    },
+    {
+      "name": "Nouvelles",
+      "short_name": "Nouvelles",
+      "description": "Dernières nouvelles AHMV",
+      "url": "/nouvelles"
+    }
+  ],
+  "categories": [
+    "sports",
+    "education",
+    "lifestyle"
+  ],
+  "orientation": "any"
 }
