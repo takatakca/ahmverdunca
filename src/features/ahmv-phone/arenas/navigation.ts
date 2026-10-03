@@ -23,12 +23,14 @@ export function navigationLinksForVenue(venue: string): ArenaNavigationLinks {
 
 export function compactDirectionsSms(
   venue: string,
-  lang: "fr" | "en",
+  lang: "fr" | "en" | "es",
   siteOrigin = "https://ahmverdun.ca",
 ) {
   const links = navigationLinksForVenue(venue);
   const arenaPath = links.arenaSlug ? `/arenas/${links.arenaSlug}` : "/arenas";
   return lang === "fr"
     ? `AHMV — ${venue}: ${links.destination}\nItinéraire: ${links.googleMaps}\nAréna: ${siteOrigin}${arenaPath}`
-    : `AHMV — ${venue}: ${links.destination}\nDirections: ${links.googleMaps}\nArena: ${siteOrigin}${arenaPath}`;
+    : lang === "es"
+      ? `AHMV — ${venue}: ${links.destination}\nCómo llegar: ${links.googleMaps}\nArena: ${siteOrigin}${arenaPath}`
+      : `AHMV — ${venue}: ${links.destination}\nDirections: ${links.googleMaps}\nArena: ${siteOrigin}${arenaPath}`;
 }
