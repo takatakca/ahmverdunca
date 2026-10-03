@@ -104,65 +104,33 @@ function TeamPage() {
     <>
       {!exactTeam && (
         <PageHeader
-          eyebrow={
-            exactTeam
-              ? `${team.code} · ${exactTeam.level} · #${exactTeam.legacyScheduleTeamId.slice(-4)}`
-              : `${team.code} · ${l(team.ages)}`
-          }
-          title={exactTeam ? exactTeam.name : l(team.name)}
-          description={
-            exactTeam
-              ? (lang === "fr"
-                  ? "Hub public de cette équipe : accès officiels, résultats, médias approuvés et contributions vérifiées, sans recopier de données personnelles de joueurs."
-                  : "Public team hub: official access, results, approved media and reviewed contributions, without copying player personal data.")
-              : l(team.description)
-          }
+          eyebrow={`${team.code} · ${l(team.ages)}`}
+          title={l(team.name)}
+          description={l(team.description)}
           actions={
-            exactTeam ? (
-              <>
-                <Button asChild variant="sport">
-                  <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
-                    <CalendarDays className="size-4" />
-                    {lang === "fr" ? "Horaire officiel" : "Official schedule"}
-                  </a>
-                </Button>
-                <Button asChild variant="outline-light">
-                  <a href={officialTeamResultsUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="size-4" />
-                    {lang === "fr" ? "Résultats / classement" : "Results / standings"}
-                  </a>
-                </Button>
-                <Button asChild variant="outline-light">
-                  <a href={`/equipes/${slug}`}>
-                    {lang === "fr" ? "Retour à la catégorie" : "Back to category"}
-                  </a>
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button asChild variant="sport">
-                  <Link to="/horaires" search={{ team: slug }}>
-                    <CalendarDays className="size-4" />
-                    {lang === "fr" ? "Voir les horaires" : "View schedules"}
-                  </Link>
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline-light"
-                  onClick={() => savePreferredTeam(slug)}
-                  aria-pressed={isPreferred}
-                >
-                  <CheckCircle2 className="size-4" />
-                  {isPreferred
-                    ? lang === "fr"
-                      ? "Ma catégorie"
-                      : "My category"
-                    : lang === "fr"
-                      ? "Mémoriser"
-                      : "Remember"}
-                </Button>
-              </>
-            )
+            <>
+              <Button asChild variant="sport">
+                <Link to="/horaires" search={{ team: slug }}>
+                  <CalendarDays className="size-4" />
+                  {lang === "fr" ? "Voir les horaires" : "View schedules"}
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline-light"
+                onClick={() => savePreferredTeam(slug)}
+                aria-pressed={isPreferred}
+              >
+                <CheckCircle2 className="size-4" />
+                {isPreferred
+                  ? lang === "fr"
+                    ? "Ma catégorie"
+                    : "My category"
+                  : lang === "fr"
+                    ? "Mémoriser"
+                    : "Remember"}
+              </Button>
+            </>
           }
         />
       )}
