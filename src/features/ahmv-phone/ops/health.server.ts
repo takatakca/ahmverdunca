@@ -9,7 +9,9 @@ function db(): SupabaseClient {
 
 async function tableReady(table: string) {
   try {
-    const result = await db().from(table).select("id").limit(1);
+    const result = await db()
+      .from(table)
+      .select("*", { count: "exact", head: true });
     return !result.error;
   } catch {
     return false;
