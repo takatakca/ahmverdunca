@@ -53,6 +53,12 @@ export const PUBLIC_TEAM_DIRECTORY: PublicTeamDirectoryEntry[] = [
 export const teamsForCategory = (categorySlug: string) =>
   PUBLIC_TEAM_DIRECTORY.filter((entry) => entry.categorySlug === categorySlug);
 
+export const getPublicTeamById = (teamId: string) =>
+  PUBLIC_TEAM_DIRECTORY.find((entry) => entry.legacyScheduleTeamId === teamId);
+
+export const publicTeamHubUrl = (entry: PublicTeamDirectoryEntry) =>
+  `/equipes/${entry.categorySlug}?teamId=${encodeURIComponent(entry.legacyScheduleTeamId)}`;
+
 export const legacyTeamScheduleUrl = (entry: PublicTeamDirectoryEntry) =>
   scheduleUrl(entry.legacyScheduleTeamId);
 

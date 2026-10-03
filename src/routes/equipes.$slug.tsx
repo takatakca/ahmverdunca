@@ -1,5 +1,5 @@
 import { canonicalLink } from "@/lib/seo";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useRouterState } from "@tanstack/react-router";
 import {
   ArrowRight,
   CalendarDays,
@@ -14,7 +14,7 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
-import { legacyTeamScheduleUrl, officialTeamResultsUrl, teamsForCategory } from "@/data/team-directory";
+import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
@@ -58,14 +58,34 @@ export const Route = createFileRoute("/equipes/$slug")({
 
 function TeamPage() {
   const { slug } = Route.useLoaderData();
+  const currentHref = useRouterState({ select: (state) => state.location.href });
+  const teamId = new URL(currentHref, SITE.domain).searchParams.get("teamId") ?? undefined;
   const { t, l, lang } = useI18n();
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
   const team = getTeam(slug)!;
   const isPreferred = preferredTeam === slug;
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
-  const socialLinks = getTeamSocialLinks(slug);
+  const categorySocialLinks = getTeamSocialLinks(slug);
   const publicTeams = teamsForCategory(slug);
+  const exactTeamCandidate = teamId ? getPublicTeamById(teamId) : undefined;
+  const exactTeam = exactTeamCandidate?.categorySlug === slug ? exactTeamCandidate : undefined;
+  const socialLinks = exactTeam
+    ? getPublicTeamSocialLinks(exactTeam.legacyScheduleTeamId)
+    : categorySocialLinks;
+  const visiblePublicTeams = exactTeam
+    ? publicTeams.filter((entry) => entry.legacyScheduleTeamId !== exactTeam.legacyScheduleTeamId)
+    : publicTeams;
+  const updateSubject = exactTeam
+    ? `AHMV — mise à jour ${exactTeam.name} · ${exactTeam.level} · ${exactTeam.legacyScheduleTeamId}`
+    : `AHMV — mise à jour ${team.code}`;
+  const updateBody = lang === "fr"
+    ? exactTeam
+      ? `Bonjour, je souhaite proposer une mise à jour pour cette équipe AHMV.\n\nÉquipe : ${exactTeam.name}\nNiveau : ${exactTeam.level}\nRéférence publique : ${exactTeam.legacyScheduleTeamId}\nInformation à publier :\nSource ou lien :\n`
+      : "Bonjour, je souhaite proposer une mise à jour pour cette catégorie/équipe AHMV.\n\nÉquipe :\nInformation à publier :\nSource ou lien :\n"
+    : exactTeam
+      ? `Hello, I would like to suggest an update for this AHMV team.\n\nTeam: ${exactTeam.name}\nLevel: ${exactTeam.level}\nPublic reference: ${exactTeam.legacyScheduleTeamId}\nInformation to publish:\nSource or link:\n`
+      : "Hello, I would like to suggest an update for this AHMV category/team.\n\nTeam:\nInformation to publish:\nSource or link:\n";
   const archiveImages = [
     OFFICIAL_MEDIA.tournamentM11Primary,
     OFFICIAL_MEDIA.tournamentM11Secondary,
@@ -76,87 +96,201 @@ function TeamPage() {
   return (
     <>
       <PageHeader
-        eyebrow={`${team.code} · ${l(team.ages)}`}
-        title={l(team.name)}
-        description={l(team.description)}
+        eyebrow={
+          exactTeam
+            ? `${team.code} · ${exactTeam.level} · #${exactTeam.legacyScheduleTeamId.slice(-4)}`
+            : `${team.code} · ${l(team.ages)}`
+        }
+        title={exactTeam ? exactTeam.name : l(team.name)}
+        description={
+          exactTeam
+            ? (lang === "fr"
+                ? "Hub public de cette équipe : accès officiels, résultats, médias approuvés et contributions vérifiées, sans recopier de données personnelles de joueurs."
+                : "Public team hub: official access, results, approved media and reviewed contributions, without copying player personal data.")
+            : l(team.description)
+        }
         actions={
-          <>
-            <Button asChild variant="sport">
-              <Link to="/horaires" search={{ team: slug }}>
-                <CalendarDays className="size-4" />
-                {lang === "fr" ? "Voir les horaires" : "View schedules"}
-              </Link>
-            </Button>
-            <Button
-              type="button"
-              variant="outline-light"
-              onClick={() => savePreferredTeam(slug)}
-              aria-pressed={isPreferred}
-            >
-              <CheckCircle2 className="size-4" />
-              {isPreferred
-                ? lang === "fr"
-                  ? "Ma catégorie"
-                  : "My category"
-                : lang === "fr"
-                  ? "Mémoriser"
-                  : "Remember"}
-            </Button>
-          </>
+          exactTeam ? (
+            <>
+              <Button asChild variant="sport">
+                <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
+                  <CalendarDays className="size-4" />
+                  {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                </a>
+              </Button>
+              <Button asChild variant="outline-light">
+                <a href={officialTeamResultsUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="size-4" />
+                  {lang === "fr" ? "Résultats / classement" : "Results / standings"}
+                </a>
+              </Button>
+              <Button asChild variant="outline-light">
+                <a href={`/equipes/${slug}`}>
+                  {lang === "fr" ? "Retour à la catégorie" : "Back to category"}
+                </a>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="sport">
+                <Link to="/horaires" search={{ team: slug }}>
+                  <CalendarDays className="size-4" />
+                  {lang === "fr" ? "Voir les horaires" : "View schedules"}
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline-light"
+                onClick={() => savePreferredTeam(slug)}
+                aria-pressed={isPreferred}
+              >
+                <CheckCircle2 className="size-4" />
+                {isPreferred
+                  ? lang === "fr"
+                    ? "Ma catégorie"
+                    : "My category"
+                  : lang === "fr"
+                    ? "Mémoriser"
+                    : "Remember"}
+              </Button>
+            </>
+          )
         }
       />
 
       <div className="container-site space-y-14 py-8 md:py-12">
-        <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
-          <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
-            <img
-              src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
-              alt={lang === "fr" ? "Archive photographique publique AHM Verdun" : "AHM Verdun public photo archive"}
-              loading="eager"
-              decoding="async"
-              className="absolute inset-0 size-full object-cover"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.82))]" />
-            <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Vie AHMV" : "AHMV life"}</p>
-              <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] sm:text-5xl">
-                {team.code} · {l(team.ages)}
-              </p>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
-                {lang === "fr"
-                  ? "Une entrée directe vers ce qui compte pour cette catégorie : horaires, équipes publiées, arénas, nouvelles et ressources."
-                  : "A direct route to what matters for this category: schedules, published teams, arenas, news and resources."}
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
-            <div>
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Repères rapides" : "Quick facts"}</p>
-              <div className="mt-5 border-y border-white/12">
-                <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
-                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Catégorie" : "Category"}</span>
-                  <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
+        {exactTeam ? (
+          <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.35fr_0.65fr]">
+            <div className="relative min-h-[320px] overflow-hidden sm:min-h-[410px]">
+              <img
+                src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
+                alt={lang === "fr" ? "Photo d’ambiance issue des archives publiques AHM Verdun" : "Atmosphere photo from AHM Verdun public archives"}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.10),rgba(7,16,43,0.88))]" />
+              <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9">
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Hub public d’équipe" : "Public team hub"}
+                </p>
+                <p className="mt-2 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl md:text-6xl">
+                  {exactTeam.name}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">
+                  <span className="border border-white/18 px-2.5 py-1">{team.code}</span>
+                  <span className="border border-white/18 px-2.5 py-1">{exactTeam.level}</span>
+                  <span className="border border-white/18 px-2.5 py-1">#{exactTeam.legacyScheduleTeamId.slice(-4)}</span>
                 </div>
-                <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
-                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes publiées" : "Published teams"}</span>
-                  <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
-                </div>
-                <div className="flex items-end justify-between gap-4 py-4">
-                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Saison" : "Season"}</span>
-                  <span className="font-display text-xl font-extrabold uppercase">2026–2027</span>
-                </div>
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
+                  {lang === "fr"
+                    ? "Photo d’archive AHMV utilisée comme ambiance; elle n’est pas présentée comme une photo spécifique de cette équipe."
+                    : "AHMV archive photo used for atmosphere; it is not presented as a photo of this specific team."}
+                </p>
               </div>
             </div>
-            <a
-              href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/55 hover:text-white"
-            >
-              {lang === "fr" ? "Archives publiques AHMV" : "AHMV public archives"} <ArrowRight className="size-3.5" />
-            </a>
-          </div>
-        </section>
+
+            <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
+              <div>
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Accès officiels" : "Official access"}
+                </p>
+                <div className="mt-5 border-y border-white/12">
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
+                      {lang === "fr" ? "Catégorie" : "Category"}
+                    </span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
+                      {lang === "fr" ? "Niveau" : "Level"}
+                    </span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{exactTeam.level}</span>
+                  </div>
+                  <div className="py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
+                      {lang === "fr" ? "Référence publique" : "Public reference"}
+                    </span>
+                    <p className="mt-2 break-all font-mono text-sm text-white/78">{exactTeam.legacyScheduleTeamId}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-7 grid gap-2">
+                <a
+                  href={legacyTeamScheduleUrl(exactTeam)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-control flex min-h-12 items-center justify-between bg-sport px-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-sport-foreground"
+                >
+                  {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                  <CalendarDays className="size-4" />
+                </a>
+                <a
+                  href={officialTeamResultsUrl(exactTeam)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-control flex min-h-12 items-center justify-between border border-white/18 px-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-white"
+                >
+                  {lang === "fr" ? "Résultats / classement" : "Results / standings"}
+                  <ExternalLink className="size-4" />
+                </a>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
+            <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
+              <img
+                src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
+                alt={lang === "fr" ? "Archive photographique publique AHM Verdun" : "AHM Verdun public photo archive"}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.82))]" />
+              <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Vie AHMV" : "AHMV life"}</p>
+                <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] sm:text-5xl">
+                  {team.code} · {l(team.ages)}
+                </p>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
+                  {lang === "fr"
+                    ? "Une entrée directe vers ce qui compte pour cette catégorie : horaires, équipes publiées, arénas, nouvelles et ressources."
+                    : "A direct route to what matters for this category: schedules, published teams, arenas, news and resources."}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
+              <div>
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Repères rapides" : "Quick facts"}</p>
+                <div className="mt-5 border-y border-white/12">
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Catégorie" : "Category"}</span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes publiées" : "Published teams"}</span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-4 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Saison" : "Season"}</span>
+                    <span className="font-display text-xl font-extrabold uppercase">2026–2027</span>
+                  </div>
+                </div>
+              </div>
+              <a
+                href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/55 hover:text-white"
+              >
+                {lang === "fr" ? "Archives publiques AHMV" : "AHMV public archives"} <ArrowRight className="size-3.5" />
+              </a>
+            </div>
+          </section>
+        )}
         <section
           aria-labelledby="team-command-title"
           className="overflow-hidden border border-navy/12 bg-background"
@@ -170,20 +304,31 @@ function TeamPage() {
                 id="team-command-title"
                 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl"
               >
-                {team.code}
+                {exactTeam ? exactTeam.name : team.code}
               </h2>
               <p className="mt-4 max-w-2xl text-sm text-navy-foreground/75 md:text-base">
-                {lang === "fr"
-                  ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
-                  : "A simple starting point for families: schedules, arenas, registration, news and public media."}
+                {exactTeam
+                  ? (lang === "fr"
+                      ? "Le point d’entrée de cette équipe exacte : horaire et résultats officiels, médias approuvés, arénas et mises à jour révisées."
+                      : "The entry point for this exact team: official schedule and results, approved media, arenas and reviewed updates.")
+                  : (lang === "fr"
+                      ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
+                      : "A simple starting point for families: schedules, arenas, registration, news and public media.")}
               </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Button asChild variant="sport">
-                  <Link to="/horaires" search={{ team: slug }}>
-                    <CalendarDays className="size-4" />
-                    {lang === "fr" ? "Horaires officiels" : "Official schedules"}
-                  </Link>
+                  {exactTeam ? (
+                    <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
+                      <CalendarDays className="size-4" />
+                      {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                    </a>
+                  ) : (
+                    <Link to="/horaires" search={{ team: slug }}>
+                      <CalendarDays className="size-4" />
+                      {lang === "fr" ? "Horaires officiels" : "Official schedules"}
+                    </Link>
+                  )}
                 </Button>
                 <Button asChild variant="outline-light">
                   <Link to="/arenas">
@@ -262,7 +407,7 @@ function TeamPage() {
           <div className="flex min-w-[250px] flex-col justify-center border-t border-navy/12 p-6 lg:border-l lg:border-t-0 md:p-8">
             <Button asChild variant="sport" size="lg" className="justify-between">
               <a
-                href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(`AHMV — mise à jour ${team.code}`)}&body=${encodeURIComponent(lang === "fr" ? "Bonjour, je souhaite proposer une mise à jour pour cette catégorie/équipe AHMV.\n\nÉquipe :\nInformation à publier :\nSource ou lien :\n" : "Hello, I would like to suggest an update for this AHMV category/team.\n\nTeam:\nInformation to publish:\nSource or link:\n")}`}
+                href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(updateSubject)}&body=${encodeURIComponent(updateBody)}`}
               >
                 <span className="flex items-center gap-2"><Mail className="size-4" />{lang === "fr" ? "Proposer une mise à jour" : "Suggest an update"}</span>
                 <ArrowRight className="size-4" />
@@ -276,17 +421,21 @@ function TeamPage() {
           </div>
         </section>
 
-        {publicTeams.length > 0 && (
+        {visiblePublicTeams.length > 0 && (
           <section aria-labelledby="public-team-directory-title">
             <SectionHeading
               eyebrow={lang === "fr" ? "Répertoire public 2026–2027" : "2026–2027 public directory"}
-              title={lang === "fr" ? "Équipes publiées" : "Published teams"}
+              title={
+                exactTeam
+                  ? (lang === "fr" ? "Autres équipes de la catégorie" : "Other teams in this category")
+                  : (lang === "fr" ? "Équipes publiées" : "Published teams")
+              }
               description={lang === "fr"
                 ? "Noms et niveaux actuellement affichés dans le répertoire public AHM Verdun. Aucun alignement de joueurs ni donnée personnelle n’est recopié."
                 : "Names and levels currently shown in AHM Verdun’s public directory. No player roster or personal information is mirrored."}
             />
             <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-              {publicTeams.map((entry, index) => {
+              {visiblePublicTeams.map((entry, index) => {
                 const teamSocialLinks = getPublicTeamSocialLinks(entry.legacyScheduleTeamId);
                 return (
                   <div
@@ -318,6 +467,13 @@ function TeamPage() {
                     </div>
 
                     <div className="relative mt-auto border-t border-white/12 bg-white/[0.035] p-3">
+                      <a
+                        href={publicTeamHubUrl(entry)}
+                        className="premium-control mb-2 flex min-h-11 items-center justify-between bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground hover:brightness-95"
+                      >
+                        <span>{lang === "fr" ? "Page équipe" : "Team page"}</span>
+                        <ArrowRight className="size-3.5" />
+                      </a>
                       <div className="grid grid-cols-2 gap-2">
                         <a
                           href={legacyTeamScheduleUrl(entry)}
