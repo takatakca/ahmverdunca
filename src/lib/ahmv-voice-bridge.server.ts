@@ -35,9 +35,7 @@ function safeEqual(a: string, b: string) {
   return left.length === right.length && timingSafeEqual(left, right);
 }
 function authorized(request: Request, settings: Settings) {
-  const expected =
-    settings["AHMV_VOICE_BRIDGE_TOKEN"]?.trim()
-    || settings["AHMV_VOICE_DATA_TOKEN"]?.trim();
+  const expected = settings["AHMV_VOICE_BRIDGE_TOKEN"]?.trim();
   if (!expected || expected.length < 24) return false;
   const header = request.headers.get("authorization") ?? "";
   const token = /^Bearer\s+/i.test(header)
