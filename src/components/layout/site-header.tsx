@@ -31,7 +31,7 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { preferredTeam, selectedTeams } = usePreferredTeam();
+  const { preferredTeam, selectedTeams, clearAllTeamPreferences } = usePreferredTeam();
   const savedTeam = TEAMS.find((team) => team.slug === preferredTeam);
 
   // Close menus on navigation
@@ -133,22 +133,42 @@ export function SiteHeader() {
           <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
           <div className="flex items-center gap-4">
             {selectedTeams.length > 0 ? (
-              <a
-                href={publicTeamHubUrl(selectedTeams[0]!)}
-                className="inline-flex items-center gap-1.5 font-semibold text-navy-foreground/75 hover:text-navy-foreground"
-              >
-                <span className="size-1.5 rounded-full bg-sport" aria-hidden />
-                {lang === "fr" ? "Mes équipes" : "My teams"} · {selectedTeams.length}
-              </a>
+              <span className="inline-flex items-center gap-1">
+                <a
+                  href={publicTeamHubUrl(selectedTeams[0]!)}
+                  className="inline-flex items-center gap-1.5 font-semibold text-navy-foreground/75 hover:text-navy-foreground"
+                >
+                  <span className="size-1.5 rounded-full bg-sport" aria-hidden />
+                  {lang === "fr" ? "Mes équipes" : "My teams"} · {selectedTeams.length}
+                </a>
+                <button
+                  type="button"
+                  onClick={clearAllTeamPreferences}
+                  className="inline-flex size-6 items-center justify-center text-navy-foreground/45 hover:text-sport-foreground"
+                  aria-label={lang === "fr" ? "Voir toutes les équipes" : "View all teams"}
+                >
+                  <X className="size-3.5" aria-hidden />
+                </button>
+              </span>
             ) : savedTeam ? (
-              <Link
-                to="/equipes/$slug"
-                params={{ slug: savedTeam.slug }}
-                className="inline-flex items-center gap-1.5 font-semibold text-navy-foreground/75 hover:text-navy-foreground"
-              >
-                <span className="size-1.5 rounded-full bg-sport" aria-hidden />
-                {lang === "fr" ? "Mon équipe" : "My team"} · {savedTeam.code}
-              </Link>
+              <span className="inline-flex items-center gap-1">
+                <Link
+                  to="/equipes/$slug"
+                  params={{ slug: savedTeam.slug }}
+                  className="inline-flex items-center gap-1.5 font-semibold text-navy-foreground/75 hover:text-navy-foreground"
+                >
+                  <span className="size-1.5 rounded-full bg-sport" aria-hidden />
+                  {lang === "fr" ? "Ma catégorie" : "My category"} · {savedTeam.code}
+                </Link>
+                <button
+                  type="button"
+                  onClick={clearAllTeamPreferences}
+                  className="inline-flex size-6 items-center justify-center text-navy-foreground/45 hover:text-sport-foreground"
+                  aria-label={lang === "fr" ? "Retirer ma catégorie" : "Remove my category"}
+                >
+                  <X className="size-3.5" aria-hidden />
+                </button>
+              </span>
             ) : null}
             {showPhone && (
               <a
@@ -321,38 +341,58 @@ export function SiteHeader() {
             </div>
 
             {selectedTeams[0] ? (
-              <a
-                href={publicTeamHubUrl(selectedTeams[0])}
-                className="interactive-surface mt-3 flex min-h-16 items-center justify-between gap-3 border border-sport/35 bg-sport/10 px-4 py-3"
-              >
-                <span className="min-w-0">
-                  <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
-                    {lang === "fr" ? "Mon équipe" : "My team"}
+              <div className="mt-3 grid grid-cols-[1fr_auto] overflow-hidden border border-sport/35 bg-sport/10">
+                <a
+                  href={publicTeamHubUrl(selectedTeams[0])}
+                  className="interactive-surface flex min-h-16 items-center justify-between gap-3 px-4 py-3"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                      {lang === "fr" ? "Mon équipe" : "My team"}
+                    </span>
+                    <span className="mt-1 block truncate font-display text-xl font-extrabold uppercase leading-none text-white">
+                      {selectedTeams[0].name}
+                    </span>
+                    <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-white/42">
+                      {selectedTeams[0].level}
+                      {selectedTeams.length > 1 ? ` · +${selectedTeams.length - 1}` : ""}
+                    </span>
                   </span>
-                  <span className="mt-1 block truncate font-display text-xl font-extrabold uppercase leading-none text-white">
-                    {selectedTeams[0].name}
-                  </span>
-                  <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-white/42">
-                    {selectedTeams[0].level}
-                    {selectedTeams.length > 1 ? ` · +${selectedTeams.length - 1}` : ""}
-                  </span>
-                </span>
-                <ChevronDown className="size-4 shrink-0 -rotate-90 text-sport-foreground" />
-              </a>
+                  <ChevronDown className="size-4 shrink-0 -rotate-90 text-sport-foreground" />
+                </a>
+                <button
+                  type="button"
+                  onClick={clearAllTeamPreferences}
+                  className="flex w-12 items-center justify-center border-l border-white/12 text-white/55 hover:bg-white/10 hover:text-white"
+                  aria-label={lang === "fr" ? "Voir toutes les équipes" : "View all teams"}
+                >
+                  <X className="size-5" aria-hidden />
+                </button>
+              </div>
             ) : savedTeam ? (
-              <Link
-                to="/equipes/$slug"
-                params={{ slug: savedTeam.slug }}
-                className="interactive-surface mt-3 flex min-h-16 items-center justify-between gap-3 border border-sport/35 bg-sport/10 px-4 py-3"
-              >
-                <span>
-                  <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
-                    {lang === "fr" ? "Ma catégorie" : "My category"}
+              <div className="mt-3 grid grid-cols-[1fr_auto] overflow-hidden border border-sport/35 bg-sport/10">
+                <Link
+                  to="/equipes/$slug"
+                  params={{ slug: savedTeam.slug }}
+                  className="interactive-surface flex min-h-16 items-center justify-between gap-3 px-4 py-3"
+                >
+                  <span>
+                    <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                      {lang === "fr" ? "Ma catégorie" : "My category"}
+                    </span>
+                    <span className="mt-1 block font-display text-xl font-extrabold uppercase text-white">{savedTeam.code}</span>
                   </span>
-                  <span className="mt-1 block font-display text-xl font-extrabold uppercase text-white">{savedTeam.code}</span>
-                </span>
-                <ChevronDown className="size-4 -rotate-90 text-sport-foreground" />
-              </Link>
+                  <ChevronDown className="size-4 -rotate-90 text-sport-foreground" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={clearAllTeamPreferences}
+                  className="flex w-12 items-center justify-center border-l border-white/12 text-white/55 hover:bg-white/10 hover:text-white"
+                  aria-label={lang === "fr" ? "Retirer ma catégorie" : "Remove my category"}
+                >
+                  <X className="size-5" aria-hidden />
+                </button>
+              </div>
             ) : (
               <Link
                 to="/equipes"

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Bookmark, BookmarkCheck, CalendarDays, ExternalLink, Images, Trophy } from "lucide-react";
+import { ArrowRight, Bookmark, BookmarkCheck, CalendarDays, ExternalLink, Images, Trophy, X } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { CURRENT_TEAMS } from "@/data/teams";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -32,12 +32,14 @@ function TeamsPage() {
     selectedTeamIds,
     selectedTeams,
     toggleSelectedTeam,
-    clearSelectedTeams,
+    clearAllTeamPreferences,
+    removeSelectedTeam,
     isTeamSelected,
   } = usePreferredTeam();
   const [showAllResults, setShowAllResults] = useState(false);
   const [showAllDirectory, setShowAllDirectory] = useState(false);
   const totalPublicTeams = CURRENT_TEAMS.reduce((count, team) => count + teamsForCategory(team.slug).length, 0);
+  const savedCategory = CURRENT_TEAMS.find((team) => team.slug === preferredTeam);
   const filterToMine = selectedTeamIds.length > 0 && !showAllResults;
   const selectedCategorySlugs = new Set(selectedTeams.map((team) => team.categorySlug));
   const categoriesToRender =
@@ -119,6 +121,30 @@ function TeamsPage() {
 
         <HouseSponsorSlot placement="teams-directory" compact className="mb-8" />
 
+        {savedCategory && selectedTeams.length === 0 ? (
+          <section className="mb-8 flex flex-col gap-4 border border-sport/30 bg-sport/[0.045] p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="eyebrow text-sport">{lang === "fr" ? "Catégorie mémorisée" : "Saved category"}</p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-navy">
+                {l(savedCategory.name)}
+              </p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Cette préférence est facultative. Retirez-la pour revenir à la vue de toutes les équipes."
+                  : "This preference is optional. Remove it to return to the all-teams view."}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={clearAllTeamPreferences}
+              className="premium-control inline-flex min-h-11 shrink-0 items-center justify-center gap-2 border border-navy/12 bg-background px-4 text-[10px] font-bold uppercase tracking-[0.13em] text-navy hover:border-sport hover:text-sport"
+            >
+              <X className="size-4" aria-hidden />
+              {lang === "fr" ? "Retirer ma catégorie" : "Remove my category"}
+            </button>
+          </section>
+        ) : null}
+
         {selectedTeams.length > 0 ? (
           <section className="mb-8 overflow-hidden border border-sport/30 bg-background">
             <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
@@ -136,7 +162,7 @@ function TeamsPage() {
               <div className="flex items-center border-t border-white/12 p-5 lg:border-l lg:border-t-0">
                 <button
                   type="button"
-                  onClick={clearSelectedTeams}
+                  onClick={clearAllTeamPreferences}
                   className="premium-control min-h-11 border border-white/18 px-4 text-[10px] font-bold uppercase tracking-[0.13em] text-white hover:border-sport"
                 >
                   {lang === "fr" ? "Effacer ma sélection" : "Clear selection"}
@@ -145,8 +171,16 @@ function TeamsPage() {
             </div>
             <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
               {selectedTeams.map((entry) => (
-                <article key={entry.legacyScheduleTeamId} className="flex min-h-52 flex-col bg-background p-5">
-                  <div className="flex items-start justify-between gap-3">
+                <article key={entry.legacyScheduleTeamId} className="relative flex min-h-52 flex-col bg-background p-5">
+                  <button
+                    type="button"
+                    onClick={() => removeSelectedTeam(entry.legacyScheduleTeamId)}
+                    aria-label={lang === "fr" ? `Retirer ${entry.name} de mes équipes` : `Remove ${entry.name} from my teams`}
+                    className="absolute right-3 top-3 inline-flex size-9 items-center justify-center border border-navy/10 bg-background text-muted-foreground transition hover:border-sport hover:text-sport"
+                  >
+                    <X className="size-4" aria-hidden />
+                  </button>
+                  <div className="flex items-start justify-between gap-3 pr-10">
                     <div>
                       <p className="eyebrow text-sport">{entry.level}</p>
                       <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.88] text-navy">{entry.name}</h3>
