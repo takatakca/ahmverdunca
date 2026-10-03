@@ -117,7 +117,7 @@ export function OfficialWeekPreview() {
                 <article
                   key={item.id}
                   className={cn(
-                    "border border-navy-foreground/15 bg-background p-5 text-foreground",
+                    "interactive-surface border border-navy-foreground/15 bg-background p-5 text-foreground",
                     cancelled && "border-status-cancelled/50 bg-status-cancelled-soft",
                   )}
                 >
@@ -172,7 +172,7 @@ export function OfficialWeekPreview() {
             })}
           </div>
         ) : (
-          <div className="mt-7 rounded-lg border border-navy-foreground/15 bg-navy-foreground/[0.04] p-5">
+          <div className="mt-7 border border-navy-foreground/15 bg-navy-foreground/[0.04] p-5">
             <p className="text-sm text-navy-foreground/75">
               {lang === "fr"
                 ? "Le dernier PDF hebdomadaire intégré n'est plus dans sa semaine active. Ouvrez Horaires pour consulter les liens officiels."

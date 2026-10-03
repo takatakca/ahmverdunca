@@ -68,7 +68,7 @@ export function ScheduleFinder() {
             </div>
           </div>
 
-          <div className="overflow-hidden border border-navy/10 bg-ice shadow-[0_24px_60px_-36px_rgba(8,20,54,0.45)]">
+          <div className="interactive-surface overflow-hidden border border-navy/10 bg-ice shadow-[0_24px_60px_-36px_rgba(8,20,54,0.45)]">
             <div className="grid lg:grid-cols-3">
               <div className="relative border-b border-navy/10 p-5 sm:p-6 lg:border-b-0 lg:border-r">
                 <span className="font-display text-6xl font-extrabold leading-none text-navy/10">01</span>
@@ -79,7 +79,7 @@ export function ScheduleFinder() {
                   </span>
                   <select
                     aria-label={lang === "fr" ? "Choisir ma catégorie" : "Choose my category"}
-                    className="mt-2 h-12 w-full border-0 border-b-2 border-navy bg-transparent px-0 font-display text-xl font-bold uppercase text-navy outline-none focus:border-sport"
+                    className="mt-2 h-12 w-full border-0 border-b-2 border-navy bg-transparent px-0 font-display text-xl font-bold uppercase text-navy outline-none transition-colors focus:border-sport focus:ring-0"
                     value={team}
                     onChange={(event) => {
                       const value = event.target.value;
@@ -174,7 +174,7 @@ export function ScheduleFinder() {
         </div>
 
         {selected && nextActivity && (
-          <div className="mt-7 border-l-4 border-sport bg-navy-deep px-5 py-5 text-navy-foreground shadow-[0_18px_48px_-30px_rgba(6,17,46,0.8)] md:flex md:items-center md:justify-between md:gap-6 md:px-7">
+          <div className="interactive-surface mt-7 border-l-4 border-sport bg-navy-deep px-5 py-5 text-navy-foreground shadow-[0_18px_48px_-30px_rgba(6,17,46,0.8)] md:flex md:items-center md:justify-between md:gap-6 md:px-7">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="eyebrow text-sport-foreground">

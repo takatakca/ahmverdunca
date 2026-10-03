@@ -58,7 +58,7 @@ function TeamsPage() {
               <article
                 key={team.slug}
                 className={cn(
-                  "group grid border-b border-navy/12 md:grid-cols-[5rem_8rem_minmax(0,1fr)_13rem] md:items-stretch",
+                  "interactive-surface group grid border-b border-navy/12 md:grid-cols-[5rem_8rem_minmax(0,1fr)_13rem] md:items-stretch",
                   saved && "bg-sport/[0.045]",
                 )}
               >
@@ -104,7 +104,7 @@ function TeamsPage() {
                   <Link
                     to="/equipes/$slug"
                     params={{ slug: team.slug }}
-                    className="inline-flex min-h-11 items-center justify-between border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-navy hover:border-sport hover:text-sport"
+                    className="premium-control inline-flex min-h-11 items-center justify-between border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-navy hover:border-sport hover:text-sport"
                   >
                     {lang === "fr" ? "Ouvrir" : "Open"} <ArrowRight className="size-4" />
                   </Link>
@@ -112,7 +112,7 @@ function TeamsPage() {
                     type="button"
                     onClick={() => savePreferredTeam(saved ? "" : team.slug)}
                     className={cn(
-                      "min-h-11 border px-3 text-[10px] font-bold uppercase tracking-[0.13em] transition-colors",
+                      "premium-control min-h-11 border px-3 text-[10px] font-bold uppercase tracking-[0.13em]",
                       saved
                         ? "border-sport bg-sport text-sport-foreground"
                         : "border-navy/12 bg-background text-navy hover:border-sport",
