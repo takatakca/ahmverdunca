@@ -6,7 +6,7 @@ const source = (path: string) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
 test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK authority", async () => {
-  const [server, bridge, contacts, messaging, env, voiceMigration, extensionMigration] =
+  const [server, bridge, contacts, messaging, env, voiceMigration, extensionMigration, preflight] =
     await Promise.all([
       source("src/server.ts"),
       source("src/lib/ahmv-voice-bridge.server.ts"),
@@ -15,6 +15,7 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
       source(".env.example"),
       source("supabase/migrations/20261003091000_ahmv_voice_sessions.sql"),
       source("supabase/migrations/20261003110000_ahmv_phone_spanish.sql"),
+      source("scripts/ahmv-voice-preflight.ts"),
     ]);
 
   assert.match(server, /handleAhmvVoiceBridge/);
@@ -41,6 +42,11 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
   assert.match(voiceMigration, /'fr','en','es'/);
   assert.match(voiceMigration, /turn_count between 0 and 100/);
   assert.match(extensionMigration, /language in \('fr','en','es'\)/);
+  assert.match(preflight, /SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(preflight, /AHMV_VOICE_BRIDGE_TOKEN/);
+  assert.match(preflight, /TAKATAK_AHMV_SCHEDULE_URL/);
+  assert.match(preflight, /scheduleUrl\.protocol/);
+  assert.doesNotMatch(preflight, /console\.log\(env/);
 });
 
 test("Voice AI sessions are covered by the AHMV privacy retention policy", async () => {
