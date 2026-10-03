@@ -6,6 +6,8 @@ import { PageHeader } from "@/components/page-header";
 import { RESOURCES, RESOURCE_CATEGORIES } from "@/data/resources";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/ressources")({
   head: () => ({
@@ -59,6 +61,37 @@ function ResourcesPage() {
             </p>
           </div>
         </section>
+        <section className="mb-6 grid overflow-hidden border border-navy/12 bg-competition text-white lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="relative min-h-[220px] overflow-hidden sm:min-h-[280px]">
+            <img
+              src={OFFICIAL_MEDIA.practiceGroup.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGroup.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.10),rgba(7,16,43,0.90))]" />
+            <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Familles · bénévoles · hockey" : "Families · volunteers · hockey"}</p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.88]">
+                {lang === "fr" ? "Les bons liens, sans détour." : "The right links, without the detour."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center p-5 md:p-7">
+            <p className="text-sm leading-relaxed text-white/62">
+              {lang === "fr"
+                ? "Chaque ressource mène directement vers son organisme d’autorité. Le portail sert à vous orienter, pas à remplacer la source officielle."
+                : "Every resource goes directly to its authoritative organization. The portal guides you; it does not replace the official source."}
+            </p>
+            <p className="mt-5 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
+              {String(RESOURCES.length).padStart(2, "0")} · {lang === "fr" ? "ressources référencées" : "referenced resources"}
+            </p>
+          </div>
+        </section>
+
+        <HouseSponsorSlot placement="resources-help" count={1} compact className="mb-6" />
+
         <div className="mb-6 border border-navy/12 bg-ice p-5">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "À savoir" : "Good to know"}
