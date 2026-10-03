@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Coffee, ExternalLink, Heart, X } from "lucide-react";
 import { DEVELOPMENT_SUPPORT } from "@/lib/monetization";
 import { useI18n } from "@/lib/i18n";
@@ -6,6 +6,12 @@ import { useI18n } from "@/lib/i18n";
 export function SupportDevelopment() {
   const { lang } = useI18n();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const openSupport = () => setOpen(true);
+    window.addEventListener("ahmv:support-open", openSupport);
+    return () => window.removeEventListener("ahmv:support-open", openSupport);
+  }, []);
 
   if (!DEVELOPMENT_SUPPORT.enabled) return null;
 
