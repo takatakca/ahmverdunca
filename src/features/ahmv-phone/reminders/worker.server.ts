@@ -82,16 +82,23 @@ function eventFromRow(row: SnapshotRow): AuthoritativeEventSnapshot {
   };
 }
 
-async function loadSnapshot(event: AuthoritativeEventSnapshot) {
+async function loadSnapshotByIds(
+  providerEventId: string,
+  publicTeamId: string,
+) {
   const result = await db()
     .from("ahmv_phone_event_snapshots")
     .select("provider_event_id,public_team_id,starts_at,venue,status")
-    .eq("provider_event_id", event.providerEventId)
-    .eq("public_team_id", event.publicTeamId)
+    .eq("provider_event_id", providerEventId)
+    .eq("public_team_id", publicTeamId)
     .maybeSingle();
 
   if (result.error) throw result.error;
   return result.data ? eventFromRow(result.data as SnapshotRow) : null;
+}
+
+async function loadSnapshot(event: AuthoritativeEventSnapshot) {
+  return loadSnapshotByIds(event.providerEventId, event.publicTeamId);
 }
 
 async function saveSnapshot(
@@ -241,6 +248,7 @@ async function queueReminderForContact(
       providerEventId: event.providerEventId,
       eventStartsAt: event.startsAt,
       venue: event.venue,
+      status: event.status,
     },
   });
 }
@@ -281,6 +289,7 @@ async function queueChangeAlertForContact(
       providerEventId: event.providerEventId,
       eventStartsAt: event.startsAt,
       venue: event.venue,
+      status: event.status,
       changeKinds: changes.map((change) => change.kind),
     },
   });
@@ -356,12 +365,53 @@ export async function syncPhoneReminderEvents(
   return summary;
 }
 
-function payloadTeamId(payload: unknown) {
+function payloadEventState(payload: unknown) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
     return null;
   }
-  const value = (payload as Record<string, unknown>)["publicTeamId"];
-  return typeof value === "string" && value ? value : null;
+
+  const value = payload as Record<string, unknown>;
+  const publicTeamId = value["publicTeamId"];
+  const providerEventId = value["providerEventId"];
+  const eventStartsAt = value["eventStartsAt"];
+  const venue = value["venue"];
+  const status = value["status"];
+
+  if (
+    typeof publicTeamId !== "string" ||
+    !publicTeamId ||
+    typeof providerEventId !== "string" ||
+    !providerEventId ||
+    typeof eventStartsAt !== "string" ||
+    !Number.isFinite(Date.parse(eventStartsAt)) ||
+    typeof venue !== "string" ||
+    !venue ||
+    (status !== "scheduled" && status !== "cancelled")
+  ) {
+    return null;
+  }
+
+  return {
+    publicTeamId,
+    providerEventId,
+    eventStartsAt: new Date(eventStartsAt).toISOString(),
+    venue,
+    status,
+  } as const;
+}
+
+function reminderJobStillMatchesSnapshot(
+  jobState: NonNullable<ReturnType<typeof payloadEventState>>,
+  current: AuthoritativeEventSnapshot | null,
+) {
+  return Boolean(
+    current &&
+      current.publicTeamId === jobState.publicTeamId &&
+      current.providerEventId === jobState.providerEventId &&
+      current.startsAt === jobState.eventStartsAt &&
+      current.venue === jobState.venue &&
+      current.status === jobState.status,
+  );
 }
 
 export async function dispatchDuePhoneReminderMessages(
@@ -408,10 +458,10 @@ export async function dispatchDuePhoneReminderMessages(
     summary.claimed += 1;
 
     const contact = await loadContact(claimed.contact_id);
-    const publicTeamId = payloadTeamId(claimed.payload);
+    const jobState = payloadEventState(claimed.payload);
     const body = messageBodyFromPayload(claimed.payload);
 
-    if (!contact || !publicTeamId || !body) {
+    if (!contact || !jobState || !body) {
       await updateMessageJob(
         claimed.id,
         {
@@ -424,9 +474,32 @@ export async function dispatchDuePhoneReminderMessages(
       continue;
     }
 
+    const currentSnapshot = await loadSnapshotByIds(
+      jobState.providerEventId,
+      jobState.publicTeamId,
+    );
+
+    if (
+      !reminderJobStillMatchesSnapshot(jobState, currentSnapshot) ||
+      (claimed.purpose === "game_reminder" &&
+        (jobState.status !== "scheduled" ||
+          Date.parse(jobState.eventStartsAt) <= now.getTime()))
+    ) {
+      await updateMessageJob(
+        claimed.id,
+        {
+          status: "cancelled",
+          last_error: "Reminder job no longer matches the current authoritative event",
+        },
+        now,
+      );
+      summary.cancelled += 1;
+      continue;
+    }
+
     const remindersEnabled = await reminderPreferenceEnabled(
       contact.id,
-      publicTeamId,
+      jobState.publicTeamId,
     );
     const entitlement = await resolvePhoneEntitlement(
       contact,
