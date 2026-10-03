@@ -26,7 +26,8 @@
     "check:supabase-key-safety": "bun scripts/validate-supabase-client-key.ts",
     "check:media-policy": "bun scripts/validate-media-policy.ts",
     "demo:phone": "bun scripts/ahmv-phone-demo.ts",
-    "check:phone-preflight": "bun scripts/ahmv-phone-preflight.ts"
+    "check:phone-preflight": "bun scripts/ahmv-phone-preflight.ts",
+    "preflight:voice": "tsx scripts/ahmv-voice-preflight.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
