@@ -26,6 +26,7 @@ export async function getAhmvPhoneInternalHealth(
     messageJobs,
     eventSnapshots,
     entitlementSyncEvents,
+    campaignExecutions,
   ] = await Promise.all([
     tableReady("ahmv_phone_contacts"),
     tableReady("ahmv_phone_team_preferences"),
@@ -33,6 +34,7 @@ export async function getAhmvPhoneInternalHealth(
     tableReady("ahmv_phone_message_jobs"),
     tableReady("ahmv_phone_event_snapshots"),
     tableReady("ahmv_phone_entitlement_sync_events"),
+    tableReady("ahmv_phone_campaign_executions"),
   ]);
 
   const databaseReady =
@@ -62,6 +64,7 @@ export async function getAhmvPhoneInternalHealth(
       messageJobs,
       eventSnapshots,
       entitlementSyncEvents,
+      campaignExecutions,
     },
     features: {
       reminders: {
@@ -75,6 +78,21 @@ export async function getAhmvPhoneInternalHealth(
         enabled: settings["AHMV_CALENDAR_LINKS_ENABLED"] === "true",
         signingSecretConfigured:
           (settings["AHMV_CALENDAR_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+      },
+      campaigns: {
+        enabled: settings["AHMV_PHONE_CAMPAIGNS_ENABLED"] === "true",
+        projectionReady: campaignExecutions,
+        serviceTokenConfigured: Boolean(
+          settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim(),
+        ),
+        legalInfoConfigured: (() => {
+          try {
+            const value = settings["TAKATAK_SMS_CEM_INFO_URL"]?.trim();
+            return Boolean(value && new URL(value).protocol === "https:");
+          } catch {
+            return false;
+          }
+        })(),
       },
       smartDeparture: {
         enabled: settings["AHMV_SMART_DEPARTURE_ENABLED"] === "true",
