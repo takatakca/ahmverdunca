@@ -28,7 +28,16 @@ if [[ "$PATHNAME" == *"'"* || "$PATHNAME" == *$'\n'* || "$PATHNAME" == *$'\r'* ]
 fi
 
 URL="${AHMV_PRODUCTION_URL}${PATHNAME}"
-USER_AGENT="AHMV-Deploy-Smoke/1.1"
+USER_AGENT="AHMV-Deploy-Smoke/1.2"
+SMOKE_TARGET="${AHMV_HTTP_SMOKE_TARGET:-auto}"
+
+case "$SMOKE_TARGET" in
+  auto|origin|public) ;;
+  *)
+    echo "ERROR: AHMV_HTTP_SMOKE_TARGET must be auto, origin, or public." >&2
+    exit 2
+    ;;
+esac
 MAX_ATTEMPTS="${AHMV_HTTP_SMOKE_ATTEMPTS:-8}"
 RETRY_DELAY="${AHMV_HTTP_SMOKE_DELAY_SECONDS:-3}"
 
@@ -70,7 +79,10 @@ origin_curl_once() {
     status) remote_action="-o /dev/null" ;;
   esac
 
-  ahmv-ssh "curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 --resolve 'ahmverdun.ca:443:127.0.0.1' --user-agent '$USER_AGENT' --header 'Cache-Control: no-cache' $remote_action '$URL'"
+  # Shared cPanel loopback TLS may present the server certificate rather than the
+  # public vhost certificate. Ignore certificate validation only on this local
+  # origin hop; public TLS is verified separately from the GitHub runner.
+  ahmv-ssh "curl --insecure --fail --silent --show-error --location --connect-timeout 10 --max-time 30 --resolve 'ahmverdun.ca:443:127.0.0.1' --user-agent '$USER_AGENT' --header 'Cache-Control: no-cache' $remote_action '$URL'"
 }
 
 retry_smoke() {
@@ -108,7 +120,9 @@ retry_smoke() {
   return "$status"
 }
 
-if [ "${AHMV_DEPLOY_TRANSPORT:-}" = "ssh" ]; then
+if [ "$SMOKE_TARGET" = "origin" ] || {
+  [ "$SMOKE_TARGET" = "auto" ] && [ "${AHMV_DEPLOY_TRANSPORT:-}" = "ssh" ];
+}; then
   echo "Smoke target: production origin over SSH" >&2
   retry_smoke origin
 else
