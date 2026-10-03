@@ -52,6 +52,7 @@ type ContactRow = {
   transactional_sms_allowed: boolean;
   marketing_sms_consent: boolean;
   takatak_identity_id: string | null;
+  premium_expires_at: string | null;
 };
 
 function db(): SupabaseClient {
@@ -69,6 +70,7 @@ function contactFromRow(row: ContactRow): AhmvPhoneContact {
     transactionalSmsAllowed: Boolean(row.transactional_sms_allowed),
     marketingSmsConsent: Boolean(row.marketing_sms_consent),
     takatakIdentityId: row.takatak_identity_id ?? undefined,
+    premiumExpiresAt: row.premium_expires_at ?? undefined,
   };
 }
 
@@ -144,7 +146,7 @@ async function reminderSubscribers(publicTeamId: string) {
   const contactsResult = await db()
     .from("ahmv_phone_contacts")
     .select(
-      "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id",
+      "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at",
     )
     .in("id", ids);
 
@@ -160,7 +162,7 @@ async function loadContact(contactId: string) {
   const result = await db()
     .from("ahmv_phone_contacts")
     .select(
-      "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id",
+      "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at",
     )
     .eq("id", contactId)
     .maybeSingle();
