@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { SportArtwork } from "@/components/sport-artwork";
 import { ALERTS } from "@/data/alerts";
-import { TEAMS } from "@/data/teams";
+import { CURRENT_TEAMS } from "@/data/teams";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -361,7 +361,7 @@ function Home() {
           </div>
 
           <div className="scrollbar-none mt-7 flex snap-x gap-px overflow-x-auto border-y border-navy-foreground/15">
-            {TEAMS.map((team, index) => (
+            {CURRENT_TEAMS.map((team, index) => (
               <Link
                 key={team.slug}
                 to="/equipes/$slug"
