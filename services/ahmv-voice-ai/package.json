@@ -6,12 +6,14 @@
   "description": "AHM Verdun trilingual Twilio ConversationRelay + OpenAI voice assistant",
   "scripts": {
     "start": "node src/server.js",
-    "check": "node --check src/server.js && node --check src/agent.js && node --check src/store.js && node --check src/twilio-security.js && node --check src/twilio-signature-url.js && node --check src/twiml.js && node --check src/ahm-data.js && node --check src/ahm-bridge.js && node --check src/sms.js && node --check src/sms-body.js && node --check src/prompt.js && node --check src/copy.js && node --check src/caller.js && node --check src/turn-controller.js && node --check src/drain.js && node --check src/concurrency.js && node --check src/openai-contract.js && node --check src/log-safe.js",
+    "check": "node --check src/server.js && node --check src/runtime.js && node --check src/health-routes.js && node --check src/twilio-entry-routes.js && node --check src/relay-route.js && node --check src/twilio-completion-routes.js && node --check src/agent.js && node --check src/store.js && node --check src/twilio-security.js && node --check src/twilio-signature-url.js && node --check src/twiml.js && node --check src/ahm-data.js && node --check src/ahm-bridge.js && node --check src/sms.js && node --check src/sms-body.js && node --check src/prompt.js && node --check src/copy.js && node --check src/caller.js && node --check src/turn-controller.js && node --check src/drain.js && node --check src/concurrency.js && node --check src/openai-contract.js && node --check src/log-safe.js",
     "preflight": "node scripts/preflight.mjs",
     "smoke": "node scripts/post-deploy-smoke.mjs",
     "smoke:bridge": "node scripts/bridge-smoke.mjs"
   },
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "@fastify/formbody": "8.0.2",
     "@fastify/websocket": "11.2.0",
