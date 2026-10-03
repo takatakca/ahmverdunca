@@ -9,6 +9,7 @@ import { createConcurrencyController } from '../runtime/src/concurrency.js';
 import { config } from '../runtime/src/config.js';
 import {
   ACCESS_DENIED_BETA_QUOTA,
+  ACCESS_DENIED_BLOCKED,
   ACCESS_DENIED_BUSY,
   ACCESS_DENIED_MEMBERSHIP,
   ACCESS_DENIED_TECHNICAL,
@@ -357,7 +358,11 @@ app.post('/twilio/start', async (request, reply) => {
   }
 
   if (!session.access?.allowed) {
-    return denyActivatedCall(session, ACCESS_DENIED_MEMBERSHIP, 'membership_required', reply);
+    const accessReason = session.access?.reason || 'membership_required';
+    const copy = accessReason === 'blocked'
+      ? ACCESS_DENIED_BLOCKED
+      : ACCESS_DENIED_MEMBERSHIP;
+    return denyActivatedCall(session, copy, accessReason, reply);
   }
 
   if (!(await persistStartOrFail(session))) {
