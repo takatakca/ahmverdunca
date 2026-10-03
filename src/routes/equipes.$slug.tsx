@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Facebook,
   Instagram,
+  ExternalLink,
   Mail,
   MapPin,
   ShieldCheck,
@@ -13,7 +14,7 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
-import { teamsForCategory } from "@/data/team-directory";
+import { legacyTeamScheduleUrl, teamsForCategory } from "@/data/team-directory";
 import { getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
@@ -257,9 +258,18 @@ function TeamPage() {
             />
             <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
               {publicTeams.map((entry) => (
-                <div key={`${entry.level}-${entry.name}`} className="bg-background p-5">
+                <div key={entry.legacyScheduleTeamId} className="interactive-surface bg-background p-5">
                   <p className="eyebrow text-sport">{entry.level}</p>
                   <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-none text-navy">{entry.name}</p>
+                  <a
+                    href={legacyTeamScheduleUrl(entry)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-sport hover:underline"
+                  >
+                    {lang === "fr" ? "Horaire et classement publiés" : "Published schedule and standings"}
+                    <ExternalLink className="size-3.5" />
+                  </a>
                 </div>
               ))}
             </div>
