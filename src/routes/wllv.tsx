@@ -84,6 +84,29 @@ function WllvPage() {
             </Button>
           </div>
         </section>
+        <section className="overflow-hidden border border-navy/12 bg-background">
+          <div className="bg-ice p-5 md:p-6">
+            <p className="eyebrow text-sport">{lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy md:text-4xl">
+              {lang === "fr" ? "Parcours Chacals" : "Chacals pathway"}
+            </h2>
+          </div>
+          <div className="grid gap-px bg-navy/10 sm:grid-cols-3 lg:grid-cols-6">
+            {["M11", "M13", "M15", "M17", "M19", "M21"].map((category) => (
+              <a
+                key={category}
+                href={EXTERNAL_LINKS.wllvSchedules}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="interactive-surface flex min-h-24 flex-col justify-between bg-background p-4 hover:bg-ice"
+              >
+                <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">WLLV</span>
+                <span className="font-display text-3xl font-extrabold uppercase text-navy">{category}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
         <section className="grid gap-4 md:grid-cols-2">
           <a
             href={EXTERNAL_LINKS.wllv}
@@ -106,7 +129,7 @@ function WllvPage() {
           </a>
 
           <a
-            href={EXTERNAL_LINKS.officialDoubleLetterSchedule}
+            href={EXTERNAL_LINKS.wllvSchedules}
             target="_blank"
             rel="noopener noreferrer"
             className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
