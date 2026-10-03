@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, ExternalLink, Info, Mail, ShieldCheck } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { TEAMS } from "@/data/teams";
+import { CURRENT_TEAMS } from "@/data/teams";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
@@ -195,7 +195,7 @@ function RegistrationPage() {
             }
           />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {TEAMS.map((team) => (
+            {CURRENT_TEAMS.map((team) => (
               <Link
                 key={team.slug}
                 to="/equipes/$slug"
