@@ -71,7 +71,7 @@ function ArenasPage() {
               aria-pressed={zone === zoneItem.id}
               onClick={() => setZone(zoneItem.id)}
               className={cn(
-                "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors",
+                "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em]",
                 zone === zoneItem.id
                   ? "border-sport bg-sport text-sport-foreground"
                   : "border-input bg-background hover:bg-secondary",
@@ -84,7 +84,7 @@ function ArenasPage() {
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {list.map((arena) => (
-            <article key={arena.slug} className="card-elevated flex flex-col p-5">
+            <article key={arena.slug} className="card-elevated interactive-surface flex flex-col p-5">
               <div className="flex items-start justify-between gap-3">
                 <MapPin className="mt-0.5 size-5 shrink-0 text-sport" aria-hidden />
                 {arena.website && <ExternalLink className="size-4 text-muted-foreground" aria-hidden />}
@@ -107,7 +107,7 @@ function ArenasPage() {
                 <Link
                   to="/arenas/$slug"
                   params={{ slug: arena.slug }}
-                  className="tap-target inline-flex items-center justify-center border border-input px-3 text-xs font-semibold uppercase tracking-wide hover:bg-secondary"
+                  className="premium-control tap-target inline-flex items-center justify-center border border-input px-3 text-xs font-semibold uppercase tracking-wide hover:bg-secondary"
                 >
                   {lang === "fr" ? "Détails" : "Details"}
                 </Link>
@@ -115,7 +115,7 @@ function ArenasPage() {
                   href={mapsDirectionsUrl(arena.address)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="tap-target inline-flex items-center justify-center gap-1.5 bg-navy px-3 text-xs font-semibold uppercase tracking-wide text-navy-foreground hover:bg-navy-deep"
+                  className="premium-control tap-target inline-flex items-center justify-center gap-1.5 bg-navy px-3 text-xs font-semibold uppercase tracking-wide text-navy-foreground hover:bg-navy-deep"
                 >
                   <Navigation className="size-3.5" aria-hidden />
                   {t("common.directions")}
