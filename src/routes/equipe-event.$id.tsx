@@ -8,9 +8,9 @@ import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl } from
 import { useI18n } from "@/lib/i18n";
 import { SITE } from "@/lib/site";
 
-export const Route = createFileRoute("/equipe-event/$id")({
-  head: ({ params }) => ({
-    links: canonicalLink(`/equipe-event/${params.id}`),
+export const Route = createFileRoute("/equipe-event/$id" as any)({
+  head: () => ({
+    links: canonicalLink("/equipes"),
     meta: [
       { title: "Aperçu activité équipe — AHM Verdun" },
       { name: "robots", content: "noindex, nofollow" },
@@ -21,8 +21,9 @@ export const Route = createFileRoute("/equipe-event/$id")({
 
 function TeamEventDemoPage() {
   const { lang } = useI18n();
-  const { id } = Route.useParams();
   const currentHref = useRouterState({ select: (state) => state.location.href });
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const id = pathname.split("/").filter(Boolean).at(-1) ?? "demo";
   const search = new URL(currentHref, SITE.domain).searchParams;
   const teamId = search.get("teamId") ?? "";
   const teamName = search.get("team") ?? "Équipe AHMV";
