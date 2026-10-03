@@ -28,6 +28,7 @@ import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { AhmvRealHockeyWall } from "@/components/home/ahmv-real-hockey-wall";
+import { HomeParentCommand } from "@/components/home/home-parent-command";
 import { LogoSlot } from "@/components/layout/logo-slot";
 import { AdSenseSlot } from "@/components/adsense-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -264,6 +265,8 @@ function Home() {
       )}
 
       <OfficialWeekPreview />
+
+      <HomeParentCommand />
 
       {/* Real AHMV photography — keep the portal visibly rooted in the association */}
       <section className="overflow-hidden border-y border-navy/10 bg-background py-9 md:py-12">

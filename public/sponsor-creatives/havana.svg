@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="t d">
+<title id="t">Havana Resort — Sortez de la routine</title><desc id="d">Créative sponsor Havana Resort.</desc>
+<defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07102b"/><stop offset=".55" stop-color="#0d3151"/><stop offset="1" stop-color="#0c776f"/></linearGradient><linearGradient id="s" x1="0" x2="1"><stop stop-color="#ff9d2e"/><stop offset="1" stop-color="#ffd34f"/></linearGradient></defs>
+<rect width="1200" height="520" fill="url(#b)"/><circle cx="1005" cy="120" r="145" fill="url(#s)" opacity=".92"/>
+<path d="M0 405 C160 335 310 430 470 380 S800 300 1200 355 L1200 520H0Z" fill="#07102b" opacity=".82"/>
+<path d="M690 402l115-160 95 160z" fill="#d8f1ee" opacity=".28"/><path d="M825 402l145-215 150 215z" fill="#d8f1ee" opacity=".18"/>
+<g transform="translate(72 72)"><text x="0" y="74" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="76" font-weight="900">HAVANA</text><text x="0" y="118" fill="#ffd34f" font-family="Arial,Helvetica,sans-serif" font-size="28" font-weight="800" letter-spacing="8">RESORT</text></g>
+<text x="72" y="272" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="46" font-weight="800">SORTEZ DE LA ROUTINE.</text>
+<text x="72" y="326" fill="#cfe6ee" font-family="Arial,Helvetica,sans-serif" font-size="24">Escapades • événements • plein air</text>
+<g transform="translate(72 390)"><rect width="230" height="62" rx="31" fill="#ffd34f"/><text x="38" y="40" fill="#07102b" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800">DÉCOUVRIR →</text></g>
+</svg>
