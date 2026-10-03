@@ -19,6 +19,9 @@ import { handleTakatakMarketingCampaign } from "./features/ahmv-phone/marketing/
 import { handleTakatakMarketingConsentSync } from "./features/ahmv-phone/marketing/consent-handler.server";
 import { handleAhmvMarketingCampaignCron } from "./features/ahmv-phone/marketing/cron-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
+import { handleAhmvExperienceAuth } from "./features/ahmv-experience/auth-handler.server";
+import { handleAhmvExperienceApi } from "./features/ahmv-experience/api-handler.server";
+import { gateAhmvExperience } from "./features/ahmv-experience/gate.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -102,6 +105,12 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
+    const experienceAuthResponse = await handleAhmvExperienceAuth(request);
+    if (experienceAuthResponse) return experienceAuthResponse;
+    const experienceApiResponse = await handleAhmvExperienceApi(request);
+    if (experienceApiResponse) return experienceApiResponse;
+    const experienceGateResponse = gateAhmvExperience(request);
+    if (experienceGateResponse) return experienceGateResponse;
     const phoneStatusResponse = handleAhmvPhoneStatus(request);
     if (phoneStatusResponse) return phoneStatusResponse;
     const calendarResponse = handleAhmvCalendarLink(request);
