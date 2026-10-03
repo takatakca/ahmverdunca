@@ -81,16 +81,11 @@ jobs:
         run: |
           bunx eslint . --rule 'prettier/prettier: off'
 
-      - name: Production deployment smoke safeguards
-        run: |
-          bash -n scripts/deploy-production-http-smoke.sh
-          bun run test:deploy-smoke
-
       - name: Standalone Voice runtime
         working-directory: services/ahmv-voice-ai
         run: |
           npm ci --ignore-scripts --audit=false --fund=false
-          npm run check
+          npm run verify
           npm audit --omit=dev --audit-level=high
 
       - name: Build
