@@ -8,17 +8,13 @@ import {
   safeTouchPhoneContact,
 } from "../contacts/store.server.ts";
 import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
-import {
-  sendTransactionalSms,
-  updateSmsDeliveryStatus,
-} from "../messaging/send.server.ts";
+import { sendTransactionalSms } from "../messaging/send.server.ts";
 import { nextEventService } from "../schedules/service.ts";
 import {
   compactTeamChoices,
   resolvePublicTeam,
 } from "../teams/resolve.ts";
 import {
-  TWILIO_HEADERS,
   TWILIO_ROOT,
   TWILIO_ROUTES,
   compactSmsFallback,
@@ -31,6 +27,7 @@ import {
 } from "./common.server.ts";
 import { validateTwilioWebhookRequest } from "./request.server.ts";
 import { handleTwilioSms } from "./sms.server.ts";
+import { handleTwilioStatus } from "./status.server.ts";
 
 export async function handleAhmvTwilio(
   request: Request,
@@ -43,13 +40,7 @@ export async function handleAhmvTwilio(
   if (!validation.ok) return validation.response;
   const { url, params, reference: ref, log } = validation.value;
   if (url.pathname === `${TWILIO_ROOT}/status`) {
-    try {
-      await updateSmsDeliveryStatus(params["MessageSid"] ?? "", params["MessageStatus"] ?? "");
-    } catch (error) {
-      console.error("[AHMV SMS delivery callback]", error);
-    }
-    log("status-received");
-    return new Response(null, { status: 204, headers: TWILIO_HEADERS });
+    return await handleTwilioStatus(validation.value);
   }
 
   if (params["To"] !== (settings["AHMV_PUBLIC_PHONE"] ?? "+15816666246")) return webhookFailure(403);
