@@ -289,7 +289,7 @@ function TeamPage() {
               {publicTeams.map((entry) => {
                 const teamSocialLinks = getPublicTeamSocialLinks(entry.legacyScheduleTeamId);
                 return (
-                  <div key={entry.legacyScheduleTeamId} className="interactive-surface flex min-h-56 flex-col bg-background p-5">
+                  <div id={`team-${entry.legacyScheduleTeamId}`} key={entry.legacyScheduleTeamId} className="interactive-surface scroll-mt-28 flex min-h-56 flex-col bg-background p-5">
                     <div>
                       <div className="flex items-start justify-between gap-3">
                         <p className="eyebrow text-sport">{entry.level}</p>
