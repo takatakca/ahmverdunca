@@ -15,10 +15,10 @@ export const Route = createFileRoute("/membership")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: MembershipDemoPage,
+  component: MembershipPreviewPage,
 });
 
-function MembershipDemoPage() {
+function MembershipPreviewPage() {
   const { lang } = useI18n();
   const price = PARENT_PREMIUM.weeklyPriceCad.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA", {
     style: "currency",
@@ -41,9 +41,9 @@ function MembershipDemoPage() {
         <div className="container-site grid gap-8 py-12 md:grid-cols-[1.05fr_0.95fr] md:py-16">
           <div>
             <div className="flex flex-wrap gap-2">
-              <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.16em] text-sport-foreground">DEMO</span>
+              <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.16em] text-sport-foreground">{lang === "fr" ? "APERÇU" : "PREVIEW"}</span>
               <span className="border border-white/16 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/60">
-                {lang === "fr" ? "Devanture prête à activer" : "Switch-on-ready storefront"}
+                {lang === "fr" ? "Aperçu interactif" : "Interactive preview"}
               </span>
             </div>
             <p className="eyebrow mt-7 text-sport-foreground">AHMV Member</p>
@@ -52,8 +52,8 @@ function MembershipDemoPage() {
             </h1>
             <p className="mt-6 max-w-2xl text-sm leading-relaxed text-white/65 md:text-base">
               {lang === "fr"
-                ? "Le produit est présenté ici uniquement en démonstration. Aucune facturation et aucune création d’abonnement ne sont déclenchées depuis cette page."
-                : "The product is shown here as a front-end demo only. No billing or subscription creation is triggered from this page."}
+                ? "Cet aperçu permet de comparer l’expérience visiteur et l’expérience membre. Aucune facturation et aucune création d’abonnement ne sont déclenchées depuis cette page."
+                : "This preview lets you compare the visitor and member experiences. No billing or subscription creation is triggered from this page."}
             </p>
           </div>
 
@@ -79,7 +79,7 @@ function MembershipDemoPage() {
 
             <div className="mt-6 flex min-h-12 items-center justify-between border border-sport/35 bg-sport/10 px-4">
               <span className="font-display text-sm font-extrabold uppercase tracking-[0.1em] text-sport-foreground">
-                {lang === "fr" ? "Activation à brancher" : "Activation to connect"}
+                {lang === "fr" ? "Aucune activation publique" : "No public activation"}
               </span>
               <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-white/40">SWITCH ON</span>
             </div>
@@ -96,8 +96,8 @@ function MembershipDemoPage() {
               <h2 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.9] text-navy">{lang === "fr" ? fr : en}</h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {lang === "fr"
-                  ? "La devanture est déjà dessinée. Le service réel pourra remplacer l’état démo lorsque la connexion autorisée sera prête."
-                  : "The storefront is already designed. The live service can replace demo mode when the authorized connection is ready."}
+                  ? "Cette fonction est illustrée ici sans créer de compte, d’abonnement ni de droit membre réel."
+                  : "This capability is illustrated here without creating an account, subscription or real member entitlement."}
               </p>
             </article>
           ))}
@@ -126,14 +126,14 @@ function MembershipDemoPage() {
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-white/62">
               {lang === "fr"
-                ? "Lorsque le membership réel sera activé, les emplacements publicitaires pourront disparaître pour le membre vérifié."
-                : "When real membership is activated, ad placements can disappear for the verified member."}
+                ? "L’aperçu membre masque les espaces promotionnels localement afin de montrer l’expérience sans publicité; aucun statut membre réel n’est créé."
+                : "The member preview hides promotional placements locally to show the ad-free experience; no real member status is created."}
             </p>
             <div className="mt-7 space-y-3">
               {[
                 lang === "fr" ? "Aucun achat aujourd’hui" : "No purchase today",
                 lang === "fr" ? "Aucune carte demandée" : "No card requested",
-                lang === "fr" ? "Démo visuelle seulement" : "Visual demo only",
+                lang === "fr" ? "Aperçu local seulement" : "Local preview only",
               ].map((item) => (
                 <div key={item} className="flex items-center gap-3 border-b border-white/10 pb-3 text-sm text-white/72">
                   <Check className="size-4 text-sport-foreground" /> {item}
