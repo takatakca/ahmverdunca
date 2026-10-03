@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFile(path.join(root, p), "utf8");
 
 const [
-  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env, usage
+  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env, usage, metrics, turnController
 ] = await Promise.all([
   read("package.json"),
   read("package-lock.json"),
@@ -21,6 +21,8 @@ const [
   read("deploy/ahmv-voice.service"),
   read(".env.example"),
   read("src/usage.js"),
+  read("src/metrics.js"),
+  read("src/turn-controller.js"),
 ]);
 
 const pkg = JSON.parse(pkgRaw);
@@ -44,6 +46,12 @@ assert.match(config, /FEATURE_SMS_RECAP_ENABLED/);
 assert.match(config, /FEATURE_HUMAN_HANDOFF_ENABLED/);
 assert.match(usage, /estimatedSessionUsd/);
 assert.match(usage, /costGuardExceeded/);
+assert.match(metrics, /scheduleAuthoritative/);
+assert.match(metrics, /arenaAuthoritative/);
+assert.match(metrics, /humanHandoffRequests/);
+assert.match(turnController, /structuredClone\(session\.usage/);
+assert.match(turnController, /structuredClone\(session\.metrics/);
+assert.match(turnController, /handoffRequested/);
 assert.doesNotMatch(config, /AHM_DATA_API_URL|AHM_DATA_API_TOKEN/);
 
 assert.match(agent, /store:\s*false/);
