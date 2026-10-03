@@ -32,7 +32,7 @@ export function planPhoneLifecycleMessages(
   contact: AhmvPhoneContact,
   now = new Date(),
 ): LifecycleMessagePlan[] {
-  if (contact.accessTier === "blocked") return [];
+  if (contact.accessTier !== "trial") return [];
 
   const expiry = parseDate(contact.trialExpiresAt);
   if (!expiry) return [];
