@@ -58,7 +58,7 @@ export function validateMembershipSyncInput(
       : null;
   const expiresAt =
     typeof row["expiresAt"] === "string"
-      ? validIso(row["expiresAt"])
+      ? (validIso(row["expiresAt"]) ?? undefined)
       : undefined;
 
   if (
