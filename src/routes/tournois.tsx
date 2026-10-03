@@ -7,6 +7,7 @@ import { ShareButton } from "@/components/share-button";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/tournois")({
   head: () => ({
@@ -92,6 +93,8 @@ function TournamentsPage() {
             </div>
           </div>
         </section>
+
+        <HouseSponsorSlot placement="tournaments-path" count={1} compact />
 
         <section className="grid h-44 grid-cols-2 gap-2 overflow-hidden sm:h-56 md:grid-cols-3">
           {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary, OFFICIAL_MEDIA.tournamentM11Primary].map((media) => (
