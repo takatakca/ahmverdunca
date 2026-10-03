@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookmarkCheck, CalendarDays, ChevronDown, LogIn, MapPin, Menu, PhoneCall, Search, Sparkles, Trophy, Users, X } from "lucide-react";
+import { CalendarDays, ChevronDown, LogIn, MapPin, Menu, PhoneCall, Search, Sparkles, Trophy, Users, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { TEAMS } from "@/data/teams";
-import { publicTeamHubUrl } from "@/data/team-directory";
+import { officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import type { TranslationKey } from "@/lib/translations";
