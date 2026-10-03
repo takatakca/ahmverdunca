@@ -15,6 +15,7 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { TeamPortfolio } from "@/components/team-portfolio";
 import { TeamLiveFeed } from "@/components/team-live-feed";
+import { TeamCommunityBoard } from "@/components/team-community-board";
 import { getTeam } from "@/data/teams";
 import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
@@ -304,6 +305,7 @@ function TeamPage() {
         )}
 
         {exactTeam && <TeamLiveFeed team={exactTeam} lang={lang} />}
+        {exactTeam && <TeamCommunityBoard team={exactTeam} lang={lang} />}
 
         <section
           aria-labelledby="team-command-title"
