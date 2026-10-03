@@ -27,7 +27,9 @@
     "check:media-policy": "bun scripts/validate-media-policy.ts",
     "demo:phone": "bun scripts/ahmv-phone-demo.ts",
     "check:phone-preflight": "bun scripts/ahmv-phone-preflight.ts",
-    "preflight:voice": "tsx scripts/ahmv-voice-preflight.ts"
+    "preflight:voice": "tsx scripts/ahmv-voice-preflight.ts",
+    "smoke:voice": "tsx scripts/ahmv-voice-smoke.ts",
+    "smoke:voice-bridge": "tsx scripts/ahmv-voice-bridge-smoke.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
