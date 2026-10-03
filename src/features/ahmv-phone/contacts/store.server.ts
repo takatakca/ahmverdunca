@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "../../../integrations/supabase/client.server";
 
-export type AhmvPhoneLanguage = "fr" | "en";
+export type AhmvPhoneLanguage = "fr" | "en" | "es";
 export type AhmvPhoneChannel = "voice" | "sms" | "system";
 
 export interface AhmvPhoneContact {
@@ -37,7 +37,12 @@ function mapContact(row: Record<string, unknown>): AhmvPhoneContact {
   return {
     id: String(row["id"]),
     phoneE164: String(row["phone_e164"]),
-    language: row["language"] === "en" ? "en" : "fr",
+    language:
+      row["language"] === "en"
+        ? "en"
+        : row["language"] === "es"
+          ? "es"
+          : "fr",
     accessTier: row["access_tier"] as AhmvPhoneContact["accessTier"],
     trialExpiresAt: String(row["trial_expires_at"]),
     smsConsent: Boolean(row["sms_consent"]),
