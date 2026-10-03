@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">R2NETTE — Réservez vos services simplement</title>
+  <desc id="desc">Créative R2NETTE pour réservation de services.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1">
+      <stop offset="0" stop-color="#07102b"/>
+      <stop offset=".55" stop-color="#243b67"/>
+      <stop offset="1" stop-color="#7255c8"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" x2="1">
+      <stop offset="0" stop-color="#ffc928"/>
+      <stop offset="1" stop-color="#ffdf73"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="520" fill="url(#bg)"/>
+  <path d="M640 0L1200 0 1200 520 880 520Z" fill="#fff" opacity=".055"/>
+  <circle cx="1000" cy="120" r="180" fill="#c9bbff" opacity=".08"/>
+  <text x="72" y="145" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="82">R2NETTE</text>
+  <text x="72" y="240" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="44">RÉSERVEZ.</text>
+  <text x="72" y="300" fill="#ffc928" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="44">ON S’OCCUPE DU RESTE.</text>
+  <text x="72" y="360" fill="#d9e2ee" font-family="Arial,Helvetica,sans-serif" font-size="24">Services à domicile • créneaux simples • suivi clair</text>
+  <g transform="translate(72 408)">
+    <rect width="240" height="62" rx="31" fill="url(#accent)"/>
+    <text x="38" y="40" fill="#07102b" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="24">RÉSERVER →</text>
+  </g>
+  <g transform="translate(790 75)">
+    <rect width="330" height="370" rx="38" fill="#fff" opacity=".97"/>
+    <text x="34" y="58" fill="#07102b" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="26">CHOISISSEZ UN CRÉNEAU</text>
+    <g font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="18">
+      <rect x="34" y="92" width="78" height="58" rx="15" fill="#f1f4f8"/><text x="56" y="128" fill="#07102b">09:00</text>
+      <rect x="126" y="92" width="78" height="58" rx="15" fill="#ffc928"/><text x="148" y="128" fill="#07102b">10:30</text>
+      <rect x="218" y="92" width="78" height="58" rx="15" fill="#f1f4f8"/><text x="240" y="128" fill="#07102b">13:00</text>
+    </g>
+    <rect x="34" y="184" width="262" height="48" rx="16" fill="#f1f4f8"/>
+    <circle cx="60" cy="208" r="10" fill="#7255c8"/><rect x="82" y="199" width="130" height="18" rx="9" fill="#8ea0b1"/>
+    <rect x="34" y="252" width="262" height="72" rx="18" fill="#07102b"/>
+    <text x="60" y="295" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="22">CONFIRMER</text>
+  </g>
+</svg>

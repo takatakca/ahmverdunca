@@ -613,3 +613,57 @@
 @media (prefers-reduced-motion: no-preference) {
   .section-heading { animation: content-reveal 460ms cubic-bezier(.2,.8,.2,1) both; }
 }
+
+
+/* Motion layer — deliberately subtle so the sports UI stays fast and readable. */
+@keyframes ahmv-crest-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0.001deg); }
+  50% { transform: translate3d(0, -2px, 0) rotate(0.001deg); }
+}
+
+@keyframes ahmv-sheen-pass {
+  0% { transform: translateX(-130%) skewX(-18deg); opacity: 0; }
+  18% { opacity: .22; }
+  48% { opacity: .1; }
+  70%, 100% { transform: translateX(230%) skewX(-18deg); opacity: 0; }
+}
+
+.ahmv-logo-motion {
+  isolation: isolate;
+  animation: ahmv-crest-float 5.5s ease-in-out infinite;
+}
+
+.ahmv-logo-motion::before {
+  content: "";
+  position: absolute;
+  inset: 14%;
+  z-index: -1;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-sport) 24%, transparent);
+  filter: blur(13px);
+  opacity: .24;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.ahmv-logo-motion:hover::before {
+  opacity: .42;
+  transform: scale(1.13);
+}
+
+.ahmv-motion-sheen {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 24%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), transparent);
+  mix-blend-mode: soft-light;
+  animation: ahmv-sheen-pass 8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ahmv-logo-motion,
+  .ahmv-motion-sheen {
+    animation: none !important;
+  }
+}

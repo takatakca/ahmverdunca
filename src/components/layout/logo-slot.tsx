@@ -11,7 +11,7 @@ export function LogoSlot({ className, size = "sm" }: { className?: string; size?
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 items-center justify-center",
+        "ahmv-logo-motion relative inline-flex shrink-0 items-center justify-center",
         size === "sm" ? "size-14 lg:size-16" : "size-20 sm:size-24",
         className,
       )}

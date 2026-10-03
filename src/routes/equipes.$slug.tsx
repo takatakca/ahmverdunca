@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { TeamPortfolio } from "@/components/team-portfolio";
 import { TeamGameCenter } from "@/components/team-game-center";
 import { TeamMicrositeHero } from "@/components/team-microsite-hero";
+import { TeamParentDeck } from "@/components/team-parent-deck";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { TeamLiveFeed } from "@/components/team-live-feed";
 import { TeamParentPremium } from "@/components/team-parent-premium";
@@ -217,7 +218,7 @@ function TeamPage() {
 
         {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
 
-        {exactTeam && <HouseSponsorSlot placement={`team-top-${exactTeam.legacyScheduleTeamId}`} count={1} compact />}
+        {exactTeam && <TeamParentDeck team={exactTeam} lang={lang} />}
         {exactTeam && (
           <TeamPortfolio
             team={exactTeam}
