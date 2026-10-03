@@ -27,6 +27,7 @@ export async function getAhmvPhoneInternalHealth(
     eventSnapshots,
     entitlementSyncEvents,
     campaignExecutions,
+    marketingConsentEvents,
   ] = await Promise.all([
     tableReady("ahmv_phone_contacts"),
     tableReady("ahmv_phone_team_preferences"),
@@ -35,6 +36,7 @@ export async function getAhmvPhoneInternalHealth(
     tableReady("ahmv_phone_event_snapshots"),
     tableReady("ahmv_phone_entitlement_sync_events"),
     tableReady("ahmv_phone_campaign_executions"),
+    tableReady("ahmv_phone_marketing_consent_events"),
   ]);
 
   const databaseReady =
@@ -65,6 +67,7 @@ export async function getAhmvPhoneInternalHealth(
       eventSnapshots,
       entitlementSyncEvents,
       campaignExecutions,
+      marketingConsentEvents,
     },
     features: {
       reminders: {
@@ -81,6 +84,9 @@ export async function getAhmvPhoneInternalHealth(
       },
       campaigns: {
         enabled: settings["AHMV_PHONE_CAMPAIGNS_ENABLED"] === "true",
+        consentSyncEnabled:
+          settings["AHMV_TAKATAK_MARKETING_CONSENT_SYNC_ENABLED"] === "true",
+        consentEvidenceReady: marketingConsentEvents,
         projectionReady: campaignExecutions,
         serviceTokenConfigured: Boolean(
           settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim(),
