@@ -252,7 +252,7 @@ export function SiteHeader() {
           <button
             type="button"
             className={cn(
-              "premium-control tap-target inline-flex h-11 shrink-0 items-center justify-center gap-1.5 border px-2.5 font-display text-[11px] font-extrabold uppercase tracking-[0.1em] xs:gap-2 xs:px-3 xs:text-xs xs:tracking-[0.12em] lg:hidden",
+              "premium-control tap-target inline-flex h-11 shrink-0 items-center justify-center gap-1.5 border px-2 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] min-[360px]:gap-2 min-[360px]:px-3 min-[360px]:text-xs min-[360px]:tracking-[0.12em] lg:hidden",
               open
                 ? "border-sport bg-sport text-sport-foreground"
                 : "border-navy-foreground/18 bg-navy-foreground/[0.035] text-navy-foreground hover:bg-navy-foreground/10",
@@ -263,7 +263,7 @@ export function SiteHeader() {
             onClick={toggleMobileMenu}
           >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
-            <span className="hidden min-[360px]:inline">{open ? (lang === "fr" ? "Fermer" : "Close") : "Menu"}</span>
+            <span>{open ? (lang === "fr" ? "Fermer" : "Close") : "Menu"}</span>
           </button>
         </div>
       </div>
