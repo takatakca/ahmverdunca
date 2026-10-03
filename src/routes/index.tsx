@@ -25,7 +25,6 @@ import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { LogoSlot } from "@/components/layout/logo-slot";
-import { LogoSlot } from "@/components/layout/logo-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
