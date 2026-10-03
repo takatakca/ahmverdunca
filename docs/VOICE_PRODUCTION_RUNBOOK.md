@@ -5,7 +5,7 @@ This runbook covers the infrastructure step after the AHMV Voice integration CI 
 ## Current integration authority
 
 - Repository: `takatakca/ahmverdunca`
-- Active Voice integration: draft PR **#179**
+- Active Voice integration branch: `voice-ai-preprod-v5`
 - Production website: `https://ahmverdun.ca`
 - Dedicated realtime host: `https://voice.ahmverdun.ca`
 - Public AHMV phone: `+1 581-666-6246`
