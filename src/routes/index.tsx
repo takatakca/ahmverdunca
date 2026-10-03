@@ -193,10 +193,6 @@ function Home() {
         </div>
       </section>
 
-      <AhmvRealHockeyWall />
-
-      <ScheduleFinder />
-
       {/* Alerts */}
       {alerts.length > 0 && (
         <section className="border-y border-status-cancelled/20 bg-status-cancelled-soft">
@@ -225,75 +221,13 @@ function Home() {
         </section>
       )}
 
+      <ScheduleFinder />
+
       <OfficialWeekPreview />
 
       <HomeParentCommand />
 
-      {/* Real AHMV photography — keep the portal visibly rooted in the association */}
-      <section className="overflow-hidden border-y border-navy/10 bg-background py-9 md:py-12">
-        <div className="container-site">
-          <div className="grid gap-5 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
-            <div>
-              <p className="eyebrow text-sport">{lang === "fr" ? "La glace · Les jeunes · Verdun" : "The rink · The players · Verdun"}</p>
-              <h2 className="mt-2 max-w-xl font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] text-navy sm:text-5xl md:text-6xl">
-                {lang === "fr" ? "Un vrai portail de hockey." : "A real hockey portal."}
-              </h2>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-                {lang === "fr"
-                  ? "Les photos officielles AHMV restent au cœur de l’expérience. Le design sert le hockey, les équipes et les familles — il ne remplace pas leur histoire."
-                  : "Official AHMV photography stays at the heart of the experience. The design supports hockey, teams and families — it does not replace their story."}
-              </p>
-              <Link
-                to="/galerie"
-                className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-sport"
-              >
-                {lang === "fr" ? "Voir les albums AHMV" : "View AHMV albums"} <ArrowRight className="size-4" />
-              </Link>
-            </div>
-
-            <div className="grid h-[380px] grid-cols-[1.35fr_0.65fr] grid-rows-2 gap-1 sm:h-[460px]">
-              <a
-                href={OFFICIAL_MEDIA.practiceGroup.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="photo-stage broadcast-cut interactive-surface group relative row-span-2 overflow-hidden bg-navy"
-                aria-label={lang === "fr" ? "Photo réelle AHMV — entraînement sur glace" : "Real AHMV photo — on-ice practice"}
-              >
-                <img
-                  src={OFFICIAL_MEDIA.practiceGroup.url}
-                  alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGroup.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.en}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.86)_100%)]" />
-                <span className="absolute bottom-4 left-4 bg-navy/80 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
-                  {lang === "fr" ? "Archive officielle AHMV" : "Official AHMV archive"}
-                </span>
-              </a>
-
-              {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media) => (
-                <a
-                  key={media.url}
-                  href={media.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="interactive-surface group relative overflow-hidden bg-navy"
-                >
-                  <img
-                    src={media.url}
-                    alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(7,16,43,0.72)_100%)]" />
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      <AhmvRealHockeyWall />
 
       {/* Team universe */}
       <section className="relative overflow-hidden bg-navy-deep py-10 text-navy-foreground md:py-14">

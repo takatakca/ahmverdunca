@@ -61,22 +61,22 @@ export function TeamPortfolio({
     if (module === "news") {
       return newsCount > 0
         ? (lang === "fr" ? `${newsCount} nouvelle(s) liée(s)` : `${newsCount} linked story/stories`)
-        : (lang === "fr" ? "Prêt pour les publications révisées" : "Ready for reviewed posts");
+        : (lang === "fr" ? "Aucune nouvelle d’équipe publiée" : "No team news published");
     }
     if (module === "photos") {
       return albumCount > 0
         ? (lang === "fr" ? `${albumCount} album(s) lié(s)` : `${albumCount} linked album(s)`)
-        : (lang === "fr" ? "Prêt pour les médias approuvés" : "Ready for approved media");
+        : (lang === "fr" ? "Aucun album d’équipe publié" : "No team album published");
     }
     if (module === "social") {
       return approvedSocialCount > 0
         ? (lang === "fr" ? `${approvedSocialCount} compte(s) approuvé(s)` : `${approvedSocialCount} approved account(s)`)
-        : (lang === "fr" ? "Connexion via GROUPE TAKATAK à venir" : "GROUPE TAKATAK connection upcoming");
+        : (lang === "fr" ? "Aucun compte social approuvé publié" : "No approved social account published");
     }
     if (module === "fundraising") {
       return lang === "fr"
-        ? "Paiement et campagne à activer après validation"
-        : "Payments and campaign activate only after approval";
+        ? "Aucune campagne publique active"
+        : "No public campaign active";
     }
     if (module === "volunteers") {
       return lang === "fr"
@@ -94,8 +94,8 @@ export function TeamPortfolio({
   const statusLabel = (module: TeamPortalModule) => {
     if (module === "schedule" || module === "results") return lang === "fr" ? "OFFICIEL" : "OFFICIAL";
     if (module === "social" && approvedSocialCount > 0) return lang === "fr" ? "APPROUVÉ" : "APPROVED";
-    if (module === "social" || module === "fundraising") return lang === "fr" ? "À CONNECTER" : "CONNECT";
-    return lang === "fr" ? "PRÊT" : "READY";
+    if (module === "social" || module === "fundraising") return lang === "fr" ? "NON PUBLIÉ" : "NOT PUBLISHED";
+    return lang === "fr" ? "PUBLIC" : "PUBLIC";
   };
 
   return (
@@ -110,8 +110,8 @@ export function TeamPortfolio({
           </h2>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
             {lang === "fr"
-              ? "Un portfolio public propre à cette équipe. Les résultats restent officiels; les réseaux, campagnes et automatisations seront servis par GROUPE TAKATAK lorsqu’ils sont connectés et autorisés."
-              : "A public portfolio for this exact team. Results remain official; social feeds, campaigns and automations will be served by GROUPE TAKATAK when connected and authorized."}
+              ? "Un portfolio public propre à cette équipe. Les horaires et résultats renvoient aux sources officielles; seuls les contenus approuvés et réellement publiés apparaissent ici."
+              : "A public portfolio for this exact team. Schedules and results link to official sources; only approved, actually published content appears here."}
           </p>
         </div>
         <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
@@ -149,7 +149,7 @@ export function TeamPortfolio({
             alt={lang === "fr"
               ? (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.fr)
               : (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.en : OFFICIAL_MEDIA.practiceGroup.alt.en)}
-            loading="eager"
+            loading="lazy"
             decoding="async"
             className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
           />

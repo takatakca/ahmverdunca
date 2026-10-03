@@ -283,8 +283,8 @@ export function TeamParentDeck({
               </p>
               <p className="mt-3 text-sm leading-relaxed text-white/58">
                 {lang === "fr"
-                  ? "Démo locale seulement : les choix restent dans ce navigateur. Aucun courriel, SMS ou push n’est envoyé."
-                  : "Local demo only: choices stay in this browser. No email, SMS or push is sent."}
+                  ? "Ces préférences restent uniquement dans ce navigateur. Aucun courriel, SMS ou push n’est envoyé."
+                  : "These preferences stay only in this browser. No email, SMS or push is sent."}
               </p>
             </div>
             <div className="grid gap-px bg-navy/10 sm:grid-cols-3">
@@ -306,7 +306,7 @@ export function TeamParentDeck({
                     <span>
                       <span className="block font-display text-2xl font-extrabold uppercase leading-none text-navy">{lang === "fr" ? fr : en}</span>
                       <span className="mt-2 block text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                        {enabled ? (lang === "fr" ? "Suivi activé · démo" : "Following · demo") : (lang === "fr" ? "Activer le suivi" : "Enable follow")}
+                        {enabled ? (lang === "fr" ? "Préférence activée" : "Preference enabled") : (lang === "fr" ? "Activer la préférence" : "Enable preference")}
                       </span>
                     </span>
                   </button>

@@ -107,7 +107,7 @@ export function SiteFooter() {
             <div className="grid gap-px border border-navy-foreground/12 bg-navy-foreground/12 sm:grid-cols-2 lg:grid-cols-1">
               <a href="/membership" className="group flex min-h-28 items-center justify-between bg-competition p-5 hover:bg-white/[0.04]">
                 <span>
-                  <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">AHMV Member · DEMO</span>
+                  <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">AHMV Member · APERÇU</span>
                   <span className="mt-2 block font-display text-2xl font-extrabold uppercase leading-[0.9] text-white">
                     {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
                   </span>
@@ -158,18 +158,9 @@ export function SiteFooter() {
             </div>
           </div>
           {showPhone && (
-            phonePublic ? (
-              <a href={`tel:${phoneE164}`} className="mt-5 inline-block font-display text-xl font-bold text-navy-foreground hover:text-sport-foreground">
-                {phoneDisplay}
-              </a>
-            ) : (
-              <p className="mt-5 font-display text-xl font-bold text-navy-foreground/72">
-                {phoneDisplay}
-                <span className="ml-2 align-middle text-[9px] font-sans uppercase tracking-[0.18em] text-sport-foreground">
-                  {lang === "fr" ? "canal à venir" : "channel upcoming"}
-                </span>
-              </p>
-            )
+            <a href={`tel:${phoneE164}`} className="mt-5 inline-block font-display text-xl font-bold text-navy-foreground hover:text-sport-foreground">
+              {phoneDisplay}
+            </a>
           )}
         </div>
 

@@ -7,20 +7,20 @@ export function DemoMemberSwitch({ className = "" }: { className?: string }) {
   const { mode, setMode } = useDemoMemberMode();
 
   return (
-    <section className={`overflow-hidden border border-sport/30 bg-background ${className}`} aria-label={lang === "fr" ? "Mode de démonstration" : "Demo mode"}>
+    <section className={`overflow-hidden border border-sport/30 bg-background ${className}`} aria-label={lang === "fr" ? "Aperçu des modes visiteur et membre" : "Visitor and member mode preview"}>
       <div className="flex flex-col gap-4 bg-competition p-5 text-white sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
             <Sparkles className="size-4 text-sport-foreground" />
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Démo interactive" : "Interactive demo"}</p>
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Aperçu interactif" : "Interactive preview"}</p>
           </div>
           <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9]">
             {lang === "fr" ? "Voir les deux expériences" : "Preview both experiences"}
           </h2>
           <p className="mt-2 max-w-xl text-xs leading-relaxed text-white/55">
             {lang === "fr"
-              ? "Ce sélecteur ne crée aucun compte et ne facture rien. Il change seulement l’apparence locale de cette démo."
-              : "This switch creates no account and charges nothing. It only changes the local appearance of this demo."}
+              ? "Ce sélecteur ne crée aucun compte et ne facture rien. Il change seulement l’apparence locale de cet aperçu."
+              : "This switch creates no account and charges nothing. It only changes the local appearance of this preview."}
           </p>
         </div>
         <span className="shrink-0 border border-white/14 bg-white/[0.04] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/52">
@@ -62,7 +62,7 @@ export function DemoMemberSwitch({ className = "" }: { className?: string }) {
               AHMV Member
             </span>
             <span className="mt-2 block text-xs leading-relaxed text-muted-foreground">
-              {lang === "fr" ? "Les commandites de démonstration disparaissent." : "Demo sponsor placements disappear."}
+              {lang === "fr" ? "Les espaces promotionnels disparaissent dans cet aperçu." : "Promotional placements disappear in this preview."}
             </span>
           </span>
         </button>

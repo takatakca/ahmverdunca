@@ -151,21 +151,13 @@ export function SiteHeader() {
               </Link>
             ) : null}
             {showPhone && (
-              phonePublic ? (
-                <a
-                  href={`tel:${phoneE164}`}
-                  className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
-                >
-                  <PhoneCall className="size-3.5" aria-hidden />
-                  {phoneDisplay}
-                </a>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 text-navy-foreground/60" title={lang === "fr" ? "Numéro réservé — activation à venir" : "Reserved number — activation upcoming"}>
-                  <PhoneCall className="size-3.5" aria-hidden />
-                  {phoneDisplay}
-                  <span className="text-[9px] uppercase tracking-wider text-sport-foreground">{lang === "fr" ? "bientôt" : "soon"}</span>
-                </span>
-              )
+              <a
+                href={`tel:${phoneE164}`}
+                className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
+              >
+                <PhoneCall className="size-3.5" aria-hidden />
+                {phoneDisplay}
+              </a>
             )}
             <LangSwitch />
           </div>
@@ -272,7 +264,7 @@ export function SiteHeader() {
           <Button asChild variant="ghost" size="sm" className="hidden border border-sport/30 text-navy-foreground hover:bg-sport/10 md:inline-flex">
             <a href="/membership">
               <Sparkles className="size-4 text-sport-foreground" />
-              {lang === "fr" ? "Member · Démo" : "Member · Demo"}
+              {lang === "fr" ? "Member · Aperçu" : "Member · Preview"}
             </a>
           </Button>
           <button
@@ -460,7 +452,7 @@ export function SiteHeader() {
               <span className="flex items-center gap-2">
                 <Sparkles className="size-4 text-sport-foreground" />
                 <span>
-                  <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member · DEMO</span>
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member · APERÇU</span>
                   <span className="mt-0.5 block font-display text-base font-extrabold uppercase">
                     {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
                   </span>

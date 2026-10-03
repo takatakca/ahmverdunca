@@ -69,7 +69,7 @@ export function HouseSponsorSlot({
         <div className="flex items-center gap-2">
           <Megaphone className="size-3.5 text-sport" aria-hidden />
           <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-            {lang === "fr" ? "Promotion maison · Démo" : "House promotion · Demo"}
+            {lang === "fr" ? "Promotion maison" : "House promotion"}
           </p>
         </div>
 

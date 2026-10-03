@@ -106,7 +106,7 @@ export function TeamParentPremium({ team, lang }: Props) {
             <ShieldCheck className="size-5 text-sport-foreground" aria-hidden />
             <p className="eyebrow text-sport-foreground">
               {lang === "fr" ? "AHMV · Assistant parent" : "AHMV · Parent assistant"}
-              {demoMode ? " · DEMO" : ""}
+              {demoMode ? (lang === "fr" ? " · APERÇU" : " · PREVIEW") : ""}
             </p>
           </div>
           <h2
@@ -149,12 +149,12 @@ export function TeamParentPremium({ team, lang }: Props) {
           ) : (
             <div className="mt-6 border border-white/14 bg-white/[0.04] px-4 py-3">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/72">
-                {lang === "fr" ? "Aperçu abonnement · prêt à activer" : "Membership preview · ready to activate"}
+                {lang === "fr" ? "Aperçu du forfait membre" : "Membership plan preview"}
               </p>
               <p className="mt-1 text-xs leading-relaxed text-white/48">
                 {lang === "fr"
-                  ? "La devanture est complète en mode démo. Le bouton réel pourra être activé plus tard sans refaire ce bloc."
-                  : "The storefront is complete in demo mode. The real button can be switched on later without rebuilding this block."}
+                  ? "Aucune inscription ni facturation n’est déclenchée depuis cet aperçu public."
+                  : "No signup or billing is triggered from this public preview."}
               </p>
             </div>
           )}
