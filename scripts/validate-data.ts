@@ -13,6 +13,7 @@ import { SPONSORS } from "../src/data/sponsors";
 import { FAQ, FAQ_TOPICS } from "../src/data/faq";
 import { TEAM_SOCIAL_LINKS } from "../src/data/team-social";
 import { EXTERNAL_LINKS, MAIN_NAV, MORE_NAV, SITE } from "../src/lib/site";
+import { AHMV_SOCIAL_ARCHIVE_REFERENCES, HOCKEY_HERITAGE } from "../src/data/heritage";
 
 const errors: string[] = [];
 
@@ -76,6 +77,8 @@ requireUnique("ALERTS.id", ALERTS.map((alert) => alert.id));
 requireUnique("FAQ.id", FAQ.map((item) => item.id));
 requireUnique("FAQ_TOPICS.id", FAQ_TOPICS.map((topic) => topic.id));
 requireUnique("TEAM_SOCIAL_LINKS.targetPlatform", TEAM_SOCIAL_LINKS.map((item) => `${item.publicTeamId ?? item.teamSlug ?? "missing"}:${item.platform}`));
+requireUnique("AHMV_SOCIAL_ARCHIVE_REFERENCES.id", AHMV_SOCIAL_ARCHIVE_REFERENCES.map((item) => item.id));
+requireUnique("AHMV_SOCIAL_ARCHIVE_REFERENCES.url", AHMV_SOCIAL_ARCHIVE_REFERENCES.map((item) => item.url));
 requireUnique("NAV.key", [...MAIN_NAV, ...MORE_NAV].map((item) => item.key));
 requireUnique("NAV.to", [...MAIN_NAV, ...MORE_NAV].map((item) => item.to));
 
@@ -108,6 +111,10 @@ for (const [key, value] of Object.entries(EXTERNAL_LINKS)) {
   requireHttps(`EXTERNAL_LINKS.${key}`, value);
 }
 
+requireHttps("HOCKEY_HERITAGE.sourceUrl", HOCKEY_HERITAGE.sourceUrl);
+for (const reference of AHMV_SOCIAL_ARCHIVE_REFERENCES) {
+  requireHttps(`AHMV_SOCIAL_ARCHIVE_REFERENCES.${reference.id}`, reference.url);
+}
 requireHttps("OFFICIAL_WEEK_META.sourceUrl", OFFICIAL_WEEK_META.sourceUrl);
 for (const document of WEEKLY_SCHEDULE_DOCUMENTS) {
   requireHttps(`WEEKLY_SCHEDULE_DOCUMENTS week ${document.week}`, document.sourceUrl);
@@ -349,6 +356,7 @@ console.log(
     `Alerts: ${ALERTS.length}`,
     `FAQ: ${FAQ.length}`,
     `Approved team social links: ${TEAM_SOCIAL_LINKS.length}`,
+    `Social archive references: ${AHMV_SOCIAL_ARCHIVE_REFERENCES.length}`,
     `Official week events: ${OFFICIAL_WEEK_ACTIVITIES.length}`,
     `Validated external links: ${Object.keys(EXTERNAL_LINKS).length}`,
     `Navigation routes: ${MAIN_NAV.length + MORE_NAV.length}`,

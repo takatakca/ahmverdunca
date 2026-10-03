@@ -2,7 +2,9 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   AlertTriangle,
+  Archive,
   ArrowRight,
+  BookOpen,
   CalendarDays,
   ExternalLink,
   Facebook,
@@ -20,6 +22,7 @@ import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { ARENAS } from "@/data/arenas";
 import { SPONSORS } from "@/data/sponsors";
+import { HOCKEY_HERITAGE } from "@/data/heritage";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
@@ -618,6 +621,90 @@ function Home() {
         </div>
       </section>
 
+      {/* Hockey heritage */}
+      <section id="archives-hockey" className="relative scroll-mt-28 overflow-hidden border-y border-navy/10 bg-background py-14 md:py-20">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
+        <div className="container-site relative">
+          <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="bg-competition p-7 text-white md:p-10 lg:p-12">
+              <div className="flex items-center gap-3">
+                <Archive className="size-7 text-sport-foreground" aria-hidden />
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Mémoire du hockey verdunois" : "Verdun hockey heritage"}
+                </p>
+              </div>
+              <h2 className="mt-5 max-w-4xl font-display text-5xl font-extrabold uppercase leading-[0.84] tracking-[-0.04em] sm:text-6xl md:text-7xl">
+                {lang === "fr" ? HOCKEY_HERITAGE.title.fr : HOCKEY_HERITAGE.title.en}
+              </h2>
+              <p className="mt-5 max-w-3xl text-sm leading-relaxed text-white/68 md:text-base">
+                {lang === "fr" ? HOCKEY_HERITAGE.summary.fr : HOCKEY_HERITAGE.summary.en}
+              </p>
+
+              <div className="mt-8 grid gap-px bg-white/12 sm:grid-cols-2">
+                {HOCKEY_HERITAGE.milestones.map((item) => (
+                  <article key={item.id} className="bg-competition p-5">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/75">
+                      {lang === "fr" ? item.timing.fr : item.timing.en}
+                    </p>
+                    <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.9]">
+                      {lang === "fr" ? item.title.fr : item.title.en}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-white/58">
+                      {lang === "fr" ? item.description.fr : item.description.en}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-between bg-ice p-7 md:p-10 lg:p-12">
+              <div>
+                <BookOpen className="size-8 text-sport" aria-hidden />
+                <p className="eyebrow mt-6 text-sport">
+                  {lang === "fr" ? "Vos archives font partie de l’histoire" : "Your archives are part of the story"}
+                </p>
+                <p className="mt-3 font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy sm:text-4xl">
+                  {lang === "fr" ? "Photos. Chandails. Trophées. Souvenirs." : "Photos. Jerseys. Trophies. Memories."}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  {lang === "fr" ? HOCKEY_HERITAGE.archiveCall.fr : HOCKEY_HERITAGE.archiveCall.en}
+                </p>
+              </div>
+
+              <div className="mt-8 border-t border-navy/12 pt-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  {lang === "fr" ? "Archive féminine — septembre 2026" : "Girls hockey archive — September 2026"}
+                </p>
+                <p className="mt-2 font-display text-2xl font-extrabold uppercase text-navy">
+                  {lang === "fr" ? "M12A + M12B" : "U12A + U12B"}
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  {lang === "fr"
+                    ? "L’appel visait les joueuses et gardiennes nées en 2015, 2016 ou 2017. La date limite du 23 septembre étant passée, l’annonce est conservée comme archive du programme féminin."
+                    : "The call targeted players and goaltenders born in 2015, 2016 or 2017. Because the September 23 deadline has passed, the notice is preserved as part of the girls hockey archive."}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <a
+                    href="https://www.facebook.com/share/19JZX8MAwx/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="premium-control inline-flex min-h-11 items-center gap-2 border border-navy/12 bg-background px-4 text-xs font-bold uppercase tracking-[0.12em] text-navy hover:border-sport"
+                  >
+                    Facebook archive <ExternalLink className="size-3.5" />
+                  </a>
+                  <a
+                    href={`mailto:${SITE.girlsHockeyEmail}`}
+                    className="premium-control inline-flex min-h-11 items-center gap-2 bg-navy px-4 text-xs font-bold uppercase tracking-[0.12em] text-white"
+                  >
+                    {lang === "fr" ? "Hockey féminin" : "Girls hockey"} <ArrowRight className="size-3.5" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Partners */}
       <section className="navy-texture overflow-hidden py-12 text-navy-foreground md:py-16">
         <div className="container-site">
@@ -634,15 +721,37 @@ function Home() {
             </Button>
           </div>
 
-          <div className="mt-8 flex flex-wrap border-l border-t border-navy-foreground/15">
-            {SPONSORS.map((sponsor) => {
-              const classes = "flex min-h-20 min-w-[220px] flex-1 items-center border-b border-r border-navy-foreground/15 px-5 py-4 text-sm font-semibold text-navy-foreground/80 transition-colors hover:bg-navy-foreground/[0.05] hover:text-navy-foreground";
+          <div className="mt-8 grid gap-px overflow-hidden border border-navy-foreground/15 bg-navy-foreground/15 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {SPONSORS.map((sponsor, index) => {
+              const content = (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/70">
+                      {lang === "fr" ? "Partenaire AHMV" : "AHMV partner"}
+                    </span>
+                    <span className="font-display text-sm font-bold text-white/25">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <div className="mt-8">
+                    <p className="font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.02em] text-white">
+                      {sponsor.name}
+                    </p>
+                    <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.15em] text-white/35">
+                      {sponsor.websiteVerified
+                        ? (lang === "fr" ? "Lien vérifié" : "Verified link")
+                        : (lang === "fr" ? "Identité répertoriée" : "Listed identity")}
+                    </p>
+                  </div>
+                </>
+              );
+              const classes = "interactive-surface flex min-h-40 flex-col justify-between bg-competition p-5 transition-colors hover:bg-white/[0.055]";
               return sponsor.website ? (
                 <a key={sponsor.name} href={sponsor.website} target="_blank" rel="noopener noreferrer" className={classes}>
-                  {sponsor.name}
+                  {content}
                 </a>
               ) : (
-                <div key={sponsor.name} className={classes}>{sponsor.name}</div>
+                <div key={sponsor.name} className={classes}>{content}</div>
               );
             })}
           </div>

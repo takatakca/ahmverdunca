@@ -87,32 +87,60 @@ function PartnersPage() {
             title={lang === "fr" ? "Ils soutiennent AHM Verdun" : "They support AHM Verdun"}
           />
           <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {SPONSORS.map((sponsor) => (
-              <article key={sponsor.name} className="interactive-surface flex min-h-40 flex-col justify-between bg-background p-5 hover:bg-ice/55">
-                <div className="flex items-center justify-between">
-                  <Handshake className="size-6 text-sport" aria-hidden />
-                  {sponsor.website && <ExternalLink className="size-4 text-muted-foreground" aria-hidden />}
-                </div>
-                <div className="mt-8">
-                  <h2 className="heading-card">{sponsor.name}</h2>
-                  <p className="mt-2 text-xs uppercase tracking-wider text-muted-foreground">
-                    {sponsor.websiteVerified
-                      ? (lang === "fr" ? "Partenaire AHMV · lien vérifié" : "AHMV partner · verified link")
-                      : (lang === "fr" ? "Partenaire AHMV" : "AHMV partner")}
-                  </p>
-                  {sponsor.website && (
-                    <a
-                      href={sponsor.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-4 inline-flex text-sm font-semibold text-sport hover:underline"
-                    >
-                      {lang === "fr" ? "Visiter le partenaire" : "Visit partner"}
-                    </a>
-                  )}
-                </div>
-              </article>
-            ))}
+            {SPONSORS.map((sponsor, index) => {
+              const card = (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex size-11 items-center justify-center border border-navy/12 bg-ice">
+                      <Handshake className="size-5 text-sport" aria-hidden />
+                    </div>
+                    <span className="font-display text-2xl font-extrabold text-navy/12">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <div className="mt-10">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport">
+                      {lang === "fr" ? "Partenaire AHMV" : "AHMV partner"}
+                    </p>
+                    <h2 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.02em] text-navy">
+                      {sponsor.name}
+                    </h2>
+                    <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                      {sponsor.websiteVerified
+                        ? (lang === "fr" ? "Lien officiel vérifié" : "Verified official link")
+                        : (lang === "fr" ? "Identité répertoriée" : "Listed identity")}
+                    </p>
+                  </div>
+                  <div className="mt-6 flex items-center justify-between border-t border-navy/10 pt-4 text-[10px] font-bold uppercase tracking-[0.12em]">
+                    <span className={sponsor.website ? "text-sport" : "text-muted-foreground"}>
+                      {sponsor.website
+                        ? (lang === "fr" ? "Visiter" : "Visit")
+                        : (lang === "fr" ? "Lien à confirmer" : "Link to confirm")}
+                    </span>
+                    {sponsor.website && <ExternalLink className="size-3.5 text-sport" aria-hidden />}
+                  </div>
+                </>
+              );
+
+              return sponsor.website ? (
+                <a
+                  key={sponsor.name}
+                  href={sponsor.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="interactive-surface flex min-h-64 flex-col justify-between bg-background p-5 hover:bg-ice/55"
+                >
+                  {card}
+                </a>
+              ) : (
+                <article
+                  key={sponsor.name}
+                  className="interactive-surface flex min-h-64 flex-col justify-between bg-background p-5"
+                >
+                  {card}
+                </article>
+              );
+            })}
           </div>
         </section>
 

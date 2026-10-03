@@ -50,6 +50,45 @@ export interface NewsArticle {
 
 export const NEWS: NewsArticle[] = [
   {
+    slug: "derniere-chance-equipes-feminines-m12-septembre-2026",
+    title: {
+      fr: "Dernière chance — équipes féminines M12",
+      en: "Last call — U12 girls teams",
+    },
+    excerpt: {
+      fr: "Archive de l’appel lancé pour compléter les équipes féminines M12A et M12B avec des joueuses et gardiennes nées en 2015, 2016 ou 2017.",
+      en: "Archive of the call to complete the U12A and U12B girls teams with players and goaltenders born in 2015, 2016 or 2017.",
+    },
+    body: {
+      fr: [
+        "L’AHM Verdun recherchait encore des joueuses et gardiennes de but pour compléter deux équipes féminines M12A et M12B.",
+        "L’appel visait les filles nées en 2015, 2016 ou 2017. La date limite annoncée était le mercredi 23 septembre 2026; cette publication est donc conservée comme archive et non comme inscription active.",
+        "Pour l’information sur le programme de hockey féminin, l’association publie le courriel hockeyfeminin@ahmverdun.com.",
+      ],
+      en: [
+        "AHM Verdun was still recruiting players and goaltenders to complete two U12A and U12B girls teams.",
+        "The call targeted girls born in 2015, 2016 or 2017. The announced deadline was Wednesday, September 23, 2026; this post is therefore preserved as an archive rather than an active registration call.",
+        "For information about the girls hockey program, the association publishes hockeyfeminin@ahmverdun.com.",
+      ],
+    },
+    publishedLabel: {
+      fr: "Septembre 2026 — archive",
+      en: "September 2026 — archive",
+    },
+    author: "AHM Verdun Communication",
+    category: "feminine",
+    teamSlugs: ["feminin"],
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/share/19JZX8MAwx/",
+    links: [
+      {
+        label: { fr: "Inscription Spordle — archive", en: "Spordle registration — archive" },
+        url: "https://page.spordle.com/fr/ahm-de-verdun/register/1f174f6f-0db7-6bea-81df-0670a2751aa1",
+      },
+    ],
+    contentPending: false,
+  },
+  {
     "legacyId": 39,
     "slug": "annulations-22-26-septembre-2026",
     "title": {
