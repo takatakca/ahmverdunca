@@ -1,6 +1,20 @@
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Handshake, Megaphone, RefreshCw } from "lucide-react";
+import {
+  ArrowRight,
+  Building2,
+  CalendarDays,
+  GalleryHorizontal,
+  Handshake,
+  MapPin,
+  Megaphone,
+  MousePointerClick,
+  Newspaper,
+  RefreshCw,
+  ShieldCheck,
+  Trophy,
+  Users,
+} from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { SPONSORS } from "@/data/sponsors";
@@ -31,20 +45,60 @@ export const Route = createFileRoute("/partenaires")({
 function PartnersPage() {
   const { lang } = useI18n();
 
+  const placements = [
+    { Icon: Building2, fr: "Accueil", en: "Homepage", frText: "Présence de marque dans une zone de visibilité dédiée.", enText: "Brand presence in a dedicated visibility area." },
+    { Icon: CalendarDays, fr: "Horaires", en: "Schedules", frText: "Visibilité près d’un parcours parent à forte utilité.", enText: "Visibility near a high-utility parent journey." },
+    { Icon: Users, fr: "Équipes", en: "Teams", frText: "Emplacements autour des catégories et mini-sites d’équipes.", enText: "Placements around categories and team mini-sites." },
+    { Icon: GalleryHorizontal, fr: "Galerie", en: "Gallery", frText: "Association possible avec des albums et moments AHMV réels.", enText: "Possible association with real AHMV albums and moments." },
+    { Icon: Newspaper, fr: "Nouvelles", en: "News", frText: "Visibilité éditoriale clairement séparée du contenu officiel.", enText: "Editorial visibility clearly separated from official content." },
+    { Icon: MapPin, fr: "Arénas", en: "Arenas", frText: "Présence près des pages d’itinéraire et d’information pratique.", enText: "Presence near directions and practical-information pages." },
+  ];
+
+  const formats = [
+    {
+      Icon: Megaphone,
+      fr: "Emplacement rotatif",
+      en: "Rotating placement",
+      frText: "Bannière ou créatif dans l’inventaire publicitaire du portail.",
+      enText: "Banner or creative inside the portal advertising inventory.",
+    },
+    {
+      Icon: Users,
+      fr: "Commandite d’équipe",
+      en: "Team sponsorship",
+      frText: "Possibilité à confirmer selon l’équipe, l’autorisation et la disponibilité.",
+      enText: "Subject to team, authorization and availability confirmation.",
+    },
+    {
+      Icon: Trophy,
+      fr: "Game Day / tournoi",
+      en: "Game Day / tournament",
+      frText: "Présence événementielle lorsque l’espace et les données officielles existent.",
+      enText: "Event visibility when the placement and official event data exist.",
+    },
+    {
+      Icon: MousePointerClick,
+      fr: "Campagne mesurable",
+      en: "Measurable campaign",
+      frText: "Impressions et clics pourront être suivis lorsque l’analytics autorisé est actif.",
+      enText: "Impressions and clicks can be tracked once approved analytics is active.",
+    },
+  ];
+
   return (
     <>
       <PageHeader
-        eyebrow={lang === "fr" ? "Communauté & visibilité" : "Community & visibility"}
-        title={lang === "fr" ? "Partenaires et commanditaires" : "Partners and sponsors"}
+        eyebrow={lang === "fr" ? "Visibilité locale · Hockey mineur" : "Local visibility · Minor hockey"}
+        title={lang === "fr" ? "Votre entreprise ici" : "Your business here"}
         description={
           lang === "fr"
-            ? "Une vitrine claire pour les organisations qui soutiennent le hockey mineur à Verdun et souhaitent faire connaître leur contribution."
-            : "A clear showcase for organizations supporting minor hockey in Verdun and the contribution they make."
+            ? "Une page de commandite claire pour comprendre où une entreprise peut être visible sur le portail AHMV, sans inventer de portée, d’audience ou de performance."
+            : "A clear sponsorship page showing where a business can appear across the AHMV portal, without inventing reach, audience or performance."
         }
         actions={
           <Button asChild variant="sport" size="lg">
             <Link to="/contact">
-              {lang === "fr" ? "Devenir partenaire" : "Become a partner"} <ArrowRight className="size-4" />
+              {lang === "fr" ? "Demander les disponibilités" : "Ask about availability"} <ArrowRight className="size-4" />
             </Link>
           </Button>
         }
@@ -53,25 +107,30 @@ function PartnersPage() {
       <div className="container-site space-y-12 py-8 md:py-12">
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
           <div className="technical-grid p-7 md:p-10">
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Hockey · Communauté · Verdun" : "Hockey · Community · Verdun"}</p>
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Hockey · Familles · Verdun" : "Hockey · Families · Verdun"}</p>
             <p className="mt-5 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl md:text-6xl">
-              {lang === "fr" ? "Soutenir le hockey mineur, visiblement." : "Support minor hockey, visibly."}
+              {lang === "fr" ? "Soutenir le hockey. Être vu au bon endroit." : "Support hockey. Be seen in the right place."}
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
-              {lang === "fr" ? "Une vitrine sobre pour reconnaître les organisations qui appuient l’association, sans inventer de logo ni de niveau de commandite." : "A clean showcase recognizing organizations supporting the association, without inventing logos or sponsorship levels."}
+              {lang === "fr"
+                ? "Le portail sert d’abord les parents. La commandite vient ensuite, dans des emplacements identifiés qui ne bloquent jamais l’information urgente, les horaires ou les itinéraires."
+                : "The portal serves parents first. Sponsorship comes afterward, in identified placements that never block urgent information, schedules or directions."}
             </p>
           </div>
           <div className="flex flex-col justify-between border-t border-white/12 p-7 lg:border-l lg:border-t-0 md:p-10">
             <Handshake className="size-9 text-sport-foreground" />
             <div className="mt-10">
               <p className="font-display text-6xl font-extrabold">{String(SPONSORS.length).padStart(2, "0")}</p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-white/48">{lang === "fr" ? "partenaires répertoriés" : "listed partners"}</p>
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-white/48">
+                {lang === "fr" ? "partenaires officiels répertoriés" : "listed official partners"}
+              </p>
             </div>
             <Button asChild variant="sport" size="lg" className="mt-8">
-              <Link to="/contact">{lang === "fr" ? "Devenir partenaire" : "Become a partner"} <ArrowRight className="size-4" /></Link>
+              <Link to="/contact">{lang === "fr" ? "Parler commandite" : "Discuss sponsorship"} <ArrowRight className="size-4" /></Link>
             </Button>
           </div>
         </section>
+
         <SponsorIdentityNotice />
 
         <section>
@@ -82,9 +141,93 @@ function PartnersPage() {
           <OfficialSponsorShowcase />
         </section>
 
+        <section>
+          <SectionHeading
+            eyebrow={lang === "fr" ? "Inventaire disponible" : "Available inventory"}
+            title={lang === "fr" ? "Où votre marque peut apparaître" : "Where your brand can appear"}
+            description={
+              lang === "fr"
+                ? "Aucune statistique de portée n’est affichée tant qu’elle n’est pas réellement mesurée. Les emplacements ci-dessous décrivent seulement les surfaces disponibles ou prévues."
+                : "No reach statistics are shown until they are actually measured. The placements below describe only available or planned surfaces."
+            }
+          />
+          <div className="mt-7 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3">
+            {placements.map(({ Icon, fr, en, frText, enText }) => (
+              <article key={fr} className="bg-background p-5 md:p-6">
+                <Icon className="size-5 text-sport" aria-hidden />
+                <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+                  {lang === "fr" ? fr : en}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  {lang === "fr" ? frText : enText}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="competition-panel border border-navy/12 p-6 text-navy-foreground md:p-8">
+          <SectionHeading
+            eyebrow={lang === "fr" ? "Formats de commandite" : "Sponsorship formats"}
+            title={lang === "fr" ? "Une offre simple à comprendre" : "A simple offer to understand"}
+            description={
+              lang === "fr"
+                ? "Les niveaux Platine, Or, Argent ou autres appellations ne seront utilisés que s’ils sont officiellement approuvés par AHMV."
+                : "Platinum, Gold, Silver or other tier names will only be used if officially approved by AHMV."
+            }
+          />
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {formats.map(({ Icon, fr, en, frText, enText }) => (
+              <div key={fr} className="border border-navy-foreground/10 bg-navy-foreground/[0.04] p-5">
+                <Icon className="size-6 text-sport-foreground" aria-hidden />
+                <h3 className="mt-5 font-display text-2xl font-bold uppercase">{lang === "fr" ? fr : en}</h3>
+                <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? frText : enText}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="bg-ice p-6 md:p-8">
+            <ShieldCheck className="size-7 text-sport" aria-hidden />
+            <p className="eyebrow mt-6 text-sport">{lang === "fr" ? "Transparence" : "Transparency"}</p>
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy">
+              {lang === "fr" ? "Pas de chiffres inventés." : "No invented numbers."}
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? "Nous ne publions pas de nombre de visiteurs, impressions, clics ou taux de conversion avant que ces données soient réellement collectées et vérifiables."
+                : "We do not publish visitor, impression, click or conversion numbers until those metrics are actually collected and verifiable."}
+            </p>
+          </div>
+          <div className="bg-background p-6 md:p-8">
+            <p className="eyebrow text-sport">{lang === "fr" ? "Demande commanditaire" : "Sponsor inquiry"}</p>
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy">
+              {lang === "fr" ? "Quel espace vous intéresse?" : "Which placement interests you?"}
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? "Indiquez votre entreprise, le type de visibilité recherché et la période souhaitée dans le formulaire de contact. L’équipe pourra ensuite confirmer ce qui est réellement disponible."
+                : "Use the contact form to share your business, preferred visibility type and desired period. The team can then confirm what is actually available."}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Button asChild variant="sport" size="lg">
+                <Link to="/contact">
+                  {lang === "fr" ? "Envoyer une demande" : "Send an inquiry"} <ArrowRight className="size-4" />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link to="/">{lang === "fr" ? "Voir le portail" : "View the portal"}</Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+
         <section className="space-y-4">
           <div>
-            <p className="eyebrow text-sport">{lang === "fr" ? "Promotion maison · distincte des commanditaires" : "House promotion · separate from sponsors"}</p>
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Promotion maison · distincte des commanditaires" : "House promotion · separate from sponsors"}
+            </p>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
                 ? "Ces créatives servent de remplissage publicitaire tant qu’un espace n’est pas attribué à AdSense ou à une commandite officielle. Elles ne sont pas présentées comme des commanditaires AHMV."
@@ -94,14 +237,14 @@ function PartnersPage() {
           <HouseSponsorSlot placement="partners-house-network" count={4} />
         </section>
 
-        <section className="competition-panel border border-navy/12 p-6 text-navy-foreground md:p-8">
+        <section className="border border-navy/12 bg-ice p-6 md:p-8">
           <SectionHeading
-            eyebrow={lang === "fr" ? "Commandites AHMV" : "AHMV sponsorships"}
+            eyebrow={lang === "fr" ? "Gestion partenaire" : "Partner management"}
             title={lang === "fr" ? "Une commandite plus simple à gérer" : "Simpler sponsorship management"}
             description={
               lang === "fr"
-                ? "Des options claires pour présenter les offres, renouvellements, campagnes, visibilité et bilans aux partenaires."
-                : "Clear options for presenting offers, renewals, campaigns, visibility and reporting to partners."
+                ? "Le portail est préparé pour structurer les offres, renouvellements, campagnes et bilans lorsque les données et processus officiels seront disponibles."
+                : "The portal is prepared to structure offers, renewals, campaigns and reporting once official data and processes are available."
             }
           />
           <div className="mt-8 grid gap-4 md:grid-cols-3">
@@ -110,28 +253,28 @@ function PartnersPage() {
                 Icon: Handshake,
                 fr: "Partenariats",
                 en: "Partnerships",
-                frText: "Fiches, niveaux, périodes et visibilité.",
-                enText: "Profiles, levels, terms and visibility.",
+                frText: "Emplacements, période et visibilité confirmés.",
+                enText: "Confirmed placements, term and visibility.",
               },
               {
                 Icon: RefreshCw,
                 fr: "Renouvellements",
                 en: "Renewals",
-                frText: "Rappels et suivis structurés.",
-                enText: "Structured reminders and follow-up.",
+                frText: "Suivi structuré lorsque le processus officiel existe.",
+                enText: "Structured follow-up once the official process exists.",
               },
               {
                 Icon: Megaphone,
                 fr: "Campagnes",
                 en: "Campaigns",
-                frText: "Site, infolettres et réseaux sociaux.",
-                enText: "Website, newsletters and social channels.",
+                frText: "Site et autres canaux uniquement lorsqu’ils sont autorisés.",
+                enText: "Website and other channels only when authorized.",
               },
             ].map(({ Icon, fr, en, frText, enText }) => (
-              <div key={fr} className="border border-navy-foreground/10 bg-navy-foreground/[0.04] p-5">
-                <Icon className="size-6 text-sport-foreground" aria-hidden />
-                <h3 className="mt-5 font-display text-2xl font-bold uppercase">{lang === "fr" ? fr : en}</h3>
-                <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? frText : enText}</p>
+              <div key={fr} className="border border-navy/10 bg-background p-5">
+                <Icon className="size-6 text-sport" aria-hidden />
+                <h3 className="mt-5 font-display text-2xl font-bold uppercase text-navy">{lang === "fr" ? fr : en}</h3>
+                <p className="mt-2 text-sm text-muted-foreground">{lang === "fr" ? frText : enText}</p>
               </div>
             ))}
           </div>
