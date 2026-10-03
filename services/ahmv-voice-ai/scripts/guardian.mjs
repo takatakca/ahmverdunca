@@ -103,9 +103,12 @@ async function walk(dir) {
 const files = await walk(root);
 for (const full of files) {
   if (full.endsWith("package-lock.json")) continue;
+  const relative = path.relative(root, full);
   const source = await readFile(full, "utf8").catch(() => "");
-  for (const forbidden of forbiddenNames) {
-    assert.ok(!source.includes(forbidden), `Forbidden legacy/privacy surface in ${path.relative(root, full)}: ${forbidden}`);
+  if (relative !== path.join("scripts", "guardian.mjs")) {
+    for (const forbidden of forbiddenNames) {
+      assert.ok(!source.includes(forbidden), `Forbidden legacy/privacy surface in ${relative}: ${forbidden}`);
+    }
   }
   if (!full.endsWith(".env.example")) {
     assert.doesNotMatch(source, openAiSecretPattern, `Possible OpenAI production secret in ${full}`);
