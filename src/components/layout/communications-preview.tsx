@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Bot, CalendarDays, Coffee, Globe2, Mail, PhoneCall, Sparkles, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
+import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { Button } from "@/components/ui/button";
 import { LogoSlot } from "./logo-slot";
 import { DEVELOPMENT_SUPPORT } from "@/lib/monetization";
@@ -87,6 +87,7 @@ function popupCopy(language: AssistantLanguageCode) {
 
 export function CommunicationsPreview() {
   const { lang, setLang } = useI18n();
+  const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const [open, setOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
@@ -166,9 +167,9 @@ export function CommunicationsPreview() {
     });
   };
 
-  const phoneBlock = SITE.phonePublic ? (
+  const phoneBlock = phonePublic ? (
     <a
-      href={`tel:${SITE.phoneE164}`}
+      href={`tel:${phoneE164}`}
       className="group block border border-sport/35 bg-sport/10 p-4 transition-colors hover:bg-sport/15"
     >
       <div className="flex items-center gap-2">
@@ -178,9 +179,9 @@ export function CommunicationsPreview() {
         </p>
       </div>
       <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-navy">
-        {SITE.phoneDisplay}
+        {phoneDisplay}
       </p>
-      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{SITE.phoneE164}</p>
+      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{phoneE164}</p>
     </a>
   ) : (
     <div className="border border-navy/12 bg-ice p-4">
@@ -191,9 +192,9 @@ export function CommunicationsPreview() {
         </p>
       </div>
       <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-navy">
-        {SITE.phoneDisplay}
+        {phoneDisplay}
       </p>
-      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{SITE.phoneE164}</p>
+      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{phoneE164}</p>
     </div>
   );
 
@@ -239,11 +240,11 @@ export function CommunicationsPreview() {
               <div className="flex items-center gap-2">
                 <PhoneCall className="size-5 text-sport-foreground" />
                 <p className="eyebrow text-sport-foreground">
-                  {SITE.phonePublic ? copy.phoneReady : copy.phoneReserved}
+                  {phonePublic ? copy.phoneReady : copy.phoneReserved}
                 </p>
               </div>
-              {SITE.phonePublic ? (
-                <a href={`tel:${SITE.phoneE164}`} className="mt-4 block font-display text-[clamp(3rem,6vw,5.6rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.04em] text-white transition-colors hover:text-sport-foreground">
+              {phonePublic ? (
+                <a href={`tel:${phoneE164}`} className="mt-4 block font-display text-[clamp(3rem,6vw,5.6rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.04em] text-white transition-colors hover:text-sport-foreground">
                   1 (581)<br />666-6AHM
                 </a>
               ) : (
