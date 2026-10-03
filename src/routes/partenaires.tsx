@@ -1,11 +1,12 @@
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink, Handshake, Megaphone, RefreshCw } from "lucide-react";
+import { ArrowRight, Handshake, Megaphone, RefreshCw } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { SPONSORS } from "@/data/sponsors";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { OfficialSponsorShowcase, SponsorIdentityNotice } from "@/components/official-sponsor-showcase";
 
 export const Route = createFileRoute("/partenaires")({
   head: () => ({
@@ -71,80 +72,26 @@ function PartnersPage() {
             </Button>
           </div>
         </section>
-        <div className="border border-navy/12 bg-ice p-5">
-          <p className="eyebrow text-sport">
-            {lang === "fr" ? "Identités protégées" : "Protected identities"}
-          </p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {lang === "fr"
-              ? "Les partenaires sont présentés par leur nom tant que l'utilisation de leur logo et leur niveau de visibilité n'ont pas été confirmés. Aucun logo n'est fabriqué."
-              : "Partners are shown by name until logo use and visibility level are confirmed. No logo is fabricated."}
-          </p>
-        </div>
-
-        <HouseSponsorSlot placement="partners-house-network" count={4} />
+        <SponsorIdentityNotice />
 
         <section>
           <SectionHeading
             eyebrow={lang === "fr" ? "Partenaires actuels" : "Current partners"}
             title={lang === "fr" ? "Ils soutiennent AHM Verdun" : "They support AHM Verdun"}
           />
-          <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {SPONSORS.map((sponsor, index) => {
-              const card = (
-                <>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex size-11 items-center justify-center border border-navy/12 bg-ice">
-                      <Handshake className="size-5 text-sport" aria-hidden />
-                    </div>
-                    <span className="font-display text-2xl font-extrabold text-navy/12">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <div className="mt-10">
-                    <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport">
-                      {lang === "fr" ? "Partenaire AHMV" : "AHMV partner"}
-                    </p>
-                    <h2 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.02em] text-navy">
-                      {sponsor.name}
-                    </h2>
-                    <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-                      {sponsor.websiteVerified
-                        ? (lang === "fr" ? "Lien officiel vérifié" : "Verified official link")
-                        : (lang === "fr" ? "Identité répertoriée" : "Listed identity")}
-                    </p>
-                  </div>
-                  <div className="mt-6 flex items-center justify-between border-t border-navy/10 pt-4 text-[10px] font-bold uppercase tracking-[0.12em]">
-                    <span className={sponsor.website ? "text-sport" : "text-muted-foreground"}>
-                      {sponsor.website
-                        ? (lang === "fr" ? "Visiter" : "Visit")
-                        : (lang === "fr" ? "Lien à confirmer" : "Link to confirm")}
-                    </span>
-                    {sponsor.website && <ExternalLink className="size-3.5 text-sport" aria-hidden />}
-                  </div>
-                </>
-              );
+          <OfficialSponsorShowcase />
+        </section>
 
-              return sponsor.website ? (
-                <a
-                  key={sponsor.name}
-                  href={sponsor.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="interactive-surface flex min-h-64 flex-col justify-between bg-background p-5 hover:bg-ice/55"
-                >
-                  {card}
-                </a>
-              ) : (
-                <article
-                  key={sponsor.name}
-                  className="interactive-surface flex min-h-64 flex-col justify-between bg-background p-5"
-                >
-                  {card}
-                </article>
-              );
-            })}
+        <section className="space-y-4">
+          <div>
+            <p className="eyebrow text-sport">{lang === "fr" ? "Promotion maison · distincte des commanditaires" : "House promotion · separate from sponsors"}</p>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? "Ces créatives servent de remplissage publicitaire tant qu’un espace n’est pas attribué à AdSense ou à une commandite officielle. Elles ne sont pas présentées comme des commanditaires AHMV."
+                : "These creatives fill advertising inventory until a placement is assigned to AdSense or an official sponsorship. They are not presented as AHMV sponsors."}
+            </p>
           </div>
+          <HouseSponsorSlot placement="partners-house-network" count={4} />
         </section>
 
         <section className="competition-panel border border-navy/12 p-6 text-navy-foreground md:p-8">
