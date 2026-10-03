@@ -573,6 +573,13 @@ jobs:
 
           echo "Production health check passed."
 
+      - name: Verify public TLS and health route
+        run: |
+          set -euo pipefail
+          AHMV_HTTP_SMOKE_TARGET=public \
+            scripts/deploy-production-http-smoke.sh status /healthz
+          echo "Public TLS and /healthz reachability verified."
+
       - name: Verify production homepage
         run: |
           set -euo pipefail
