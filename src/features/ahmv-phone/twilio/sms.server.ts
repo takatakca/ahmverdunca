@@ -2,10 +2,10 @@ import twilio from "twilio";
 import { officialPhoneSchedule, parseSms } from "../../../lib/ahmv-phone.ts";
 import {
   normalizePhoneE164,
+  safeApplyMarketingSmsConsentEvent,
   safeFindPhoneContactByNumber,
   safeSavePrimaryTeamPreference,
   safeSetCarrierMessagingPermission,
-  safeSetMarketingSmsConsent,
   safeSetTeamReminderPreference,
   safeTouchPhoneContact,
 } from "../contacts/store.server.ts";
@@ -52,6 +52,12 @@ export async function handleTwilioSms(
 
   if (params["OptOutType"] || carrierStop || carrierStart) {
     if (existingContact && carrierStop) {
+      await safeApplyMarketingSmsConsentEvent({
+        eventId: `carrier-stop:${ref}`,
+        contactId: existingContact.id,
+        enabled: false,
+        source: "carrier_opt_out",
+      });
       await safeSetCarrierMessagingPermission(existingContact.id, false);
     } else if (existingContact && carrierStart) {
       await safeSetCarrierMessagingPermission(existingContact.id, true);
@@ -95,10 +101,15 @@ export async function handleTwilioSms(
     }
 
     const enabled = marketingCommand.kind === "marketing-opt-in";
-    const saved = await safeSetMarketingSmsConsent(
-      contact.id,
+    const consentResult = await safeApplyMarketingSmsConsentEvent({
+      eventId: `sms-marketing:${ref}`,
+      contactId: contact.id,
       enabled,
-      "sms_keyword",
+      source: "sms_keyword",
+    });
+    const saved = Boolean(
+      consentResult &&
+        (consentResult.applied || consentResult.duplicate),
     );
 
     response.message(
