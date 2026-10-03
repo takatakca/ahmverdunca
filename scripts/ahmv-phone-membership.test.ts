@@ -132,6 +132,11 @@ test("membership projection migration is atomic idempotent and service-role only
   assert.match(sql, /pg_advisory_xact_lock/i);
   assert.match(sql, /for update/i);
   assert.match(sql, /premium_expires_at/i);
+  assert.match(sql, /idx_ahmv_phone_contacts_takatak_identity/i);
+  assert.match(sql, /identity\|/i);
+  assert.match(sql, /phone\|/i);
+  assert.match(sql, /already linked to another TAKATAK identity/i);
+  assert.match(sql, /TAKATAK identity is already linked to another AHMV phone contact/i);
   assert.match(sql, /security definer/i);
   assert.match(sql, /revoke all on function/i);
   assert.match(sql, /grant execute on function[\s\S]*service_role/i);
