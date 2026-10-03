@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, CircleHelp, Images, LogIn, MapPin, Menu, Newspaper, PhoneCall, Search, Trophy, Users, X } from "lucide-react";
+import { BookmarkCheck, CalendarDays, ChevronDown, CircleHelp, Images, LogIn, MapPin, Menu, Newspaper, PhoneCall, Search, Trophy, Users, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { TEAMS } from "@/data/teams";
+import { publicTeamHubUrl } from "@/data/team-directory";
 import { usePreferredTeam } from "@/lib/team-preference";
 import type { TranslationKey } from "@/lib/translations";
 
@@ -28,7 +29,7 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { preferredTeam } = usePreferredTeam();
+  const { preferredTeam, selectedTeams } = usePreferredTeam();
   const savedTeam = TEAMS.find((team) => team.slug === preferredTeam);
 
   // Close menus on navigation
@@ -120,7 +121,15 @@ export function SiteHeader() {
         <div className="container-site flex h-9 items-center justify-between text-xs">
           <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
           <div className="flex items-center gap-4">
-            {savedTeam && (
+            {selectedTeams.length > 0 ? (
+              <a
+                href={publicTeamHubUrl(selectedTeams[0]!)}
+                className="inline-flex items-center gap-1.5 font-semibold text-navy-foreground/75 hover:text-navy-foreground"
+              >
+                <span className="size-1.5 rounded-full bg-sport" aria-hidden />
+                {lang === "fr" ? "Mes équipes" : "My teams"} · {selectedTeams.length}
+              </a>
+            ) : savedTeam ? (
               <Link
                 to="/equipes/$slug"
                 params={{ slug: savedTeam.slug }}
@@ -129,7 +138,7 @@ export function SiteHeader() {
                 <span className="size-1.5 rounded-full bg-sport" aria-hidden />
                 {lang === "fr" ? "Mon équipe" : "My team"} · {savedTeam.code}
               </Link>
-            )}
+            ) : null}
             {showPhone && (
               SITE.phonePublic ? (
                 <a
@@ -298,7 +307,38 @@ export function SiteHeader() {
               <LogoSlot className="size-16 sm:size-20" />
             </div>
 
-            {savedTeam && (
+            {selectedTeams.length > 0 ? (
+              <div className="mt-4 overflow-hidden border border-sport/35 bg-sport/10">
+                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+                  <div>
+                    <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/75">
+                      {lang === "fr" ? "Mes équipes" : "My teams"}
+                    </p>
+                    <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none text-white">
+                      {selectedTeams.length} {lang === "fr" ? "sélectionnée(s)" : "selected"}
+                    </p>
+                  </div>
+                  <BookmarkCheck className="size-5 text-sport-foreground" />
+                </div>
+                <div className="grid gap-px bg-white/10">
+                  {selectedTeams.map((entry) => (
+                    <a
+                      key={entry.legacyScheduleTeamId}
+                      href={publicTeamHubUrl(entry)}
+                      className="interactive-surface flex min-h-14 items-center justify-between bg-competition px-4 py-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate font-display text-lg font-extrabold uppercase leading-none text-white">{entry.name}</p>
+                        <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/40">{entry.level}</p>
+                      </div>
+                      <span className="ml-3 shrink-0 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
+                        {lang === "fr" ? "Ouvrir" : "Open"}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : savedTeam ? (
               <Link
                 to="/equipes/$slug"
                 params={{ slug: savedTeam.slug }}
@@ -308,15 +348,11 @@ export function SiteHeader() {
                   <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/75">
                     {lang === "fr" ? "Mon équipe enregistrée" : "My saved team"}
                   </p>
-                  <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-white">
-                    {savedTeam.code}
-                  </p>
+                  <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-white">{savedTeam.code}</p>
                 </div>
-                <span className="font-display text-sm font-bold uppercase tracking-[0.12em] text-sport-foreground">
-                  {lang === "fr" ? "Ouvrir" : "Open"}
-                </span>
+                <span className="font-display text-sm font-bold uppercase tracking-[0.12em] text-sport-foreground">{lang === "fr" ? "Ouvrir" : "Open"}</span>
               </Link>
-            )}
+            ) : null}
 
             <Link
               to="/recherche"
