@@ -5,7 +5,7 @@ export interface ArenaNavigationLinks {
   googleMaps: string;
   appleMaps: string;
   waze: string;
-  arenaSlug?: string;
+  arenaSlug?: string | undefined;
 }
 
 export function navigationLinksForVenue(venue: string): ArenaNavigationLinks {
