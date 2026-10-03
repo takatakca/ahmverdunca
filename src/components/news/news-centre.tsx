@@ -35,6 +35,7 @@ type LiveFeedItem = {
   id: string;
   source: FeedKind;
   network?: Network;
+  association?: string;
   contentType: string;
   publishedAt: string;
   text: string | null;
@@ -53,6 +54,7 @@ type NewsFeedItem = {
   id: string;
   kind: FeedKind;
   network: Network;
+  association: string;
   publishedAt: string | null;
   dateLabel: string;
   title: string;
@@ -66,6 +68,7 @@ type NewsFeedItem = {
 
 type SavedFilters = {
   team: string;
+  association: string;
   network: "all" | Network;
   kind: "all" | FeedKind;
   timeRange: TimeRange;
@@ -75,6 +78,7 @@ type SavedFilters = {
 
 const DEFAULT_FILTERS: SavedFilters = {
   team: "all",
+  association: "all",
   network: "all",
   kind: "all",
   timeRange: "all",
@@ -133,6 +137,10 @@ function readSavedFilters(): SavedFilters {
     const parsed = JSON.parse(window.localStorage.getItem(FILTER_KEY) ?? "{}") as Partial<SavedFilters>;
     return {
       team: typeof parsed.team === "string" ? parsed.team : DEFAULT_FILTERS.team,
+      association:
+        typeof parsed.association === "string"
+          ? parsed.association
+          : DEFAULT_FILTERS.association,
       network:
         parsed.network === "website" ||
         parsed.network === "facebook" ||
@@ -219,6 +227,7 @@ export function NewsCentre() {
         id: `archive:${article.slug}`,
         kind: "official",
         network: classifyNetwork(url),
+        association: "AHM Verdun",
         publishedAt: article.date ? `${article.date}T12:00:00-04:00` : null,
         dateLabel: newsDateLabel(article, lang),
         title,
@@ -228,7 +237,7 @@ export function NewsCentre() {
         internalSlug: article.slug,
         teamSlugs: article.teamSlugs,
         searchable: normalize(
-          [title, text, article.author, article.category, ...article.teamSlugs].join(" "),
+          ["AHM Verdun", title, text, article.author, article.category, ...article.teamSlugs].join(" "),
         ),
       };
     });
@@ -242,6 +251,7 @@ export function NewsCentre() {
         id: `live:${item.id}`,
         kind: item.source,
         network,
+        association: item.association?.trim() || "AHM Verdun",
         publishedAt: item.publishedAt,
         dateLabel: new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
           year: "numeric",
@@ -264,7 +274,7 @@ export function NewsCentre() {
         imageUrl: item.imageUrl,
         internalSlug: null,
         teamSlugs,
-        searchable: normalize([text, network, ...teamSlugs].join(" ")),
+        searchable: normalize([item.association?.trim() || "AHM Verdun", text, network, ...teamSlugs].join(" ")),
       };
     });
 
@@ -283,6 +293,7 @@ export function NewsCentre() {
         : null;
 
     const result = items.filter((item) => {
+      if (filters.association !== "all" && item.association !== filters.association) return false;
       if (filters.network !== "all" && item.network !== filters.network) return false;
       if (filters.kind !== "all" && item.kind !== filters.kind) return false;
 
@@ -319,8 +330,14 @@ export function NewsCentre() {
     });
   }, [filters, items, selectedTeams]);
 
+  const associations = useMemo(
+    () => Array.from(new Set(items.map((item) => item.association))).sort(),
+    [items],
+  );
+
   const activeCount = [
     filters.team !== "all",
+    filters.association !== "all",
     filters.network !== "all",
     filters.kind !== "all",
     filters.timeRange !== "all",
@@ -376,7 +393,28 @@ export function NewsCentre() {
 
         {filterOpen ? (
           <div className="border-b border-navy/10 bg-ice p-5 md:p-6">
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+              <label className="block">
+                <span className="eyebrow text-navy">{lang === "fr" ? "Association" : "Association"}</span>
+                <select
+                  value={filters.association}
+                  onChange={(event) =>
+                    setFilters((current) => ({
+                      ...current,
+                      association: event.target.value,
+                    }))
+                  }
+                  className="mt-2 h-11 w-full border border-navy/15 bg-background px-3 text-sm font-semibold text-navy outline-none focus:border-sport"
+                >
+                  <option value="all">{lang === "fr" ? "Toutes les associations" : "All associations"}</option>
+                  {associations.map((association) => (
+                    <option key={association} value={association}>
+                      {association}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
               <label className="block">
                 <span className="eyebrow text-navy">{lang === "fr" ? "Équipe" : "Team"}</span>
                 <select
