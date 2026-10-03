@@ -153,6 +153,38 @@ export async function safeSavePrimaryTeamPreference(contactId: string, publicTea
   }
 }
 
+export async function setTeamReminderPreference(
+  contactId: string,
+  publicTeamId: string,
+  enabled: boolean,
+) {
+  const result = await db()
+    .from("ahmv_phone_team_preferences")
+    .upsert(
+      {
+        contact_id: contactId,
+        public_team_id: publicTeamId,
+        reminders_enabled: enabled,
+      },
+      { onConflict: "contact_id,public_team_id" },
+    );
+  if (result.error) throw result.error;
+}
+
+export async function safeSetTeamReminderPreference(
+  contactId: string,
+  publicTeamId: string,
+  enabled: boolean,
+) {
+  try {
+    await setTeamReminderPreference(contactId, publicTeamId, enabled);
+    return true;
+  } catch (error) {
+    console.error("[AHMV phone reminder preference]", error);
+    return false;
+  }
+}
+
 export async function safeTouchPhoneContact(
   input: Parameters<typeof touchPhoneContact>[0],
 ): Promise<AhmvPhoneContact | null> {
