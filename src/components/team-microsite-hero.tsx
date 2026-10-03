@@ -108,6 +108,7 @@ export function TeamMicrositeHero({
             className="absolute inset-0 size-full object-cover"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.06)_20%,rgba(7,16,43,0.90)_100%)]" />
+          <div className="ahmv-motion-sheen" aria-hidden />
           <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7 md:p-8">
             <div className="flex flex-wrap gap-2">
               <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.15em] text-sport-foreground">
