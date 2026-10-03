@@ -3,7 +3,7 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Bookmark, BookmarkCheck, CalendarDays, ExternalLink, Images, Trophy } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { TEAMS } from "@/data/teams";
+import { CURRENT_TEAMS } from "@/data/teams";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { useI18n } from "@/lib/i18n";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/equipes/")({
     links: canonicalLink("/equipes"),
     meta: [
       { title: "Équipes et catégories — AHM Verdun" },
-      { name: "description", content: "M5 à M18, Junior et hockey féminin : toutes les catégories de l'AHM Verdun pour la saison 2026–2027." },
+      { name: "description", content: "M5, M7, M9, M11, M13, M15, M17, M19, M22 et hockey féminin : les catégories AHM Verdun pour la saison 2026–2027." },
       { property: "og:title", content: "Équipes et catégories — AHM Verdun" },
       { property: "og:description", content: "Toutes les catégories de l'AHM Verdun, avec page dédiée pour chacune." },
     ],
@@ -36,13 +36,13 @@ function TeamsPage() {
   } = usePreferredTeam();
   const [showAllResults, setShowAllResults] = useState(false);
   const [showAllDirectory, setShowAllDirectory] = useState(false);
-  const totalPublicTeams = TEAMS.reduce((count, team) => count + teamsForCategory(team.slug).length, 0);
+  const totalPublicTeams = CURRENT_TEAMS.reduce((count, team) => count + teamsForCategory(team.slug).length, 0);
   const filterToMine = selectedTeamIds.length > 0 && !showAllResults;
   const selectedCategorySlugs = new Set(selectedTeams.map((team) => team.categorySlug));
   const categoriesToRender =
     selectedTeamIds.length > 0 && !showAllDirectory
-      ? TEAMS.filter((team) => selectedCategorySlugs.has(team.slug))
-      : TEAMS;
+      ? CURRENT_TEAMS.filter((team) => selectedCategorySlugs.has(team.slug))
+      : CURRENT_TEAMS;
 
   return (
     <>
@@ -50,8 +50,8 @@ function TeamsPage() {
         eyebrow={`${t("common.season")} · 2026–2027`}
         title={t("teams.title")}
         description={lang === "fr"
-          ? "Du premier coup de patin au parcours Junior : choisissez une catégorie pour retrouver son horaire, ses équipes publiques, ses résultats, son classement, ses arénas et ses informations."
-          : "From the first skate to Junior: choose a category to find its schedule, public teams, results, standings, arenas and information."}
+          ? "Du premier coup de patin à M22 : choisissez une catégorie pour retrouver son horaire, ses équipes publiques, ses résultats, son classement, ses arénas et ses informations."
+          : "From the first skate to U22: choose a category to find its schedule, public teams, results, standings, arenas and information."}
       />
 
       <div className="container-site py-9 md:py-14">
@@ -84,7 +84,7 @@ function TeamsPage() {
               <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail familles" : "Family portal"}</p>
               <div className="mt-6 grid gap-px border border-white/12 bg-white/12">
                 <div className="bg-navy p-5">
-                  <p className="font-display text-5xl font-extrabold">{String(TEAMS.length).padStart(2, "0")}</p>
+                  <p className="font-display text-5xl font-extrabold">{String(CURRENT_TEAMS.length).padStart(2, "0")}</p>
                   <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-white/48">
                     {lang === "fr" ? "catégories AHMV" : "AHMV categories"}
                   </p>
@@ -250,7 +250,7 @@ function TeamsPage() {
           </div>
 
           <div className="divide-y divide-navy/10">
-            {TEAMS.map((category) => {
+            {CURRENT_TEAMS.map((category) => {
               const allEntries = teamsForCategory(category.slug);
               const entries = filterToMine
                 ? allEntries.filter((entry) => selectedTeamIds.includes(entry.legacyScheduleTeamId))
