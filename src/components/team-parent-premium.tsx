@@ -85,7 +85,7 @@ const ROADMAP = [
 ] as const;
 
 export function TeamParentPremium({ team, lang }: Props) {
-  if (!PARENT_PREMIUM.visible) return null;
+  const demoMode = !PARENT_PREMIUM.visible || !PARENT_PREMIUM.launchEnabled;
 
   const signupUrl = parentPremiumSignupUrl(team.legacyScheduleTeamId);
   const price = PARENT_PREMIUM.weeklyPriceCad.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA", {
@@ -106,6 +106,7 @@ export function TeamParentPremium({ team, lang }: Props) {
             <ShieldCheck className="size-5 text-sport-foreground" aria-hidden />
             <p className="eyebrow text-sport-foreground">
               {lang === "fr" ? "AHMV · Assistant parent" : "AHMV · Parent assistant"}
+              {demoMode ? " · DEMO" : ""}
             </p>
           </div>
           <h2
@@ -137,7 +138,7 @@ export function TeamParentPremium({ team, lang }: Props) {
             </p>
           </div>
 
-          {signupUrl ? (
+          {signupUrl && !demoMode ? (
             <a
               href={signupUrl}
               className="premium-control mt-6 flex min-h-12 items-center justify-between bg-sport px-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-sport-foreground"
@@ -148,12 +149,12 @@ export function TeamParentPremium({ team, lang }: Props) {
           ) : (
             <div className="mt-6 border border-white/14 bg-white/[0.04] px-4 py-3">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-white/72">
-                {lang === "fr" ? "Connexion bientôt activée" : "Connection coming soon"}
+                {lang === "fr" ? "Aperçu abonnement · prêt à activer" : "Membership preview · ready to activate"}
               </p>
               <p className="mt-1 text-xs leading-relaxed text-white/48">
                 {lang === "fr"
-                  ? "Le lancement restera fermé tant que TAKATAK Auth et la facturation ne sont pas branchés et testés."
-                  : "Launch remains closed until TAKATAK Auth and billing are connected and tested."}
+                  ? "La devanture est complète en mode démo. Le bouton réel pourra être activé plus tard sans refaire ce bloc."
+                  : "The storefront is complete in demo mode. The real button can be switched on later without rebuilding this block."}
               </p>
             </div>
           )}
