@@ -422,6 +422,18 @@ export async function dispatchDueMarketingCampaignMessages(
     }
   }
 
+  const dispatching = await db()
+    .from("ahmv_phone_campaign_executions")
+    .select("takatak_campaign_id")
+    .eq("status", "dispatching")
+    .limit(100);
+  if (dispatching.error) throw dispatching.error;
+
+  for (const row of dispatching.data ?? []) {
+    const campaignId = String(row.takatak_campaign_id);
+    touchedCampaigns.add(campaignId);
+  }
+
   for (const campaignId of touchedCampaigns) {
     await finalizeCampaignIfDone(campaignId);
   }
