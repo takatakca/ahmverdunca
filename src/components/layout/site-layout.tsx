@@ -9,6 +9,7 @@ import { useI18n } from "@/lib/i18n";
 import { SupportDevelopment } from "@/components/support-development";
 import { AhmvAssistant } from "@/components/ahmv-assistant";
 import { ParentQuickPanel } from "./parent-quick-panel";
+import { InstallAppPrompt } from "./install-app-prompt";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { lang } = useI18n();
@@ -28,6 +29,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <SupportDevelopment />
       <AhmvAssistant />
       <ParentQuickPanel />
+      <InstallAppPrompt />
     </div>
   );
 }
