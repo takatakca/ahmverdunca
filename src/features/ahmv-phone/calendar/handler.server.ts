@@ -1,6 +1,8 @@
+import type { PhoneLanguage } from "../../../lib/ahmv-phone.ts";
+import { phoneText } from "../i18n.ts";
+import { navigationLinksForVenue } from "../arenas/navigation.ts";
 import { calendarIcs, findCalendarEvent, googleCalendarUrl } from "./event.ts";
 import { validateCalendarLink } from "./link.server.ts";
-import { navigationLinksForVenue } from "../arenas/navigation.ts";
 
 type Settings = Record<string, string | undefined>;
 
@@ -17,6 +19,11 @@ function htmlEscape(value: string) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+function linkLanguage(url: URL): PhoneLanguage {
+  const value = url.searchParams.get("lang");
+  return value === "en" ? "en" : value === "es" ? "es" : "fr";
 }
 
 function unavailable(status: number, code: string) {
@@ -75,6 +82,9 @@ export function handleAhmvCalendarLink(
     });
   }
 
+  const lang = linkLanguage(url);
+  const t = (fr: string, en: string, es: string) =>
+    phoneText(lang, { fr, en, es });
   const google = googleCalendarUrl(eventId);
   const directions = navigationLinksForVenue(event.venue);
   const icsUrl = new URL(url.toString());
@@ -82,7 +92,15 @@ export function handleAhmvCalendarLink(
 
   const statusNotice =
     event.status === "cancelled"
-      ? '<p class="alert">Cet événement est indiqué ANNULÉ dans la source AHMV actuelle.</p>'
+      ? '<p class="alert">' +
+        htmlEscape(
+          t(
+            "Cet événement est indiqué ANNULÉ dans la source AHMV actuelle.",
+            "This event is marked CANCELLED in the current AHMV source.",
+            "Este evento aparece como CANCELADO en la fuente AHMV actual.",
+          ),
+        ) +
+        "</p>"
       : "";
 
   const googleButton = google
@@ -93,12 +111,20 @@ export function handleAhmvCalendarLink(
 
   const body = [
     "<!doctype html>",
-    '<html lang="fr">',
+    '<html lang="' + lang + '">',
     "<head>",
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width,initial-scale=1">',
     '<meta name="robots" content="noindex,nofollow">',
-    "<title>Ajouter au calendrier — AHMV</title>",
+    "<title>" +
+      htmlEscape(
+        t(
+          "Ajouter au calendrier — AHMV",
+          "Add to calendar — AHMV",
+          "Agregar al calendario — AHMV",
+        ),
+      ) +
+      "</title>",
     "<style>",
     "body{font-family:system-ui,-apple-system,sans-serif;background:#0b1320;color:#fff;margin:0;padding:24px}",
     "main{max-width:620px;margin:40px auto;background:#142238;border:1px solid #29405f;border-radius:18px;padding:24px}",
@@ -130,12 +156,30 @@ export function handleAhmvCalendarLink(
     googleButton,
     '<a class="secondary" href="' +
       htmlEscape(icsUrl.toString()) +
-      '">Apple / Outlook / .ics</a>',
+      '">' +
+      htmlEscape(
+        t(
+          "Apple / Outlook / fichier .ics",
+          "Apple / Outlook / .ics file",
+          "Apple / Outlook / archivo .ics",
+        ),
+      ) +
+      "</a>",
     '<a class="secondary" href="' +
       htmlEscape(directions.googleMaps) +
-      '" rel="noopener noreferrer">Directions</a>',
+      '" rel="noopener noreferrer">' +
+      htmlEscape(t("Itinéraire", "Directions", "Cómo llegar")) +
+      "</a>",
     "</div>",
-    '<p class="foot">Service AHMV propulsé par GROUPE TAKATAK. Ce lien temporaire contient uniquement des données publiques d’horaire.</p>',
+    '<p class="foot">' +
+      htmlEscape(
+        t(
+          "Service AHMV propulsé par GROUPE TAKATAK. Ce lien temporaire contient uniquement des données publiques d’horaire.",
+          "AHMV service powered by GROUPE TAKATAK. This temporary link contains only public schedule data.",
+          "Servicio AHMV impulsado por GROUPE TAKATAK. Este enlace temporal contiene únicamente datos públicos del horario.",
+        ),
+      ) +
+      "</p>",
     "</main>",
     "</body>",
     "</html>",
@@ -145,6 +189,7 @@ export function handleAhmvCalendarLink(
     status: 200,
     headers: {
       ...BASE_HEADERS,
+      "content-language": lang,
       "content-type": "text/html; charset=utf-8",
       "content-security-policy":
         "default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",
