@@ -14,7 +14,7 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
-import { legacyTeamScheduleUrl, officialTeamResultsUrl, teamsForCategory } from "@/data/team-directory";
+import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, teamsForCategory } from "@/data/team-directory";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
@@ -24,6 +24,9 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/equipes/$slug")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    teamId: typeof search["teamId"] === "string" ? search["teamId"] : undefined,
+  }),
   loader: ({ params }) => {
     const team = getTeam(params.slug);
     if (!team) throw notFound();
@@ -58,14 +61,33 @@ export const Route = createFileRoute("/equipes/$slug")({
 
 function TeamPage() {
   const { slug } = Route.useLoaderData();
+  const { teamId } = Route.useSearch();
   const { t, l, lang } = useI18n();
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
   const team = getTeam(slug)!;
   const isPreferred = preferredTeam === slug;
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
-  const socialLinks = getTeamSocialLinks(slug);
+  const categorySocialLinks = getTeamSocialLinks(slug);
   const publicTeams = teamsForCategory(slug);
+  const exactTeamCandidate = teamId ? getPublicTeamById(teamId) : undefined;
+  const exactTeam = exactTeamCandidate?.categorySlug === slug ? exactTeamCandidate : undefined;
+  const socialLinks = exactTeam
+    ? getPublicTeamSocialLinks(exactTeam.legacyScheduleTeamId)
+    : categorySocialLinks;
+  const visiblePublicTeams = exactTeam
+    ? publicTeams.filter((entry) => entry.legacyScheduleTeamId !== exactTeam.legacyScheduleTeamId)
+    : publicTeams;
+  const updateSubject = exactTeam
+    ? `AHMV — mise à jour ${exactTeam.name} · ${exactTeam.level} · ${exactTeam.legacyScheduleTeamId}`
+    : `AHMV — mise à jour ${team.code}`;
+  const updateBody = lang === "fr"
+    ? exactTeam
+      ? `Bonjour, je souhaite proposer une mise à jour pour cette équipe AHMV.\n\nÉquipe : ${exactTeam.name}\nNiveau : ${exactTeam.level}\nRéférence publique : ${exactTeam.legacyScheduleTeamId}\nInformation à publier :\nSource ou lien :\n`
+      : "Bonjour, je souhaite proposer une mise à jour pour cette catégorie/équipe AHMV.\n\nÉquipe :\nInformation à publier :\nSource ou lien :\n"
+    : exactTeam
+      ? `Hello, I would like to suggest an update for this AHMV team.\n\nTeam: ${exactTeam.name}\nLevel: ${exactTeam.level}\nPublic reference: ${exactTeam.legacyScheduleTeamId}\nInformation to publish:\nSource or link:\n`
+      : "Hello, I would like to suggest an update for this AHMV category/team.\n\nTeam:\nInformation to publish:\nSource or link:\n";
   const archiveImages = [
     OFFICIAL_MEDIA.tournamentM11Primary,
     OFFICIAL_MEDIA.tournamentM11Secondary,
@@ -76,33 +98,65 @@ function TeamPage() {
   return (
     <>
       <PageHeader
-        eyebrow={`${team.code} · ${l(team.ages)}`}
-        title={l(team.name)}
-        description={l(team.description)}
+        eyebrow={
+          exactTeam
+            ? `${team.code} · ${exactTeam.level} · #${exactTeam.legacyScheduleTeamId.slice(-4)}`
+            : `${team.code} · ${l(team.ages)}`
+        }
+        title={exactTeam ? exactTeam.name : l(team.name)}
+        description={
+          exactTeam
+            ? (lang === "fr"
+                ? "Hub public de cette équipe : accès officiels, résultats, médias approuvés et contributions vérifiées, sans recopier de données personnelles de joueurs."
+                : "Public team hub: official access, results, approved media and reviewed contributions, without copying player personal data.")
+            : l(team.description)
+        }
         actions={
-          <>
-            <Button asChild variant="sport">
-              <Link to="/horaires" search={{ team: slug }}>
-                <CalendarDays className="size-4" />
-                {lang === "fr" ? "Voir les horaires" : "View schedules"}
-              </Link>
-            </Button>
-            <Button
-              type="button"
-              variant="outline-light"
-              onClick={() => savePreferredTeam(slug)}
-              aria-pressed={isPreferred}
-            >
-              <CheckCircle2 className="size-4" />
-              {isPreferred
-                ? lang === "fr"
-                  ? "Ma catégorie"
-                  : "My category"
-                : lang === "fr"
-                  ? "Mémoriser"
-                  : "Remember"}
-            </Button>
-          </>
+          exactTeam ? (
+            <>
+              <Button asChild variant="sport">
+                <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
+                  <CalendarDays className="size-4" />
+                  {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                </a>
+              </Button>
+              <Button asChild variant="outline-light">
+                <a href={officialTeamResultsUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
+                  <ExternalLink className="size-4" />
+                  {lang === "fr" ? "Résultats / classement" : "Results / standings"}
+                </a>
+              </Button>
+              <Button asChild variant="outline-light">
+                <Link to="/equipes/$slug" params={{ slug }} search={{ teamId: undefined }}>
+                  {lang === "fr" ? "Retour à la catégorie" : "Back to category"}
+                </Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="sport">
+                <Link to="/horaires" search={{ team: slug }}>
+                  <CalendarDays className="size-4" />
+                  {lang === "fr" ? "Voir les horaires" : "View schedules"}
+                </Link>
+              </Button>
+              <Button
+                type="button"
+                variant="outline-light"
+                onClick={() => savePreferredTeam(slug)}
+                aria-pressed={isPreferred}
+              >
+                <CheckCircle2 className="size-4" />
+                {isPreferred
+                  ? lang === "fr"
+                    ? "Ma catégorie"
+                    : "My category"
+                  : lang === "fr"
+                    ? "Mémoriser"
+                    : "Remember"}
+              </Button>
+            </>
+          )
         }
       />
 
