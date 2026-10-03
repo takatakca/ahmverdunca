@@ -115,7 +115,7 @@ function NewsPage() {
                   </span>
                   <span className="eyebrow text-muted-foreground">{newsDateLabel(featured, lang)}</span>
                 </div>
-                <h2 className="mt-6 max-w-3xl font-display text-[clamp(2.7rem,5vw,5.4rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.04em] text-navy transition-colors group-hover:text-sport">
+                <h2 className="mt-6 max-w-3xl font-display text-[clamp(2.25rem,4.6vw,4.6rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.03em] text-navy transition-colors group-hover:text-sport">
                   {l(featured.title)}
                 </h2>
                 <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
