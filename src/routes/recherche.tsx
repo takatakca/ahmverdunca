@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, PhoneCall, Search } from "lucide-react";
+import { ArrowRight, CalendarDays, MapPin, PhoneCall, Search, Trophy, Users } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { TEAMS } from "@/data/teams";
-import { PUBLIC_TEAM_DIRECTORY, publicTeamHubUrl } from "@/data/team-directory";
+import { PUBLIC_TEAM_DIRECTORY, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { ARENAS } from "@/data/arenas";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { FAQ } from "@/data/faq";
@@ -17,6 +17,8 @@ import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-we
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { usePreferredTeam } from "@/lib/team-preference";
 
 export const Route = createFileRoute("/recherche")({
   head: () => ({
@@ -137,6 +139,8 @@ function SearchPage() {
   const { t, l, lang } = useI18n();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
+  const { selectedTeams } = usePreferredTeam();
+  const primaryTeam = selectedTeams[0];
   const showPhone = phonePublic;
   const [q, setQ] = useState("");
   const today = montrealDateKey();
@@ -324,6 +328,77 @@ function SearchPage() {
       />
 
       <div className="container-site py-8 md:py-12">
+        <section className="mb-7 grid overflow-hidden border border-navy/12 bg-competition text-white lg:grid-cols-[0.86fr_1.14fr]">
+          <div className="relative min-h-[220px] overflow-hidden sm:min-h-[280px]">
+            <img
+              src={OFFICIAL_MEDIA.practicePlayers.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.practicePlayers.alt.fr : OFFICIAL_MEDIA.practicePlayers.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.9))]" />
+            <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Recherche parent" : "Parent search"}</p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.88] sm:text-4xl">
+                {lang === "fr" ? "Une question. Un raccourci." : "One question. One shortcut."}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center p-5 md:p-7">
+            {primaryTeam ? (
+              <>
+                <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                  {lang === "fr" ? "Mon équipe en premier" : "My team first"}
+                </p>
+                <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9]">{primaryTeam.name}</p>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/42">{primaryTeam.level}</p>
+                <div className="mt-5 grid grid-cols-2 gap-2">
+                  <a href={publicTeamHubUrl(primaryTeam)} className="premium-control flex min-h-11 items-center justify-center gap-2 bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
+                    <Users className="size-3.5" /> {lang === "fr" ? "Mini-site" : "Mini-site"}
+                  </a>
+                  <a href={officialTeamResultsUrl(primaryTeam)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                    <Trophy className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Résultats" : "Results"}
+                  </a>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                  {lang === "fr" ? "Personnalisez la recherche" : "Personalize search"}
+                </p>
+                <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9]">
+                  {lang === "fr" ? "Enregistrez une équipe." : "Save a team."}
+                </p>
+                <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/58">
+                  {lang === "fr"
+                    ? "Une équipe enregistrée remonte ensuite en priorité dans le portail, le menu et la recherche."
+                    : "A saved team is then prioritized across the portal, menu and search."}
+                </p>
+                <Link to="/equipes" className="premium-control mt-5 inline-flex min-h-11 w-fit items-center gap-2 bg-sport px-4 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
+                  <Users className="size-4" /> {lang === "fr" ? "Choisir mon équipe" : "Choose my team"}
+                </Link>
+              </>
+            )}
+          </div>
+        </section>
+
+        <div className="mb-5 grid grid-cols-3 gap-2">
+          <Link to="/horaires" className="premium-control flex min-h-16 flex-col justify-between border border-navy/12 bg-background p-3 text-navy hover:bg-ice">
+            <CalendarDays className="size-4 text-sport" />
+            <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Horaires" : "Schedules"}</span>
+          </Link>
+          <Link to="/arenas" className="premium-control flex min-h-16 flex-col justify-between border border-navy/12 bg-background p-3 text-navy hover:bg-ice">
+            <MapPin className="size-4 text-sport" />
+            <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Arénas" : "Arenas"}</span>
+          </Link>
+          <Link to="/inscriptions" className="premium-control flex min-h-16 flex-col justify-between border border-navy/12 bg-background p-3 text-navy hover:bg-ice">
+            <ArrowRight className="size-4 text-sport" />
+            <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Inscription" : "Register"}</span>
+          </Link>
+        </div>
+
         <div className="relative">
           <Search
             className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
