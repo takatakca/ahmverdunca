@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { config } from './config.js';
 import { isSmsCapableCaller } from './caller.js';
 import { emptyUsage } from './usage.js';
+import { emptyVoiceMetrics, normalizedVoiceMetrics } from './metrics.js';
 
 const memory = new Map();
 const memorySmsClaims = new Set();
@@ -36,6 +37,7 @@ export function sessionState(session, { includeMessages = config.persistActiveCo
     reconnectCount: Number(session.reconnectCount || 0),
     auditRecorded: Boolean(session.auditRecorded),
     usage: session.usage || emptyUsage(),
+    metrics: normalizedVoiceMetrics(session.metrics),
     costGuardExceeded: Boolean(session.costGuardExceeded),
     handoffRequested: Boolean(session.handoffRequested),
     handoffReason: session.handoffReason || null,
@@ -68,6 +70,7 @@ export function newSession({ callSid, from, to }) {
     reconnectCount: 0,
     auditRecorded: false,
     usage: emptyUsage(),
+    metrics: emptyVoiceMetrics(),
     costGuardExceeded: false,
     handoffRequested: false,
     handoffReason: null,
@@ -169,6 +172,7 @@ export async function loadSession(callSid) {
     reconnectCount: Number(state.reconnectCount || 0),
     auditRecorded: Boolean(state.auditRecorded || data.audit_recorded_at),
     usage: state.usage && typeof state.usage === 'object' ? state.usage : emptyUsage(),
+    metrics: normalizedVoiceMetrics(state.metrics),
     costGuardExceeded: Boolean(state.costGuardExceeded),
     handoffRequested: Boolean(state.handoffRequested),
     handoffReason: state.handoffReason || null,
