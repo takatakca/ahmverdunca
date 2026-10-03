@@ -7,6 +7,8 @@ import {
   MessageCircle,
   Navigation,
   ShieldCheck,
+  Sparkles,
+  Trophy,
   Users,
   Video,
 } from "lucide-react";
@@ -25,39 +27,60 @@ type Props = {
 
 const CAPABILITIES = [
   {
-    icon: CalendarDays,
-    fr: "Calendrier automatique",
-    en: "Automatic calendar",
-    frBody: "Les matchs et changements pourront se synchroniser avec le calendrier du parent après consentement.",
-    enBody: "Games and changes can sync to the parent's calendar after consent.",
+    icon: ShieldCheck,
+    fr: "Expérience sans publicité",
+    en: "Ad-free experience",
+    frBody: "L'entitlement TAKATAK ad_free permettra de retirer AdSense des surfaces membre lorsque la session premium est vérifiée.",
+    enBody: "The TAKATAK ad_free entitlement can remove AdSense from member surfaces once the premium session is verified.",
+  },
+  {
+    icon: Sparkles,
+    fr: "Assistant AHMV premium",
+    en: "Premium AHMV assistant",
+    frBody: "L'assistant complet pourra guider le parent vers son équipe, ses horaires, ses liens et ses services après vérification membre.",
+    enBody: "The full assistant can guide parents to their team, schedules, links and services after membership verification.",
   },
   {
     icon: Bell,
-    fr: "Rappels SMS",
-    en: "SMS reminders",
-    frBody: "Rappel avant la partie, changement d'heure, annulation ou information importante.",
-    enBody: "Reminders before games plus time changes, cancellations and important updates.",
+    fr: "Rappels de matchs",
+    en: "Game reminders",
+    frBody: "Rappels et changements significatifs pourront être livrés selon les préférences de communication du parent.",
+    enBody: "Reminders and meaningful changes can be delivered according to the parent's communication preferences.",
   },
   {
-    icon: Navigation,
-    fr: "Départ intelligent",
-    en: "Smart departure",
-    frBody: "Une alerte pourra proposer l'heure de départ selon l'aréna et le trafic réel.",
-    enBody: "An alert can suggest when to leave based on the arena and live traffic.",
+    icon: CalendarDays,
+    fr: "Calendrier automatique",
+    en: "Automatic calendar",
+    frBody: "Les événements officiels des équipes choisies pourront se synchroniser au calendrier avec consentement explicite.",
+    enBody: "Official events for selected teams can sync to a calendar with explicit consent.",
   },
   {
     icon: Users,
-    fr: "Famille synchronisée",
-    en: "Family sync",
-    frBody: "Papa, maman ou autre responsable pourront partager la même vue de l'équipe et des rappels.",
-    enBody: "Parents and caregivers can share the same team view and reminders.",
+    fr: "Communauté d'équipe",
+    en: "Team community",
+    frBody: "Un espace privé et modéré pourra rassembler les parents autorisés d'une même équipe sans exposer de données sur le site public.",
+    enBody: "A private moderated space can connect authorized parents from the same team without exposing data on the public site.",
+  },
+  {
+    icon: MessageCircle,
+    fr: "Communication parent-parent",
+    en: "Parent-to-parent messaging",
+    frBody: "Les échanges privés passeront par l'identité TAKATAK et les permissions d'équipe plutôt que d'afficher les coordonnées des parents publiquement.",
+    enBody: "Private conversations will use TAKATAK identity and team permissions instead of exposing parent contact details publicly.",
+  },
+  {
+    icon: Car,
+    fr: "Covoiturage parent-parent",
+    en: "Parent rideshare",
+    frBody: "Le forfait réserve l'accès au module de covoiturage volontaire lorsqu'il sera activé, avec participation explicite et portée limitée à l'équipe.",
+    enBody: "The plan reserves access to the opt-in parent rideshare module when launched, scoped to the team.",
   },
 ] as const;
 
 const ROADMAP = [
-  { icon: MessageCircle, fr: "Chat entre parents", en: "Parent chat" },
-  { icon: Car, fr: "Covoiturage", en: "Ride sharing" },
-  { icon: MapPin, fr: "Suivi temporaire", en: "Temporary tracking" },
+  { icon: Navigation, fr: "Départ intelligent / trafic", en: "Smart departure / traffic" },
+  { icon: Trophy, fr: "Voyages et tournois", en: "Travel and tournaments" },
+  { icon: MapPin, fr: "Coordination familiale en direct", en: "Live family coordination" },
   { icon: Video, fr: "Appels vidéo", en: "Video calls" },
 ] as const;
 
@@ -93,8 +116,8 @@ export function TeamParentPremium({ team, lang }: Props) {
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/75 md:text-base">
             {lang === "fr"
-              ? `Une mini-application liée à ${team.name} pour enlever des tâches aux parents : calendrier, rappels, départ vers l'aréna et coordination familiale.`
-              : `A mini-app connected to ${team.name} that removes parent busywork: calendar, reminders, arena departure and family coordination.`}
+              ? `Une expérience membre liée à ${team.name} : sans pub, assistant premium, rappels, calendrier, communauté, messagerie et futur covoiturage parent-parent.`
+              : `A member experience connected to ${team.name}: ad-free, premium assistant, reminders, calendar, community, messaging and future parent rideshare.`}
           </p>
 
           <div className="mt-7 border-y border-white/12 py-5">
@@ -137,7 +160,7 @@ export function TeamParentPremium({ team, lang }: Props) {
         </div>
 
         <div className="p-6 md:p-8">
-          <p className="eyebrow text-sport">{lang === "fr" ? "Gagner du temps maintenant" : "Save time now"}</p>
+          <p className="eyebrow text-sport">{lang === "fr" ? "Droits du forfait AHMV Member" : "AHMV Member entitlements"}</p>
           <div className="mt-5 grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
             {CAPABILITIES.map((item) => {
               const Icon = item.icon;
@@ -157,7 +180,7 @@ export function TeamParentPremium({ team, lang }: Props) {
 
           <div className="mt-7">
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-              {lang === "fr" ? "La suite prévue" : "Planned next"}
+              {lang === "fr" ? "Prochaine phase · non vendue aujourd'hui" : "Next phase · not sold today"}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
               {ROADMAP.map((item) => {
