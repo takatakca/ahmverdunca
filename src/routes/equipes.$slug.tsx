@@ -166,6 +166,30 @@ function TeamPage() {
       <div className="container-site space-y-10 py-6 md:space-y-12 md:py-10">
         {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
 
+        {exactTeam && (
+          <nav
+            aria-label={lang === "fr" ? "Navigation du mini-site d’équipe" : "Team mini-site navigation"}
+            className="scrollbar-none -mt-5 flex gap-1 overflow-x-auto border-y border-navy/10 bg-ice px-2 py-2 md:-mt-7"
+          >
+            {[
+              { href: "#match-center", fr: "Parties", en: "Games" },
+              { href: "#social-equipe", fr: "Réseaux", en: "Social" },
+              { href: "#nouvelles-equipe", fr: "Nouvelles", en: "News" },
+              { href: "#photos-equipe", fr: "Photos", en: "Photos" },
+              { href: "#benevolat-equipe", fr: "Bénévoles", en: "Volunteers" },
+              { href: "#documents-equipe", fr: "Documents", en: "Documents" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="premium-control shrink-0 border border-navy/10 bg-background px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.13em] text-navy hover:border-sport"
+              >
+                {lang === "fr" ? item.fr : item.en}
+              </a>
+            ))}
+          </nav>
+        )}
+
         {exactTeam ? (
           <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.35fr_0.65fr]">
             <div className="relative min-h-[250px] overflow-hidden sm:min-h-[330px]">
