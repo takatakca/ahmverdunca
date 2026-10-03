@@ -21,7 +21,6 @@ import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { ARENAS } from "@/data/arenas";
-import { SPONSORS } from "@/data/sponsors";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
