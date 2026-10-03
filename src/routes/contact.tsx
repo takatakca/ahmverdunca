@@ -39,7 +39,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { t, lang } = useI18n();
   const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
-  const showPhone = showPlannedServices || SITE.phonePublic;
+  const showPhone = SITE.phonePublic;
 
   return (
     <>
@@ -59,14 +59,6 @@ function ContactPage() {
                 {SITE.phoneDisplay}
               </a>
             </Button>
-          ) : showPlannedServices ? (
-            <span className="inline-flex min-h-11 items-center gap-2 rounded-md border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/80">
-              <PhoneCall className="size-4" />
-              {SITE.phoneDisplay}
-              <span className="text-[10px] uppercase tracking-wider text-sport-foreground">
-                {lang === "fr" ? "à venir" : "coming soon"}
-              </span>
-            </span>
           ) : undefined
         }
       />
@@ -193,16 +185,13 @@ function ContactPage() {
             <div className="card-elevated p-6 md:p-8">
               <BellRing className="size-6 text-sport" aria-hidden />
               <h2 className="heading-card mt-5">
-                {lang === "fr" ? "Info générale & infolettre" : "General info & newsletter"}
+                {lang === "fr" ? "Services d’information à venir" : "Information services coming later"}
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
                 {lang === "fr"
-                  ? "Nouvelles générales, événements, campagnes, commanditaires et infolettres pourront être regroupés ici. Les résultats, classements et opérations hockey demeurent dans les services officiels."
-                  : "General news, events, campaigns, sponsors and newsletters can be brought together here. Scores, standings and hockey operations remain in official services."}
+                  ? "Les futurs canaux d’information, dont l’infolettre et l’assistance téléphonique, seront affichés ici seulement après activation officielle par l’association."
+                  : "Future information channels, including newsletter and phone assistance, will appear here only after official activation by the association."}
               </p>
-              <div className="mt-5 rounded-lg border border-border bg-ice px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {lang === "fr" ? "Activation après approbation de l'association" : "Activation after association approval"}
-              </div>
             </div>
           )}
           </section>

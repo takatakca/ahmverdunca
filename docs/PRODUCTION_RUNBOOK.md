@@ -1,6 +1,6 @@
 # AHM Verdun — Production cutover runbook
 
-**Target:** https://ahmverdun.com  
+**Target:** https://ahmverdun.ca  
 **Rule:** deploy privately first with `VITE_PUBLIC_INDEXING=false`. Do not change hockey-operation systems.
 
 ## 0. Release source of truth
@@ -53,14 +53,14 @@ Check FR/EN, mobile navigation, saved team, external official gateways, 404 and 
 Run from a machine outside the hosting network:
 
 ```sh
-curl -fsS https://ahmverdun.com/healthz
-curl -I https://ahmverdun.com/
-curl -I https://ahmverdun.com/recherche
-curl -I https://ahmverdun.com/robots.txt
-curl -I https://ahmverdun.com/sitemap.xml
-curl -I https://ahmverdun.com/schedules
-curl -I https://ahmverdun.com/news/38
-curl -I https://ahmverdun.com/albums/1
+curl -fsS https://ahmverdun.ca/healthz
+curl -I https://ahmverdun.ca/
+curl -I https://ahmverdun.ca/recherche
+curl -I https://ahmverdun.ca/robots.txt
+curl -I https://ahmverdun.ca/sitemap.xml
+curl -I https://ahmverdun.ca/schedules
+curl -I https://ahmverdun.ca/news/38
+curl -I https://ahmverdun.ca/albums/1
 ```
 
 Expected before public indexing approval:
@@ -80,7 +80,7 @@ Only after all applicable approval items are complete:
 
 1. Re-run **Deploy AHM Verdun production** for the exact current green `main` SHA with `public_indexing=true`.
 2. Enter `PUBLIC-INDEXING-APPROVED` in the workflow launch-confirmation field; this is a deliberate technical safeguard, not a substitute for the association approvals above.
-3. Confirm the workflow passes its health, security-header and indexing-policy checks on `https://ahmverdun.com`.
+3. Confirm the workflow passes its health, security-header and indexing-policy checks on `https://ahmverdun.ca`.
 4. Confirm the homepage HTML and HTTP header are indexable.
 5. Confirm `/recherche` and HTTP error pages remain noindex.
 6. Confirm sitemap and robots use the canonical HTTPS domain.

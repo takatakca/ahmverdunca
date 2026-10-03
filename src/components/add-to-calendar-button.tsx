@@ -72,7 +72,7 @@ export function AddToCalendarButton({
       "END:STANDARD",
       "END:VTIMEZONE",
       "BEGIN:VEVENT",
-      `UID:${escapeIcs(id)}@ahmverdun.com`,
+      `UID:${escapeIcs(id)}@ahmverdun.ca`,
       `DTSTAMP:${utcStamp()}`,
       `DTSTART;TZID=America/Toronto:${localDateTime(date, start)}`,
       `DTEND;TZID=America/Toronto:${localDateTime(date, end)}`,

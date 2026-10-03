@@ -91,7 +91,7 @@ function GalleryPage() {
           </div>
         </section>
 
-        <div className="mt-8 grid auto-rows-[260px] gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-7 grid auto-rows-[220px] gap-2 sm:auto-rows-[240px] sm:grid-cols-2 lg:grid-cols-4">
           {albums.map((album, index) => (
             <Link
               key={album.slug}
@@ -103,22 +103,22 @@ function GalleryPage() {
                 index === 1 && "lg:col-span-2",
               )}
             >
-              {album.coverUrl ? (
+              <SportArtwork
+                index={String(index + 1).padStart(2, "0")}
+                kicker={`${l(album.eventType)} · ${formatShortDate(album.date, lang)}`}
+                title={l(album.title)}
+                code={album.season.slice(-2)}
+                aspect="absolute inset-0"
+                className="absolute inset-0"
+              />
+              {album.coverUrl && (
                 <img
                   src={album.coverUrl}
                   alt={l(album.title)}
                   loading="lazy"
                   decoding="async"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
-                />
-              ) : (
-                <SportArtwork
-                  index={String(index + 1).padStart(2, "0")}
-                  kicker={`${l(album.eventType)} · ${formatShortDate(album.date, lang)}`}
-                  title={l(album.title)}
-                  code={album.season.slice(-2)}
-                  aspect="absolute inset-0"
-                  className="absolute inset-0"
+                  className="absolute inset-0 z-[1] size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                  onError={(event) => { event.currentTarget.style.display = "none"; }}
                 />
               )}
               <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(7,16,43,0.62)_100%)]" />

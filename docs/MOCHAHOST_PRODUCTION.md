@@ -48,7 +48,7 @@ Use only after the applicable go-live approvals are complete:
 
 - `public_indexing=true`
 - `launch_confirmation=PUBLIC-INDEXING-APPROVED`
-- `AHMV_PRODUCTION_URL` must be exactly `https://ahmverdun.com`
+- `AHMV_PRODUCTION_URL` must be exactly `https://ahmverdun.ca`
 
 The workflow will fail if the homepage remains noindex, while `/recherche` must continue to return `noindex, nofollow`.
 

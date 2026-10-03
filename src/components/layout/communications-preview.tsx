@@ -101,7 +101,7 @@ export function CommunicationsPreview() {
               <p className="eyebrow text-sport-foreground">
                 {lang === "fr" ? "Numéro AHMV réservé" : "Reserved AHMV number"}
               </p>
-              <p className="mt-3 font-display text-[clamp(2.8rem,7vw,5.5rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.035em]">
+              <p className="mt-3 font-display text-[clamp(2.25rem,6vw,4.5rem)] font-extrabold uppercase leading-[0.88] tracking-[-0.025em]">
                 1 (581)<br />
                 666-6AHM
               </p>

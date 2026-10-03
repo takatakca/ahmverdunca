@@ -53,7 +53,7 @@ export function ScheduleFinder() {
             </p>
             <h2
               id="schedule-finder-title"
-              className="mt-3 max-w-3xl font-display text-5xl font-extrabold uppercase leading-[0.86] tracking-[-0.035em] text-navy sm:text-6xl lg:text-7xl"
+              className="mt-3 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.9] tracking-[-0.025em] text-navy sm:text-5xl lg:text-6xl"
             >
               {lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}
             </h2>

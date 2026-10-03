@@ -72,7 +72,7 @@ export function OfficialWeekPreview() {
                   ? "Horaires"
                   : "Schedules"}
             </p>
-            <h2 className="mt-2 font-display text-[clamp(3rem,6vw,5.8rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.04em]">
+            <h2 className="mt-2 font-display text-[clamp(2.4rem,5.2vw,4.8rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.03em]">
               {isPersonalized
                 ? lang === "fr"
                   ? `${savedTeam.code === "F" ? l(savedTeam.name) : savedTeam.code} · Cette semaine`
