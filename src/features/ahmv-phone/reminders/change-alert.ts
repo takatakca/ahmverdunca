@@ -7,7 +7,7 @@ import type {
 
 function localEventTime(value: string, lang: PhoneLanguage) {
   const date = new Date(value);
-  return new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
+  return new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : lang === "es" ? "es-CA" : "en-CA", {
     timeZone: "America/Toronto",
     dateStyle: "medium",
     timeStyle: "short",
@@ -37,6 +37,23 @@ export function eventChangeAlertText(
     if (kinds.has("venue_changed")) {
       lines.push("Nouvel aréna: " + current.venue + ".");
       lines.push("Itinéraire: " + directions.googleMaps);
+    }
+    return lines.join("\n");
+  }
+
+  if (lang === "es") {
+    const lines = ["AHMV — Actualización importante."];
+    if (kinds.has("cancelled")) {
+      lines.push("El evento fue CANCELADO.");
+    } else if (kinds.has("restored")) {
+      lines.push("El evento está confirmado nuevamente.");
+    }
+    if (kinds.has("time_changed")) {
+      lines.push("Nueva hora: " + localEventTime(current.startsAt, lang) + ".");
+    }
+    if (kinds.has("venue_changed")) {
+      lines.push("Nueva arena: " + current.venue + ".");
+      lines.push("Cómo llegar: " + directions.googleMaps);
     }
     return lines.join("\n");
   }
