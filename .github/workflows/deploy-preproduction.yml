@@ -65,6 +65,7 @@ jobs:
           bunx tsc --noEmit
           bun test scripts/ahmv-phone.test.ts
           bun run test:team-feed
+          bun run test:assistant
           bun run check:monetization
           bun run check:data
           bun run check:seo
