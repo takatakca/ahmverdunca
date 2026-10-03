@@ -1,7 +1,7 @@
 import { canonicalLink } from "@/lib/seo";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { AlertTriangle, ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -36,6 +36,17 @@ function NewsPage() {
     NEWS.some((article) => article.category === category.id),
   );
   const list = cat === "all" ? NEWS : NEWS.filter((article) => article.category === cat);
+  const weeklyImportant = useMemo(() => {
+    const now = new Date();
+    const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
+
+    return NEWS.filter((article) => {
+      if (!article.date || !["cancellations", "registration"].includes(article.category)) return false;
+      const publishedAt = new Date(`${article.date}T12:00:00-04:00`);
+      const age = now.getTime() - publishedAt.getTime();
+      return age >= 0 && age <= sevenDaysMs;
+    });
+  }, []);
   const featured = list[0];
   const remaining = list.slice(1);
 
@@ -90,6 +101,42 @@ function NewsPage() {
             </a>
           ))}
         </div>
+
+        {weeklyImportant.length > 0 && (
+          <section className="mt-7 border border-status-cancelled/25 bg-status-cancelled-soft p-5 md:p-6" aria-labelledby="weekly-important-title">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="mt-0.5 size-5 shrink-0 text-status-cancelled" aria-hidden />
+              <div className="min-w-0 flex-1">
+                <p className="eyebrow text-status-cancelled">
+                  {lang === "fr" ? "Information vérifiée et récente" : "Verified recent information"}
+                </p>
+                <h2 id="weekly-important-title" className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-navy">
+                  {lang === "fr" ? "Important cette semaine" : "Important this week"}
+                </h2>
+                <div className="mt-4 grid gap-2">
+                  {weeklyImportant.map((article) => (
+                    <Link
+                      key={article.slug}
+                      to="/nouvelles/$slug"
+                      params={{ slug: article.slug }}
+                      className="premium-control flex min-h-12 items-center justify-between gap-4 border border-navy/10 bg-background px-4 py-3 text-navy hover:border-status-cancelled/40"
+                    >
+                      <span>
+                        <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-status-cancelled">
+                          {newsDateLabel(article, lang)}
+                        </span>
+                        <span className="mt-1 block font-display text-lg font-extrabold uppercase leading-none">
+                          {l(article.title)}
+                        </span>
+                      </span>
+                      <ArrowRight className="size-4 shrink-0 text-status-cancelled" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         <div
           className="scrollbar-none -mx-1 flex gap-1 overflow-x-auto border-b border-navy/10 px-1 py-5"
