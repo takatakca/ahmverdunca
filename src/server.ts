@@ -109,7 +109,7 @@ export default {
     if (experienceAuthResponse) return experienceAuthResponse;
     const experienceApiResponse = await handleAhmvExperienceApi(request);
     if (experienceApiResponse) return experienceApiResponse;
-    const experienceGateResponse = gateAhmvExperience(request);
+    const experienceGateResponse = await gateAhmvExperience(request);
     if (experienceGateResponse) return experienceGateResponse;
     const phoneStatusResponse = handleAhmvPhoneStatus(request);
     if (phoneStatusResponse) return phoneStatusResponse;
