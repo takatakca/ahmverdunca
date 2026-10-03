@@ -32,7 +32,7 @@ This project is intentionally safe for proposal/pre-production use by default.
 - [ ] Validate all public photo/video permissions involving minors.
 - [ ] Approve any analytics, Search Console, Google Business Profile and social integrations.
 - [ ] Complete the approved production hosting/DNS cutover for `ahmverdun.ca`.
-- [ ] Activate and test the reserved phone with a real inbound call, then set `SITE.phonePublic=true`.
+- [ ] Activate and test the reserved phone with a real inbound call, then set `AHMV_PHONE_PUBLIC=true`.
 - [ ] Verify `/healthz`, `/robots.txt`, `/sitemap.xml`, `/recherche` noindex headers, title/meta previews, legacy redirects and social sharing on the actual new production deployment.
 - [ ] Run the full CI workflow and perform the final mobile/desktop smoke test against the production hostname.
 - [ ] Set `VITE_PUBLIC_INDEXING=true` only after every item above that affects public release is approved.

@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { SITE } from "@/lib/site";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
+import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -40,7 +41,8 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { t, lang } = useI18n();
   const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
-  const showPhone = SITE.phonePublic;
+  const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
+  const showPhone = phonePublic;
 
   return (
     <>
@@ -53,11 +55,11 @@ function ContactPage() {
             : "Choose the right access point for your need. Hockey operations remain in their official systems; this site simply makes the path easier for families."
         }
         actions={
-          SITE.phonePublic ? (
+          phonePublic ? (
             <Button asChild variant="sport">
-              <a href={`tel:${SITE.phoneE164}`}>
+              <a href={`tel:${phoneE164}`}>
                 <PhoneCall className="size-4" />
-                {SITE.phoneDisplay}
+                {phoneDisplay}
               </a>
             </Button>
           ) : undefined
@@ -81,7 +83,7 @@ function ContactPage() {
             <p className="mt-4 text-sm leading-relaxed text-white/65">
               {lang === "fr" ? "Horaires, inscriptions, bénévolat, commandites ou information générale : utilisez la bonne porte pour obtenir une réponse plus rapidement." : "Schedules, registration, volunteering, sponsorships or general information: use the right entry point to get an answer faster."}
             </p>
-            {SITE.phonePublic && <a href={`tel:${SITE.phoneE164}`} className="mt-6 font-display text-3xl font-extrabold text-white">{SITE.phoneDisplay}</a>}
+            {phonePublic && <a href={`tel:${phoneE164}`} className="mt-6 font-display text-3xl font-extrabold text-white">{phoneDisplay}</a>}
           </div>
         </section>
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -172,18 +174,18 @@ function ContactPage() {
               <p className="eyebrow text-sport-foreground">
                 {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
               </p>
-              {SITE.phonePublic ? (
+              {phonePublic ? (
                 <a
-                  href={`tel:${SITE.phoneE164}`}
+                  href={`tel:${phoneE164}`}
                   className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
                 >
                   <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
-                  {SITE.phoneDisplay}
+                  {phoneDisplay}
                 </a>
               ) : (
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
-                  <span className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">{SITE.phoneDisplay}</span>
+                  <span className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">{phoneDisplay}</span>
                   <span className="border border-sport-foreground/35 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
                     {lang === "fr" ? "Réservé · activation à venir" : "Reserved · activation upcoming"}
                   </span>

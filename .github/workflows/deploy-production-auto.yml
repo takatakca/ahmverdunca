@@ -52,7 +52,7 @@ jobs:
           set -euo pipefail
 
           bunx tsc --noEmit
-          bun test scripts/ahmv-phone.test.ts
+          bun run test:phone
           bun run test:team-feed
           bun run test:assistant
           bun run check:monetization

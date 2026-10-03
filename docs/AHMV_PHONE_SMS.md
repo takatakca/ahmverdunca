@@ -38,3 +38,6 @@ Automated official-source ingestion, a GROUPE TAKATAK tenant-scoped schedule API
 This is an implementation awaiting configuration and real-channel QA. A successful local test or CI build is not evidence that the public number is active or available 24/7.
 
 References: https://www.twilio.com/docs/usage/webhooks/webhooks-security and https://www.twilio.com/docs/voice/twiml/gather.
+
+
+Public website activation: after a successful real inbound call confirms carrier/Twilio routing, set server-only `AHMV_PHONE_PUBLIC=true`. The website reads `/api/ahmv/phone-status` and enables click-to-call automatically. Keep it false before that validation.

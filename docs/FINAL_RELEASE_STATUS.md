@@ -119,7 +119,7 @@ Until those approvals exist, the code intentionally uses safe fallbacks.
 6. Verify HTTPS, legacy redirects, `/robots.txt`, `/sitemap.xml`, 404 behavior, `/recherche` noindex behavior and server headers on the actual production domain.
 7. Set `VITE_PUBLIC_INDEXING=true` only after the new production domain is confirmed correct.
 8. Rebuild/redeploy and verify the HTML robots meta plus `X-Robots-Tag`.
-9. Set `SITE.phonePublic=true` only after the reserved number is active and a real inbound-call test succeeds; then connect only analytics/social/search tools explicitly authorized by the association.
+9. Set `AHMV_PHONE_PUBLIC=true` only after the reserved number is active and a real inbound-call test succeeds; then connect only analytics/social/search tools explicitly authorized by the association.
 10. Submit/refresh the sitemap in the approved search-console account.
 
 ## 8. Operating rule after launch

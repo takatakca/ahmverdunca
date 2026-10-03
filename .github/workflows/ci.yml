@@ -39,7 +39,7 @@ jobs:
         run: bunx tsc --noEmit
 
       - name: AHMV phone and SMS security tests
-        run: bun test scripts/ahmv-phone.test.ts
+        run: bun run test:phone
 
       - name: GROUPE TAKATAK team feed security tests
         run: bun run test:team-feed

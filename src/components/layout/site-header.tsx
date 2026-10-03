@@ -10,11 +10,13 @@ import { LangSwitch } from "./lang-switch";
 import { TEAMS } from "@/data/teams";
 import { publicTeamHubUrl } from "@/data/team-directory";
 import { usePreferredTeam } from "@/lib/team-preference";
+import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import type { TranslationKey } from "@/lib/translations";
 
 export function SiteHeader() {
   const { t, lang } = useI18n();
-  const showPhone = SITE.phonePublic;
+  const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
+  const showPhone = phonePublic;
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -149,18 +151,18 @@ export function SiteHeader() {
               </Link>
             ) : null}
             {showPhone && (
-              SITE.phonePublic ? (
+              phonePublic ? (
                 <a
-                  href={`tel:${SITE.phoneE164}`}
+                  href={`tel:${phoneE164}`}
                   className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
                 >
                   <PhoneCall className="size-3.5" aria-hidden />
-                  {SITE.phoneDisplay}
+                  {phoneDisplay}
                 </a>
               ) : (
                 <span className="inline-flex items-center gap-1.5 text-navy-foreground/60" title={lang === "fr" ? "Numéro réservé — activation à venir" : "Reserved number — activation upcoming"}>
                   <PhoneCall className="size-3.5" aria-hidden />
-                  {SITE.phoneDisplay}
+                  {phoneDisplay}
                   <span className="text-[9px] uppercase tracking-wider text-sport-foreground">{lang === "fr" ? "bientôt" : "soon"}</span>
                 </span>
               )
@@ -473,16 +475,16 @@ export function SiteHeader() {
 
             {showPhone && (
               <div className="mt-2">
-                {SITE.phonePublic ? (
+                {phonePublic ? (
                   <Button asChild variant="outline-light" size="lg" className="w-full justify-between">
-                    <a href={`tel:${SITE.phoneE164}`}>
-                      <span className="flex items-center gap-2"><PhoneCall className="size-4" />{SITE.phoneDisplay}</span>
+                    <a href={`tel:${phoneE164}`}>
+                      <span className="flex items-center gap-2"><PhoneCall className="size-4" />{phoneDisplay}</span>
                       <ChevronDown className="size-4 -rotate-90" />
                     </a>
                   </Button>
                 ) : (
                   <div className="flex min-h-11 items-center justify-between border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/75">
-                    <span className="flex items-center gap-2"><PhoneCall className="size-4" />{SITE.phoneDisplay}</span>
+                    <span className="flex items-center gap-2"><PhoneCall className="size-4" />{phoneDisplay}</span>
                     <span className="text-[9px] uppercase tracking-[0.16em] text-sport-foreground">{lang === "fr" ? "à venir" : "coming soon"}</span>
                   </div>
                 )}
