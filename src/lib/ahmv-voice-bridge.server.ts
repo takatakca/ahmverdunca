@@ -12,6 +12,7 @@ import { canUse } from "../features/ahmv-phone/entitlements/access";
 import { memberActivationUrl, resolvePhoneEntitlement } from "../features/ahmv-phone/entitlements/service.server";
 import { safeRecordPhoneInteraction } from "../features/ahmv-phone/audit/store.server";
 import { sendTransactionalSms } from "../features/ahmv-phone/messaging/send.server";
+import { fetchLiveSchedule, liveEventToVoiceMatch, liveScheduleIsReady } from "../features/ahmv-phone/schedules/live.server";
 
 type Settings = Record<string, string | undefined>;
 type VoiceLanguage = "fr" | "en" | "es";
@@ -92,21 +93,56 @@ function routeLinks(address: string) {
     appleMapsUrl: `https://maps.apple.com/?daddr=${encoded}`,
   };
 }
-function schedule(request: Request) {
+async function schedule(request: Request, settings: Settings) {
   const url = new URL(request.url);
   const team = limited(url.searchParams.get("team"), 80);
   const category = limited(url.searchParams.get("category"), 80);
   const date = limited(url.searchParams.get("date"), 10);
   const now = localClock(new Date());
-  if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+  if (date && !/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) {
     return json({ ok: false, code: "INVALID_DATE" }, 400);
   }
+
+  const resolutionQuery = team || category;
+  const resolution = resolutionQuery
+    ? resolvePublicTeam(resolutionQuery)
+    : { kind: "none", teams: [] } as const;
+  const officialTeamScheduleUrl =
+    resolution.kind === "exact" ? legacyTeamScheduleUrl(resolution.team) : null;
+  const teamChoices =
+    resolution.kind === "ambiguous" ? compactTeamChoices(resolution.teams, 6) : [];
+
+  const live = await fetchLiveSchedule({ team, category, date }, settings);
+  if (liveScheduleIsReady(live)) {
+    const matches = live.events.map(liveEventToVoiceMatch).slice(0, 10);
+    return json({
+      ok: true,
+      status: matches.length
+        ? "verified_live"
+        : resolution.kind === "ambiguous"
+          ? "ambiguous_team"
+          : "no_match",
+      liveScheduleStatus: live.status,
+      liveUpdatedAt: live.updatedAt ?? null,
+      sourceWindow: null,
+      sourceUrl: live.sourceUrl ?? "https://ahmverdun.ca/horaires",
+      teamResolution: resolution.kind,
+      teamChoices,
+      officialTeamScheduleUrl,
+      matches,
+    });
+  }
+
   if (now.date > OFFICIAL_WEEK_META.end) {
     return json({
       ok: true,
       status: "source_expired",
+      liveScheduleStatus: live.status,
       sourceWindow: OFFICIAL_WEEK_META,
       sourceUrl: "https://ahmverdun.ca/horaires",
+      teamResolution: resolution.kind,
+      teamChoices,
+      officialTeamScheduleUrl,
       matches: [],
     });
   }
@@ -114,8 +150,12 @@ function schedule(request: Request) {
     return json({
       ok: true,
       status: "outside_source_window",
+      liveScheduleStatus: live.status,
       sourceWindow: OFFICIAL_WEEK_META,
       sourceUrl: "https://ahmverdun.ca/horaires",
+      teamResolution: resolution.kind,
+      teamChoices,
+      officialTeamScheduleUrl,
       matches: [],
     });
   }
@@ -126,7 +166,7 @@ function schedule(request: Request) {
     .filter((item) => {
       const groupKey = normalizeTeam(item.group);
       if (teamKey && groupKey !== teamKey) return false;
-      const groupCategory = item.group.match(/^M\d+/i)?.[0] ?? "";
+      const groupCategory = item.group.match(/^M\\d+/i)?.[0] ?? "";
       if (categoryKey && normalizeTeam(groupCategory) !== categoryKey) return false;
       if (date && item.date !== date) return false;
       if (!date && (item.date < now.date || (item.date === now.date && item.end <= now.time))) {
@@ -143,7 +183,7 @@ function schedule(request: Request) {
         id: item.id,
         type: item.activity,
         team: item.group,
-        category: item.group.match(/^M\d+/i)?.[0]?.toUpperCase() ?? null,
+        category: item.group.match(/^M\\d+/i)?.[0]?.toUpperCase() ?? null,
         date: item.date,
         time: item.start,
         endTime: item.end,
@@ -155,23 +195,14 @@ function schedule(request: Request) {
       };
     });
 
-  const resolutionQuery = team || category;
-  const resolution = resolutionQuery
-    ? resolvePublicTeam(resolutionQuery)
-    : { kind: "none", teams: [] } as const;
-  const officialTeamScheduleUrl =
-    resolution.kind === "exact" ? legacyTeamScheduleUrl(resolution.team) : null;
-  const teamChoices =
-    resolution.kind === "ambiguous" ? compactTeamChoices(resolution.teams, 6) : [];
-  const status = matches.length
-    ? "verified"
-    : resolution.kind === "ambiguous"
-      ? "ambiguous_team"
-      : "no_match";
-
   return json({
     ok: true,
-    status,
+    status: matches.length
+      ? "verified"
+      : resolution.kind === "ambiguous"
+        ? "ambiguous_team"
+        : "no_match",
+    liveScheduleStatus: live.status,
     sourceWindow: OFFICIAL_WEEK_META,
     sourceUrl: "https://ahmverdun.ca/horaires",
     teamResolution: resolution.kind,
@@ -322,19 +353,43 @@ async function interaction(request: Request) {
   });
   return json({ ok: true });
 }
-async function readiness() {
-  const now = localClock(new Date());
-  if (now.date > OFFICIAL_WEEK_META.end) {
-    return json({ ready: false, reason: "schedule_source_expired", sourceWindow: OFFICIAL_WEEK_META }, 503);
+async function readiness(settings: Settings) {
+  const live = await fetchLiveSchedule({}, settings);
+  const staticScheduleReady = localClock(new Date()).date <= OFFICIAL_WEEK_META.end;
+  const liveReady = liveScheduleIsReady(live);
+
+  if (!liveReady && !staticScheduleReady) {
+    return json({
+      ready: false,
+      reason: live.status === "not_configured"
+        ? "schedule_source_expired"
+        : `live_schedule_${live.status}`,
+      liveSchedule: { status: live.status, reason: live.reason ?? null },
+      sourceWindow: OFFICIAL_WEEK_META,
+    }, 503);
   }
+
   const probe = await db().from("ahmv_phone_contacts")
     .select("id", { head: true, count: "exact" }).limit(1);
   if (probe.error) {
-    return json({ ready: false, reason: "ahmv_phone_store_unavailable", sourceWindow: OFFICIAL_WEEK_META }, 503);
+    return json({
+      ready: false,
+      reason: "ahmv_phone_store_unavailable",
+      liveSchedule: { status: live.status, reason: live.reason ?? null },
+      sourceWindow: OFFICIAL_WEEK_META,
+    }, 503);
   }
   return json({
     ready: true,
-    reason: "ahmv_phone_v2_and_schedule_source_ready",
+    reason: liveReady
+      ? "ahmv_phone_v2_and_live_schedule_ready"
+      : "ahmv_phone_v2_and_static_schedule_ready",
+    liveSchedule: {
+      status: live.status,
+      updatedAt: live.updatedAt ?? null,
+      sourceUrl: live.sourceUrl ?? null,
+      reason: live.reason ?? null,
+    },
     sourceWindow: OFFICIAL_WEEK_META,
     phoneStore: "ready",
   });
@@ -365,13 +420,13 @@ export async function handleAhmvVoiceBridge(
   }
 
   let response: Response;
-  if (url.pathname === `${ROOT}/schedule`) response = schedule(request);
+  if (url.pathname === `${ROOT}/schedule`) response = await schedule(request, settings);
   else if (url.pathname === `${ROOT}/arena`) response = arena(request);
   else if (url.pathname === `${ROOT}/bootstrap`) response = await bootstrap(request, settings);
   else if (url.pathname === `${ROOT}/language`) response = await voiceLanguage(request, settings);
   else if (url.pathname === `${ROOT}/sms`) response = await voiceSms(request, settings);
   else if (url.pathname === `${ROOT}/interaction`) response = await interaction(request);
-  else response = await readiness();
+  else response = await readiness(settings);
 
   return request.method === "HEAD"
     ? new Response(null, { status: response.status, headers: response.headers })
