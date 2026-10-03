@@ -151,21 +151,13 @@ export function SiteHeader() {
               </Link>
             ) : null}
             {showPhone && (
-              phonePublic ? (
-                <a
-                  href={`tel:${phoneE164}`}
-                  className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
-                >
-                  <PhoneCall className="size-3.5" aria-hidden />
-                  {phoneDisplay}
-                </a>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 text-navy-foreground/60" title={lang === "fr" ? "Numéro réservé — activation à venir" : "Reserved number — activation upcoming"}>
-                  <PhoneCall className="size-3.5" aria-hidden />
-                  {phoneDisplay}
-                  <span className="text-[9px] uppercase tracking-wider text-sport-foreground">{lang === "fr" ? "bientôt" : "soon"}</span>
-                </span>
-              )
+              <a
+                href={`tel:${phoneE164}`}
+                className="inline-flex items-center gap-1.5 text-navy-foreground/70 hover:text-navy-foreground"
+              >
+                <PhoneCall className="size-3.5" aria-hidden />
+                {phoneDisplay}
+              </a>
             )}
             <LangSwitch />
           </div>
