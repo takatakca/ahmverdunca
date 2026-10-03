@@ -1,6 +1,6 @@
 {
   "name": "ahmv-voice-ai",
-  "version": "0.5.0-preproduction",
+  "version": "0.6.0-preproduction",
   "private": true,
   "type": "module",
   "description": "AHM Verdun trilingual Twilio ConversationRelay + OpenAI voice assistant",
