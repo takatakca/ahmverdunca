@@ -86,6 +86,14 @@ export async function runPhoneRetention(
     .select("id");
   if (jobDelete.error) throw jobDelete.error;
 
+  const voiceDelete = await client
+    .from("ahmv_voice_sessions")
+    .delete()
+    .not("ended_at", "is", null)
+    .lt("ended_at", cutoff(now, policy.voiceSessionDays))
+    .select("id");
+  if (voiceDelete.error) throw voiceDelete.error;
+
   return {
     generatedAt: now.toISOString(),
     policy,
