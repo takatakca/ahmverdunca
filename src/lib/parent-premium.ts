@@ -1,10 +1,14 @@
 export type ParentPremiumCapabilityId =
+  | "ad_free"
+  | "ai_assistant"
+  | "game_reminders"
   | "calendar_sync"
-  | "sms_reminders"
+  | "team_community"
+  | "parent_messaging"
+  | "parent_rideshare"
   | "smart_departure"
-  | "family_sync"
-  | "team_chat"
-  | "ride_share"
+  | "family_live_coordination"
+  | "tournament_travel"
   | "live_tracking"
   | "video_chat";
 
@@ -24,21 +28,27 @@ function weeklyPrice() {
 }
 
 export const PARENT_PREMIUM = {
-  productCode: "ahmv-parent-premium",
+  /** Must match GROUPE TAKATAK Hockey Membership catalog. */
+  productCode: "hockey_member_weekly_10",
+  planName: "AHMV Member",
   visible: import.meta.env["VITE_PARENT_PREMIUM_VISIBLE"] === "true",
   launchEnabled: import.meta.env["VITE_PARENT_PREMIUM_LAUNCH_ENABLED"] === "true",
   weeklyPriceCad: weeklyPrice(),
   supporterThankYouWeeks: 4,
   authStartUrl: import.meta.env["VITE_TAKATAK_AUTH_START_URL"] || "",
   activeCapabilities: [
+    "ad_free",
+    "ai_assistant",
+    "game_reminders",
     "calendar_sync",
-    "sms_reminders",
-    "smart_departure",
-    "family_sync",
+    "team_community",
+    "parent_messaging",
+    "parent_rideshare",
   ] satisfies ParentPremiumCapabilityId[],
   roadmapCapabilities: [
-    "team_chat",
-    "ride_share",
+    "smart_departure",
+    "family_live_coordination",
+    "tournament_travel",
     "live_tracking",
     "video_chat",
   ] satisfies ParentPremiumCapabilityId[],
