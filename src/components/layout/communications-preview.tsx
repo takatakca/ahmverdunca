@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { LogoSlot } from "./logo-slot";
 import { DEVELOPMENT_SUPPORT } from "@/lib/monetization";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { usePreferredTeam } from "@/lib/team-preference";
+import { publicTeamHubUrl } from "@/data/team-directory";
 import {
   ASSISTANT_LANGUAGE_OPTIONS,
   assistantUiLanguage,
@@ -74,6 +76,8 @@ function popupCopy(language: AssistantLanguageCode) {
 export function CommunicationsPreview() {
   const { lang, setLang } = useI18n();
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
+  const { selectedTeams } = usePreferredTeam();
+  const primaryTeam = selectedTeams[0];
   const [open, setOpen] = useState(false);
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
   const copy = useMemo(() => popupCopy(assistantLanguage), [assistantLanguage]);
@@ -148,16 +152,16 @@ export function CommunicationsPreview() {
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/62 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-center sm:p-5"
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/48 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-[2px] sm:items-center sm:p-4"
       role="presentation"
     >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="communications-preview-title"
-        className="relative w-full max-w-[680px] overflow-hidden border border-white/12 bg-background shadow-[0_30px_90px_-34px_rgba(0,0,0,0.78)]"
+        className="relative w-full max-w-[520px] overflow-hidden border border-white/12 bg-background shadow-[0_28px_80px_-36px_rgba(0,0,0,0.8)]"
       >
-        <div className="relative h-[150px] overflow-hidden bg-competition sm:h-[190px]">
+        <div className="relative h-[106px] overflow-hidden bg-competition sm:h-[128px]">
           <img
             src={OFFICIAL_MEDIA.practiceGoalie.url}
             alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGoalie.alt.fr : OFFICIAL_MEDIA.practiceGoalie.alt.en}
@@ -166,13 +170,13 @@ export function CommunicationsPreview() {
             className="absolute inset-0 size-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.94)_0%,rgba(7,16,43,0.62)_54%,rgba(7,16,43,0.20)_100%)]" />
-          <div className="relative flex h-full items-end gap-3 p-5 pr-16 text-white sm:p-6 sm:pr-20">
-            <LogoSlot className="size-14 sm:size-16" />
+          <div className="relative flex h-full items-end gap-3 p-4 pr-14 text-white sm:p-5 sm:pr-16">
+            <LogoSlot className="size-11 sm:size-12" />
             <div>
               <p className="eyebrow text-sport-foreground">{copy.eyebrow}</p>
               <h2
                 id="communications-preview-title"
-                className="mt-1 max-w-[11ch] font-display text-3xl font-extrabold uppercase leading-[0.86] tracking-[-0.035em] sm:text-4xl"
+                className="mt-1 max-w-[14ch] font-display text-2xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-3xl"
               >
                 {copy.title}
               </h2>
@@ -181,33 +185,42 @@ export function CommunicationsPreview() {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="premium-control absolute right-3 top-3 flex size-10 items-center justify-center border border-white/20 bg-navy-deep/76 text-white backdrop-blur"
+            className="premium-control absolute right-2.5 top-2.5 flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur"
             aria-label={assistantUiLanguage(assistantLanguage) === "fr" ? "Fermer" : assistantUiLanguage(assistantLanguage) === "es" ? "Cerrar" : "Close"}
           >
             <X className="size-4" />
           </button>
         </div>
 
-        <div className="max-h-[calc(100dvh-11rem)] overflow-y-auto p-5 sm:max-h-[560px] sm:p-6">
-          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">{copy.body}</p>
+        <div className="max-h-[calc(100dvh-8rem)] overflow-y-auto p-4 sm:max-h-[470px] sm:p-5">
+          <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">{copy.body}</p>
 
           <div className="mt-5 grid grid-cols-3 gap-2">
-            <Button asChild variant="sport" className="h-auto min-h-[70px] flex-col gap-1 px-2 py-3">
-              <Link to="/equipes" onClick={() => setOpen(false)}>
-                <Users className="size-4" />
-                <span className="text-[10px] uppercase tracking-[0.08em]">{copy.chooseTeams}</span>
-              </Link>
+            <Button asChild variant="sport" className="h-auto min-h-[58px] flex-col gap-1 px-2 py-2.5">
+              {primaryTeam ? (
+                <a href={publicTeamHubUrl(primaryTeam)} onClick={() => setOpen(false)}>
+                  <Users className="size-4" />
+                  <span className="max-w-full truncate text-[9px] uppercase tracking-[0.08em]">
+                    {primaryTeam.name}
+                  </span>
+                </a>
+              ) : (
+                <Link to="/equipes" onClick={() => setOpen(false)}>
+                  <Users className="size-4" />
+                  <span className="text-[9px] uppercase tracking-[0.08em]">{copy.chooseTeams}</span>
+                </Link>
+              )}
             </Button>
-            <Button asChild variant="outline" className="h-auto min-h-[70px] flex-col gap-1 px-2 py-3">
+            <Button asChild variant="outline" className="h-auto min-h-[58px] flex-col gap-1 px-2 py-3">
               <Link to="/horaires" onClick={() => setOpen(false)}>
                 <CalendarDays className="size-4 text-sport" />
-                <span className="text-[10px] uppercase tracking-[0.08em]">{copy.schedules}</span>
+                <span className="text-[9px] uppercase tracking-[0.08em]">{copy.schedules}</span>
               </Link>
             </Button>
             <button
               type="button"
               onClick={launchAssistant}
-              className="premium-control flex min-h-[70px] flex-col items-center justify-center gap-1 border border-sport/35 bg-competition px-2 py-3 text-white"
+              className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1 border border-sport/35 bg-competition px-2 py-3 text-white"
             >
               <Bot className="size-4 text-sport-foreground" />
               <span className="text-[10px] font-bold uppercase tracking-[0.08em]">{copy.assistant}</span>
@@ -218,33 +231,33 @@ export function CommunicationsPreview() {
             {phonePublic ? (
               <a
                 href={`tel:${phoneE164}`}
-                className="premium-control flex min-h-12 items-center justify-between border border-sport/35 bg-sport/8 px-4 text-navy"
+                className="premium-control flex min-h-11 items-center justify-between border border-sport/30 bg-sport/8 px-3 text-navy"
               >
                 <span className="flex items-center gap-3">
-                  <span className="flex size-8 items-center justify-center bg-sport text-sport-foreground">
+                  <span className="flex size-7 items-center justify-center bg-sport text-sport-foreground">
                     <PhoneCall className="size-4" />
                   </span>
                   <span>
                     <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-sport">{copy.phoneReady}</span>
-                    <span className="mt-0.5 block font-display text-xl font-extrabold uppercase leading-none">{phoneDisplay}</span>
+                    <span className="mt-0.5 block font-display text-lg font-extrabold uppercase leading-none">{phoneDisplay}</span>
                   </span>
                 </span>
                 <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-sport">1 clic</span>
               </a>
             ) : (
-              <div className="flex min-h-12 items-center justify-between border border-navy/10 bg-ice px-4 text-navy">
+              <div className="flex min-h-11 items-center justify-between border border-navy/10 bg-ice px-3 text-navy">
                 <span className="flex items-center gap-3">
                   <PhoneCall className="size-4 text-sport" />
                   <span>
                     <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{copy.phoneReserved}</span>
-                    <span className="mt-0.5 block font-display text-xl font-extrabold uppercase leading-none">{phoneDisplay}</span>
+                    <span className="mt-0.5 block font-display text-lg font-extrabold uppercase leading-none">{phoneDisplay}</span>
                   </span>
                 </span>
               </div>
             )}
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-navy/10 pt-4">
+          <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-navy/10 pt-3">
             <Globe2 className="size-4 text-sport" />
             <span className="mr-1 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{copy.language}</span>
             {ASSISTANT_LANGUAGE_OPTIONS.slice(0, 3).map((option) => (
@@ -275,7 +288,7 @@ export function CommunicationsPreview() {
             </select>
           </div>
 
-          <div className="mt-4 flex items-center justify-between gap-3">
+          <div className="mt-3 flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={dismissForever}
