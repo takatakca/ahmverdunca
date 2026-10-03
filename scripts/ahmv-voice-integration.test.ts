@@ -23,7 +23,7 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
   assert.match(bridge, /dedupeKey/);
   assert.match(contacts, /"fr" \| "en" \| "es"/);
   assert.match(messaging, /dedupe_key/);
-  assert.match(env, /AHMV_VOICE_BRIDGE_TOKEN=/);
+  assert.match(env, /AHMV_VOICE_BRIDGE_TOKEN=/);\n  assert.doesNotMatch(env, /AHMV_VOICE_DATA_TOKEN=/);\n  assert.doesNotMatch(bridge, /AHMV_VOICE_DATA_TOKEN/);
   assert.match(voiceMigration, /public\.ahmv_voice_sessions/);
   assert.match(voiceMigration, /revoke all on public\.ahmv_voice_sessions from anon, authenticated/);
   assert.match(extensionMigration, /language in \('fr','en','es'\)/);
