@@ -33,8 +33,8 @@ export async function sendTransactionalSms(input: {
   to: string;
   body: string;
   purpose: string;
-  contactId?: string;
-  settings?: Settings;
+  contactId?: string | undefined;
+  settings?: Settings | undefined;
 }) {
   const settings = input.settings ?? process.env;
   const to = normalizePhoneE164(input.to);
