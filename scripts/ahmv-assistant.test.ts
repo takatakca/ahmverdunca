@@ -50,22 +50,22 @@ test("lists exact saved teams from family context", () => {
   const reply = buildAssistantReply("mes équipes", "fr", {
     selectedTeamIds: ["2025191400019495", "2025191400035012"],
   });
-  assert.equal(reply.matchedTeamIds.length, 2);
-  assert.equal(reply.actions.length, 2);
-  assert.ok(reply.actions.some((action) => action.href.includes("teamId=2025191400019495")));
-  assert.ok(reply.actions.some((action) => action.href.includes("teamId=2025191400035012")));
+  expect(reply.matchedTeamIds).toHaveLength(2);
+  expect(reply.actions).toHaveLength(2);
+  expect(reply.actions.some((action) => action.href.includes("teamId=2025191400019495"))).toBe(true);
+  expect(reply.actions.some((action) => action.href.includes("teamId=2025191400035012"))).toBe(true);
 });
 
 test("routes saved-team results to each official source", () => {
   const reply = buildAssistantReply("résultats de mes équipes", "fr", {
     selectedTeamIds: ["2025191400019495", "2025191400035012"],
   });
-  assert.deepEqual(reply.actions.map((action) => action.kind), ["results", "results"]);
-  assert.ok(reply.actions.every((action) => action.external === true));
+  expect(reply.actions.map((action) => action.kind)).toEqual(["results", "results"]);
+  expect(reply.actions.every((action) => action.external === true)).toBe(true);
 });
 
 test("empty My Teams context never invents a family team", () => {
   const reply = buildAssistantReply("mis equipos", "es", { selectedTeamIds: [] });
-  assert.deepEqual(reply.matchedTeamIds, []);
-  assert.equal(reply.actions[0]?.href, "/equipes");
+  expect(reply.matchedTeamIds).toEqual([]);
+  expect(reply.actions[0]?.href).toBe("/equipes");
 });
