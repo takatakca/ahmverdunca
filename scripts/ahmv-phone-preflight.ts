@@ -1,3 +1,5 @@
+import { approvedReminderTeamMap } from "../src/features/ahmv-phone/reminders/source.ts";
+
 type Settings = Record<string, string | undefined>;
 
 export interface PhonePreflightCheck {
@@ -97,10 +99,15 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       id: "reminder-team-map",
       ok:
         !remindersEnabled ||
-        (present(settings["AHMV_REMINDER_TEAM_MAP_JSON"]) &&
-          settings["AHMV_REMINDER_TEAM_MAP_JSON"] !== "{}"),
+        (() => {
+          try {
+            return Object.keys(approvedReminderTeamMap(settings)).length > 0;
+          } catch {
+            return false;
+          }
+        })(),
       required: remindersEnabled,
-      detail: "Reminder delivery requires an explicit official-group to public-team mapping.",
+      detail: "Reminder delivery requires a valid explicit official-group to public-team mapping.",
     },
     {
       id: "safe-lifecycle-gate",
