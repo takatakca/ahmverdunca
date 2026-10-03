@@ -99,6 +99,8 @@ test("Voice AI deployment assets are fail-closed and preserve canonical public U
 
   assert.match(service, /User=ahmvvoice/);
   assert.match(service, /EnvironmentFile=\/etc\/ahmv-voice-ai\.env/);
+  assert.match(service, /WorkingDirectory=\/opt\/ahmv-voice-ai\/current/);
+  assert.match(service, /ExecStart=\/usr\/bin\/node \/opt\/ahmv-voice-ai\/current\/src\/server\.js/);
   assert.match(service, /TimeoutStopSec=20/);
   assert.match(service, /NoNewPrivileges=true/);
 
@@ -154,12 +156,38 @@ test("Voice integration preproduction deploy is branch-pinned, smoke-gated and r
 });
 
 
+test("Standalone Voice runtime preproduction deploy is immutable, CI-gated and rollback-safe", async () => {
+  const workflow = await source(".github/workflows/deploy-voice-runtime-preproduction.yml");
+  const runtimeEnv = await source("services/ahmv-voice-ai/.env.example");
+
+  assert.match(workflow, /commits\/voice-ai-preprod-v5/);
+  assert.match(workflow, /AHMV-VOICE-RUNTIME-PREPROD/);
+  assert.match(workflow, /npm ci --ignore-scripts --audit=false --fund=false/);
+  assert.match(workflow, /npm run verify/);
+  assert.match(workflow, /npm audit --omit=dev --audit-level=high/);
+  assert.match(workflow, /ahmv-voice-runtime-\$RELEASE_SHA\.tar\.gz/);
+  assert.match(workflow, /ln -sfn '\$VOICE_APP_ROOT\/releases\/\$RELEASE_SHA' '\$VOICE_APP_ROOT\/current'/);
+  assert.match(workflow, /\/healthz/);
+  assert.match(workflow, /\/readyz/);
+  assert.match(workflow, /Roll back failed Voice runtime activation/);
+  assert.doesNotMatch(workflow, /TWILIO_AUTH_TOKEN|OPENAI_API_KEY|SUPABASE_SERVICE_ROLE_KEY/);
+
+  assert.match(runtimeEnv, /OPENAI_MODEL=gpt-6-luna/);
+  assert.match(runtimeEnv, /TWILIO_VALIDATE_SIGNATURES=true/);
+  assert.match(runtimeEnv, /VOICE_INSTANCE_MODE=single/);
+  assert.match(runtimeEnv, /AHM_VOICE_BRIDGE_TOKEN=/);
+  assert.doesNotMatch(runtimeEnv, /sk-|AC[0-9a-f]{32}|sb_secret_/i);
+});
+
+
 test("Voice dependency workflow audits production packages and emits a CycloneDX SBOM", async () => {
   const workflow = await source(".github/workflows/voice-lockfile.yml");
   assert.match(workflow, /npm ci --ignore-scripts --audit=false --fund=false/);
   assert.match(workflow, /npm audit --omit=dev --audit-level=high/);
   assert.match(workflow, /npm sbom --sbom-format=cyclonedx/);
   assert.match(workflow, /bomFormat !== 'CycloneDX'/);
+  assert.match(workflow, /voice-ai-preprod-v5/);
+  assert.match(workflow, /npm run verify/);
   assert.match(workflow, /services\/ahmv-voice-ai\/package-lock\.json/);
   assert.match(workflow, /services\/ahmv-voice-ai\/sbom\.cdx\.json/);
   assert.match(workflow, /actions\/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a/);
