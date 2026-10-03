@@ -16,6 +16,7 @@ import type { TranslationKey } from "@/lib/translations";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
+import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 
 export const Route = createFileRoute("/horaires")({
   head: () => ({
@@ -53,7 +54,7 @@ function addDays(iso: string, n: number) {
 function SchedulePage() {
   const { t, l, lang } = useI18n();
   const showPrototypeCalendar = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
-  const { preferredTeam, savePreferredTeam } = usePreferredTeam();
+  const { preferredTeam, savePreferredTeam, selectedTeams } = usePreferredTeam();
   const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
   const selectedTeam =
     typeof search["team"] === "string" && TEAMS.some((item) => item.slug === search["team"])
@@ -141,6 +142,51 @@ function SchedulePage() {
             </p>
           </div>
         </section>
+        {selectedTeams.length > 0 && (
+          <section className="mb-6 overflow-hidden border border-sport/30 bg-background">
+            <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
+              <div className="p-5 md:p-6">
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail parent" : "Parent portal"}</p>
+                <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9]">
+                  {lang === "fr" ? "Mes équipes — accès direct" : "My teams — direct access"}
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm text-white/62">
+                  {lang === "fr"
+                    ? "Ces liens utilisent l’identifiant officiel exact de chaque équipe enregistrée sur cet appareil."
+                    : "These links use the exact official identifier for each team saved on this device."}
+                </p>
+              </div>
+              <div className="flex items-center border-t border-white/12 p-5 lg:border-l lg:border-t-0">
+                <a href="/equipes" className="premium-control min-h-11 border border-white/18 px-4 py-3 text-[10px] font-bold uppercase tracking-[0.12em] text-white hover:border-sport">
+                  {lang === "fr" ? "Gérer mes équipes" : "Manage my teams"}
+                </a>
+              </div>
+            </div>
+            <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
+              {selectedTeams.map((entry) => (
+                <article key={entry.legacyScheduleTeamId} className="flex min-h-44 flex-col bg-background p-4">
+                  <div>
+                    <p className="eyebrow text-sport">{entry.level}</p>
+                    <p className="mt-2 font-display text-xl font-extrabold uppercase leading-[0.9] text-navy">{entry.name}</p>
+                    <p className="mt-2 font-mono text-[9px] text-muted-foreground">#{entry.legacyScheduleTeamId.slice(-4)}</p>
+                  </div>
+                  <div className="mt-auto grid grid-cols-3 gap-2 pt-5">
+                    <a href={publicTeamHubUrl(entry)} className="premium-control flex min-h-10 items-center justify-center border border-navy/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-navy hover:border-sport">
+                      {lang === "fr" ? "Équipe" : "Team"}
+                    </a>
+                    <a href={legacyTeamScheduleUrl(entry)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-navy/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-navy hover:border-sport">
+                      {lang === "fr" ? "Horaire" : "Schedule"}
+                    </a>
+                    <a href={officialTeamResultsUrl(entry)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center bg-navy px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white">
+                      {lang === "fr" ? "Résultats" : "Results"}
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
+
         <section className="mb-6 overflow-hidden border border-navy/12 bg-background">
           <div className="border-b border-border bg-ice px-5 py-4 md:px-6">
             <p className="eyebrow text-sport">
