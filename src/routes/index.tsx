@@ -35,6 +35,7 @@ import { publicTeamHubUrl } from "@/data/team-directory";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
 import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase";
+import { RevenueActionPanel } from "@/components/revenue-action-panel";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -665,6 +666,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <RevenueActionPanel />
 
       {/* Final action */}
       <section className="bg-sport text-sport-foreground">
