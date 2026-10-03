@@ -8,7 +8,7 @@ import { EventCard } from "@/components/event-list";
 import { OfficialWeekSchedule } from "@/components/official-week-schedule";
 import { Button } from "@/components/ui/button";
 import { SCHEDULE, SCHEDULE_META, DEMO_TODAY, type EventType, type EventStatus } from "@/data/schedule";
-import { TEAMS } from "@/data/teams";
+import { TEAMS, CURRENT_TEAMS } from "@/data/teams";
 import { ARENAS } from "@/data/arenas";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -326,7 +326,7 @@ function SchedulePage() {
                   }}
                 >
                   <option value="all">{t("common.all")}</option>
-                  {TEAMS.map((item) => (
+                  {CURRENT_TEAMS.map((item) => (
                     <option key={item.slug} value={item.slug}>
                       {item.code === "F" ? l(item.name) : `${item.code} · ${l(item.name)}`}
                     </option>
