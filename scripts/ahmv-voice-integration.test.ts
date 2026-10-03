@@ -29,7 +29,7 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
   assert.match(extensionMigration, /language in \('fr','en','es'\)/);
   assert.doesNotMatch(voiceMigration, /voice_memberships/);
   assert.doesNotMatch(voiceMigration, /transcript_summary/);
-  assert.match(voiceMigration, /Raw call transcripts are intentionally not stored here/);
+  assert.match(voiceMigration, /Raw call transcripts are intentionally not stored here/);\n  assert.match(voiceMigration, /detected_language in \\('fr','en','es'\\)/);\n  assert.match(voiceMigration, /turn_count between 0 and 100/);
   assert.match(bridge, /expected\.length < 24/);
   assert.match(bridge, /transactional_sms_allowed !== true \|\| lookup\.data\.sms_consent !== true/);
   assert.match(bridge, /CONTACT_MISMATCH/);
