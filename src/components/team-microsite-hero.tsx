@@ -73,7 +73,7 @@ function MiniCalendar({
   team: PublicTeamDirectoryEntry;
   kind: "game" | "practice";
   lang: Lang;
-  sourceHref?: string;
+  sourceHref?: string | undefined;
 }) {
   return (
     <section className="overflow-hidden border border-white/12 bg-white/[0.04]">
