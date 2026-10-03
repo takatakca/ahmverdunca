@@ -33,7 +33,7 @@ test("fresh authoritative schedule feed is accepted with provenance", () => {
   const voice = liveEventToVoiceMatch(result.events[0]!);
   assert.equal(voice.date, "2026-10-05");
   assert.equal(voice.time, "18:30");
-  assert.equal(voice.endTime, "19:50");
+  assert.equal(voice.endTime, "19:50");\n  assert.match(voice.mapsUrl ?? "", /^https:\/\/www\\.google\\.com\/maps\/dir/);\n  assert.match(voice.wazeUrl ?? "", /^https:\/\/www\\.waze\\.com\/ul/);\n  assert.match(voice.appleMapsUrl ?? "", /^https:\/\/maps\\.apple\\.com/);
 });
 
 test("stale live schedule is rejected instead of overriding the fallback", () => {
