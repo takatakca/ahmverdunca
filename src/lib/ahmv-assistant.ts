@@ -1,6 +1,7 @@
 import { FAQ } from "@/data/faq";
 import {
   PUBLIC_TEAM_DIRECTORY,
+  getPublicTeamById,
   legacyTeamScheduleUrl,
   officialTeamResultsUrl,
   publicTeamHubUrl,
@@ -25,6 +26,10 @@ export interface AssistantReply {
   matchedTeamIds: string[];
 }
 
+export interface AssistantContext {
+  selectedTeamIds?: readonly string[];
+}
+
 function normalize(value: string) {
   return value
     .normalize("NFD")
@@ -47,22 +52,27 @@ const INTENTS = {
   registration: ["inscription", "inscrire", "registration", "register", "registro", "inscribir", "inscricao", "iscrizione", "enskripsyon"],
   news: ["nouvelle", "nouvelles", "news", "noticia", "noticias", "novita"],
   teams: ["equipe", "equipes", "team", "teams", "equipo", "equipos", "squadra", "ekip"],
+  myTeams: [
+    "mes equipes",
+    "my teams",
+    "mis equipos",
+    "minhas equipes",
+    "le mie squadre",
+    "ekip mwen",
+  ],
   bookmark: [
     "ajoute",
     "ajouter",
     "favori",
     "favoris",
-    "mes equipes",
     "bookmark",
     "favorite",
     "favourite",
     "add to my teams",
-    "mis equipos",
     "favorito",
     "guardar",
     "adicionar",
     "preferiti",
-    "ekip mwen",
   ],
 } as const;
 
@@ -117,6 +127,8 @@ function copy(language: AssistantLanguageCode) {
       openResults: "Resultados",
       openPage: "Abrir",
       source: "Ver fuente",
+      myTeams: "Estos son tus equipos guardados en este dispositivo.",
+      noMyTeams: "Todavía no has guardado ningún equipo. Abre un mini-sitio y pulsa «Añadir a Mis equipos».",
     };
   }
   if (ui === "en") {
@@ -136,6 +148,8 @@ function copy(language: AssistantLanguageCode) {
       openResults: "Results",
       openPage: "Open",
       source: "View source",
+      myTeams: "These are your teams saved on this device.",
+      noMyTeams: "You have not saved a team yet. Open a team mini-site and choose “Add to My teams”.",
     };
   }
   return {
@@ -154,6 +168,8 @@ function copy(language: AssistantLanguageCode) {
     openResults: "Résultats",
     openPage: "Ouvrir",
     source: "Voir la source",
+    myTeams: "Voici les équipes enregistrées sur cet appareil.",
+    noMyTeams: "Vous n’avez encore enregistré aucune équipe. Ouvrez un mini-site puis choisissez « Ajouter à mes équipes ».",
   };
 }
 
@@ -179,7 +195,11 @@ function bestValidatedFaq(query: string) {
   return best?.item;
 }
 
-export function buildAssistantReply(query: string, language: AssistantLanguageCode = "fr"): AssistantReply {
+export function buildAssistantReply(
+  query: string,
+  language: AssistantLanguageCode = "fr",
+  context: AssistantContext = {},
+): AssistantReply {
   const q = normalize(query);
   const c = copy(language);
   const teams = findAssistantTeams(query);
@@ -211,6 +231,35 @@ export function buildAssistantReply(query: string, language: AssistantLanguageCo
         kind: "team" as const,
       })),
       matchedTeamIds: teams.map((team) => team.legacyScheduleTeamId),
+    };
+  }
+
+  if (containsAny(q, INTENTS.myTeams)) {
+    const selectedTeams = (context.selectedTeamIds ?? [])
+      .map((teamId) => getPublicTeamById(teamId))
+      .filter((team): team is PublicTeamDirectoryEntry => Boolean(team));
+
+    if (selectedTeams.length === 0) {
+      return {
+        text: c.noMyTeams,
+        actions: [{ label: c.openPage, href: "/equipes", kind: "page" }],
+        matchedTeamIds: [],
+      };
+    }
+
+    return {
+      text: c.myTeams,
+      actions: selectedTeams.slice(0, 8).map((team) => ({
+        label: `${team.categorySlug.toUpperCase()} · ${team.name} · ${team.level}`,
+        href: wantsResults
+          ? officialTeamResultsUrl(team)
+          : wantsSchedule
+            ? legacyTeamScheduleUrl(team)
+            : publicTeamHubUrl(team),
+        kind: wantsResults ? "results" as const : wantsSchedule ? "schedule" as const : "team" as const,
+        ...(wantsResults || wantsSchedule ? { external: true } : {}),
+      })),
+      matchedTeamIds: selectedTeams.map((team) => team.legacyScheduleTeamId),
     };
   }
 
