@@ -1,6 +1,7 @@
 import { ExternalLink, Megaphone, Sparkles } from "lucide-react";
 import { houseSponsorsForPlacement } from "@/data/house-sponsors";
 import { useI18n } from "@/lib/i18n";
+import { useDemoMemberMode } from "@/lib/demo-member-mode";
 
 export function HouseSponsorSlot({
   placement,
@@ -14,7 +15,10 @@ export function HouseSponsorSlot({
   compact?: boolean;
 }) {
   const { lang } = useI18n();
+  const { isDemoMember } = useDemoMemberMode();
   const sponsors = houseSponsorsForPlacement(placement, count);
+
+  if (isDemoMember) return null;
 
   return (
     <aside
