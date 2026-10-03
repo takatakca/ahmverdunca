@@ -5,7 +5,13 @@ on:
     branches: [main]
     paths:
       - "services/ahmv-voice-ai/**"
-      - ".github/workflows/voice-guardian.yml"
+      - "src/lib/ahmv-voice-bridge.server.ts"
+      - "src/features/ahmv-phone/**"
+      - "supabase/migrations/*voice*"
+      - ".github/workflows/*voice*"
+      - ".cursor/**"
+      - "docs/VOICE_*"
+      - "docs/CURSOR_TWILIO_HANDOFF.md"
   schedule:
     - cron: "17 4 * * *"
   workflow_dispatch:
