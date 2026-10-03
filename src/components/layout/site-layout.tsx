@@ -7,6 +7,7 @@ import { GlobalSearchShortcut } from "@/components/global-search-shortcut";
 import { CommunicationsPreview } from "./communications-preview";
 import { useI18n } from "@/lib/i18n";
 import { SupportDevelopment } from "@/components/support-development";
+import { AhmvAssistant } from "@/components/ahmv-assistant";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { lang } = useI18n();
@@ -24,6 +25,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <MobileQuickNav />
       <CommunicationsPreview />
       <SupportDevelopment />
+      <AhmvAssistant />
     </div>
   );
 }
