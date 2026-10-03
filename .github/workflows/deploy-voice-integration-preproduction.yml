@@ -1,0 +1,198 @@
+name: Deploy AHMV Voice integration preproduction
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: "Exact green voice-ai-integration-v5 commit SHA"
+        required: true
+        type: string
+      confirmation:
+        description: "Type AHMV-VOICE-PREPROD"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ahmverdun-voice-preproduction
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: preproduction
+    timeout-minutes: 25
+
+    env:
+      VITE_PUBLIC_INDEXING: "false"
+      AHMV_HOST: ${{ secrets.AHMV_MOCHAHOST_HOST }}
+      AHMV_PORT: ${{ secrets.AHMV_MOCHAHOST_SSH_PORT }}
+      AHMV_USER: ${{ secrets.AHMV_MOCHAHOST_USER }}
+      AHMV_APP_ROOT: ${{ secrets.AHMV_MOCHAHOST_APP_ROOT }}
+      AHMV_PREVIEW_URL: ${{ secrets.AHMV_PREPRODUCTION_URL }}
+      AHMV_VOICE_BRIDGE_TOKEN: ${{ secrets.AHMV_VOICE_BRIDGE_TOKEN }}
+
+    steps:
+      - name: Validate requested Voice release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_SHA: ${{ inputs.release_sha }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          set -euo pipefail
+          test "$CONFIRMATION" = "AHMV-VOICE-PREPROD" || {
+            echo "Exact confirmation AHMV-VOICE-PREPROD is required."
+            exit 1
+          }
+          [[ "$REQUESTED_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "release_sha must be a full lowercase 40-character SHA"
+            exit 1
+          }
+          VOICE_HEAD="$(gh api repos/${GITHUB_REPOSITORY}/commits/voice-ai-integration-v5 --jq .sha)"
+          test "$REQUESTED_SHA" = "$VOICE_HEAD" || {
+            echo "Refusing stale/non-Voice head: requested=$REQUESTED_SHA voice_head=$VOICE_HEAD"
+            exit 1
+          }
+          SUCCESSFUL_CI_RUNS="$(
+            gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?head_sha=$REQUESTED_SHA&status=success&per_page=10"               --jq '.workflow_runs | length'
+          )"
+          test "$SUCCESSFUL_CI_RUNS" -gt 0 || {
+            echo "No successful AHM Verdun CI exists for $REQUESTED_SHA"
+            exit 1
+          }
+
+      - name: Checkout exact Voice release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.release_sha }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Full Voice release gate
+        run: |
+          set -euo pipefail
+          bunx tsc --noEmit
+          bun run doctor:voice-db
+          bun run test:phone
+          bun run test:team-feed
+          bun run test:assistant
+          bun run check:monetization
+          bun run check:parent-premium
+          bun run check:data
+          bun run check:seo
+          bun run check:runtime-policy
+          bun run check:mobile-nav
+          bun run check:supabase-key-safety
+          bun run check:media-policy
+          bun run check:canonical
+          bun run check:external-links
+          bunx eslint . --rule 'prettier/prettier: off'
+          bun run build
+          bun run check:release-artifact
+
+      - name: Verify preproduction deployment configuration
+        run: |
+          set -euo pipefail
+          for name in AHMV_HOST AHMV_PORT AHMV_USER AHMV_APP_ROOT AHMV_PREVIEW_URL AHMV_VOICE_BRIDGE_TOKEN; do
+            test -n "${!name:-}" || { echo "Missing required secret-backed value: $name"; exit 1; }
+          done
+          [[ "$AHMV_PORT" =~ ^[0-9]+$ ]] || { echo "SSH port must be numeric"; exit 1; }
+          [[ "$AHMV_APP_ROOT" = /* ]] || { echo "AHMV app root must be absolute"; exit 1; }
+          [[ "$AHMV_PREVIEW_URL" =~ ^https://[^/]+$ ]] || { echo "Preproduction URL must be an HTTPS origin"; exit 1; }
+          test "${#AHMV_VOICE_BRIDGE_TOKEN}" -ge 24 || { echo "Voice bridge token is too short"; exit 1; }
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AHMV_MOCHAHOST_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.AHMV_MOCHAHOST_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Package immutable Voice integration release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$RELEASE_SHA" > .output/RELEASE_SHA
+          tar -C .output -czf "ahmverdun-voice-$RELEASE_SHA.tar.gz" .
+
+      - name: Capture previous release
+        run: |
+          set -euo pipefail
+          PREVIOUS="$(ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "readlink '$AHMV_APP_ROOT/current' 2>/dev/null || true")"
+          echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+
+      - name: Upload and activate Voice integration release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "mkdir -p '$AHMV_APP_ROOT/releases/$RELEASE_SHA'"
+          scp -P "$AHMV_PORT" "ahmverdun-voice-$RELEASE_SHA.tar.gz"             "$AHMV_USER@$AHMV_HOST:$AHMV_APP_ROOT/releases/$RELEASE_SHA/release.tar.gz"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST"             "cd '$AHMV_APP_ROOT/releases/$RELEASE_SHA' && tar -xzf release.tar.gz && rm release.tar.gz && ln -sfn '$AHMV_APP_ROOT/releases/$RELEASE_SHA' '$AHMV_APP_ROOT/current'"
+
+      - name: Restart preproduction application
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_MOCHAHOST_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          test -n "$RESTART_COMMAND" || { echo "Missing AHMV_MOCHAHOST_RESTART_COMMAND"; exit 1; }
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "$RESTART_COMMAND"
+
+      - name: Verify preproduction health and Voice bridge readiness
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          sleep 5
+          curl --fail --silent --show-error --retry 5 --retry-delay 3 "$AHMV_PREVIEW_URL/healthz"
+
+          BRIDGE_BODY="$(mktemp)"
+          BRIDGE_STATUS="$(
+            curl --silent --show-error --retry 5 --retry-delay 3               -o "$BRIDGE_BODY" -w '%{http_code}'               -H "Accept: application/json"               -H "Authorization: Bearer $AHMV_VOICE_BRIDGE_TOKEN"               "$AHMV_PREVIEW_URL/api/ahmv/voice/readiness"
+          )"
+          test "$BRIDGE_STATUS" = "200" || {
+            echo "Voice bridge readiness returned HTTP $BRIDGE_STATUS"
+            cat "$BRIDGE_BODY"
+            exit 1
+          }
+          grep -q '"ready"[[:space:]]*:[[:space:]]*true' "$BRIDGE_BODY" || {
+            echo "Voice bridge does not report ready=true"
+            cat "$BRIDGE_BODY"
+            exit 1
+          }
+
+          HEADERS="$(mktemp)"
+          curl --fail --silent --show-error -D "$HEADERS" -o /dev/null "$AHMV_PREVIEW_URL/"
+          grep -qi '^x-robots-tag: noindex, nofollow' "$HEADERS" || {
+            echo "Voice preproduction must remain noindex"
+            cat "$HEADERS"
+            exit 1
+          }
+          echo "Voice integration preproduction $RELEASE_SHA is healthy and bridge-ready."
+
+      - name: Roll back failed Voice preproduction activation
+        if: failure() && env.previous_release != ''
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_MOCHAHOST_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          echo "Restoring previous release: $previous_release"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "ln -sfn '$previous_release' '$AHMV_APP_ROOT/current'"
+          ssh -p "$AHMV_PORT" "$AHMV_USER@$AHMV_HOST" "$RESTART_COMMAND"
