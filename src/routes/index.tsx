@@ -9,6 +9,7 @@ import {
   ExternalLink,
   Facebook,
   Instagram,
+  Images,
   MapPin,
   Trophy,
   Users,
