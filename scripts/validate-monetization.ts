@@ -17,8 +17,8 @@ if (adsEnabled) {
   if (!/^ca-pub-\d+$/.test(adsClient)) {
     errors.push("VITE_ADSENSE_CLIENT must be a real ca-pub-<digits> identifier when AdSense is enabled.");
   }
-  if (!/^\d+$/.test(adsSlot)) {
-    errors.push("VITE_ADSENSE_SLOT must be numeric when AdSense is enabled.");
+  if (adsSlot && !/^\d+$/.test(adsSlot)) {
+    errors.push("VITE_ADSENSE_SLOT must be numeric when provided.");
   }
 }
 
@@ -46,5 +46,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `AHM Verdun monetization check passed. AdSense=${adsEnabled ? "configured" : "off"}; support=${supportEnabled ? "configured" : "off"}.`,
+  `AHM Verdun monetization check passed. AdSense=${adsEnabled ? (adsSlot ? "manual+auto-ready" : "auto-ready") : "off"}; support=${supportEnabled ? "configured" : "off"}.`,
 );

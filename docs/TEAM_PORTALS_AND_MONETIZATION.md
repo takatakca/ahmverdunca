@@ -54,7 +54,17 @@ Browser settings:
 
 - `VITE_ADSENSE_ENABLED=true|false`
 - `VITE_ADSENSE_CLIENT=ca-pub-<digits>`
-- `VITE_ADSENSE_SLOT=<numeric-slot-id>`
+- `VITE_ADSENSE_SLOT=<numeric-slot-id>` (optional when Google Auto Ads is used)
+
+Auto Ads mode:
+- set `VITE_ADSENSE_ENABLED=true`
+- set the approved `VITE_ADSENSE_CLIENT`
+- leave `VITE_ADSENSE_SLOT` empty
+- the global Google script loads, while designed AHMV house-sponsor surfaces remain available as layout-safe fallback inventory
+
+Manual slot mode:
+- provide all three values
+- the explicit AHMV ad slot renders Google Ads instead of the house-sponsor fallback
 
 AdSense remains off until the real publisher ID, slot, privacy disclosures and applicable consent requirements are approved.
 
