@@ -47,15 +47,22 @@ function AlbumPage() {
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
           <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
             {slug === "tournoi-m11-2025" ? (
-              <div className="absolute inset-0 grid grid-cols-[1.2fr_0.8fr] grid-rows-2 gap-px bg-white/10">
-                {[OFFICIAL_MEDIA.tournamentM11Primary, OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media, index) => (
+              <div className="absolute inset-0 grid grid-cols-2 grid-rows-3 gap-px bg-white/10 sm:grid-cols-3 sm:grid-rows-2">
+                {[
+                  OFFICIAL_MEDIA.tournamentM11Primary,
+                  OFFICIAL_MEDIA.tournamentM11Champions,
+                  OFFICIAL_MEDIA.tournamentM11Finalist,
+                  OFFICIAL_MEDIA.tournamentM11Secondary,
+                  OFFICIAL_MEDIA.tournamentM11ChampionB,
+                  OFFICIAL_MEDIA.tournamentM11Tertiary,
+                ].map((media, index) => (
                   <img
                     key={media.url}
                     src={media.url}
                     alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                    loading={index === 0 ? "eager" : "lazy"}
+                    loading={index < 2 ? "eager" : "lazy"}
                     decoding="async"
-                    className={`size-full object-cover ${index === 0 ? "row-span-2" : ""}`}
+                    className="size-full object-cover"
                   />
                 ))}
               </div>

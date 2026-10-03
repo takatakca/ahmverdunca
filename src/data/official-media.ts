@@ -37,6 +37,30 @@ export const OFFICIAL_MEDIA = {
       en: "AHM Verdun public archive — 2025 U11 Tournament",
     },
   },
+  tournamentM11Finalist: {
+    url: "https://www.ahmverdun.com/storage/gallery/01K40QFFMNDV1Z973J1XFD6P3P.jpg",
+    sourceUrl: "https://www.ahmverdun.com/albums/1",
+    alt: {
+      fr: "Archive publique AHM Verdun — équipe finaliste du Tournoi M11 2025",
+      en: "AHM Verdun public archive — finalist team at the 2025 U11 Tournament",
+    },
+  },
+  tournamentM11Champions: {
+    url: "https://www.ahmverdun.com/storage/gallery/01K40QJQ1706617JH819S3EG59.jpg",
+    sourceUrl: "https://www.ahmverdun.com/albums/1",
+    alt: {
+      fr: "Archive publique AHM Verdun — équipe championne avec trophée et mascotte au Tournoi M11 2025",
+      en: "AHM Verdun public archive — champion team with trophy and mascot at the 2025 U11 Tournament",
+    },
+  },
+  tournamentM11ChampionB: {
+    url: "https://www.ahmverdun.com/storage/gallery/01K40QJQ1B99QXAPZ0HXAKDDNX.jpg",
+    sourceUrl: "https://www.ahmverdun.com/albums/1",
+    alt: {
+      fr: "Archive publique AHM Verdun — champions B du Tournoi M11 2025",
+      en: "AHM Verdun public archive — B champions at the 2025 U11 Tournament",
+    },
+  },
   volunteerArchive: {
     url: "https://www.ahmverdun.com/storage/gallery/01K40VSP15YFS9QQMM1QYM1WHR.jpg",
     sourceUrl: "https://www.ahmverdun.com/albums/2",
