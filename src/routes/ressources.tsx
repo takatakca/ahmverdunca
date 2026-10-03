@@ -40,7 +40,26 @@ function ResourcesPage() {
         }
       />
       <div className="container-site py-8 md:py-12">
-        <div className="mb-6 rounded-xl border border-border bg-ice p-5">
+        <section className="mb-7 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-[1fr_auto]">
+          <div className="bg-navy p-6 text-white md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Répertoire famille & hockey" : "Family & hockey directory"}</p>
+            <p className="mt-3 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">
+              {lang === "fr" ? "Une source claire. Un lien direct." : "A clear source. A direct link."}
+            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65">
+              {lang === "fr"
+                ? "Le portail regroupe les organismes et programmes utiles sans recopier leurs règles ni leurs critères. Chaque fiche mène vers la source concernée."
+                : "The portal groups useful organizations and programs without copying their rules or eligibility criteria. Each entry points to its source."}
+            </p>
+          </div>
+          <div className="flex min-w-48 flex-col justify-center bg-ice p-6 md:p-8">
+            <p className="font-display text-6xl font-extrabold tracking-[-0.05em] text-navy">{String(RESOURCES.length).padStart(2, "0")}</p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-muted-foreground">
+              {lang === "fr" ? "ressources publiques" : "public resources"}
+            </p>
+          </div>
+        </section>
+        <div className="mb-6 border border-navy/12 bg-ice p-5">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "À savoir" : "Good to know"}
           </p>
@@ -59,7 +78,7 @@ function ResourcesPage() {
               aria-pressed={cat === c.id}
               onClick={() => setCat(c.id)}
               className={cn(
-                "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
+                "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors",
                 cat === c.id ? "border-sport bg-sport text-sport-foreground" : "border-input hover:bg-secondary",
               )}
             >
@@ -68,15 +87,15 @@ function ResourcesPage() {
           ))}
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 md:grid-cols-2 lg:grid-cols-3">
           {list.map((r) => (
-            <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className="card-elevated group p-5">
+            <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className="interactive-surface group bg-background p-5 hover:bg-ice/55">
               <h2 className="heading-card flex items-center gap-2 group-hover:text-sport">
                 {r.name} <ExternalLink className="size-4 shrink-0" aria-hidden />
               </h2>
               <p className="mt-2 text-sm text-muted-foreground">{l(r.description)}</p>
               {r.note && (
-                <p className="mt-3 rounded-md bg-ice px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+                <p className="mt-3 border-l-2 border-sport bg-ice px-3 py-2 text-xs leading-relaxed text-muted-foreground">
                   {l(r.note)}
                 </p>
               )}

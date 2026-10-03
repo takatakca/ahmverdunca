@@ -49,12 +49,47 @@ function WllvPage() {
       />
 
       <div className="container-site space-y-10 py-8 md:py-12">
+        <section className="grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.25fr_0.75fr]">
+          <div className="technical-grid relative overflow-hidden p-7 md:p-10 lg:p-12">
+            <p className="eyebrow text-sport-foreground">AA / BB · WLLV</p>
+            <p className="mt-5 font-display text-[clamp(4.5rem,12vw,9rem)] font-extrabold uppercase leading-[0.72] tracking-[-0.07em] text-white">
+              WLLV
+            </p>
+            <p className="mt-5 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">
+              {lang === "fr" ? "Les Chacals · double lettre" : "Les Chacals · double letter"}
+            </p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65 md:text-base">
+              {lang === "fr"
+                ? "AHM Verdun sert de passerelle. Les équipes, camps, opérations et données AA/BB restent sous l’autorité du WLLV et de ses systèmes officiels."
+                : "AHM Verdun acts as a gateway. AA/BB teams, camps, operations and data remain under WLLV and its official systems."}
+            </p>
+          </div>
+          <div className="flex flex-col justify-between border-t border-white/12 p-7 lg:border-l lg:border-t-0 md:p-10">
+            <div>
+              <ShieldCheck className="size-8 text-sport-foreground" />
+              <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-white/42">
+                {lang === "fr" ? "Source d’autorité" : "Authority"}
+              </p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase">WLLV</p>
+              <p className="mt-4 text-sm leading-relaxed text-white/62">
+                {lang === "fr"
+                  ? "Pour les décisions, inscriptions, camps et informations de structure AA/BB, vérifiez toujours directement la source WLLV."
+                  : "For AA/BB decisions, registration, camps and structure information, always verify directly with WLLV."}
+              </p>
+            </div>
+            <Button asChild variant="sport" size="lg" className="mt-8">
+              <a href={EXTERNAL_LINKS.wllv} target="_blank" rel="noopener noreferrer">
+                {t("common.officialSite")} <ExternalLink className="size-4" />
+              </a>
+            </Button>
+          </div>
+        </section>
         <section className="grid gap-4 md:grid-cols-2">
           <a
             href={EXTERNAL_LINKS.wllv}
             target="_blank"
             rel="noopener noreferrer"
-            className="card-elevated group p-6"
+            className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
           >
             <div className="flex items-center justify-between">
               <ShieldCheck className="size-6 text-sport" aria-hidden />
@@ -74,7 +109,7 @@ function WllvPage() {
             href={EXTERNAL_LINKS.officialDoubleLetterSchedule}
             target="_blank"
             rel="noopener noreferrer"
-            className="card-elevated group p-6"
+            className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
           >
             <div className="flex items-center justify-between">
               <CalendarDays className="size-6 text-sport" aria-hidden />
@@ -116,7 +151,7 @@ function WllvPage() {
                 enText: "Do not duplicate or modify WLLV operations.",
               },
             ].map((item) => (
-              <div key={item.fr} className="rounded-xl border border-border bg-ice p-5">
+              <div key={item.fr} className="interactive-surface border border-navy/12 bg-ice p-5">
                 <h3 className="heading-card">{lang === "fr" ? item.fr : item.en}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">
                   {lang === "fr" ? item.frText : item.enText}

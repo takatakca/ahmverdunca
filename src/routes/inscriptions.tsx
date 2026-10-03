@@ -4,6 +4,7 @@ import { CheckCircle2, ExternalLink, Info, Mail, ShieldCheck } from "lucide-reac
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { TEAMS } from "@/data/teams";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 
@@ -52,6 +53,46 @@ function RegistrationPage() {
       />
 
       <div className="container-site space-y-12 py-8 md:py-12">
+        <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="relative min-h-[300px] overflow-hidden sm:min-h-[380px]">
+            <img
+              src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.84))]" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}</p>
+              <h2 className="mt-2 max-w-2xl font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-5xl">
+                {lang === "fr" ? "Du bon groupe au bon système." : "From the right group to the right system."}
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
+                {lang === "fr"
+                  ? "AHM Verdun vous aide à repérer la catégorie et les informations utiles; l’inscription officielle demeure ensuite dans Spordle."
+                  : "AHM Verdun helps you identify the category and useful information; official registration then continues in Spordle."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Accès officiel" : "Official access"}</p>
+            <p className="mt-4 font-display text-4xl font-extrabold uppercase leading-[0.9]">{lang === "fr" ? "Prêt à inscrire?" : "Ready to register?"}</p>
+            <p className="mt-4 text-sm leading-relaxed text-white/65">
+              {lang === "fr"
+                ? "Documents, paiements et confirmation finale sont traités dans le parcours officiel. Le portail AHMV reste votre guide avant et après l’inscription."
+                : "Documents, payments and final confirmation are handled in the official process. The AHMV portal remains your guide before and after registration."}
+            </p>
+            <a
+              href={EXTERNAL_LINKS.spordleRegister}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="premium-control mt-6 inline-flex min-h-12 items-center justify-between bg-sport px-5 font-display text-base font-bold uppercase tracking-wide text-sport-foreground"
+            >
+              {t("reg.cta")} <ExternalLink className="size-4" />
+            </a>
+          </div>
+        </section>
         <div className="broadcast-rail border border-navy/12 bg-ice p-5 pl-7">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "Parcours officiel" : "Official pathway"}
@@ -101,7 +142,7 @@ function RegistrationPage() {
                 enText: "Documents, payments and confirmations stay in the Spordle process.",
               },
             ].map(({ Icon, number, frTitle, enTitle, frText, enText }) => (
-              <div key={number} className="card-elevated relative overflow-hidden p-6">
+              <div key={number} className="interactive-surface relative overflow-hidden border border-navy/12 bg-background p-6">
                 <span className="absolute right-4 top-2 font-display text-5xl font-extrabold text-navy/5">
                   {number}
                 </span>
@@ -159,7 +200,7 @@ function RegistrationPage() {
                 key={team.slug}
                 to="/equipes/$slug"
                 params={{ slug: team.slug }}
-                className="card-elevated flex items-center justify-between p-5 hover:text-sport"
+                className="interactive-surface flex items-center justify-between border border-navy/12 bg-background p-5 hover:border-sport hover:text-sport"
               >
                 <span className="heading-card">{l(team.name)}</span>
                 <span className="text-xs text-muted-foreground">{l(team.ages)}</span>
@@ -180,7 +221,7 @@ function RegistrationPage() {
               }
             />
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="card-elevated p-6">
+              <div className="border border-navy/12 bg-background p-6">
                 <Mail className="size-6 text-sport" aria-hidden />
                 <h3 className="heading-card mt-5">
                   {lang === "fr" ? "Restez informé" : "Stay informed"}
@@ -191,7 +232,7 @@ function RegistrationPage() {
                     : "When this service is activated, you will be able to choose which communications you want to receive, with explicit consent."}
                 </p>
               </div>
-              <div className="card-elevated p-6">
+              <div className="border border-navy/12 bg-background p-6">
                 <ShieldCheck className="size-6 text-sport" aria-hidden />
                 <h3 className="heading-card mt-5">
                   {lang === "fr" ? "Séparé du hockey" : "Separate from hockey"}

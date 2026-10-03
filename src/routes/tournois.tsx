@@ -5,6 +5,7 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { EXTERNAL_LINKS } from "@/lib/site";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/tournois")({
@@ -43,21 +44,41 @@ function TournamentsPage() {
       />
 
       <div className="container-site space-y-12 py-8 md:py-12">
-        <section className="overflow-hidden rounded-xl border border-border bg-background shadow-card">
-          <div className="competition-panel p-6 text-navy-foreground md:p-8 lg:p-10">
-            <Trophy className="size-9 text-sport-foreground" aria-hidden />
-            <p className="eyebrow mt-7 text-sport-foreground">
-              {lang === "fr" ? "30e édition" : "30th edition"}
-            </p>
-            <h2 className="mt-2 max-w-4xl font-display text-4xl font-extrabold uppercase leading-none md:text-6xl">
-              {lang === "fr" ? "Tournoi Provincial M11 de Verdun" : "Verdun Provincial U11 Tournament"}
-            </h2>
-            <p className="mt-4 max-w-2xl text-base text-navy-foreground/75">
-              {lang === "fr"
-                ? "Du 18 au 31 janvier 2027 à l'Auditorium de Verdun. Les inscriptions sont annoncées ouvertes jusqu'au 15 novembre 2026 sur le site officiel du tournoi."
-                : "January 18–31, 2027 at the Verdun Auditorium. Registration is announced as open until November 15, 2026 on the tournament's official site."}
-            </p>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+        <section className="grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.25fr_0.75fr]">
+          <div className="relative min-h-[420px] overflow-hidden sm:min-h-[520px]">
+            <img
+              src={OFFICIAL_MEDIA.tournamentM11Primary.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.92))]" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 lg:p-10">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "30e édition · Verdun" : "30th edition · Verdun"}</p>
+              <h2 className="mt-3 max-w-4xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl md:text-6xl">
+                {lang === "fr" ? "Tournoi Provincial M11 de Verdun" : "Verdun Provincial U11 Tournament"}
+              </h2>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/75">
+                {lang === "fr"
+                  ? "Du 18 au 31 janvier 2027 à l'Auditorium de Verdun. Les inscriptions sont annoncées ouvertes jusqu'au 15 novembre 2026 sur le site officiel du tournoi."
+                  : "January 18–31, 2027 at the Verdun Auditorium. Registration is announced as open until November 15, 2026 on the tournament's official site."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-between border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8 lg:p-10">
+            <div>
+              <Trophy className="size-9 text-sport-foreground" aria-hidden />
+              <p className="mt-8 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+                {lang === "fr" ? "Dates" : "Dates"}
+              </p>
+              <p className="mt-1 font-display text-3xl font-extrabold uppercase">18–31 JAN 2027</p>
+              <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.18em] text-white/45">
+                {lang === "fr" ? "Lieu" : "Venue"}
+              </p>
+              <p className="mt-1 font-display text-2xl font-extrabold uppercase">{lang === "fr" ? "Auditorium de Verdun" : "Verdun Auditorium"}</p>
+            </div>
+            <div className="mt-8 flex flex-col gap-3">
               <Button asChild variant="sport" size="lg">
                 <a href={EXTERNAL_LINKS.verdunM11Tournament} target="_blank" rel="noopener noreferrer">
                   {lang === "fr" ? "Site officiel du tournoi" : "Official tournament site"} <ExternalLink className="size-4" />
@@ -66,14 +87,30 @@ function TournamentsPage() {
               <ShareButton
                 variant="outline-light"
                 title={lang === "fr" ? "Tournoi Provincial M11 de Verdun" : "Verdun Provincial U11 Tournament"}
-                text={
-                  lang === "fr"
-                    ? "18 au 31 janvier 2027 · Auditorium de Verdun"
-                    : "January 18–31, 2027 · Verdun Auditorium"
-                }
+                text={lang === "fr" ? "18 au 31 janvier 2027 · Auditorium de Verdun" : "January 18–31, 2027 · Verdun Auditorium"}
               />
             </div>
           </div>
+        </section>
+
+        <section className="grid h-44 grid-cols-2 gap-2 overflow-hidden sm:h-56 md:grid-cols-3">
+          {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary, OFFICIAL_MEDIA.tournamentM11Primary].map((media) => (
+            <a
+              key={media.url}
+              href={media.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="interactive-surface group relative overflow-hidden bg-navy last:hidden md:last:block"
+            >
+              <img
+                src={media.url}
+                alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+              />
+            </a>
+          ))}
         </section>
 
         <section>
@@ -91,7 +128,7 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.verdunM11Registration}
               target="_blank"
               rel="noopener noreferrer"
-              className="card-elevated group p-6"
+              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
             >
               <div className="flex items-center justify-between">
                 <Users className="size-6 text-sport" aria-hidden />
@@ -111,7 +148,7 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m11TournamentSchedule}
               target="_blank"
               rel="noopener noreferrer"
-              className="card-elevated group p-6"
+              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
             >
               <div className="flex items-center justify-between">
                 <CalendarDays className="size-6 text-sport" aria-hidden />
@@ -131,7 +168,7 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m11TournamentRules}
               target="_blank"
               rel="noopener noreferrer"
-              className="card-elevated group p-6"
+              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
             >
               <div className="flex items-center justify-between">
                 <FileText className="size-6 text-sport" aria-hidden />
@@ -151,7 +188,7 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m7FestivalSchedule}
               target="_blank"
               rel="noopener noreferrer"
-              className="card-elevated group p-6"
+              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
             >
               <div className="flex items-center justify-between">
                 <Trophy className="size-6 text-sport" aria-hidden />
@@ -168,7 +205,7 @@ function TournamentsPage() {
             </a>
           </div>
 
-          <div className="card-elevated mt-5 p-6">
+          <div className="mt-5 border border-navy/12 bg-ice p-6">
             <Users className="size-6 text-sport" aria-hidden />
             <h3 className="heading-card mt-5">
               {lang === "fr" ? "Bénévoles & partenaires" : "Volunteers & partners"}
