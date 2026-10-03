@@ -4,10 +4,10 @@ import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
 
 const MEDIA = [
-  OFFICIAL_MEDIA.tournamentM11Primary,
-  OFFICIAL_MEDIA.tournamentM11Secondary,
-  OFFICIAL_MEDIA.tournamentM11Tertiary,
-  OFFICIAL_MEDIA.volunteerArchive,
+  OFFICIAL_MEDIA.practiceGroup,
+  OFFICIAL_MEDIA.practiceSkaters,
+  OFFICIAL_MEDIA.practiceGoalie,
+  OFFICIAL_MEDIA.practiceCoach,
 ] as const;
 
 export function AhmvRealHockeyWall() {
@@ -123,13 +123,7 @@ export function AhmvRealHockeyWall() {
               <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.80)_100%)]" />
               <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
                 <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/62">
-                  {index === 3
-                    ? lang === "fr"
-                      ? "Bénévoles · Archive AHMV"
-                      : "Volunteers · AHMV archive"
-                    : lang === "fr"
-                      ? "Tournoi M11 · Archive AHMV"
-                      : "U11 tournament · AHMV archive"}
+                  {lang === "fr" ? "Entraînement · Photo réelle AHMV" : "Practice · Real AHMV photo"}
                 </p>
                 <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
                   {lang === "fr" ? "Voir la source" : "View source"} <ArrowRight className="size-3.5" />
