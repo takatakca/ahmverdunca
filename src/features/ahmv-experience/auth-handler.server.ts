@@ -123,6 +123,9 @@ export async function handleAhmvExperienceAuth(
   }
 
   if (path === "/api/ahmv/experience/logout" && request.method === "POST") {
+    if (request.headers.get("origin") !== url.origin) {
+      return new Response("Forbidden", { status: 403, headers: { "cache-control": "no-store" } });
+    }
     const response = noStoreRedirect(new URL("/", url.origin));
     response.headers.append("set-cookie", ahmvExperienceClearCookie());
     return response;
