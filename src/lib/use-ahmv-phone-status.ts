@@ -6,7 +6,7 @@ type PhoneStatusPayload = {
 };
 
 export function useAhmvPhoneStatus() {
-  const [phonePublic, setPhonePublic] = useState(SITE.phonePublic);
+  const [phonePublic, setPhonePublic] = useState<boolean>(SITE.phonePublic);
 
   useEffect(() => {
     const controller = new AbortController();
