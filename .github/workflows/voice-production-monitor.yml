@@ -1,0 +1,59 @@
+name: AHM Verdun Voice production monitor
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ahmv-voice-production-monitor
+  cancel-in-progress: true
+
+jobs:
+  monitor:
+    if: ${{ vars.AHMV_VOICE_MONITOR_ENABLED == 'true' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VOICE_ORIGIN: https://voice.ahmverdun.ca
+      AHMV_ORIGIN: https://ahmverdun.ca
+      AHMV_VOICE_BRIDGE_TOKEN: ${{ secrets.AHMV_VOICE_BRIDGE_TOKEN }}
+
+    steps:
+      - name: Public health and readiness
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --max-time 10 \
+            "$VOICE_ORIGIN/healthz" | tee /tmp/voice-health.json
+          jq -e '.ok == true' /tmp/voice-health.json >/dev/null
+
+          curl --fail --silent --show-error --max-time 10 \
+            "$VOICE_ORIGIN/readyz" | tee /tmp/voice-ready.json
+          jq -e '.ready == true' /tmp/voice-ready.json >/dev/null
+
+      - name: Private AHMV bridge readiness
+        run: |
+          set -euo pipefail
+          test -n "$AHMV_VOICE_BRIDGE_TOKEN" || {
+            echo "AHMV_VOICE_BRIDGE_TOKEN is required when production monitoring is enabled."
+            exit 1
+          }
+          curl --fail --silent --show-error --max-time 10 \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer $AHMV_VOICE_BRIDGE_TOKEN" \
+            "$AHMV_ORIGIN/api/ahmv/voice/readiness" | tee /tmp/bridge-ready.json
+          jq -e '.ready == true' /tmp/bridge-ready.json >/dev/null
+
+      - name: Monitoring summary
+        if: always()
+        run: |
+          {
+            echo "## AHM Verdun Voice production monitor"
+            echo
+            echo "- Target: $VOICE_ORIGIN"
+            echo "- UTC check: $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+            echo "- GitHub run: $GITHUB_RUN_ID"
+          } >> "$GITHUB_STEP_SUMMARY"
