@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getTeam } from "@/data/teams";
-import { getPublicTeamById } from "@/data/team-directory";
+import { getPublicTeamById, type PublicTeamDirectoryEntry } from "@/data/team-directory";
 
 const LEGACY_KEY = "ahmv-preferred-team";
 const EXACT_TEAMS_KEY = "ahmv-selected-team-ids";
@@ -74,7 +74,7 @@ export function usePreferredTeam() {
   const clearSelectedTeams = useCallback(() => saveSelectedTeamIds([]), [saveSelectedTeamIds]);
 
   const selectedTeams = useMemo(
-    () => selectedTeamIds.map((teamId) => getPublicTeamById(teamId)).filter(Boolean),
+    () => selectedTeamIds.map((teamId) => getPublicTeamById(teamId)).filter((team): team is PublicTeamDirectoryEntry => Boolean(team)),
     [selectedTeamIds],
   );
 
