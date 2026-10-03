@@ -39,6 +39,12 @@ export function phoneRetentionPolicy(settings: Settings = process.env) {
       30,
       1095,
     ),
+    voiceSessionDays: boundedDays(
+      settings["AHMV_VOICE_SESSION_RETENTION_DAYS"],
+      90,
+      7,
+      365,
+    ),
   };
 }
 
@@ -80,11 +86,20 @@ export async function runPhoneRetention(
     .select("id");
   if (jobDelete.error) throw jobDelete.error;
 
+  const voiceDelete = await client
+    .from("ahmv_voice_sessions")
+    .delete()
+    .not("ended_at", "is", null)
+    .lt("ended_at", cutoff(now, policy.voiceSessionDays))
+    .select("id");
+  if (voiceDelete.error) throw voiceDelete.error;
+
   return {
     generatedAt: now.toISOString(),
     policy,
     scrubbedMessageBodies: scrubResult.data?.length ?? 0,
     deletedInteractions: interactionDelete.data?.length ?? 0,
     deletedMessageJobs: jobDelete.data?.length ?? 0,
+    deletedVoiceSessions: voiceDelete.data?.length ?? 0,
   };
 }
