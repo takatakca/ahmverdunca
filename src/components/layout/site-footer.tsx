@@ -18,6 +18,30 @@ export function SiteFooter() {
       </div>
 
       <div className="relative border-y border-navy-foreground/12 border-t-2 border-t-sport">
+        <div className="container-site grid md:grid-cols-[0.36fr_1.64fr]">
+          <div className="flex items-center border-b border-navy-foreground/12 py-6 md:border-b-0 md:border-r md:py-7 md:pr-8">
+            <span className="font-display text-[4.6rem] font-extrabold leading-none tracking-[-0.07em] text-sport-foreground sm:text-[5.5rem]">125</span>
+          </div>
+          <div className="flex flex-col justify-center gap-5 py-6 md:py-7 md:pl-8 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Hockey à Verdun · mémoire collective" : "Hockey in Verdun · shared heritage"}
+              </p>
+              <p className="mt-2 max-w-3xl font-display text-2xl font-extrabold uppercase leading-[0.92] sm:text-3xl">
+                {lang === "fr" ? "125 ans d’histoire. Des générations à raconter." : "125 years of history. Generations of stories."}
+              </p>
+            </div>
+            <a
+              href="/#archives-hockey"
+              className="premium-control inline-flex min-h-12 shrink-0 items-center justify-between gap-4 border border-navy-foreground/20 px-5 font-display text-sm font-bold uppercase tracking-[0.12em] text-white hover:border-sport"
+            >
+              {lang === "fr" ? "Voir les archives" : "Explore the archive"} <ArrowRight className="size-4 text-sport-foreground" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative border-b border-navy-foreground/12">
         <div className="container-site grid md:grid-cols-[0.72fr_1.28fr]">
           <div className="border-b border-navy-foreground/12 py-7 md:border-b-0 md:border-r md:py-8 md:pr-10">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Le raccourci des familles" : "Families' shortcut"}</p>
@@ -119,6 +143,9 @@ export function SiteFooter() {
         <div className="py-9 lg:py-10 lg:pl-8">
           <p className="eyebrow mb-5 text-sport-foreground/85">{lang === "fr" ? "Accès officiels" : "Official access"}</p>
           <div className="space-y-3">
+            <a href="/equipes#resultats" className="flex items-center justify-between border-b border-navy-foreground/10 pb-3 text-sm text-navy-foreground/72 hover:text-navy-foreground">
+              {lang === "fr" ? "Résultats & classements" : "Results & standings"} <ArrowRight className="size-3.5 text-sport-foreground" />
+            </a>
             <a href={EXTERNAL_LINKS.wllv} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between border-b border-navy-foreground/10 pb-3 text-sm text-navy-foreground/72 hover:text-navy-foreground">
               WLLV — Les Chacals <ExternalLink className="size-3.5" />
             </a>
