@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, Facebook, Instagram, Newspaper, Radio } from "lucide-react";
+import { ExternalLink, Images, Newspaper, Radio } from "lucide-react";
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 
@@ -67,29 +67,29 @@ export function TeamLiveFeed({
 
   const message = {
     disabled: {
-      fr: "La passerelle de feed est prête mais n’est pas encore activée publiquement.",
-      en: "The feed bridge is ready but is not yet publicly enabled.",
+      fr: "Aucune publication sociale d’équipe n’est diffusée ici actuellement.",
+      en: "No team social posts are currently published here.",
     },
-    loading: { fr: "Connexion au feed de l’équipe…", en: "Connecting to the team feed…" },
+    loading: { fr: "Chargement des publications approuvées…", en: "Loading approved team posts…" },
     not_connected: {
-      fr: "Aucun réseau social n’est encore connecté à cette équipe.",
-      en: "No social account is connected to this team yet.",
+      fr: "Aucun compte social approuvé n’est relié publiquement à cette équipe.",
+      en: "No approved social account is publicly linked to this team.",
     },
     subscription_required: {
-      fr: "Les comptes peuvent être connectés, mais l’abonnement de diffusion GROUPE TAKATAK n’est pas actif.",
-      en: "Accounts may be connected, but the GROUPE TAKATAK feed subscription is not active.",
+      fr: "Aucune publication sociale approuvée n’est disponible publiquement pour cette équipe.",
+      en: "No approved social posts are publicly available for this team.",
     },
     connected: {
-      fr: "La connexion est active. Aucune publication publique approuvée n’est disponible pour le moment.",
-      en: "The connection is active. No approved public posts are currently available.",
+      fr: "La connexion est active, mais aucune publication publique approuvée n’est disponible pour le moment.",
+      en: "The connection is active, but no approved public posts are currently available.",
     },
     active: {
-      fr: "Publications publiques approuvées via GROUPE TAKATAK.",
-      en: "Approved public posts delivered through GROUPE TAKATAK.",
+      fr: "Publications publiques approuvées pour cette équipe.",
+      en: "Approved public posts for this team.",
     },
     unavailable: {
-      fr: "Le feed est temporairement indisponible.",
-      en: "The feed is temporarily unavailable.",
+      fr: "Les publications sociales sont temporairement indisponibles.",
+      en: "Social posts are temporarily unavailable.",
     },
     idle: { fr: "", en: "" },
   }[feed.status];
@@ -100,84 +100,84 @@ export function TeamLiveFeed({
         <div className="p-6 md:p-8">
           <div className="flex items-center gap-3">
             <Radio className="size-5 text-sport-foreground" aria-hidden />
-            <p className="eyebrow text-sport-foreground">GROUPE TAKATAK Social</p>
+            <p className="eyebrow text-sport-foreground">
+              {lang === "fr" ? "Publications d’équipe" : "Team posts"}
+            </p>
           </div>
           <h2 className="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em]">
-            {lang === "fr" ? "Live feed de l’équipe" : "Team live feed"}
+            {lang === "fr" ? "Nouvelles & réseaux" : "News & social"}
           </h2>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/62">{message[lang]}</p>
         </div>
         <div className="flex items-center border-t border-white/12 p-6 lg:border-l lg:border-t-0">
           <div>
             <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/38">
-              {lang === "fr" ? "État" : "Status"}
+              {lang === "fr" ? "Équipe" : "Team"}
             </p>
-            <p className="mt-2 font-display text-xl font-extrabold uppercase text-sport-foreground">
-              {feed.status.replaceAll("_", " ")}
-            </p>
+            <p className="mt-2 font-display text-xl font-extrabold uppercase text-sport-foreground">{team.name}</p>
             <p className="mt-2 font-mono text-[9px] text-white/38">#{team.legacyScheduleTeamId.slice(-4)}</p>
           </div>
         </div>
       </div>
 
       {feed.items.length === 0 && (
-        <div className="grid gap-px bg-navy/10 md:grid-cols-3">
-          {[
-            {
-              platform: "Facebook",
-              Icon: Facebook,
-              media: OFFICIAL_MEDIA.practiceGroup,
-              label: lang === "fr" ? "Fil Facebook prêt" : "Facebook feed ready",
-              body: lang === "fr"
-                ? "Les publications publiques approuvées de cette équipe pourront prendre cette place sans refaire le design."
-                : "Approved public team posts can take over this space without redesigning the page.",
-            },
-            {
-              platform: "Instagram",
-              Icon: Instagram,
-              media: OFFICIAL_MEDIA.practicePlayers,
-              label: lang === "fr" ? "Galerie Instagram prête" : "Instagram gallery ready",
-              body: lang === "fr"
-                ? "Photos, reels et publications approuvées pourront s’intégrer ici quand le compte sera relié."
-                : "Approved photos, reels and posts can appear here when the account is connected.",
-            },
-            {
-              platform: lang === "fr" ? "Mini-blog" : "Mini-blog",
-              Icon: Newspaper,
-              media: OFFICIAL_MEDIA.practiceCoach,
-              label: lang === "fr" ? "Journal d’équipe prêt" : "Team journal ready",
-              body: lang === "fr"
-                ? "Victoire, tournoi, changement d’horaire, bénévoles ou message du coach : la devanture est déjà prête."
-                : "Win, tournament, schedule change, volunteers or a coach note: the storefront is already ready.",
-            },
-          ].map(({ platform, Icon, media, label, body }) => (
-            <article key={platform} className="group relative min-h-[330px] overflow-hidden bg-competition text-white">
-              <img
-                src={media.url}
-                alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover opacity-68 transition-transform duration-700 group-hover:scale-[1.025]"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.14)_0%,rgba(7,16,43,0.38)_40%,rgba(7,16,43,0.95)_100%)]" />
-              <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
-                <span className="flex size-9 items-center justify-center border border-white/18 bg-navy/52 backdrop-blur">
-                  <Icon className="size-4 text-sport-foreground" />
-                </span>
-                <span className="border border-white/18 bg-navy/52 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/72 backdrop-blur">
-                  DEMO
-                </span>
-              </div>
-              <div className="absolute inset-x-0 bottom-0 p-5">
-                <p className="eyebrow text-sport-foreground">{platform}</p>
-                <h3 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.88]">{label}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/62">{body}</p>
-                <p className="mt-5 border-t border-white/12 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
-                  {lang === "fr" ? "Prêt à connecter" : "Ready to connect"}
+        <div className="grid gap-px bg-navy/10 lg:grid-cols-[1.25fr_0.75fr]">
+          <div className="relative min-h-[300px] overflow-hidden bg-competition text-white">
+            <img
+              src={OFFICIAL_MEDIA.practicePlayers.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.practicePlayers.alt.fr : OFFICIAL_MEDIA.practicePlayers.alt.en}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover opacity-70"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.12),rgba(7,16,43,0.94))]" />
+            <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Contenu AHMV vérifié" : "Verified AHMV content"}
+              </p>
+              <h3 className="mt-2 max-w-xl font-display text-3xl font-extrabold uppercase leading-[0.88]">
+                {lang === "fr"
+                  ? "Les vraies nouvelles restent accessibles maintenant."
+                  : "Real association content remains available now."}
+              </h3>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/62">
+                {lang === "fr"
+                  ? "En attendant une publication sociale propre à cette équipe, utilisez les nouvelles et les archives photo officielles de l’AHM Verdun."
+                  : "Until this team has an approved social post, use AHM Verdun’s official news and photo archives."}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-px bg-navy/10">
+            <a
+              href="/nouvelles"
+              className="interactive-surface flex min-h-36 flex-col justify-between bg-background p-5 text-navy hover:bg-ice"
+            >
+              <Newspaper className="size-5 text-sport" />
+              <div>
+                <p className="font-display text-2xl font-extrabold uppercase">
+                  {lang === "fr" ? "Nouvelles" : "News"}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  {lang === "fr" ? "Communications publiées par l’association." : "Association-published updates."}
                 </p>
               </div>
-            </article>
-          ))}
+            </a>
+            <a
+              href="/galerie"
+              className="interactive-surface flex min-h-36 flex-col justify-between bg-background p-5 text-navy hover:bg-ice"
+            >
+              <Images className="size-5 text-sport" />
+              <div>
+                <p className="font-display text-2xl font-extrabold uppercase">
+                  {lang === "fr" ? "Galerie" : "Gallery"}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  {lang === "fr" ? "Photos réelles et archives AHMV." : "Real AHMV photos and archives."}
+                </p>
+              </div>
+            </a>
+          </div>
         </div>
       )}
 
