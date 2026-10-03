@@ -193,10 +193,6 @@ function Home() {
         </div>
       </section>
 
-      <AhmvRealHockeyWall />
-
-      <ScheduleFinder />
-
       {/* Alerts */}
       {alerts.length > 0 && (
         <section className="border-y border-status-cancelled/20 bg-status-cancelled-soft">
@@ -225,9 +221,13 @@ function Home() {
         </section>
       )}
 
+      <ScheduleFinder />
+
       <OfficialWeekPreview />
 
       <HomeParentCommand />
+
+      <AhmvRealHockeyWall />
 
       {/* Real AHMV photography — keep the portal visibly rooted in the association */}
       <section className="overflow-hidden border-y border-navy/10 bg-background py-9 md:py-12">
