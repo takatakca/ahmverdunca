@@ -163,19 +163,34 @@ export function TeamGameCenter({
               <>
                 <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white sm:text-3xl">
                   {loading
-                    ? (lang === "fr" ? "Synchronisation de l’horaire…" : "Syncing schedule…")
-                    : (lang === "fr" ? "Horaire officiel prêt à ouvrir" : "Official schedule ready")}
+                    ? (lang === "fr" ? "Vérification de l’horaire…" : "Checking schedule…")
+                    : (lang === "fr" ? "Aucune donnée exacte publiée actuellement" : "No exact game data published right now")}
                 </p>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58">
                   {lang === "fr"
-                    ? "Le mini-site est prêt à afficher automatiquement la prochaine partie dès que le flux équipe est branché. D’ici là, le bouton ci-dessous ouvre directement la source officielle."
-                    : "The mini-site is ready to show the next game automatically as soon as the team feed is connected. Until then, the button below opens the official source directly."}
+                    ? "Consultez la source officielle pour l’heure, l’adversaire et l’aréna les plus récents."
+                    : "Use the official source for the latest time, opponent and arena information."}
                 </p>
               </>
             )}
           </div>
 
-          <div className="mt-6 flex flex-wrap gap-2">
+          {directions && (
+            <a
+              href={directions.google}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="premium-control mt-6 flex min-h-14 w-full items-center justify-between bg-sport px-5 text-[11px] font-extrabold uppercase tracking-[0.13em] text-sport-foreground sm:w-auto"
+            >
+              <span className="flex items-center gap-2">
+                <Navigation className="size-5" />
+                {lang === "fr" ? "Partir maintenant" : "Leave now"}
+              </span>
+              <span aria-hidden>→</span>
+            </a>
+          )}
+
+          <div className="mt-3 flex flex-wrap gap-2">
             <a
               href={nextGame?.officialUrl || officialSchedule}
               target="_blank"
@@ -248,7 +263,11 @@ export function TeamGameCenter({
               <p className="mt-1 font-display text-xl font-extrabold uppercase text-navy">
                 {nextGame?.venue || (lang === "fr" ? "Disponible avec la prochaine partie" : "Available with next game")}
               </p>
-              {venueTarget && <p className="mt-1 text-xs text-muted-foreground">{nextGame?.venueAddress}</p>}
+              {nextGame?.venueAddress && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  <span className="font-semibold">{lang === "fr" ? "Adresse :" : "Address:"}</span> {nextGame.venueAddress}
+                </p>
+              )}
             </div>
           </div>
         </div>
