@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useLocation } from "@tanstack/react-router";
 import { ADSENSE_CONFIG } from "@/lib/monetization";
 
 const MEMBER_STORAGE_KEY = "ahmv-demo-member-mode";
@@ -29,9 +30,14 @@ function loadAdSense() {
 }
 
 export function AdSenseScriptController() {
+  const location = useLocation();
+  const experienceActive =
+    location.pathname === "/experience" ||
+    location.pathname.startsWith("/experience/");
+
   useEffect(() => {
     const sync = () => {
-      if (memberPreviewActive()) removeAdSense();
+      if (experienceActive || memberPreviewActive()) removeAdSense();
       else loadAdSense();
     };
 
@@ -43,7 +49,7 @@ export function AdSenseScriptController() {
       window.removeEventListener(MEMBER_EVENT_NAME, sync);
       window.removeEventListener("storage", sync);
     };
-  }, []);
+  }, [experienceActive]);
 
   return null;
 }
