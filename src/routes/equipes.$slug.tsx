@@ -147,6 +147,7 @@ function TeamPage() {
             className="scrollbar-none -mt-5 flex gap-1 overflow-x-auto border-y border-navy/10 bg-ice px-2 py-2 md:-mt-7"
           >
             {[
+              { href: "#jour-de-match", fr: "Jour de match", en: "Game day" },
               { href: "#match-center", fr: "Parties", en: "Games" },
               { href: "#social-equipe", fr: "Réseaux", en: "Social" },
               { href: "#nouvelles-equipe", fr: "Nouvelles", en: "News" },
