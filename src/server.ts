@@ -10,6 +10,7 @@ import { handleAhmvPhoneOpsSummary } from "./features/ahmv-phone/ops/handler.ser
 import { handleAhmvPhoneOpsHealth } from "./features/ahmv-phone/ops/health-handler.server";
 import { handleAhmvPhoneRetention } from "./features/ahmv-phone/privacy/handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
+import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -103,6 +104,8 @@ export default {
     if (phoneOpsHealthResponse) return phoneOpsHealthResponse;
     const phoneRetentionResponse = await handleAhmvPhoneRetention(request);
     if (phoneRetentionResponse) return phoneRetentionResponse;
+    const voiceBridgeResponse = await handleAhmvVoiceBridge(request);
+    if (voiceBridgeResponse) return voiceBridgeResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);
