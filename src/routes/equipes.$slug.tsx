@@ -307,7 +307,7 @@ function TeamPage() {
             <SectionHeading title={t("teams.news")} />
             <div className="grid gap-5 md:grid-cols-3">
               {news.map((article, index) => {
-                const media = archiveImages[index % archiveImages.length];
+                const media = archiveImages[index % archiveImages.length]!;
                 return (
                   <Link
                     key={article.slug}
