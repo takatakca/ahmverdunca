@@ -14,7 +14,7 @@
     "check:seo": "bun run generate:sitemap && bun scripts/validate-public-seo.ts",
     "check:runtime-policy": "bun scripts/validate-runtime-policy.ts",
     "check:mobile-nav": "bun scripts/validate-mobile-navigation.ts",
-    "check:monetization": "bun scripts/validate-monetization.ts",
+    "check:monetization": "bun scripts/validate-monetization.ts && bun run check:takatak-ads",
     "check:parent-premium": "bun scripts/validate-parent-premium.ts",
     "test:phone": "bun test scripts/ahmv-phone.test.ts scripts/ahmv-phone-status.test.ts scripts/ahmv-phone-v2.test.ts scripts/ahmv-phone-demo.test.ts scripts/ahmv-phone-preflight.test.ts scripts/ahmv-phone-lifecycle.test.ts scripts/ahmv-phone-ops.test.ts scripts/ahmv-phone-takatak-events.test.ts scripts/ahmv-phone-event-changes.test.ts scripts/ahmv-phone-privacy-health.test.ts scripts/ahmv-phone-reminder-worker.test.ts scripts/ahmv-phone-calendar.test.ts scripts/ahmv-phone-departure.test.ts scripts/ahmv-phone-membership.test.ts scripts/ahmv-phone-marketing.test.ts scripts/ahmv-phone-spanish.test.ts scripts/ahmv-voice-integration.test.ts scripts/ahmv-phone-live-schedule.test.ts",
     "test:team-feed": "bun test scripts/takatak-team-feed.test.ts",
@@ -30,7 +30,8 @@
     "preflight:voice": "bun scripts/ahmv-voice-preflight.ts",
     "smoke:voice": "tsx scripts/ahmv-voice-smoke.ts",
     "smoke:voice-bridge": "tsx scripts/ahmv-voice-bridge-smoke.ts",
-    "doctor:voice-db": "bun scripts/ahmv-voice-db-doctor.ts"
+    "doctor:voice-db": "bun scripts/ahmv-voice-db-doctor.ts",
+    "check:takatak-ads": "bun scripts/validate-takatak-ads.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
