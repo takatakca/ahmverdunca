@@ -41,17 +41,20 @@ test("retention policy defaults are bounded and deterministic", () => {
     messageBodyDays: 30,
     interactionDays: 90,
     messageJobDays: 180,
+    voiceSessionDays: 90,
   });
   assert.deepEqual(
     phoneRetentionPolicy({
       AHMV_PHONE_MESSAGE_BODY_RETENTION_DAYS: "14",
       AHMV_PHONE_INTERACTION_RETENTION_DAYS: "60",
       AHMV_PHONE_JOB_RETENTION_DAYS: "365",
+      AHMV_VOICE_SESSION_RETENTION_DAYS: "45",
     }),
     {
       messageBodyDays: 14,
       interactionDays: 60,
       messageJobDays: 365,
+      voiceSessionDays: 45,
     },
   );
 });
@@ -62,11 +65,13 @@ test("invalid retention settings fall back instead of disabling privacy cleanup"
       AHMV_PHONE_MESSAGE_BODY_RETENTION_DAYS: "0",
       AHMV_PHONE_INTERACTION_RETENTION_DAYS: "9999",
       AHMV_PHONE_JOB_RETENTION_DAYS: "-2",
+      AHMV_VOICE_SESSION_RETENTION_DAYS: "0",
     }),
     {
       messageBodyDays: 30,
       interactionDays: 90,
       messageJobDays: 180,
+      voiceSessionDays: 90,
     },
   );
 });
