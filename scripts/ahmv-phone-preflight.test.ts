@@ -281,3 +281,78 @@ test("TAKATAK marketing consent projection requires only the service token", () 
     true,
   );
 });
+
+
+test("database-backed phone features reject a wrong Supabase project and accept the pinned AHMV ref", () => {
+  const wrong = phonePreflight({
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "secret",
+    AHMV_SUPABASE_PROJECT_REF: "utuvzrqvivqyziibobvu",
+    SUPABASE_URL: "https://utuvzrqvivqyziibobvu.supabase.co",
+  });
+  assert.equal(
+    wrong.find((check) => check.id === "ahmv-supabase-target")?.ok,
+    false,
+  );
+
+  const correct = phonePreflight({
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "secret",
+    AHMV_SUPABASE_PROJECT_REF: "bqflllsjxmhqsvemhhwv",
+    SUPABASE_URL: "https://bqflllsjxmhqsvemhhwv.supabase.co",
+  });
+  assert.equal(
+    correct.find((check) => check.id === "ahmv-supabase-target")?.ok,
+    true,
+  );
+});
+
+test("public phone cannot launch without the authenticated live schedule source", () => {
+  const missing = phonePreflight({
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "secret",
+    AHMV_SUPABASE_PROJECT_REF: "bqflllsjxmhqsvemhhwv",
+    SUPABASE_URL: "https://bqflllsjxmhqsvemhhwv.supabase.co",
+  });
+  assert.equal(
+    missing.find((check) => check.id === "live-schedule-source")?.ok,
+    false,
+  );
+
+  const configured = phonePreflight({
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "secret",
+    AHMV_SUPABASE_PROJECT_REF: "bqflllsjxmhqsvemhhwv",
+    SUPABASE_URL: "https://bqflllsjxmhqsvemhhwv.supabase.co",
+    TAKATAK_AHMV_SCHEDULE_URL: "https://takatak.ca/api/ahmv/schedule",
+    TAKATAK_AHMV_SERVICE_TOKEN: "service-secret",
+  });
+  assert.equal(
+    configured.find((check) => check.id === "live-schedule-source")?.ok,
+    true,
+  );
+});
