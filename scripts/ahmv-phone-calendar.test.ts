@@ -152,3 +152,22 @@ test("same signed link can download an ICS file", async () => {
   assert.match(response?.headers.get("content-type") ?? "", /text\/calendar/);
   assert.match(await response!.text(), /BEGIN:VEVENT/);
 });
+
+
+test("signed calendar landing follows Spanish language preference", async () => {
+  const link = createSignedCalendarLink(
+    "ow-0929-1700",
+    settings,
+    new Date(),
+    3600,
+  );
+  const url = new URL(link!);
+  url.searchParams.set("lang", "es");
+  const response = handleAhmvCalendarLink(new Request(url), settings);
+  assert.equal(response?.status, 200);
+  assert.equal(response?.headers.get("content-language"), "es");
+  const body = await response!.text();
+  assert.match(body, /Agregar al calendario/);
+  assert.match(body, /Cómo llegar/);
+  assert.match(body, /Servicio AHMV impulsado por GROUPE TAKATAK/);
+});
