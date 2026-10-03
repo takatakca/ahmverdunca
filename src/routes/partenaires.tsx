@@ -1,6 +1,6 @@
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink, Handshake, Megaphone, RefreshCw } from "lucide-react";
+import { ArrowRight, Handshake, Megaphone, RefreshCw } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { SPONSORS } from "@/data/sponsors";
