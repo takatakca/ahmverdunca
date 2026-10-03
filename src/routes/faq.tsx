@@ -8,6 +8,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { FAQ, FAQ_TOPICS } from "@/data/faq";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 function normalizeSearch(value: string) {
   return value
@@ -93,6 +95,42 @@ function FaqPage() {
             </p>
           </div>
         </section>
+        <section className="mb-6 grid overflow-hidden border border-navy/12 bg-competition text-white lg:grid-cols-[0.82fr_1.18fr]">
+          <div className="relative min-h-[220px] overflow-hidden sm:min-h-[280px]">
+            <img
+              src={OFFICIAL_MEDIA.practiceCoach.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.practiceCoach.alt.fr : OFFICIAL_MEDIA.practiceCoach.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.88))]" />
+            <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Besoin d’une réponse maintenant?" : "Need an answer now?"}</p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.88]">
+                {lang === "fr" ? "Commencez par une question simple." : "Start with one simple question."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center p-5 md:p-7">
+            <p className="text-sm leading-relaxed text-white/62">
+              {lang === "fr"
+                ? "Horaire, inscription, aréna, équipement ou bénévolat : la recherche ci-dessous filtre immédiatement les réponses validées."
+                : "Schedule, registration, arena, equipment or volunteering: the search below immediately filters validated answers."}
+            </p>
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              <Link to="/horaires" className="premium-control flex min-h-11 items-center justify-center border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
+                {lang === "fr" ? "Horaires" : "Schedules"}
+              </Link>
+              <Link to="/contact" className="premium-control flex min-h-11 items-center justify-center bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
+                {lang === "fr" ? "Contact" : "Contact"}
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <HouseSponsorSlot placement="faq-help" count={1} compact className="mb-6" />
+
         <div className="mb-6 border border-navy/12 bg-ice p-5">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "Réponses rapides" : "Quick answers"}
