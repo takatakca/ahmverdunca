@@ -6,6 +6,7 @@ import { persistSessionSnapshot, saveSession } from './store.js';
 import { throwIfAborted } from './turn-controller.js';
 import { assertCompletedResponse } from './openai-contract.js';
 import { recordOpenAiUsage } from './usage.js';
+import { scheduleCapability } from './access-policy.js';
 
 const openai = new OpenAI({
   apiKey: config.openaiApiKey,
@@ -173,7 +174,8 @@ async function runTool(session, call, { signal, persist = true } = {}) {
           : args.date
             ? 'day'
             : 'next';
-        const fullSchedule = session.access?.weeklySchedule === true;
+        const capability = scheduleCapability(session.access);
+        const fullSchedule = capability.weeklySchedule;
         const lookup = fullSchedule
           ? { team: args.team, category: args.category, date: args.date }
           : { team: args.team, category: args.category, date: null };
