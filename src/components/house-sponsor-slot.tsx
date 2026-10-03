@@ -1,7 +1,10 @@
-import { ExternalLink, Megaphone, Sparkles } from "lucide-react";
-import { houseSponsorsForPlacement } from "@/data/house-sponsors";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight, ExternalLink, Megaphone, Pause, Sparkles } from "lucide-react";
+import { HOUSE_SPONSORS, houseSponsorsForPlacement } from "@/data/house-sponsors";
 import { useI18n } from "@/lib/i18n";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
+
+const ROTATION_MS = 6500;
 
 export function HouseSponsorSlot({
   placement,
@@ -16,29 +19,90 @@ export function HouseSponsorSlot({
 }) {
   const { lang } = useI18n();
   const { isDemoMember } = useDemoMemberMode();
-  const sponsors = houseSponsorsForPlacement(placement, count);
+  const [rotation, setRotation] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const sequence = useMemo(
+    () => houseSponsorsForPlacement(placement, HOUSE_SPONSORS.length),
+    [placement],
+  );
+  const visibleCount = Math.max(1, Math.min(count, sequence.length));
+  const sponsors = Array.from({ length: visibleCount }, (_, offset) =>
+    sequence[(rotation + offset) % sequence.length]!,
+  );
+
+  useEffect(() => {
+    if (paused || sequence.length <= visibleCount || typeof window === "undefined") return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (reduceMotion.matches) return;
+
+    const timer = window.setInterval(
+      () => setRotation((current) => (current + visibleCount) % sequence.length),
+      ROTATION_MS,
+    );
+
+    return () => window.clearInterval(timer);
+  }, [paused, sequence.length, visibleCount]);
 
   if (isDemoMember) return null;
+
+  const move = (direction: -1 | 1) => {
+    setRotation((current) => {
+      const next = current + direction * visibleCount;
+      return ((next % sequence.length) + sequence.length) % sequence.length;
+    });
+  };
 
   return (
     <aside
       className={`overflow-hidden border border-navy/10 bg-background ${className}`}
-      aria-label={lang === "fr" ? "Commandites" : "Sponsors"}
+      aria-label={lang === "fr" ? "Publicités et promotions maison" : "House advertising and promotions"}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false);
+      }}
     >
       <div className="flex items-center justify-between gap-3 border-b border-navy/10 bg-ice px-4 py-2.5">
         <div className="flex items-center gap-2">
           <Megaphone className="size-3.5 text-sport" aria-hidden />
           <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-            {lang === "fr" ? "Espace partenaire · Démo" : "Partner space · Demo"}
+            {lang === "fr" ? "Promotion maison · Démo" : "House promotion · Demo"}
           </p>
         </div>
-        <span className="inline-flex items-center gap-1 text-[8px] font-bold uppercase tracking-[0.14em] text-sport">
-          <Sparkles className="size-3" />
-          {lang === "fr" ? "Rotation locale" : "Local rotation"}
-        </span>
+
+        <div className="flex items-center gap-1">
+          <span className="mr-1 hidden items-center gap-1 text-[8px] font-bold uppercase tracking-[0.14em] text-sport sm:inline-flex">
+            {paused ? <Pause className="size-3" /> : <Sparkles className="size-3" />}
+            {paused
+              ? (lang === "fr" ? "Pause" : "Paused")
+              : (lang === "fr" ? "Rotation auto" : "Auto rotation")}
+          </span>
+          <button
+            type="button"
+            onClick={() => move(-1)}
+            className="premium-control flex size-8 items-center justify-center border border-navy/10 bg-background text-navy hover:border-sport"
+            aria-label={lang === "fr" ? "Publicité précédente" : "Previous advertisement"}
+          >
+            <ChevronLeft className="size-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => move(1)}
+            className="premium-control flex size-8 items-center justify-center border border-navy/10 bg-background text-navy hover:border-sport"
+            aria-label={lang === "fr" ? "Publicité suivante" : "Next advertisement"}
+          >
+            <ChevronRight className="size-3.5" />
+          </button>
+        </div>
       </div>
 
-      <div className={compact ? "grid gap-px bg-navy/10 sm:grid-cols-2" : "grid gap-px bg-navy/10 md:grid-cols-2"}>
+      <div
+        className={compact ? "grid gap-px bg-navy/10 sm:grid-cols-2" : "grid gap-px bg-navy/10 md:grid-cols-2"}
+        aria-live="off"
+      >
         {sponsors.map((sponsor) => {
           const card = sponsor.creative ? (
             <div className="premium-depth group relative overflow-hidden bg-competition">
@@ -47,8 +111,11 @@ export function HouseSponsorSlot({
                 alt={`${sponsor.name} — ${sponsor.tagline[lang]}`}
                 loading="lazy"
                 decoding="async"
-                className={`premium-depth-media w-full object-cover ${compact ? "aspect-[12/4.4]" : "aspect-[12/5.2]"}`}
+                className={`premium-depth-media w-full object-cover transition-[transform,filter,opacity] duration-700 group-hover:scale-[1.018] ${compact ? "aspect-[12/4.4]" : "aspect-[12/5.2]"}`}
               />
+              <span className="absolute left-3 top-3 border border-white/15 bg-navy-deep/72 px-2 py-1 text-[7px] font-bold uppercase tracking-[0.16em] text-white/78 backdrop-blur">
+                {lang === "fr" ? "Publicité" : "Advertisement"}
+              </span>
               {sponsor.href && (
                 <span className="absolute bottom-3 right-3 flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur">
                   <ExternalLink className="size-4" aria-hidden />
@@ -82,12 +149,15 @@ export function HouseSponsorSlot({
         })}
       </div>
 
-      <div className="border-t border-navy/10 px-4 py-2">
+      <div className="flex items-center justify-between gap-4 border-t border-navy/10 px-4 py-2">
         <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">
           {lang === "fr"
-            ? "Affichage temporaire maison · remplaçable par AdSense ou commanditaire officiel sans changer le layout."
-            : "Temporary house placement · replaceable by AdSense or an official sponsor without changing the layout."}
+            ? "Inventaire maison rotatif · remplaçable par AdSense ou commanditaire officiel."
+            : "Rotating house inventory · replaceable by AdSense or an official sponsor."}
         </p>
+        <span className="shrink-0 text-[8px] font-bold tabular-nums text-muted-foreground">
+          {String(rotation + 1).padStart(2, "0")} / {String(sequence.length).padStart(2, "0")}
+        </span>
       </div>
     </aside>
   );
