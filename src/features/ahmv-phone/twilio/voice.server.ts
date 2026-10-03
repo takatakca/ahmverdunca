@@ -9,6 +9,7 @@ import {
 } from "../contacts/store.server.ts";
 import { normalizeNanpDtmf } from "../contacts/phone-input.ts";
 import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
+import { phoneLocale, phoneText, phoneVoice } from "../i18n.ts";
 import { sendTransactionalSms } from "../messaging/send.server.ts";
 import { nextEventService } from "../schedules/service.ts";
 import {
@@ -32,16 +33,20 @@ export async function handleTwilioVoice(
   const { url, params, settings, reference: ref, log } = context;
   const voice = new twilio.twiml.VoiceResponse();
   const step = url.searchParams.get("step") ?? "language";
-  const lang: PhoneLanguage = url.searchParams.get("lang") === "en" ? "en" : "fr";
+  const requestedLang = url.searchParams.get("lang");
+  const lang: PhoneLanguage = requestedLang === "en" ? "en" : requestedLang === "es" ? "es" : "fr";
   const smsRequested = url.searchParams.get("sms") === "1";
-  const language = lang === "fr" ? "fr-CA" : "en-US";
+  const language = phoneLocale(lang);
   const caller = normalizePhoneE164(params["From"]);
+
+  const t = (fr: string, en: string, es: string) =>
+    phoneText(lang, { fr, en, es });
 
   const say = (text: string) =>
     voice.say(
       {
         language,
-        voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna",
+        voice: phoneVoice(lang),
       },
       text,
     );
@@ -70,12 +75,16 @@ export async function handleTwilioVoice(
       { language: "en-US", voice: "Polly.Joanna" },
       "Welcome to the Verdun Minor Hockey Association. For English, press 2.",
     );
+    gather.say(
+      { language: "es-US", voice: "Polly.Lupe-Neural" },
+      "Bienvenido a la Asociación de Hockey Menor de Verdun. Para español, oprima 3.",
+    );
     voice.hangup();
     return xmlResponse(voice.toString());
   }
 
   if (step === "select") {
-    if (!["1", "2"].includes(params["Digits"] ?? "")) {
+    if (!["1", "2", "3"].includes(params["Digits"] ?? "")) {
       if (attempt < 1) {
         voice.redirect(
           { method: "POST" },
@@ -87,7 +96,7 @@ export async function handleTwilioVoice(
       return xmlResponse(voice.toString());
     }
 
-    const selectedLang: PhoneLanguage = params["Digits"] === "2" ? "en" : "fr";
+    const selectedLang: PhoneLanguage = params["Digits"] === "2" ? "en" : params["Digits"] === "3" ? "es" : "fr";
     if (caller) {
       await safeTouchPhoneContact({
         phoneE164: caller,
@@ -111,10 +120,12 @@ export async function handleTwilioVoice(
       timeout: 4,
     });
     gather.say(
-      { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
-      lang === "fr"
-        ? "Pour recevoir par texto les renseignements que vous demandez pendant cet appel, appuyez sur 1. Ce service est offert par GROUPE TAKATAK avec une période découverte de 30 jours. Pour voix seulement, appuyez sur 2."
-        : "To receive the information you request during this call by text message, press 1. This GROUPE TAKATAK service includes a 30 day introductory period. For voice only, press 2.",
+      { language, voice: phoneVoice(lang) },
+      t(
+        "Pour recevoir par texto les renseignements que vous demandez pendant cet appel, appuyez sur 1. Ce service est offert par GROUPE TAKATAK avec une période découverte de 30 jours. Pour voix seulement, appuyez sur 2.",
+        "To receive the information you request during this call by text message, press 1. This GROUPE TAKATAK service includes a 30 day introductory period. For voice only, press 2.",
+        "Para recibir por texto la información solicitada durante esta llamada, oprima 1. Este servicio de GROUPE TAKATAK incluye un período introductorio de 30 días. Para continuar solo por voz, oprima 2.",
+      ),
     );
     voice.hangup();
     return xmlResponse(voice.toString());
@@ -158,10 +169,12 @@ export async function handleTwilioVoice(
       timeout: 8,
     });
     gather.say(
-      { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
-      lang === "fr"
-        ? "Je n'ai pas accès à votre numéro. Entrez maintenant les dix chiffres du cellulaire où vous voulez recevoir le texto."
-        : "I cannot access your number. Enter the ten digits of the mobile phone where you want to receive the text message.",
+      { language, voice: phoneVoice(lang) },
+      t(
+        "Je n'ai pas accès à votre numéro. Entrez maintenant les dix chiffres du cellulaire où vous voulez recevoir le texto.",
+        "I cannot access your number. Enter the ten digits of the mobile phone where you want to receive the text message.",
+        "No tengo acceso a su número. Ingrese ahora los diez dígitos del celular donde desea recibir el mensaje de texto.",
+      ),
     );
     voice.hangup();
     return xmlResponse(voice.toString());
@@ -178,9 +191,11 @@ export async function handleTwilioVoice(
         );
       } else {
         say(
-          lang === "fr"
-            ? "Le numéro n'a pas pu être validé. Vous pouvez texter votre équipe directement au même numéro AHMV. Merci."
-            : "The number could not be validated. You can text your team directly to the same AHMV number. Thank you.",
+          t(
+            "Le numéro n'a pas pu être validé. Vous pouvez texter votre équipe directement au même numéro AHMV. Merci.",
+            "The number could not be validated. You can text your team directly to the same AHMV number. Thank you.",
+            "No se pudo validar el número. Puede enviar su equipo por texto directamente al mismo número de AHMV. Gracias.",
+          ),
         );
         await safeRecordPhoneInteraction({
           channel: "voice",
@@ -210,12 +225,16 @@ export async function handleTwilioVoice(
 
     say(
       sent.sent
-        ? lang === "fr"
-          ? "Parfait. Je vous ai envoyé un texto. Répondez simplement avec votre équipe et nous continuons par texto. Merci."
-          : "Perfect. I sent you a text. Simply reply with your team and we will continue by text. Thank you."
-        : lang === "fr"
-          ? "Je n'ai pas pu envoyer le texto. Vous pouvez texter votre équipe directement au numéro AHMV. Merci."
-          : "I could not send the text. You can text your team directly to the AHMV number. Thank you.",
+        ? t(
+            "Parfait. Je vous ai envoyé un texto. Répondez simplement avec votre équipe et nous continuons par texto. Merci.",
+            "Perfect. I sent you a text. Simply reply with your team and we will continue by text. Thank you.",
+            "Perfecto. Le envié un mensaje de texto. Responda simplemente con su equipo y continuaremos por texto. Gracias.",
+          )
+        : t(
+            "Je n'ai pas pu envoyer le texto. Vous pouvez texter votre équipe directement au numéro AHMV. Merci.",
+            "I could not send the text. You can text your team directly to the AHMV number. Thank you.",
+            "No pude enviar el mensaje de texto. Puede enviar su equipo directamente al número de AHMV. Gracias.",
+          ),
     );
 
     await safeRecordPhoneInteraction({
@@ -242,10 +261,12 @@ export async function handleTwilioVoice(
       timeout: 4,
     });
     gather.say(
-      { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
-      lang === "fr"
-        ? "Pour votre prochain match ou entraînement, appuyez sur 1. Pour entendre les équipes disponibles, 2. Pour les arénas, 3."
-        : "For your next game or practice, press 1. For available teams, press 2. For arenas, press 3.",
+      { language, voice: phoneVoice(lang) },
+      t(
+        "Pour votre prochain match ou entraînement, appuyez sur 1. Pour entendre les équipes disponibles, 2. Pour les arénas, 3.",
+        "For your next game or practice, press 1. For available teams, press 2. For arenas, press 3.",
+        "Para su próximo partido o entrenamiento, oprima 1. Para escuchar los equipos disponibles, 2. Para las arenas, 3.",
+      ),
     );
     voice.hangup();
     return xmlResponse(voice.toString());
@@ -267,12 +288,14 @@ export async function handleTwilioVoice(
       ].slice(0, 8);
 
       say(
-        lang === "fr"
-          ? "Voici les entrées validées dans la source présentement intégrée."
-          : "These are the validated entries in the currently integrated source.",
+        t(
+          "Voici les entrées validées dans la source présentement intégrée.",
+          "These are the validated entries in the currently integrated source.",
+          "Estas son las entradas validadas en la fuente actualmente integrada.",
+        ),
       );
       say(items.join(". "));
-      say(lang === "fr" ? "Merci." : "Thank you.");
+      say(t("Merci.", "Thank you.", "Gracias."));
       voice.hangup();
       return xmlResponse(voice.toString());
     }
@@ -296,10 +319,12 @@ export async function handleTwilioVoice(
       actionOnEmptyResult: true,
     });
     gather.say(
-      { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
-      lang === "fr"
-        ? "Dites votre équipe ou votre groupe maintenant."
-        : "Say your team or group now.",
+      { language, voice: phoneVoice(lang) },
+      t(
+        "Dites votre équipe ou votre groupe maintenant.",
+        "Say your team or group now.",
+        "Diga ahora su equipo o grupo.",
+      ),
     );
     return xmlResponse(voice.toString());
   }
@@ -335,18 +360,24 @@ export async function handleTwilioVoice(
 
       say(
         sent.sent
-          ? lang === "fr"
-            ? "Je vous ai envoyé un texto. Répondez simplement avec votre équipe. Merci."
-            : "I sent you a text. Simply reply with your team. Thank you."
-          : lang === "fr"
-            ? "Je n'ai pas pu envoyer le texto. Consultez ahmverdun point c a. Merci."
-            : "I could not send the text. Visit ahmverdun dot c a. Thank you.",
+          ? t(
+              "Je vous ai envoyé un texto. Répondez simplement avec votre équipe. Merci.",
+              "I sent you a text. Simply reply with your team. Thank you.",
+              "Le envié un mensaje de texto. Responda simplemente con su equipo. Gracias.",
+            )
+          : t(
+              "Je n'ai pas pu envoyer le texto. Consultez ahmverdun point c a. Merci.",
+              "I could not send the text. Visit ahmverdun dot c a. Thank you.",
+              "No pude enviar el mensaje de texto. Consulte ahmverdun punto c a. Gracias.",
+            ),
       );
     } else {
       say(
-        lang === "fr"
-          ? "Je n'ai rien entendu. Vous pouvez texter votre équipe au même numéro. Merci."
-          : "I did not hear anything. You can text your team to this same number. Thank you.",
+        t(
+          "Je n'ai rien entendu. Vous pouvez texter votre équipe au même numéro. Merci.",
+          "I did not hear anything. You can text your team to this same number. Thank you.",
+          "No escuché nada. Puede enviar su equipo por texto a este mismo número. Gracias.",
+        ),
       );
     }
 
@@ -366,18 +397,22 @@ export async function handleTwilioVoice(
   if (resolution.kind === "ambiguous") {
     const choices = compactTeamChoices(resolution.teams, 3).join(". ");
     say(
-      lang === "fr"
-        ? `J'ai trouvé plusieurs équipes. ${choices}. Envoyez votre équipe exacte par texto pour aller plus vite.`
-        : `I found multiple teams. ${choices}. Text your exact team for a faster result.`,
+      t(
+        `J'ai trouvé plusieurs équipes. ${choices}. Envoyez votre équipe exacte par texto pour aller plus vite.`,
+        `I found multiple teams. ${choices}. Text your exact team for a faster result.`,
+        `Encontré varios equipos. ${choices}. Envíe su equipo exacto por texto para obtener una respuesta más rápida.`,
+      ),
     );
 
     if (smsRequested && caller) {
       await sendTransactionalSms({
         to: caller,
         body:
-          lang === "fr"
-            ? `AHMV: plusieurs équipes correspondent. Répondez avec l'équipe exacte: ${choices}`
-            : `AHMV: multiple teams match. Reply with the exact team: ${choices}`,
+          t(
+            `AHMV: plusieurs équipes correspondent. Répondez avec l'équipe exacte: ${choices}`,
+            `AHMV: multiple teams match. Reply with the exact team: ${choices}`,
+            `AHMV: varios equipos coinciden. Responda con el equipo exacto: ${choices}`,
+          ),
         purpose: "team-ambiguity",
         contactId: contact?.id,
         settings,
@@ -409,13 +444,15 @@ export async function handleTwilioVoice(
     });
     if (sent.sent) {
       say(
-        lang === "fr"
-          ? "Je vous envoie les détails par texto. Merci."
-          : "I am sending the details by text. Thank you.",
+        t(
+          "Je vous envoie les détails par texto. Merci.",
+          "I am sending the details by text. Thank you.",
+          "Le envío los detalles por mensaje de texto. Gracias.",
+        ),
       );
     }
   } else {
-    say(lang === "fr" ? "Merci." : "Thank you.");
+    say(t("Merci.", "Thank you.", "Gracias."));
   }
 
   await safeRecordPhoneInteraction({
