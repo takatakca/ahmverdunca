@@ -49,6 +49,7 @@ Optional:
 AHMV_TEAM_ALIASES_JSON={}
 AHMV_URGENT_FR=
 AHMV_URGENT_EN=
+AHMV_URGENT_ES=
 AHMV_URGENT_UNTIL=
 ```
 
@@ -124,7 +125,17 @@ Use a real Canadian mobile phone.
 
 ### Voice — English
 
-Repeat with English.
+Repeat with English using option 2.
+
+### Voice — Spanish
+
+1. Call the public AHMV number.
+2. Press 3 for Spanish.
+3. Confirm Spanish TTS and speech recognition use the Spanish flow.
+4. Request SMS follow-up.
+5. Ask for a validated team/group.
+6. Confirm the spoken answer and SMS follow-up are in Spanish.
+7. Confirm the call ends promptly.
 
 ### Silence fallback
 
@@ -144,6 +155,9 @@ HELP
 Junior
 SEMAINE Junior
 EN WEEK Junior
+ES SEMANA Junior
+ES CALENDARIO M13A
+ES SALIDA M13A
 SAVE M13A
 ```
 
@@ -172,7 +186,7 @@ Verify:
 
 - first contact creates a trial window;
 - repeated calls do not restart the trial;
-- language updates;
+- language updates across `fr`, `en`, and `es`;
 - requested SMS consent is distinct from marketing consent;
 - marketing consent remains false unless explicitly collected elsewhere;
 - message delivery status updates;
