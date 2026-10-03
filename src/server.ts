@@ -14,6 +14,7 @@ import { handleAhmvPhoneLifecycleCron } from "./features/ahmv-phone/messaging/li
 import { handleAhmvPhoneReminderCron } from "./features/ahmv-phone/reminders/handler.server";
 import { handleAhmvCalendarLink } from "./features/ahmv-phone/calendar/handler.server";
 import { handleAhmvDeparture } from "./features/ahmv-phone/departure/handler.server";
+import { handleTakatakMembershipSync } from "./features/ahmv-phone/takatak/membership-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 
 type ServerEntry = {
@@ -104,6 +105,8 @@ export default {
     if (calendarResponse) return calendarResponse;
     const departureResponse = await handleAhmvDeparture(request);
     if (departureResponse) return departureResponse;
+    const membershipSyncResponse = await handleTakatakMembershipSync(request);
+    if (membershipSyncResponse) return membershipSyncResponse;
     const phoneDemoResponse = await handleAhmvPhoneDemo(request);
     if (phoneDemoResponse) return phoneDemoResponse;
     const phoneOpsResponse = await handleAhmvPhoneOpsSummary(request);
