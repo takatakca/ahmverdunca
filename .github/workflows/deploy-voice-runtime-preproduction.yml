@@ -78,7 +78,7 @@ jobs:
         run: |
           set -euo pipefail
           npm ci --ignore-scripts --audit=false --fund=false
-          npm run verify
+          npm run check
           npm audit --omit=dev --audit-level=high
 
       - name: Verify deployment configuration
