@@ -65,6 +65,7 @@ function MiniCalendar({
   team,
   kind,
   lang,
+  sourceHref,
 }: {
   title: string;
   eyebrow: string;
