@@ -210,3 +210,42 @@ test("TAKATAK membership sync requires the server service token", () => {
     true,
   );
 });
+
+
+test("commercial campaigns require phone provider service token cron secret and legal info URL", () => {
+  const missing = phonePreflight({
+    AHMV_PHONE_ENABLED: "false",
+    AHMV_PHONE_CAMPAIGNS_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+  });
+
+  assert.equal(missing.find((check) => check.id === "safe-campaign-gate")?.ok, false);
+  assert.equal(missing.find((check) => check.id === "campaign-service-token")?.ok, false);
+  assert.equal(missing.find((check) => check.id === "campaign-cron-secret")?.ok, false);
+  assert.equal(missing.find((check) => check.id === "campaign-legal-info-url")?.ok, false);
+  assert.equal(missing.find((check) => check.id === "twilio-account")?.required, true);
+
+  const configured = phonePreflight({
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_CAMPAIGNS_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    TAKATAK_AHMV_SERVICE_TOKEN: "service-secret",
+    LOVABLE_CRON_SECRET: "cron-secret",
+    TAKATAK_SMS_CEM_INFO_URL: "https://takatak.ca/sms-info",
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "twilio-secret",
+  });
+
+  assert.equal(configured.find((check) => check.id === "safe-campaign-gate")?.ok, true);
+  assert.equal(configured.find((check) => check.id === "campaign-service-token")?.ok, true);
+  assert.equal(configured.find((check) => check.id === "campaign-cron-secret")?.ok, true);
+  assert.equal(configured.find((check) => check.id === "campaign-legal-info-url")?.ok, true);
+});
