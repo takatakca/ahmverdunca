@@ -24,13 +24,13 @@ export function resolvePublicTeam(query: string): TeamResolution {
     (item) => normalize(`${item.categorySlug} ${item.level} ${item.name}`) === key
       || normalize(item.name) === key,
   );
-  if (exactNameMatches.length === 1) return { kind: "exact", team: exactNameMatches[0] };
+  if (exactNameMatches.length === 1) return { kind: "exact", team: exactNameMatches[0]! };
   if (exactNameMatches.length > 1) return { kind: "ambiguous", teams: exactNameMatches };
 
   const categoryLevelMatches = PUBLIC_TEAM_DIRECTORY.filter(
     (item) => normalize(`${item.categorySlug}${item.level}`) === key,
   );
-  if (categoryLevelMatches.length === 1) return { kind: "exact", team: categoryLevelMatches[0] };
+  if (categoryLevelMatches.length === 1) return { kind: "exact", team: categoryLevelMatches[0]! };
   if (categoryLevelMatches.length > 1) return { kind: "ambiguous", teams: categoryLevelMatches };
 
   const categoryMatches = PUBLIC_TEAM_DIRECTORY.filter(
