@@ -5,7 +5,7 @@ import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
 import { useI18n } from "@/lib/i18n";
 
-export const Route = createFileRoute("/membership" as any)({
+export const Route = createFileRoute("/membership" as never)({
   head: () => ({
     links: canonicalLink("/membership"),
     meta: [
