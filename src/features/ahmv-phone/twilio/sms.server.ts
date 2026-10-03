@@ -2,11 +2,15 @@ import twilio from "twilio";
 import { officialPhoneSchedule, parseSms } from "../../../lib/ahmv-phone.ts";
 import {
   normalizePhoneE164,
+  safeApplyMarketingSmsConsentEvent,
+  safeFindPhoneContactByNumber,
   safeSavePrimaryTeamPreference,
+  safeSetCarrierMessagingPermission,
   safeSetTeamReminderPreference,
   safeTouchPhoneContact,
 } from "../contacts/store.server.ts";
 import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
+import { parseMarketingConsentCommand } from "../contacts/marketing-consent.ts";
 import { createSignedCalendarLink } from "../calendar/link.server.ts";
 import { createSignedDepartureLink } from "../departure/link.server.ts";
 import { parsePhoneCommand } from "../conversation/commands.ts";
@@ -35,6 +39,47 @@ export async function handleTwilioSms(
   const response = new twilio.twiml.MessagingResponse();
   const { lang, query } = parseSms(params["Body"] ?? "");
   const caller = normalizePhoneE164(params["From"]);
+  const existingContact = caller
+    ? await safeFindPhoneContactByNumber(caller)
+    : null;
+  const optOutType = (params["OptOutType"] ?? "").toUpperCase();
+  const carrierStop =
+    optOutType === "STOP" ||
+    /^(STOP|STOPALL|UNSUBSCRIBE|CANCEL|END|QUIT)$/i.test(query);
+  const carrierStart =
+    optOutType === "START" ||
+    /^(START|UNSTOP)$/i.test(query);
+
+  if (params["OptOutType"] || carrierStop || carrierStart) {
+    if (existingContact && carrierStop) {
+      await safeApplyMarketingSmsConsentEvent({
+        eventId: `carrier-stop:${ref}`,
+        contactId: existingContact.id,
+        enabled: false,
+        source: "carrier_opt_out",
+      });
+      await safeSetCarrierMessagingPermission(existingContact.id, false);
+    } else if (existingContact && carrierStart) {
+      await safeSetCarrierMessagingPermission(existingContact.id, true);
+    }
+
+    const intent = carrierStart
+      ? "carrier-opt-in"
+      : carrierStop
+        ? "carrier-opt-out"
+        : "carrier-help";
+
+    await safeRecordPhoneInteraction({
+      contactId: existingContact?.id,
+      channel: "sms",
+      providerReferenceHash: ref,
+      intent,
+      outcome: "managed-by-twilio",
+    });
+    log(intent + "-managed-by-twilio");
+    return xmlResponse(response.toString());
+  }
+
   const contact = caller
     ? await safeTouchPhoneContact({
         phoneE164: caller,
@@ -44,26 +89,59 @@ export async function handleTwilioSms(
       })
     : null;
 
-  if (
-    params["OptOutType"] ||
-    /^(STOP|STOPALL|UNSUBSCRIBE|CANCEL|END|QUIT|START)$/i.test(query)
-  ) {
+  const marketingCommand = parseMarketingConsentCommand(query);
+  if (marketingCommand) {
+    if (!contact) {
+      response.message(
+        lang === "fr"
+          ? "AHMV: impossible d'associer cette préférence à ce numéro pour le moment."
+          : "AHMV: unable to associate this preference with this number right now.",
+      );
+      return xmlResponse(response.toString());
+    }
+
+    const enabled = marketingCommand.kind === "marketing-opt-in";
+    const consentResult = await safeApplyMarketingSmsConsentEvent({
+      eventId: `sms-marketing:${ref}`,
+      contactId: contact.id,
+      enabled,
+      source: "sms_keyword",
+    });
+    const saved = Boolean(
+      consentResult &&
+        (consentResult.applied || consentResult.duplicate),
+    );
+
+    response.message(
+      saved
+        ? enabled
+          ? lang === "fr"
+            ? "AHMV / GROUPE TAKATAK: consentement aux offres SMS enregistré. Pour retirer seulement les offres: OFFRES NON. Pour arrêter tous les SMS: STOP."
+            : "AHMV / GROUPE TAKATAK: SMS offers consent saved. To stop offers only: OFFERS NO. To stop all SMS: STOP."
+          : lang === "fr"
+            ? "AHMV / GROUPE TAKATAK: les offres SMS sont désactivées. Les messages de service demandés peuvent continuer. STOP arrête tous les SMS."
+            : "AHMV / GROUPE TAKATAK: SMS offers are off. Requested service messages may continue. STOP stops all SMS."
+        : lang === "fr"
+          ? "AHMV: impossible de modifier cette préférence pour le moment."
+          : "AHMV: unable to update this preference right now.",
+    );
+
     await safeRecordPhoneInteraction({
-      contactId: contact?.id,
+      contactId: contact.id,
       channel: "sms",
       providerReferenceHash: ref,
-      intent: "opt-out",
-      outcome: "managed-by-twilio",
+      intent: marketingCommand.kind,
+      outcome: saved ? (enabled ? "enabled" : "disabled") : "failed",
     });
-    log("opt-out-managed-by-twilio");
+    log(saved ? marketingCommand.kind : "marketing-consent-failed");
     return xmlResponse(response.toString());
   }
 
   if (!query || /^(HELP|AIDE|FR|EN)$/i.test(query)) {
     response.message(
       lang === "fr"
-        ? "AHMV: envoyez votre équipe pour le prochain événement. Essai 30 jours: AUJOURD'HUI, DEMAIN, SEMAINE, SAUVE ou RAPPEL + équipe. EN pour anglais. GROUPE TAKATAK."
-        : "AHMV: text your team for the next event. 30-day trial: TODAY, TOMORROW, WEEK, SAVE, REMIND, CALENDAR or LEAVE + team. GROUPE TAKATAK.",
+        ? "AHMV: envoyez votre équipe pour le prochain événement. Essai 30 jours: AUJOURD'HUI, DEMAIN, SEMAINE, SAUVE, RAPPEL, CALENDRIER ou DÉPART + équipe. Offres commerciales: OFFRES OUI/NON. EN pour anglais. GROUPE TAKATAK."
+        : "AHMV: text your team for the next event. 30-day trial: TODAY, TOMORROW, WEEK, SAVE, REMIND, CALENDAR or LEAVE + team. Commercial offers: OFFERS YES/NO. GROUPE TAKATAK.",
     );
     await safeRecordPhoneInteraction({
       contactId: contact?.id,

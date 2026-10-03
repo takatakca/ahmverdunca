@@ -41,13 +41,13 @@ export function HouseSponsorSlot({
       <div className={compact ? "grid gap-px bg-navy/10 sm:grid-cols-2" : "grid gap-px bg-navy/10 md:grid-cols-2"}>
         {sponsors.map((sponsor) => {
           const card = sponsor.creative ? (
-            <div className="group relative overflow-hidden bg-competition">
+            <div className="premium-depth group relative overflow-hidden bg-competition">
               <img
                 src={sponsor.creative}
                 alt={`${sponsor.name} — ${sponsor.tagline[lang]}`}
                 loading="lazy"
                 decoding="async"
-                className={`w-full object-cover transition-transform duration-700 group-hover:scale-[1.015] ${compact ? "aspect-[12/4.4]" : "aspect-[12/5.2]"}`}
+                className={`premium-depth-media w-full object-cover ${compact ? "aspect-[12/4.4]" : "aspect-[12/5.2]"}`}
               />
               {sponsor.href && (
                 <span className="absolute bottom-3 right-3 flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur">

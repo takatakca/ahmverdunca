@@ -667,3 +667,44 @@
     animation: none !important;
   }
 }
+
+
+/* Depth layer — progressive enhancement for desktop pointers only. */
+.premium-depth {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+.premium-depth-media {
+  transform: translateZ(0);
+  transition:
+    transform 420ms cubic-bezier(.2,.8,.2,1),
+    filter 320ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .premium-depth {
+    perspective: 1100px;
+    transition:
+      transform 280ms cubic-bezier(.2,.8,.2,1),
+      box-shadow 300ms ease;
+  }
+
+  .premium-depth:hover {
+    transform: perspective(1100px) rotateX(1deg) rotateY(-1.4deg) translateY(-3px);
+    box-shadow: 0 32px 72px -48px color-mix(in oklab, var(--color-navy) 82%, transparent);
+  }
+
+  .premium-depth:hover .premium-depth-media {
+    transform: scale(1.022) translateZ(8px);
+    filter: saturate(1.04) contrast(1.015);
+  }
+}
+
+@media (prefers-reduced-motion: reduce), (hover: none) {
+  .premium-depth,
+  .premium-depth-media {
+    transform: none !important;
+    transition: none !important;
+  }
+}

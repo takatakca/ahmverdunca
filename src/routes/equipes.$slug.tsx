@@ -18,6 +18,7 @@ import { TeamGameCenter } from "@/components/team-game-center";
 import { TeamMicrositeHero } from "@/components/team-microsite-hero";
 import { TeamParentDeck } from "@/components/team-parent-deck";
 import { TeamShareTools } from "@/components/team-share-tools";
+import { TeamGameDayPanel } from "@/components/team-game-day-panel";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { TeamLiveFeed } from "@/components/team-live-feed";
 import { TeamParentPremium } from "@/components/team-parent-premium";
@@ -220,6 +221,8 @@ function TeamPage() {
         )}
 
         {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
+
+        {exactTeam && <TeamGameDayPanel team={exactTeam} lang={lang} />}
 
         {exactTeam && <TeamParentDeck team={exactTeam} lang={lang} />}
         {exactTeam && (
