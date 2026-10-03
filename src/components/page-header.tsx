@@ -16,7 +16,7 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={cn("relative isolate overflow-hidden bg-competition text-navy-foreground", className)}>
+    <header className={cn("page-masthead relative isolate overflow-hidden bg-competition text-navy-foreground", className)}>
       <div className="technical-grid absolute inset-0 opacity-25" aria-hidden />
       <div className="absolute inset-y-0 left-[12%] w-px bg-sport/35" aria-hidden />
       <div className="absolute inset-y-0 right-[18%] hidden w-px bg-navy-foreground/7 lg:block" aria-hidden />
@@ -24,7 +24,7 @@ export function PageHeader({
         Verdun
       </div>
 
-      <div className="container-site relative grid gap-6 py-9 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-14">
+      <div className="container-site relative grid gap-6 py-8 sm:py-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-14">
         <div className="max-w-5xl min-w-0">
           {eyebrow && (
             <p className="eyebrow mb-3 flex flex-wrap items-center gap-2.5 text-sport-foreground/90">
@@ -32,7 +32,7 @@ export function PageHeader({
               {eyebrow}
             </p>
           )}
-          <h1 className="max-w-[18ch] break-words font-display text-[clamp(2.75rem,7.5vw,6rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.035em]">
+          <h1 className="max-w-[18ch] break-words font-display text-[clamp(2.65rem,7.5vw,6rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.035em] text-balance">
             {title}
           </h1>
           {description && (
@@ -77,7 +77,7 @@ export function SectionHeading({
   id?: string;
 }) {
   return (
-    <div className={cn("mb-6 grid gap-4 border-b border-navy/15 pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:mb-8", className)}>
+    <div className={cn("section-heading mb-6 grid gap-4 border-b border-navy/15 pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:mb-8", className)}>
       <div className="max-w-4xl min-w-0">
         {eyebrow && (
           <p className="eyebrow mb-2 flex flex-wrap items-center gap-2 text-sport">
