@@ -14,6 +14,7 @@ import { getArena } from "@/data/arenas";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { mapsDirectionsUrl } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/arenas/$slug")({
   loader: ({ params }) => {
@@ -48,10 +49,20 @@ export const Route = createFileRoute("/arenas/$slug")({
   component: ArenaPage,
 });
 
+function directionProviders(address: string) {
+  const target = encodeURIComponent(address);
+  return {
+    google: mapsDirectionsUrl(address),
+    waze: `https://www.waze.com/ul?q=${target}&navigate=yes`,
+    apple: `https://maps.apple.com/?daddr=${target}`,
+  };
+}
+
 function ArenaPage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
   const arena = getArena(slug)!;
+  const directions = directionProviders(arena.address);
 
   return (
     <>
@@ -63,7 +74,7 @@ function ArenaPage() {
           <>
             <Button asChild variant="sport">
               <a
-                href={mapsDirectionsUrl(arena.address)}
+                href={directions.google}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -109,14 +120,32 @@ function ArenaPage() {
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "À retenir" : "At a glance"}</p>
             <p className="mt-4 font-display text-3xl font-extrabold uppercase leading-[0.9]">{l(arena.borough)}</p>
             <p className="mt-4 text-sm leading-relaxed text-white/68">{arena.address}</p>
-            <a
-              href={mapsDirectionsUrl(arena.address)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="premium-control mt-6 inline-flex min-h-12 items-center justify-between border border-white/20 px-4 text-xs font-bold uppercase tracking-[0.14em] hover:bg-white/[0.06]"
-            >
-              {t("common.directions")} <Navigation className="size-4 text-sport-foreground" />
-            </a>
+            <div className="mt-6 grid grid-cols-3 gap-2">
+              <a
+                href={directions.google}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="premium-control flex min-h-11 items-center justify-center border border-white/20 px-2 text-[8px] font-bold uppercase tracking-[0.09em] text-white hover:border-sport"
+              >
+                Google
+              </a>
+              <a
+                href={directions.waze}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="premium-control flex min-h-11 items-center justify-center border border-white/20 px-2 text-[8px] font-bold uppercase tracking-[0.09em] text-white hover:border-sport"
+              >
+                Waze
+              </a>
+              <a
+                href={directions.apple}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="premium-control flex min-h-11 items-center justify-center bg-sport px-2 text-[8px] font-bold uppercase tracking-[0.09em] text-sport-foreground"
+              >
+                Apple
+              </a>
+            </div>
           </div>
         </section>
         <Link
@@ -140,6 +169,8 @@ function ArenaPage() {
               {lang === "fr" ? "Source officielle recoupée" : "Official source cross-checked"}
             </div>
           </div>
+
+          <HouseSponsorSlot placement={`arena-${arena.slug}`} count={1} compact className="lg:col-span-2" />
 
           <div className="competition-panel border border-navy/12 p-6 text-navy-foreground">
             <CalendarDays className="size-6 text-sport-foreground" aria-hidden />
