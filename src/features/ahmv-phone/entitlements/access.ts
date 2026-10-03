@@ -24,10 +24,14 @@ const PREMIUM = [
   "smart_departure",
 ] as const;
 
-export function localEntitlement(tier: AhmvAccessTier, trialExpiresAt?: string): AhmvEntitlement {
+export function localEntitlement(
+  tier: AhmvAccessTier,
+  trialExpiresAt?: string,
+  now = new Date(),
+): AhmvEntitlement {
   const activeTrial =
     tier === "trial" && !!trialExpiresAt && Number.isFinite(Date.parse(trialExpiresAt))
-      && Date.parse(trialExpiresAt) > Date.now();
+      && Date.parse(trialExpiresAt) > now.getTime();
   const capabilities = tier === "premium" || activeTrial ? PREMIUM : tier === "blocked" ? [] : BASE;
   return { tier, trialExpiresAt, capabilities: new Set(capabilities) };
 }
