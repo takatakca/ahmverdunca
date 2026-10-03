@@ -338,15 +338,17 @@ function Home() {
                 params={{ slug: news[0].slug }}
                 className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
-                <SportArtwork
-                  index={String(news[0].legacyId ?? "01").padStart(2, "0")}
-                  kicker={newsDateLabel(news[0], lang)}
-                  title={l(news[0].title)}
-                  code="NEWS"
-                  aspect="absolute inset-0"
-                  className="absolute inset-0 opacity-95"
+                <img
+                  src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
+                  alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                 />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_18%,rgba(7,16,43,0.12)_45%,rgba(7,16,43,0.96)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.16)_0%,rgba(7,16,43,0.22)_40%,rgba(7,16,43,0.96)_100%)]" />
+                <span className="absolute left-5 top-5 border border-white/20 bg-navy/72 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur md:left-7 md:top-7">
+                  {lang === "fr" ? "Photo d’archive AHMV" : "AHMV archive photo"}
+                </span>
                 <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground md:p-9">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
