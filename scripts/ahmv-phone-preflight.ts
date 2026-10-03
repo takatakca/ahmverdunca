@@ -29,6 +29,7 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const demoEnabled = bool(settings["AHMV_PHONE_DEMO_ENABLED"]);
   const phoneEnabled = bool(settings["AHMV_PHONE_ENABLED"]);
   const publicEnabled = bool(settings["AHMV_PHONE_PUBLIC"]);
+  const lifecycleEnabled = bool(settings["AHMV_PHONE_LIFECYCLE_ENABLED"]);
 
   return [
     {
@@ -48,13 +49,13 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
     {
       id: "twilio-account",
       ok: present(settings["TWILIO_ACCOUNT_SID"]),
-      required: phoneEnabled || publicEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled,
       detail: "Twilio Account SID is configured server-side.",
     },
     {
       id: "twilio-auth",
       ok: present(settings["TWILIO_AUTH_TOKEN"]),
-      required: phoneEnabled || publicEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled,
       detail: "Twilio Auth Token is configured server-side.",
     },
     {
@@ -82,6 +83,18 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       ok: !demoEnabled || present(settings["AHMV_PHONE_DEMO_TOKEN"]),
       required: demoEnabled,
       detail: "Internal demo endpoint has a separate token when enabled.",
+    },
+    {
+      id: "lifecycle-cron-secret",
+      ok: !lifecycleEnabled || present(settings["LOVABLE_CRON_SECRET"]),
+      required: lifecycleEnabled,
+      detail: "Lifecycle worker requires the protected cron secret.",
+    },
+    {
+      id: "safe-lifecycle-gate",
+      ok: !lifecycleEnabled || phoneEnabled,
+      required: true,
+      detail: "Lifecycle dispatch cannot be enabled while the phone integration is disabled.",
     },
     {
       id: "safe-public-gate",

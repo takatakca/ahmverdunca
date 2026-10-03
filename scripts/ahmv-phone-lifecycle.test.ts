@@ -1,11 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  lifecycleConsentStillValid,
   lifecycleMessagesDue,
+  lifecycleRetryDelayMinutes,
   planPhoneLifecycleMessages,
 } from "../src/features/ahmv-phone/messaging/lifecycle.ts";
 import { lifecycleMessageText } from "../src/features/ahmv-phone/messaging/templates.ts";
 import type { AhmvPhoneContact } from "../src/features/ahmv-phone/contacts/store.server.ts";
+import { handleAhmvPhoneLifecycleCron } from "../src/features/ahmv-phone/messaging/lifecycle-handler.server.ts";
 
 function contact(overrides: Partial<AhmvPhoneContact> = {}): AhmvPhoneContact {
   return {
@@ -79,4 +82,100 @@ test("localized templates keep the service notice separate from the marketing of
     lifecycleMessageText("membership_offer", "en", memberUrl),
     /membership/,
   );
+});
+
+
+test("premium contact receives no trial-expiry lifecycle messages", () => {
+  const plans = planPhoneLifecycleMessages(
+    contact({
+      accessTier: "premium",
+      marketingSmsConsent: true,
+    }),
+    new Date("2026-10-03T12:00:00.000Z"),
+  );
+  assert.deepEqual(plans, []);
+});
+
+test("guest contact receives no trial lifecycle messages", () => {
+  const plans = planPhoneLifecycleMessages(
+    contact({ accessTier: "guest" }),
+    new Date("2026-10-03T12:00:00.000Z"),
+  );
+  assert.deepEqual(plans, []);
+});
+
+
+test("expired trial skips stale welcome and J-3 messages", () => {
+  const plans = planPhoneLifecycleMessages(
+    contact({
+      trialExpiresAt: "2026-10-01T12:00:00.000Z",
+      marketingSmsConsent: true,
+    }),
+    new Date("2026-10-03T12:00:00.000Z"),
+  );
+  assert.deepEqual(
+    plans.map((plan) => plan.kind),
+    ["trial_expired", "membership_offer"],
+  );
+  assert.equal(plans.every((plan) => plan.dueAt === "2026-10-03T12:00:00.000Z"), true);
+});
+
+test("inside final 3 days schedules expiry warning immediately, not in the past", () => {
+  const now = new Date("2026-10-31T12:00:00.000Z");
+  const plans = planPhoneLifecycleMessages(contact(), now);
+  const warning = plans.find((plan) => plan.kind === "trial_expiry_3d");
+  assert.equal(warning?.dueAt, now.toISOString());
+});
+
+test("consent is revalidated at delivery time", () => {
+  const current = contact();
+  assert.equal(lifecycleConsentStillValid(current, "requested"), true);
+  assert.equal(lifecycleConsentStillValid(current, "service"), true);
+  assert.equal(lifecycleConsentStillValid(current, "marketing"), false);
+  assert.equal(
+    lifecycleConsentStillValid(
+      contact({ marketingSmsConsent: true }),
+      "marketing",
+    ),
+    true,
+  );
+  assert.equal(
+    lifecycleConsentStillValid(
+      contact({ accessTier: "premium", marketingSmsConsent: true }),
+      "marketing",
+    ),
+    false,
+  );
+  assert.equal(
+    lifecycleConsentStillValid(
+      contact({ transactionalSmsAllowed: false, marketingSmsConsent: true }),
+      "marketing",
+    ),
+    false,
+  );
+});
+
+test("provider retry backoff is bounded", () => {
+  assert.equal(lifecycleRetryDelayMinutes(1), 5);
+  assert.equal(lifecycleRetryDelayMinutes(2), 10);
+  assert.equal(lifecycleRetryDelayMinutes(3), 20);
+  assert.equal(lifecycleRetryDelayMinutes(9), 60);
+});
+
+test("lifecycle cron is disabled by default", async () => {
+  const response = await handleAhmvPhoneLifecycleCron(
+    new Request("https://ahmverdun.ca/api/ahmv/cron/phone-lifecycle", {
+      method: "POST",
+    }),
+    {},
+  );
+  assert.equal(response?.status, 404);
+});
+
+test("lifecycle cron remains POST-only before cron authentication", async () => {
+  const response = await handleAhmvPhoneLifecycleCron(
+    new Request("https://ahmverdun.ca/api/ahmv/cron/phone-lifecycle"),
+    { AHMV_PHONE_LIFECYCLE_ENABLED: "true" },
+  );
+  assert.equal(response?.status, 405);
 });
