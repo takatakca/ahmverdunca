@@ -283,7 +283,7 @@ export async function dispatchDuePhoneLifecycleMessages(
     } else {
       await updateJob(claimed.id, {
         status: "failed",
-        last_error: result.error ?? result.reason,
+        last_error: result.error,
       });
       summary.failed += 1;
     }
