@@ -44,6 +44,9 @@ jobs:
       - name: GROUPE TAKATAK team feed security tests
         run: bun run test:team-feed
 
+      - name: AHMV assistant routing tests
+        run: bun run test:assistant
+
       - name: Validate monetization configuration
         run: bun run check:monetization
 

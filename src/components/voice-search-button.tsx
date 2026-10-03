@@ -78,9 +78,11 @@ export function normalizeVoiceTranscript(value: string) {
 export function VoiceSearchButton({
   onTranscript,
   compact = false,
+  recognitionLocale,
 }: {
   onTranscript: (text: string) => void;
   compact?: boolean;
+  recognitionLocale?: string;
 }) {
   const { lang } = useI18n();
   const [supported, setSupported] = useState(false);
@@ -104,7 +106,7 @@ export function VoiceSearchButton({
     if (!Recognition || listening) return;
 
     const recognition = new Recognition();
-    recognition.lang = lang === "fr" ? "fr-CA" : "en-CA";
+    recognition.lang = recognitionLocale ?? (lang === "fr" ? "fr-CA" : "en-CA");
     recognition.interimResults = false;
     recognition.continuous = false;
 

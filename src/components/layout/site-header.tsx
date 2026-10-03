@@ -38,6 +38,15 @@ export function SiteHeader() {
     setMoreOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const closeForAssistant = () => {
+      setOpen(false);
+      setMoreOpen(false);
+    };
+    window.addEventListener("ahmv:assistant-open", closeForAssistant);
+    return () => window.removeEventListener("ahmv:assistant-open", closeForAssistant);
+  }, []);
+
   // Lock the page behind the mobile navigation without losing the previous
   // body state. The menu is modal-like on phones and must not allow the page
   // underneath to scroll.
