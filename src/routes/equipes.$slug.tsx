@@ -1,5 +1,5 @@
 import { canonicalLink } from "@/lib/seo";
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useRouterState } from "@tanstack/react-router";
 import {
   ArrowRight,
   CalendarDays,
@@ -24,9 +24,6 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/equipes/$slug")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    teamId: typeof search["teamId"] === "string" ? search["teamId"] : undefined,
-  }),
   loader: ({ params }) => {
     const team = getTeam(params.slug);
     if (!team) throw notFound();
@@ -61,7 +58,8 @@ export const Route = createFileRoute("/equipes/$slug")({
 
 function TeamPage() {
   const { slug } = Route.useLoaderData();
-  const { teamId } = Route.useSearch();
+  const currentHref = useRouterState({ select: (state) => state.location.href });
+  const teamId = new URL(currentHref, SITE.domain).searchParams.get("teamId") ?? undefined;
   const { t, l, lang } = useI18n();
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
   const team = getTeam(slug)!;
