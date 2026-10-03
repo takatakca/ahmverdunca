@@ -325,8 +325,8 @@ export function SiteHeader() {
               className="interactive-surface group relative mt-4 block min-h-[170px] overflow-hidden border border-white/12 bg-navy"
             >
               <img
-                src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-                alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+                src={OFFICIAL_MEDIA.practiceSkaters.url}
+                alt={lang === "fr" ? OFFICIAL_MEDIA.practiceSkaters.alt.fr : OFFICIAL_MEDIA.practiceSkaters.alt.en}
                 loading="eager"
                 decoding="async"
                 className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
