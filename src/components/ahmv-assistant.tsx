@@ -12,8 +12,8 @@ import {
   type AssistantLanguageCode,
 } from "@/lib/assistant-language";
 import { useI18n } from "@/lib/i18n";
+import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { usePreferredTeam } from "@/lib/team-preference";
-import { SITE } from "@/lib/site";
 
 function assistantCopy(language: AssistantLanguageCode) {
   const ui = assistantUiLanguage(language);
@@ -70,6 +70,7 @@ function assistantCopy(language: AssistantLanguageCode) {
 
 export function AhmvAssistant() {
   const { lang } = useI18n();
+  const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const { isTeamSelected, toggleSelectedTeam } = usePreferredTeam();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -278,15 +279,15 @@ export function AhmvAssistant() {
               </form>
 
               <div className="mt-4 border-t border-navy/10 pt-4">
-                {SITE.phonePublic ? (
-                  <a href={`tel:${SITE.phoneE164}`} className="premium-control flex min-h-11 items-center justify-between bg-navy px-4 text-xs font-bold uppercase tracking-[0.1em] text-white">
+                {phonePublic ? (
+                  <a href={`tel:${phoneE164}`} className="premium-control flex min-h-11 items-center justify-between bg-navy px-4 text-xs font-bold uppercase tracking-[0.1em] text-white">
                     <span className="flex items-center gap-2"><PhoneCall className="size-4 text-sport-foreground" />{copy.phoneReady}</span>
-                    <span className="font-mono text-[10px] text-white/58">{SITE.phoneDisplay}</span>
+                    <span className="font-mono text-[10px] text-white/58">{phoneDisplay}</span>
                   </a>
                 ) : (
                   <div className="flex min-h-11 items-center justify-between border border-navy/12 px-4 text-xs font-semibold text-muted-foreground">
                     <span className="flex items-center gap-2"><PhoneCall className="size-4 text-sport" />{copy.phoneReserved}</span>
-                    <span className="font-mono text-[10px]">{SITE.phoneDisplay}</span>
+                    <span className="font-mono text-[10px]">{phoneDisplay}</span>
                   </div>
                 )}
                 <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
