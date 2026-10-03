@@ -132,3 +132,15 @@ test("Voice integration preproduction deploy is branch-pinned, smoke-gated and r
   assert.match(workflow, /x-robots-tag: noindex, nofollow/);
   assert.doesNotMatch(workflow, /AHMV_PRODUCTION_HOST|AHMV_PRODUCTION_URL/);
 });
+
+
+test("Voice dependency workflow audits production packages and emits a CycloneDX SBOM", async () => {
+  const workflow = await source(".github/workflows/voice-lockfile.yml");
+  assert.match(workflow, /npm ci --ignore-scripts --audit=false --fund=false/);
+  assert.match(workflow, /npm audit --omit=dev --audit-level=high/);
+  assert.match(workflow, /npm sbom --sbom-format=cyclonedx/);
+  assert.match(workflow, /bomFormat !== 'CycloneDX'/);
+  assert.match(workflow, /services\/ahmv-voice-ai\/package-lock\.json/);
+  assert.match(workflow, /services\/ahmv-voice-ai\/sbom\.cdx\.json/);
+  assert.match(workflow, /actions\/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a/);
+});
