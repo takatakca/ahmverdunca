@@ -5,6 +5,7 @@ import { findSchedule, findArena } from './ahm-data.js';
 import { persistSessionSnapshot, saveSession } from './store.js';
 import { throwIfAborted } from './turn-controller.js';
 import { assertCompletedResponse } from './openai-contract.js';
+import { recordOpenAiUsage } from './usage.js';
 
 const openai = new OpenAI({
   apiKey: config.openaiApiKey,
@@ -161,10 +162,18 @@ async function runTool(session, call, { signal, persist = true } = {}) {
       result = session.access || { allowed: false, mode: config.accessMode, reason: 'unknown' };
       break;
     case 'find_schedule':
+      if (!config.featureScheduleLookup) {
+        result = { ok: false, code: 'FEATURE_DISABLED', feature: 'schedule_lookup' };
+        break;
+      }
       result = await findSchedule(args);
       rememberScheduleResults(session, result);
       break;
     case 'find_arena':
+      if (!config.featureArenaLookup) {
+        result = { ok: false, code: 'FEATURE_DISABLED', feature: 'arena_lookup' };
+        break;
+      }
       result = await findArena(args);
       rememberArenaResults(session, result);
       break;
@@ -191,7 +200,12 @@ async function runTool(session, call, { signal, persist = true } = {}) {
       break;
     }
     case 'set_sms_preference':
-      session.smsEnabled = Boolean(args.enabled && /^\+[1-9]\d{7,14}$/.test(String(session.from || '')) && config.smsEnabled);
+      session.smsEnabled = Boolean(
+        args.enabled &&
+        /^\+[1-9]\d{7,14}$/.test(String(session.from || '')) &&
+        config.smsEnabled &&
+        config.featureSmsRecap
+      );
       result = { ok: true, enabled: session.smsEnabled };
       break;
     default:
@@ -252,6 +266,7 @@ export async function answerCaller({ session, text, lang, signal, persist = true
     const response = await openai.responses.create(request, signal ? { signal } : undefined);
     throwIfAborted(signal);
     assertCompletedResponse(response);
+    recordOpenAiUsage(session, response.usage || {});
     input.push(...response.output);
     const calls = response.output.filter((item) => item.type === 'function_call');
 
