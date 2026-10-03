@@ -124,17 +124,29 @@
     border-color: var(--color-border);
   }
   html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
   body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
+  }
+  #app, #root {
+    width: 100%;
+    max-width: 100%;
     overflow-x: clip;
-    min-width: 320px;
+  }
+  img, video, svg {
+    max-width: 100%;
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-display);
@@ -447,4 +459,33 @@
   .group:hover .sport-artwork {
     transform: scale(1.012);
   }
+}
+
+/* Premium tactile motion — fast enough to feel responsive, soft enough to feel physical. */
+@media (prefers-reduced-motion: no-preference) {
+  a, button {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tactile {
+    transition:
+      transform 220ms cubic-bezier(.2,.8,.2,1),
+      box-shadow 220ms ease,
+      border-color 220ms ease,
+      background-color 220ms ease;
+    will-change: transform;
+  }
+  .tactile:hover {
+    transform: translateY(-2px);
+  }
+  .tactile:active {
+    transform: translateY(0) scale(.985);
+    transition-duration: 90ms;
+  }
+  .page-enter {
+    animation: ahmv-page-enter 420ms cubic-bezier(.2,.8,.2,1) both;
+  }
+}
+@keyframes ahmv-page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

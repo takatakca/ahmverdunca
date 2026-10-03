@@ -13,10 +13,7 @@ export function CommunicationsPreview() {
   const { lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
-
   useEffect(() => {
-    if (publicLaunch) return;
     if (window.localStorage.getItem(HIDE_KEY) === "1") return;
     if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
 
@@ -26,7 +23,7 @@ export function CommunicationsPreview() {
     }, 320);
 
     return () => window.clearTimeout(timer);
-  }, [publicLaunch]);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -45,7 +42,7 @@ export function CommunicationsPreview() {
     };
   }, [open]);
 
-  if (!open || publicLaunch) return null;
+  if (!open) return null;
 
   const dismissForever = () => {
     window.localStorage.setItem(HIDE_KEY, "1");
@@ -59,25 +56,25 @@ export function CommunicationsPreview() {
 
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/80 backdrop-blur-md sm:items-center sm:p-5"
+      className="fixed inset-0 z-[90] flex items-end justify-center overflow-hidden bg-navy-deep/70 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-center sm:p-5"
       role="presentation"
     >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="communications-preview-title"
-        className="relative grid max-h-[100dvh] w-full overflow-hidden bg-background shadow-[0_40px_100px_-30px_rgba(0,0,0,0.65)] sm:max-h-[92dvh] sm:max-w-5xl sm:grid-cols-[1.05fr_0.95fr] sm:border sm:border-white/10"
+        className="relative grid max-h-[min(84dvh,680px)] w-full max-w-[calc(100vw-1rem)] overflow-hidden border border-white/10 bg-background shadow-[0_32px_90px_-28px_rgba(0,0,0,0.7)] sm:max-h-[88dvh] sm:max-w-4xl sm:grid-cols-[0.9fr_1.1fr]"
       >
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="tap-target absolute right-3 top-3 z-30 inline-flex items-center justify-center rounded-full border border-white/15 bg-navy-deep/55 text-white backdrop-blur-md transition-colors hover:bg-navy-deep/75"
+          className="tap-target absolute right-2 top-2 z-40 inline-flex size-11 items-center justify-center border border-white/25 bg-navy-deep/90 text-white shadow-lg backdrop-blur-md transition-transform active:scale-95 sm:right-3 sm:top-3"
           aria-label={lang === "fr" ? "Fermer" : "Close"}
         >
           <X className="size-5" />
         </button>
 
-        <div className="relative min-h-[42dvh] overflow-hidden bg-navy-deep p-6 text-navy-foreground sm:min-h-[640px] sm:p-8 md:p-10">
+        <div className="relative hidden min-h-[520px] overflow-hidden bg-navy-deep p-8 text-navy-foreground sm:block md:p-9">
           <div className="arena-light" aria-hidden />
           <div className="light-beam left-[6%]" aria-hidden />
           <div className="light-beam left-[58%] [animation-delay:2.6s]" aria-hidden />
@@ -121,21 +118,21 @@ export function CommunicationsPreview() {
           </div>
         </div>
 
-        <div className="max-h-[58dvh] overflow-y-auto p-6 sm:max-h-none sm:p-8 md:p-10">
+        <div className="max-h-[min(84dvh,680px)] overflow-y-auto overscroll-contain p-5 pr-5 pt-14 sm:max-h-none sm:p-8 md:p-9">
           <p className="eyebrow text-sport">{lang === "fr" ? "Info AHMV" : "AHMV updates"}</p>
           <h2
             id="communications-preview-title"
-            className="mt-3 max-w-[10ch] font-display text-5xl font-extrabold uppercase leading-[0.84] tracking-[-0.03em] text-navy sm:text-6xl"
+            className="mt-2 max-w-[12ch] font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.025em] text-navy sm:mt-3 sm:text-5xl"
           >
             {lang === "fr" ? "Restez connecté" : "Stay connected"}
           </h2>
-          <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
+          <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground sm:mt-5 sm:text-base">
             {lang === "fr"
               ? "Horaires, nouvelles et informations importantes d'AHM Verdun, réunis dans une expérience simple pour les familles."
               : "Schedules, news and important AHM Verdun information, brought together in a simple family experience."}
           </p>
 
-          <div className="mt-7 border-y border-navy/10 py-5">
+          <div className="mt-5 border-y border-navy/10 py-4 sm:mt-7 sm:py-5">
             <p className="eyebrow text-muted-foreground">{lang === "fr" ? "Priorité parent" : "Parent priority"}</p>
             <p className="mt-2 font-display text-2xl font-extrabold uppercase text-navy">
               {lang === "fr" ? "Recevoir les horaires" : "Receive schedules"}
@@ -177,7 +174,7 @@ export function CommunicationsPreview() {
             )}
           </div>
 
-          <div className="mt-6 grid gap-2 sm:grid-cols-2">
+          <div className="mt-4 grid gap-2 sm:mt-6 sm:grid-cols-2">
             <Button asChild variant="outline" size="lg">
               <Link to="/horaires" onClick={() => setOpen(false)}>
                 <CalendarDays className="size-4" />
@@ -189,7 +186,7 @@ export function CommunicationsPreview() {
             </Button>
           </div>
 
-          <div className="mt-5 flex items-start gap-2 text-xs text-muted-foreground">
+          <div className="mt-4 hidden items-start gap-2 text-xs text-muted-foreground sm:flex">
             <PhoneCall className="mt-0.5 size-3.5 shrink-0 text-sport" aria-hidden />
             <p>
               {lang === "fr"
