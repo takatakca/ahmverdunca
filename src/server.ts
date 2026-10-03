@@ -16,6 +16,7 @@ import { handleAhmvCalendarLink } from "./features/ahmv-phone/calendar/handler.s
 import { handleAhmvDeparture } from "./features/ahmv-phone/departure/handler.server";
 import { handleTakatakMembershipSync } from "./features/ahmv-phone/takatak/membership-handler.server";
 import { handleTakatakMarketingCampaign } from "./features/ahmv-phone/marketing/handler.server";
+import { handleTakatakMarketingConsentSync } from "./features/ahmv-phone/marketing/consent-handler.server";
 import { handleAhmvMarketingCampaignCron } from "./features/ahmv-phone/marketing/cron-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 
@@ -111,6 +112,8 @@ export default {
     if (membershipSyncResponse) return membershipSyncResponse;
     const marketingCampaignResponse = await handleTakatakMarketingCampaign(request);
     if (marketingCampaignResponse) return marketingCampaignResponse;
+    const marketingConsentResponse = await handleTakatakMarketingConsentSync(request);
+    if (marketingConsentResponse) return marketingConsentResponse;
     const phoneDemoResponse = await handleAhmvPhoneDemo(request);
     if (phoneDemoResponse) return phoneDemoResponse;
     const phoneOpsResponse = await handleAhmvPhoneOpsSummary(request);
