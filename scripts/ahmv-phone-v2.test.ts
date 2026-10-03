@@ -181,6 +181,8 @@ test("reminder lead time defaults safely to two hours", () => {
 
 test("Spanish phone language remains first-class for SMS and schedule answers", () => {
   assert.deepEqual(parseSms("ES Junior"), { lang: "es", query: "Junior" });
+  const spanishNext = nextEventService("Junior", "es", {}, new Date("2026-09-28T16:00:00Z"));
+  assert.match(spanishNext.smsText, /Cómo llegar:/);
   const result = scheduleAnswer(
     "",
     "es",
