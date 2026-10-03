@@ -166,7 +166,7 @@ export function TeamMicrositeHero({
   const practiceRows = publishedPracticeRows.length > 0 ? publishedPracticeRows : DEMO_PRACTICES;
 
   return (
-    <section className="overflow-hidden border border-navy/12 bg-competition text-white shadow-[0_30px_70px_-52px_rgba(7,16,43,0.9)]">
+    <section className="premium-depth overflow-hidden border border-navy/12 bg-competition text-white shadow-[0_30px_70px_-52px_rgba(7,16,43,0.9)]">
       <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[390px] lg:min-h-[520px]">
           <img
@@ -174,7 +174,7 @@ export function TeamMicrositeHero({
             alt={lang === "fr" ? heroMedia.alt.fr : heroMedia.alt.en}
             loading="eager"
             decoding="async"
-            className="absolute inset-0 size-full object-cover"
+            className="premium-depth-media absolute inset-0 size-full object-cover"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.06)_20%,rgba(7,16,43,0.90)_100%)]" />
           <div className="ahmv-motion-sheen" aria-hidden />
