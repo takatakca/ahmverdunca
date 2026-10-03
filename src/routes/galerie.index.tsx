@@ -47,10 +47,10 @@ function GalleryPage() {
         <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
           <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
             {[
-              OFFICIAL_MEDIA.tournamentM11Primary,
-              OFFICIAL_MEDIA.tournamentM11Secondary,
-              OFFICIAL_MEDIA.tournamentM11Tertiary,
-              OFFICIAL_MEDIA.volunteerArchive,
+              OFFICIAL_MEDIA.practiceGroup,
+              OFFICIAL_MEDIA.practiceSkaters,
+              OFFICIAL_MEDIA.practiceGoalie,
+              OFFICIAL_MEDIA.practicePlayers,
             ].map((media, index) => (
               <a
                 key={media.url}
@@ -69,7 +69,7 @@ function GalleryPage() {
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_48%,rgba(7,16,43,0.72)_100%)]" />
                 {index === 0 && (
                   <span className="absolute bottom-4 left-4 bg-navy/78 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
-                    {lang === "fr" ? "Archives officielles AHMV" : "Official AHMV archives"}
+                    {lang === "fr" ? "Photos réelles AHMV" : "Real AHMV photography"}
                   </span>
                 )}
               </a>
