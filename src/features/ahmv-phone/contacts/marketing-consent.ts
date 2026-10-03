@@ -13,14 +13,14 @@ export function parseMarketingConsentCommand(
     .replace(/\s+/g, " ");
 
   if (
-    /^(OFFRES|PROMO|MARKETING) (OUI|YES)$/.test(normalized) ||
+    /^(OFFRES|PROMO|MARKETING|OFERTAS) (OUI|YES|SI)$/.test(normalized) ||
     /^(OFFERS) YES$/.test(normalized)
   ) {
     return { kind: "marketing-opt-in" };
   }
 
   if (
-    /^(OFFRES|PROMO|MARKETING) (NON|NO)$/.test(normalized) ||
+    /^(OFFRES|PROMO|MARKETING|OFERTAS) (NON|NO)$/.test(normalized) ||
     /^(OFFERS) NO$/.test(normalized)
   ) {
     return { kind: "marketing-opt-out" };
