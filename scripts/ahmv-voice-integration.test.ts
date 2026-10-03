@@ -92,3 +92,16 @@ test("Voice AI deployment assets are fail-closed and preserve canonical public U
   assert.match(runbook, /Twilio sandbox acceptance/);
   assert.match(runbook, /Rollback/);
 });
+
+
+test("Voice DB doctor is locked to the AHMV Supabase project and performs no remote mutation", async () => {
+  const doctor = await source("scripts/ahmv-voice-db-doctor.ts");
+  assert.match(doctor, /bqflllsjxmhqsvemhhwv/);
+  assert.match(doctor, /SUPABASE_PROJECT_REF/);
+  assert.match(doctor, /Refusing Voice database operation against a non-AHMV Supabase project/);
+  assert.match(doctor, /20261003090500_ahmv_phone_message_dedupe\.sql/);
+  assert.match(doctor, /20261003110000_ahmv_phone_spanish\.sql/);
+  assert.match(doctor, /20261003091000_ahmv_voice_sessions\.sql/);
+  assert.match(doctor, /remoteMutationPerformed: false/);
+  assert.doesNotMatch(doctor, /db push|apply_migration|execute_sql/);
+});
