@@ -109,6 +109,42 @@ async function existingEvent(eventId: string) {
   return Boolean(result.data);
 }
 
+async function latestIdentityEvent(identityId: string) {
+  const result = await db()
+    .from("ahmv_phone_entitlement_sync_events")
+    .select("occurred_at")
+    .eq("takatak_identity_id", identityId)
+    .eq("product_code", TAKATAK_AHMV_PRODUCT_CODE)
+    .order("occurred_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (result.error) throw result.error;
+  const value = result.data?.["occurred_at"];
+  return typeof value === "string" ? Date.parse(value) : null;
+}
+
+async function recordSyncEvent(
+  input: TakatakMembershipSyncInput,
+  contactId: string | null,
+) {
+  const result = await db()
+    .from("ahmv_phone_entitlement_sync_events")
+    .insert({
+      event_id: input.eventId,
+      contact_id: contactId,
+      takatak_identity_id: input.identityId,
+      product_code: input.productCode,
+      membership_status: input.status,
+      entitlement_expires_at: input.expiresAt ?? null,
+      occurred_at: input.occurredAt,
+    });
+
+  if (!result.error) return "inserted" as const;
+  if (result.error.code === "23505") return "duplicate" as const;
+  throw result.error;
+}
+
 function resolvedTier(input: {
   status: TakatakMembershipStatus;
   trialExpiresAt?: string | null | undefined;
@@ -131,6 +167,18 @@ export async function applyTakatakMembershipSync(
     return { duplicate: true, applied: false };
   }
 
+  const latestOccurredAt = await latestIdentityEvent(input.identityId);
+  if (
+    latestOccurredAt !== null &&
+    Date.parse(input.occurredAt) <= latestOccurredAt
+  ) {
+    const recorded = await recordSyncEvent(input, null);
+    return {
+      duplicate: recorded === "duplicate",
+      applied: false,
+    };
+  }
+
   const client = db();
   const existing = await client
     .from("ahmv_phone_contacts")
@@ -141,24 +189,11 @@ export async function applyTakatakMembershipSync(
   if (existing.error) throw existing.error;
 
   if (!existing.data && input.status !== "active") {
-    const audit = await client
-      .from("ahmv_phone_entitlement_sync_events")
-      .insert({
-        event_id: input.eventId,
-        contact_id: null,
-        takatak_identity_id: input.identityId,
-        product_code: input.productCode,
-        membership_status: input.status,
-        entitlement_expires_at: input.expiresAt ?? null,
-        occurred_at: input.occurredAt,
-      });
-    if (audit.error) {
-      if (audit.error.code === "23505") {
-        return { duplicate: true, applied: false };
-      }
-      throw audit.error;
-    }
-    return { duplicate: false, applied: false };
+    const recorded = await recordSyncEvent(input, null);
+    return {
+      duplicate: recorded === "duplicate",
+      applied: false,
+    };
   }
 
   let contactId: string;
@@ -208,28 +243,14 @@ export async function applyTakatakMembershipSync(
     contactId = String(inserted.data.id);
   }
 
-  const audit = await client
-    .from("ahmv_phone_entitlement_sync_events")
-    .insert({
-      event_id: input.eventId,
-      contact_id: contactId,
-      takatak_identity_id: input.identityId,
-      product_code: input.productCode,
-      membership_status: input.status,
-      entitlement_expires_at: input.expiresAt ?? null,
-      occurred_at: input.occurredAt,
-    });
-
-  if (audit.error) {
-    if (audit.error.code === "23505") {
-      return {
-        duplicate: true,
-        applied: false,
-        contactId,
-        accessTier: tier,
-      };
-    }
-    throw audit.error;
+  const recorded = await recordSyncEvent(input, contactId);
+  if (recorded === "duplicate") {
+    return {
+      duplicate: true,
+      applied: false,
+      contactId,
+      accessTier: tier,
+    };
   }
 
   return {
