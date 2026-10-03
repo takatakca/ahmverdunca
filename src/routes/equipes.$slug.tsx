@@ -15,6 +15,8 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { TeamPortfolio } from "@/components/team-portfolio";
 import { TeamGameCenter } from "@/components/team-game-center";
+import { TeamMicrositeHero } from "@/components/team-microsite-hero";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { TeamLiveFeed } from "@/components/team-live-feed";
 import { TeamParentPremium } from "@/components/team-parent-premium";
 import { TeamCommunityBoard } from "@/components/team-community-board";
@@ -100,42 +102,12 @@ function TeamPage() {
 
   return (
     <>
-      <PageHeader
-        eyebrow={
-          exactTeam
-            ? `${team.code} · ${exactTeam.level} · #${exactTeam.legacyScheduleTeamId.slice(-4)}`
-            : `${team.code} · ${l(team.ages)}`
-        }
-        title={exactTeam ? exactTeam.name : l(team.name)}
-        description={
-          exactTeam
-            ? (lang === "fr"
-                ? "Hub public de cette équipe : accès officiels, résultats, médias approuvés et contributions vérifiées, sans recopier de données personnelles de joueurs."
-                : "Public team hub: official access, results, approved media and reviewed contributions, without copying player personal data.")
-            : l(team.description)
-        }
-        actions={
-          exactTeam ? (
-            <>
-              <Button asChild variant="sport">
-                <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
-                  <CalendarDays className="size-4" />
-                  {lang === "fr" ? "Horaire officiel" : "Official schedule"}
-                </a>
-              </Button>
-              <Button asChild variant="outline-light">
-                <a href={officialTeamResultsUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="size-4" />
-                  {lang === "fr" ? "Résultats / classement" : "Results / standings"}
-                </a>
-              </Button>
-              <Button asChild variant="outline-light">
-                <a href={`/equipes/${slug}`}>
-                  {lang === "fr" ? "Retour à la catégorie" : "Back to category"}
-                </a>
-              </Button>
-            </>
-          ) : (
+      {!exactTeam && (
+        <PageHeader
+          eyebrow={`${team.code} · ${l(team.ages)}`}
+          title={l(team.name)}
+          description={l(team.description)}
+          actions={
             <>
               <Button asChild variant="sport">
                 <Link to="/horaires" search={{ team: slug }}>
@@ -159,12 +131,12 @@ function TeamPage() {
                     : "Remember"}
               </Button>
             </>
-          )
-        }
-      />
+          }
+        />
+      )}
 
       <div className="container-site space-y-10 py-6 md:space-y-12 md:py-10">
-        {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
+        {exactTeam && <TeamMicrositeHero team={exactTeam} categoryCode={team.code} lang={lang} />}
 
         {exactTeam && (
           <nav
@@ -190,87 +162,7 @@ function TeamPage() {
           </nav>
         )}
 
-        {exactTeam ? (
-          <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.35fr_0.65fr]">
-            <div className="relative min-h-[250px] overflow-hidden sm:min-h-[330px]">
-              <img
-                src={slug === "m11" ? OFFICIAL_MEDIA.practiceSkaters.url : OFFICIAL_MEDIA.practiceCoach.url}
-                alt={lang === "fr" ? "Photo réelle AHM Verdun — jeunes et entraîneur sur la glace" : "Real AHM Verdun photo — players and coach on the ice"}
-                loading="eager"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.10),rgba(7,16,43,0.88))]" />
-              <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9">
-                <p className="eyebrow text-sport-foreground">
-                  {lang === "fr" ? "Hub public d’équipe" : "Public team hub"}
-                </p>
-                <p className="mt-2 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl md:text-6xl">
-                  {exactTeam.name}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">
-                  <span className="border border-white/18 px-2.5 py-1">{team.code}</span>
-                  <span className="border border-white/18 px-2.5 py-1">{exactTeam.level}</span>
-                  <span className="border border-white/18 px-2.5 py-1">#{exactTeam.legacyScheduleTeamId.slice(-4)}</span>
-                </div>
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
-                  {lang === "fr"
-                    ? "Photo réelle AHMV utilisée comme ambiance; elle n’est pas présentée comme une photo spécifique de cette équipe."
-                    : "Real AHMV photo used for atmosphere; it is not presented as a photo of this specific team."}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
-              <div>
-                <p className="eyebrow text-sport-foreground">
-                  {lang === "fr" ? "Accès officiels" : "Official access"}
-                </p>
-                <div className="mt-5 border-y border-white/12">
-                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
-                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
-                      {lang === "fr" ? "Catégorie" : "Category"}
-                    </span>
-                    <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
-                  </div>
-                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
-                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
-                      {lang === "fr" ? "Niveau" : "Level"}
-                    </span>
-                    <span className="font-display text-3xl font-extrabold uppercase">{exactTeam.level}</span>
-                  </div>
-                  <div className="py-4">
-                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
-                      {lang === "fr" ? "Référence publique" : "Public reference"}
-                    </span>
-                    <p className="mt-2 break-all font-mono text-sm text-white/78">{exactTeam.legacyScheduleTeamId}</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-7 grid gap-2">
-                <a
-                  href={legacyTeamScheduleUrl(exactTeam)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="premium-control flex min-h-12 items-center justify-between bg-sport px-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-sport-foreground"
-                >
-                  {lang === "fr" ? "Horaire officiel" : "Official schedule"}
-                  <CalendarDays className="size-4" />
-                </a>
-                <a
-                  href={officialTeamResultsUrl(exactTeam)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="premium-control flex min-h-12 items-center justify-between border border-white/18 px-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-white"
-                >
-                  {lang === "fr" ? "Résultats / classement" : "Results / standings"}
-                  <ExternalLink className="size-4" />
-                </a>
-              </div>
-            </div>
-          </section>
-        ) : (
+        {exactTeam ? null : (
           <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
             <div className="relative min-h-[240px] overflow-hidden sm:min-h-[320px]">
               <img
@@ -322,6 +214,10 @@ function TeamPage() {
             </div>
           </section>
         )}
+
+        {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
+
+        {exactTeam && <HouseSponsorSlot placement={`team-top-${exactTeam.legacyScheduleTeamId}`} count={1} compact />}
         {exactTeam && (
           <TeamPortfolio
             team={exactTeam}
@@ -335,6 +231,7 @@ function TeamPage() {
         {exactTeam && <TeamLiveFeed team={exactTeam} lang={lang} />}
 
         {exactTeam && <TeamParentPremium team={exactTeam} lang={lang} />}
+        {exactTeam && <HouseSponsorSlot placement={`team-lower-${exactTeam.legacyScheduleTeamId}`} count={1} compact />}
         {exactTeam && <TeamCommunityBoard team={exactTeam} lang={lang} />}
 
         <section

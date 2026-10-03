@@ -7,6 +7,7 @@ import { NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/nouvelles/")({
   head: () => ({
@@ -51,6 +52,7 @@ function NewsPage() {
       />
 
       <div className="container-site py-8 md:py-11">
+        <HouseSponsorSlot placement="newsroom" compact className="mb-7" />
         <div className="grid gap-6 border-b border-navy/15 pb-7 lg:grid-cols-[1fr_auto] lg:items-end">
           <div className="max-w-3xl">
             <p className="eyebrow text-sport">{lang === "fr" ? "Contenu public migré" : "Migrated public content"}</p>

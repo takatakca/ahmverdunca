@@ -5,6 +5,7 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { SPONSORS } from "@/data/sponsors";
 import { useI18n } from "@/lib/i18n";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/partenaires")({
   head: () => ({
@@ -80,6 +81,8 @@ function PartnersPage() {
               : "Partners are shown by name until logo use and visibility level are confirmed. No logo is fabricated."}
           </p>
         </div>
+
+        <HouseSponsorSlot placement="partners-house-network" count={4} />
 
         <section>
           <SectionHeading

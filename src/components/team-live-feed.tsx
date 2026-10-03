@@ -119,6 +119,40 @@ export function TeamLiveFeed({
         </div>
       </div>
 
+      {feed.items.length === 0 && (
+        <div className="grid gap-px bg-navy/10 md:grid-cols-3">
+          {[
+            {
+              platform: "Facebook",
+              label: lang === "fr" ? "EMPLACEMENT FACEBOOK" : "FACEBOOK PLACEMENT",
+              body: lang === "fr" ? "Le mini-site est prêt à afficher les publications publiques approuvées de cette équipe." : "The mini-site is ready to display this team's approved public posts.",
+            },
+            {
+              platform: "Instagram",
+              label: lang === "fr" ? "EMPLACEMENT INSTAGRAM" : "INSTAGRAM PLACEMENT",
+              body: lang === "fr" ? "Photos, stories et publications pourront apparaître ici lorsque le compte sera connecté." : "Photos, stories and posts can appear here once the account is connected.",
+            },
+            {
+              platform: "Mini-blog",
+              label: lang === "fr" ? "PUBLICATION D’ÉQUIPE" : "TEAM POST",
+              body: lang === "fr" ? "Victoire, changement d’horaire, tournoi, bénévoles ou nouvelle rapide : la carte est prête." : "Win, schedule change, tournament, volunteers or quick news: this card is ready.",
+            },
+          ].map((item) => (
+            <article key={item.platform} className="flex min-h-52 flex-col bg-background p-5">
+              <div className="flex items-center justify-between">
+                <p className="eyebrow text-sport">{item.platform}</p>
+                <span className="border border-navy/10 bg-ice px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">DEMO</span>
+              </div>
+              <h3 className="mt-7 font-display text-2xl font-extrabold uppercase leading-[0.9] text-navy">{item.label}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
+              <div className="mt-auto border-t border-navy/10 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport">
+                {lang === "fr" ? "Prêt à connecter" : "Ready to connect"}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
       {feed.items.length > 0 && (
         <div className="grid gap-px bg-navy/10 md:grid-cols-2 xl:grid-cols-3">
           {feed.items.map((item) => (

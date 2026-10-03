@@ -22,6 +22,8 @@ import { Route as RechercheRouteImport } from './routes/recherche'
 import { Route as RessourcesRouteImport } from './routes/ressources'
 import { Route as TournoisRouteImport } from './routes/tournois'
 import { Route as WllvRouteImport } from './routes/wllv'
+import { Route as MembershipRouteImport } from './routes/membership'
+import { Route as EquipeEventIdRouteImport } from './routes/equipe-event.$id'
 import { Route as ArenasIndexRouteImport } from './routes/arenas.index'
 import { Route as ArenasSlugRouteImport } from './routes/arenas.$slug'
 import { Route as EquipesIndexRouteImport } from './routes/equipes.index'
@@ -96,6 +98,16 @@ const WllvRoute = WllvRouteImport.update({
   path: '/wllv',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MembershipRoute = MembershipRouteImport.update({
+  id: '/membership',
+  path: '/membership',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipeEventIdRoute = EquipeEventIdRouteImport.update({
+  id: '/equipe-event/$id',
+  path: '/equipe-event/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArenasIndexRoute = ArenasIndexRouteImport.update({
   id: '/arenas/',
   path: '/arenas/',
@@ -151,6 +163,8 @@ export interface FileRoutesByFullPath {
   '/ressources': typeof RessourcesRoute
   '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
+  '/membership': typeof MembershipRoute
+  '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
   '/galerie/$slug': typeof GalerieSlugRoute
@@ -174,6 +188,8 @@ export interface FileRoutesByTo {
   '/ressources': typeof RessourcesRoute
   '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
+  '/membership': typeof MembershipRoute
+  '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
   '/galerie/$slug': typeof GalerieSlugRoute
@@ -198,6 +214,8 @@ export interface FileRoutesById {
   '/ressources': typeof RessourcesRoute
   '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
+  '/membership': typeof MembershipRoute
+  '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
   '/galerie/$slug': typeof GalerieSlugRoute
@@ -223,6 +241,8 @@ export interface FileRouteTypes {
     | '/ressources'
     | '/tournois'
     | '/wllv'
+    | '/membership'
+    | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
     | '/galerie/$slug'
@@ -246,6 +266,8 @@ export interface FileRouteTypes {
     | '/ressources'
     | '/tournois'
     | '/wllv'
+    | '/membership'
+    | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
     | '/galerie/$slug'
@@ -269,6 +291,8 @@ export interface FileRouteTypes {
     | '/ressources'
     | '/tournois'
     | '/wllv'
+    | '/membership'
+    | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
     | '/galerie/$slug'
@@ -293,6 +317,8 @@ export interface RootRouteChildren {
   RessourcesRoute: typeof RessourcesRoute
   TournoisRoute: typeof TournoisRoute
   WllvRoute: typeof WllvRoute
+  MembershipRoute: typeof MembershipRoute
+  EquipeEventIdRoute: typeof EquipeEventIdRoute
   ArenasSlugRoute: typeof ArenasSlugRoute
   EquipesSlugRoute: typeof EquipesSlugRoute
   GalerieSlugRoute: typeof GalerieSlugRoute
@@ -396,6 +422,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WllvRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/membership': {
+      id: '/membership'
+      path: '/membership'
+      fullPath: '/membership'
+      preLoaderRoute: typeof MembershipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipe-event/$id': {
+      id: '/equipe-event/$id'
+      path: '/equipe-event/$id'
+      fullPath: '/equipe-event/$id'
+      preLoaderRoute: typeof EquipeEventIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/arenas/': {
       id: '/arenas/'
       path: '/arenas'
@@ -469,6 +509,8 @@ const rootRouteChildren: RootRouteChildren = {
   RessourcesRoute: RessourcesRoute,
   TournoisRoute: TournoisRoute,
   WllvRoute: WllvRoute,
+  MembershipRoute: MembershipRoute,
+  EquipeEventIdRoute: EquipeEventIdRoute,
   ArenasSlugRoute: ArenasSlugRoute,
   EquipesSlugRoute: EquipesSlugRoute,
   GalerieSlugRoute: GalerieSlugRoute,

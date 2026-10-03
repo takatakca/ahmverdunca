@@ -9,6 +9,7 @@ import { officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/da
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { cn } from "@/lib/utils";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/equipes/")({
   head: () => ({
@@ -115,6 +116,8 @@ function TeamsPage() {
             </a>
           </div>
         </section>
+
+        <HouseSponsorSlot placement="teams-directory" compact className="mb-8" />
 
         {selectedTeams.length > 0 ? (
           <section className="mb-8 overflow-hidden border border-sport/30 bg-background">

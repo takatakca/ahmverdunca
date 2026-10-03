@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookmarkCheck, CalendarDays, ChevronDown, CircleHelp, Images, LogIn, MapPin, Menu, Newspaper, PhoneCall, Search, Trophy, Users, X } from "lucide-react";
+import { BookmarkCheck, CalendarDays, ChevronDown, CircleHelp, Images, LogIn, MapPin, Menu, Newspaper, PhoneCall, Search, Sparkles, Trophy, Users, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -270,6 +270,12 @@ export function SiteHeader() {
               {lang === "fr" ? "Mon horaire" : "My schedule"}
             </Link>
           </Button>
+          <Button asChild variant="ghost" size="sm" className="hidden border border-sport/30 text-navy-foreground hover:bg-sport/10 md:inline-flex">
+            <a href="/membership">
+              <Sparkles className="size-4 text-sport-foreground" />
+              {lang === "fr" ? "Member · Démo" : "Member · Demo"}
+            </a>
+          </Button>
           <button
             type="button"
             className={cn(
@@ -482,6 +488,24 @@ export function SiteHeader() {
                 </Link>
               ))}
             </div>
+
+            <a
+              href="/membership"
+              className="premium-control mt-7 flex min-h-16 items-center justify-between border border-sport/35 bg-sport/10 px-4 text-white"
+            >
+              <span className="flex items-center gap-3">
+                <span className="flex size-10 items-center justify-center bg-sport text-sport-foreground">
+                  <Sparkles className="size-5" />
+                </span>
+                <span>
+                  <span className="block text-[9px] font-bold uppercase tracking-[0.16em] text-sport-foreground">AHMV Member · DEMO</span>
+                  <span className="mt-1 block font-display text-xl font-extrabold uppercase leading-none">
+                    {lang === "fr" ? "Prêt à activer" : "Ready to switch on"}
+                  </span>
+                </span>
+              </span>
+              <ChevronDown className="size-4 -rotate-90 text-sport-foreground" />
+            </a>
 
             <div className="mt-7 grid gap-2">
               <Button asChild variant="sport" size="lg" className="justify-between">

@@ -744,7 +744,7 @@ function Home() {
         </div>
       </section>
 
-      <AdSenseSlot className="container-site my-8 border border-navy/10 bg-ice p-3 md:my-12 md:p-4" />
+      <AdSenseSlot placement="home-main" className="container-site my-8 md:my-12" />
 
       {/* Partners */}
       <section className="navy-texture overflow-hidden py-12 text-navy-foreground md:py-16">

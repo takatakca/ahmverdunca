@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { ADSENSE_CONFIG } from "@/lib/monetization";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 declare global {
   interface Window {
@@ -7,7 +8,7 @@ declare global {
   }
 }
 
-export function AdSenseSlot({ className = "" }: { className?: string }) {
+export function AdSenseSlot({ className = "", placement = "generic" }: { className?: string; placement?: string }) {
   useEffect(() => {
     if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) return;
     try {
@@ -17,7 +18,9 @@ export function AdSenseSlot({ className = "" }: { className?: string }) {
     }
   }, []);
 
-  if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) return null;
+  if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) {
+    return <HouseSponsorSlot placement={placement} className={className} />;
+  }
 
   return (
     <aside className={className} aria-label="Publicité">
