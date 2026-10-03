@@ -2,13 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { ArrowRight, ExternalLink } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
+import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
-  const showPhone = SITE.phonePublic;
+  const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
+  const showPhone = phonePublic;
 
   return (
     <footer className="relative mt-auto overflow-hidden bg-competition text-navy-foreground">
@@ -96,13 +98,13 @@ export function SiteFooter() {
             </div>
           </div>
           {showPhone && (
-            SITE.phonePublic ? (
-              <a href={`tel:${SITE.phoneE164}`} className="mt-5 inline-block font-display text-xl font-bold text-navy-foreground hover:text-sport-foreground">
-                {SITE.phoneDisplay}
+            phonePublic ? (
+              <a href={`tel:${phoneE164}`} className="mt-5 inline-block font-display text-xl font-bold text-navy-foreground hover:text-sport-foreground">
+                {phoneDisplay}
               </a>
             ) : (
               <p className="mt-5 font-display text-xl font-bold text-navy-foreground/72">
-                {SITE.phoneDisplay}
+                {phoneDisplay}
                 <span className="ml-2 align-middle text-[9px] font-sans uppercase tracking-[0.18em] text-sport-foreground">
                   {lang === "fr" ? "canal à venir" : "channel upcoming"}
                 </span>
