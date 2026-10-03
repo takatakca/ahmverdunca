@@ -622,7 +622,7 @@ function Home() {
       </section>
 
       {/* Hockey heritage */}
-      <section className="relative overflow-hidden border-y border-navy/10 bg-background py-14 md:py-20">
+      <section id="archives-hockey" className="relative scroll-mt-28 overflow-hidden border-y border-navy/10 bg-background py-14 md:py-20">
         <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
         <div className="container-site relative">
           <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 lg:grid-cols-[1.15fr_0.85fr]">
@@ -721,15 +721,37 @@ function Home() {
             </Button>
           </div>
 
-          <div className="mt-8 flex flex-wrap border-l border-t border-navy-foreground/15">
-            {SPONSORS.map((sponsor) => {
-              const classes = "flex min-h-20 min-w-[220px] flex-1 items-center border-b border-r border-navy-foreground/15 px-5 py-4 text-sm font-semibold text-navy-foreground/80 transition-colors hover:bg-navy-foreground/[0.05] hover:text-navy-foreground";
+          <div className="mt-8 grid gap-px overflow-hidden border border-navy-foreground/15 bg-navy-foreground/15 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {SPONSORS.map((sponsor, index) => {
+              const content = (
+                <>
+                  <div className="flex items-start justify-between gap-4">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/70">
+                      {lang === "fr" ? "Partenaire AHMV" : "AHMV partner"}
+                    </span>
+                    <span className="font-display text-sm font-bold text-white/25">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <div className="mt-8">
+                    <p className="font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.02em] text-white">
+                      {sponsor.name}
+                    </p>
+                    <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.15em] text-white/35">
+                      {sponsor.websiteVerified
+                        ? (lang === "fr" ? "Lien vérifié" : "Verified link")
+                        : (lang === "fr" ? "Identité répertoriée" : "Listed identity")}
+                    </p>
+                  </div>
+                </>
+              );
+              const classes = "interactive-surface flex min-h-40 flex-col justify-between bg-competition p-5 transition-colors hover:bg-white/[0.055]";
               return sponsor.website ? (
                 <a key={sponsor.name} href={sponsor.website} target="_blank" rel="noopener noreferrer" className={classes}>
-                  {sponsor.name}
+                  {content}
                 </a>
               ) : (
-                <div key={sponsor.name} className={classes}>{sponsor.name}</div>
+                <div key={sponsor.name} className={classes}>{content}</div>
               );
             })}
           </div>
