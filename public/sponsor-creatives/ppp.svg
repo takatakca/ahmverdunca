@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="t d">
+<title id="t">PPP Pizzeria — Pizza montréalaise</title><desc id="d">Créative sponsor PPP Pizzeria.</desc>
+<defs><linearGradient id="b" x1="0" x2="1"><stop stop-color="#171318"/><stop offset="1" stop-color="#4d1d25"/></linearGradient><linearGradient id="c" x1="0" x2="1"><stop stop-color="#ffbf2f"/><stop offset="1" stop-color="#ff6a32"/></linearGradient></defs>
+<rect width="1200" height="520" fill="url(#b)"/>
+<g transform="translate(850 66)"><circle cx="155" cy="190" r="160" fill="#f5c36a"/><path d="M30 145Q155 25 280 145L155 330Z" fill="#ffb43b"/><circle cx="118" cy="148" r="22" fill="#b22735"/><circle cx="194" cy="178" r="19" fill="#b22735"/><circle cx="154" cy="230" r="17" fill="#b22735"/><path d="M28 145Q155 18 282 145" fill="none" stroke="#e7a44d" stroke-width="28"/></g>
+<text x="72" y="150" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="82" font-weight="900">PPP PIZZERIA</text>
+<text x="72" y="245" fill="#ffbf2f" font-family="Arial,Helvetica,sans-serif" font-size="48" font-weight="800">PIZZA. MATCH. FAMILLE.</text>
+<text x="72" y="305" fill="#e8d9dc" font-family="Arial,Helvetica,sans-serif" font-size="24">Une soirée hockey, une pizza au centre de la table.</text>
+<g transform="translate(72 390)"><rect width="225" height="62" rx="31" fill="url(#c)"/><text x="35" y="40" fill="#171318" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800">COMMANDER →</text></g>
+</svg>
