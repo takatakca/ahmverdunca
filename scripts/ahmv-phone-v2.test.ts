@@ -4,6 +4,8 @@ import { localEntitlement, canUse } from "../src/features/ahmv-phone/entitlement
 import { navigationLinksForVenue } from "../src/features/ahmv-phone/arenas/navigation.ts";
 import { resolvePublicTeam } from "../src/features/ahmv-phone/teams/resolve.ts";
 import { nextEventService } from "../src/features/ahmv-phone/schedules/service.ts";
+import { scheduleRangeAnswer } from "../src/features/ahmv-phone/schedules/range.ts";
+import { parsePhoneCommand } from "../src/features/ahmv-phone/conversation/commands.ts";
 
 test("active 30-day trial unlocks premium-ready phone capabilities", () => {
   const entitlement = localEntitlement("trial", "2099-01-01T00:00:00Z");
@@ -50,4 +52,38 @@ test("shared schedule service returns event metadata and directions", () => {
   assert.equal(result.event?.group, "Junior");
   assert.ok(result.directions?.googleMaps);
   assert.match(result.smsText, /Itinéraire:/);
+});
+
+test("member SMS commands parse in French and English", () => {
+  assert.deepEqual(parsePhoneCommand("SEMAINE Junior"), { kind: "week", teamQuery: "Junior" });
+  assert.deepEqual(parsePhoneCommand("TODAY M13A"), { kind: "today", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("DEMAIN M13A"), { kind: "tomorrow", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("SAVE M13A"), { kind: "save", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("M13A"), { kind: "next", teamQuery: "M13A" });
+});
+
+test("weekly range answer lists only the requested exact group", () => {
+  const result = scheduleRangeAnswer(
+    "Junior",
+    "week",
+    "fr",
+    undefined,
+    new Date("2026-09-28T16:00:00Z"),
+  );
+  assert.equal(result.outcome, "scheduled");
+  assert.equal(result.group, "Junior");
+  assert.equal(result.events.length, 1);
+  assert.match(result.text, /Cette semaine/);
+});
+
+test("tomorrow range does not invent unpublished activities", () => {
+  const result = scheduleRangeAnswer(
+    "Junior",
+    "tomorrow",
+    "fr",
+    undefined,
+    new Date("2026-09-28T16:00:00Z"),
+  );
+  assert.equal(result.outcome, "empty");
+  assert.equal(result.events.length, 0);
 });
