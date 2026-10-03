@@ -49,7 +49,28 @@ function PartnersPage() {
       />
 
       <div className="container-site space-y-12 py-8 md:py-12">
-        <div className="rounded-xl border border-border bg-ice p-5">
+        <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="technical-grid p-7 md:p-10">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Hockey · Communauté · Verdun" : "Hockey · Community · Verdun"}</p>
+            <p className="mt-5 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl md:text-6xl">
+              {lang === "fr" ? "Soutenir le hockey mineur, visiblement." : "Support minor hockey, visibly."}
+            </p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
+              {lang === "fr" ? "Une vitrine sobre pour reconnaître les organisations qui appuient l’association, sans inventer de logo ni de niveau de commandite." : "A clean showcase recognizing organizations supporting the association, without inventing logos or sponsorship levels."}
+            </p>
+          </div>
+          <div className="flex flex-col justify-between border-t border-white/12 p-7 lg:border-l lg:border-t-0 md:p-10">
+            <Handshake className="size-9 text-sport-foreground" />
+            <div className="mt-10">
+              <p className="font-display text-6xl font-extrabold">{String(SPONSORS.length).padStart(2, "0")}</p>
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-white/48">{lang === "fr" ? "partenaires répertoriés" : "listed partners"}</p>
+            </div>
+            <Button asChild variant="sport" size="lg" className="mt-8">
+              <Link to="/contact">{lang === "fr" ? "Devenir partenaire" : "Become a partner"} <ArrowRight className="size-4" /></Link>
+            </Button>
+          </div>
+        </section>
+        <div className="border border-navy/12 bg-ice p-5">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "Identités protégées" : "Protected identities"}
           </p>
@@ -65,9 +86,9 @@ function PartnersPage() {
             eyebrow={lang === "fr" ? "Partenaires actuels" : "Current partners"}
             title={lang === "fr" ? "Ils soutiennent AHM Verdun" : "They support AHM Verdun"}
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {SPONSORS.map((sponsor) => (
-              <article key={sponsor.name} className="card-elevated flex min-h-40 flex-col justify-between p-5">
+              <article key={sponsor.name} className="interactive-surface flex min-h-40 flex-col justify-between bg-background p-5 hover:bg-ice/55">
                 <div className="flex items-center justify-between">
                   <Handshake className="size-6 text-sport" aria-hidden />
                   {sponsor.website && <ExternalLink className="size-4 text-muted-foreground" aria-hidden />}
@@ -95,7 +116,7 @@ function PartnersPage() {
           </div>
         </section>
 
-        <section className="competition-panel rounded-xl p-6 text-navy-foreground md:p-8">
+        <section className="competition-panel border border-navy/12 p-6 text-navy-foreground md:p-8">
           <SectionHeading
             eyebrow={lang === "fr" ? "Commandites AHMV" : "AHMV sponsorships"}
             title={lang === "fr" ? "Une commandite plus simple à gérer" : "Simpler sponsorship management"}
@@ -129,7 +150,7 @@ function PartnersPage() {
                 enText: "Website, newsletters and social channels.",
               },
             ].map(({ Icon, fr, en, frText, enText }) => (
-              <div key={fr} className="rounded-lg border border-navy-foreground/10 bg-navy-foreground/[0.04] p-5">
+              <div key={fr} className="border border-navy-foreground/10 bg-navy-foreground/[0.04] p-5">
                 <Icon className="size-6 text-sport-foreground" aria-hidden />
                 <h3 className="mt-5 font-display text-2xl font-bold uppercase">{lang === "fr" ? fr : en}</h3>
                 <p className="mt-2 text-sm text-navy-foreground/65">{lang === "fr" ? frText : enText}</p>
