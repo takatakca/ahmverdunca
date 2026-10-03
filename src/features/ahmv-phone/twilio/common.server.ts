@@ -48,7 +48,8 @@ export function teamAliases(settings: TwilioSettings): Record<string, string> {
 export function urgentBulletin(settings: TwilioSettings, lang: PhoneLanguage) {
   const until = Date.parse(settings["AHMV_URGENT_UNTIL"] ?? "");
   if (!Number.isFinite(until) || until <= Date.now()) return "";
-  return (settings[lang === "fr" ? "AHMV_URGENT_FR" : "AHMV_URGENT_EN"] ?? "").slice(0, 1000);
+  const key = lang === "fr" ? "AHMV_URGENT_FR" : lang === "es" ? "AHMV_URGENT_ES" : "AHMV_URGENT_EN";
+  return (settings[key] ?? "").slice(0, 1000);
 }
 
 export function twilioReferenceHash(value: string) {
@@ -60,12 +61,16 @@ export function spokenScheduleAnswer(text: string, lang: PhoneLanguage) {
     /https:\/\/\S+/g,
     lang === "fr"
       ? "Consultez ahmverdun point c a pour les détails."
-      : "Visit ahmverdun dot c a for details.",
+      : lang === "es"
+        ? "Consulte ahmverdun punto c a para más detalles."
+        : "Visit ahmverdun dot c a for details.",
   );
 }
 
 export function compactSmsFallback(lang: PhoneLanguage) {
   return lang === "fr"
     ? "AHMV: répondez à ce texto avec votre équipe ou groupe (ex. M11 groupe 5). Aide: AIDE. https://ahmverdun.ca/horaires"
-    : "AHMV: reply with your team or group (e.g. M11 group 5). Help: HELP. https://ahmverdun.ca/horaires";
+    : lang === "es"
+      ? "AHMV: responda con su equipo o grupo (ej. M11 grupo 5). Ayuda: AYUDA. https://ahmverdun.ca/horaires"
+      : "AHMV: reply with your team or group (e.g. M11 group 5). Help: HELP. https://ahmverdun.ca/horaires";
 }
