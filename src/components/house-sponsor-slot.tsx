@@ -174,20 +174,30 @@ type HouseSponsorSlotProps = {
 };
 
 export function HouseSponsorSlot({
+  placement,
+  className = "",
+  count = 2,
+  compact = false,
   network = true,
-  ...props
 }: HouseSponsorSlotProps) {
   const { isDemoMember } = useDemoMemberMode();
   if (isDemoMember) return null;
 
-  const fallback = <HouseSponsorInventory {...props} />;
+  const fallback = (
+    <HouseSponsorInventory
+      placement={placement}
+      className={className}
+      count={count}
+      compact={compact}
+    />
+  );
   if (!network) return fallback;
 
   return (
     <TakatakAdSlot
-      placement={props.placement}
-      className={props.className}
-      compact={props.compact}
+      placement={placement}
+      className={className}
+      compact={compact}
       fallback={fallback}
     />
   );
