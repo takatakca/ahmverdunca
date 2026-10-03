@@ -24,6 +24,7 @@ export const EXTERNAL_LINKS = {
   spordleRegister: "https://page.spordle.com/fr/ahm-de-verdun/register",
   spordleLogin: "https://www.spordle.com/",
   wllv: "https://wllv.org/",
+  wllvSchedules: "https://www.wllv.org/schedules",
   hockeyQuebec: "https://www.hockey.qc.ca/",
   hockeyCanada: "https://www.hockeycanada.ca/",
   nhl: "https://www.nhl.com/fr/",

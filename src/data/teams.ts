@@ -7,6 +7,8 @@ export interface Team {
   ages: Localized;
   description: Localized;
   feminine?: boolean;
+  /** Kept only so historical public links do not break. Never surface as a current 2026–2027 category. */
+  legacyOnly?: boolean;
 }
 
 /**
@@ -77,24 +79,56 @@ export const TEAMS: Team[] = [
     },
   },
   {
+    slug: "m17",
+    code: "M17",
+    name: { fr: "M17", en: "U17" },
+    ages: { fr: "15–16 ans", en: "Ages 15–16" },
+    description: {
+      fr: "Catégorie mixte 2026–2027. Les identifiants d’équipe officiels seront ajoutés dès leur publication par les sources hockey.",
+      en: "2026–2027 mixed category. Official team identifiers will be added as soon as hockey sources publish them.",
+    },
+  },
+  {
+    slug: "m19",
+    code: "M19",
+    name: { fr: "M19", en: "U19" },
+    ages: { fr: "17–18 ans", en: "Ages 17–18" },
+    description: {
+      fr: "Catégorie mixte 2026–2027. Les identifiants d’équipe officiels seront ajoutés dès leur publication par les sources hockey.",
+      en: "2026–2027 mixed category. Official team identifiers will be added as soon as hockey sources publish them.",
+    },
+  },
+  {
+    slug: "m22",
+    code: "M22",
+    name: { fr: "M22", en: "U22" },
+    ages: { fr: "19–21 ans", en: "Ages 19–21" },
+    description: {
+      fr: "Nouvelle structure M22 / Junior pour la saison 2026–2027.",
+      en: "New U22 / Junior structure for the 2026–2027 season.",
+    },
+  },
+  {
     slug: "m18",
     code: "M18",
-    name: { fr: "M18", en: "U18" },
-    ages: { fr: "15–17 ans", en: "Ages 15–17" },
+    name: { fr: "M18 historique", en: "Legacy U18" },
+    ages: { fr: "Ancienne structure", en: "Previous structure" },
     description: {
-      fr: "Horaires, nouvelles et accès utiles pour la catégorie M18.",
-      en: "Schedules, news and useful links for the U18 category.",
+      fr: "Route conservée uniquement pour les liens et identifiants historiques publiés avant la classification 2026–2027.",
+      en: "Route retained only for legacy links and identifiers published before the 2026–2027 classification.",
     },
+    legacyOnly: true,
   },
   {
     slug: "junior",
     code: "JR",
-    name: { fr: "Junior", en: "Junior" },
-    ages: { fr: "18–21 ans", en: "Ages 18–21" },
+    name: { fr: "Junior historique", en: "Legacy Junior" },
+    ages: { fr: "Ancienne structure", en: "Previous structure" },
     description: {
-      fr: "Horaires, nouvelles et accès utiles pour la catégorie Junior.",
-      en: "Schedules, news and useful links for the Junior category.",
+      fr: "Route conservée uniquement pour les liens et identifiants historiques publiés avant la classification 2026–2027.",
+      en: "Route retained only for legacy links and identifiers published before the 2026–2027 classification.",
     },
+    legacyOnly: true,
   },
   {
     slug: "feminin",
@@ -108,5 +142,7 @@ export const TEAMS: Team[] = [
     feminine: true,
   },
 ];
+
+export const CURRENT_TEAMS = TEAMS.filter((team) => !team.legacyOnly);
 
 export const getTeam = (slug: string) => TEAMS.find((team) => team.slug === slug);
