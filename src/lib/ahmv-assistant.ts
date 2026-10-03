@@ -239,7 +239,7 @@ export function buildAssistantReply(query: string, language: AssistantLanguageCo
   if (wantsResults) {
     return { text: c.results, actions: [{ label: c.openResults, href: "/equipes#resultats", kind: "results" }], matchedTeamIds: [] };
   }
-  if (containsAny(q, INTENTS.teams)) {
+  if (containsAny(q, INTENTS.teams) || /\bm\s*\d{1,2}\b/.test(q)) {
     return { text: c.help, actions: [{ label: c.openPage, href: "/equipes", kind: "page" }], matchedTeamIds: [] };
   }
 
