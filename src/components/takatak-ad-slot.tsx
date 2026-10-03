@@ -11,6 +11,7 @@ type TakatakAd = {
   body: string | null;
   callToAction: string | null;
   destinationUrl: string;
+  clickUrl: string | null;
   imageUrl: string | null;
   label: "Publicité" | "Advertisement";
   trackingToken: string | null;
@@ -200,12 +201,14 @@ export function TakatakAdSlot({
       data-takatak-ad-placement={placementCode}
     >
       <a
-        href={ad.destinationUrl}
+        href={ad.clickUrl ?? ad.destinationUrl}
         target="_blank"
         rel="sponsored noopener noreferrer"
         className="group block"
         onClick={() => {
-          void emitEvent(ad, "click", lang);
+          if (!ad.clickUrl) {
+            void emitEvent(ad, "click", lang);
+          }
         }}
       >
         {ad.imageUrl ? (
