@@ -61,7 +61,8 @@ export async function getAhmvPhoneOpsSummary(
     client
       .from("ahmv_phone_contacts")
       .select("*", { count: "exact", head: true })
-      .eq("access_tier", "premium"),
+      .eq("access_tier", "premium")
+      .gt("premium_expires_at", nowIso),
     client
       .from("ahmv_phone_contacts")
       .select("*", { count: "exact", head: true })
