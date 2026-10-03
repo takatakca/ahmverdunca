@@ -28,6 +28,16 @@ function int(name, fallback, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
   return value;
 }
 
+function numberValue(name, fallback, { min = 0, max = Number.MAX_SAFE_INTEGER } = {}) {
+  const raw = process.env[name];
+  if (raw === undefined || raw === '') return fallback;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < min || value > max) {
+    throw new Error(`${name} must be a number between ${min} and ${max}`);
+  }
+  return value;
+}
+
 function oneOf(name, values, fallback) {
   const value = (process.env[name] || fallback).trim();
   if (!values.includes(value)) throw new Error(`${name} must be one of: ${values.join(', ')}`);
@@ -124,6 +134,12 @@ export const config = {
   openaiReasoningEffort,
   openaiTimeoutMs: int('OPENAI_TIMEOUT_MS', 15000, { min: 3000, max: 60000 }),
   openaiMaxOutputTokens: int('OPENAI_MAX_OUTPUT_TOKENS', 320, { min: 64, max: 2000 }),
+  openaiInputUsdPerMillion: numberValue('OPENAI_INPUT_USD_PER_MILLION', 2, { min: 0, max: 1000 }),
+  openaiCachedInputUsdPerMillion: numberValue('OPENAI_CACHED_INPUT_USD_PER_MILLION', 0.2, { min: 0, max: 1000 }),
+  openaiOutputUsdPerMillion: numberValue('OPENAI_OUTPUT_USD_PER_MILLION', 12, { min: 0, max: 1000 }),
+  twilioInboundUsdPerMinute: numberValue('TWILIO_INBOUND_USD_PER_MINUTE', 0.0085, { min: 0, max: 100 }),
+  twilioConversationRelayUsdPerMinute: numberValue('TWILIO_CONVERSATION_RELAY_USD_PER_MINUTE', 0.07, { min: 0, max: 100 }),
+  costGuardSessionUsd: numberValue('COST_GUARD_SESSION_USD', 0, { min: 0, max: 1000 }),
   ahmDataMode,
   ahmBridgeApiUrl,
   ahmBridgeToken: bridgeToken,
@@ -139,6 +155,12 @@ export const config = {
   freeBetaCallsPer24h: int('FREE_BETA_CALLS_PER_24H', 0, { min: 0, max: 1000 }),
   membershipUrl,
   smsEnabled: bool('SMS_ENABLED', true),
+  featureScheduleLookup: bool('FEATURE_SCHEDULE_LOOKUP_ENABLED', true),
+  featureArenaLookup: bool('FEATURE_ARENA_LOOKUP_ENABLED', true),
+  featureSmsRecap: bool('FEATURE_SMS_RECAP_ENABLED', true),
+  featureHumanHandoff: bool('FEATURE_HUMAN_HANDOFF_ENABLED', false),
+  featureTeamPersonalization: bool('FEATURE_TEAM_PERSONALIZATION_ENABLED', false),
+  featurePremiumAnalytics: bool('FEATURE_PREMIUM_ANALYTICS_ENABLED', false),
   smsFallbackUrl,
   smsMaxChars: int('SMS_MAX_CHARS', 700, { min: 160, max: 1400 }),
   maxConcurrentCalls: int('MAX_CONCURRENT_CALLS', 20, { min: 1, max: 500 }),
