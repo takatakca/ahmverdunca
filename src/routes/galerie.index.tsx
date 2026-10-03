@@ -5,6 +5,7 @@ import { ArrowRight, CalendarDays, Images } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { SportArtwork } from "@/components/sport-artwork";
 import { ALBUMS } from "@/data/gallery";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,38 @@ function GalleryPage() {
       />
 
       <div className="container-site py-9 md:py-14">
+        <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
+          <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
+            {[
+              OFFICIAL_MEDIA.tournamentM11Primary,
+              OFFICIAL_MEDIA.tournamentM11Secondary,
+              OFFICIAL_MEDIA.tournamentM11Tertiary,
+              OFFICIAL_MEDIA.volunteerArchive,
+            ].map((media, index) => (
+              <a
+                key={media.url}
+                href={media.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="interactive-surface group relative overflow-hidden bg-navy"
+              >
+                <img
+                  src={media.url}
+                  alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_48%,rgba(7,16,43,0.72)_100%)]" />
+                {index === 0 && (
+                  <span className="absolute bottom-4 left-4 bg-navy/78 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
+                    {lang === "fr" ? "Archives officielles AHMV" : "Official AHMV archives"}
+                  </span>
+                )}
+              </a>
+            ))}
+          </div>
+        </section>
         <section className="grid gap-0 overflow-hidden border border-navy/12 lg:grid-cols-[0.7fr_1.3fr]">
           <div className="bg-navy p-6 text-navy-foreground md:p-8">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Archives AHMV vérifiées" : "Verified AHMV archives"}</p>
