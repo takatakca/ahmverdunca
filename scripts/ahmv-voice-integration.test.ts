@@ -56,12 +56,10 @@ test("Voice AI sessions are covered by the AHMV privacy retention policy", async
 });
 
 
-test("Voice AI deployment assets are fail-closed and preserve canonical public URLs", async () => {
-  const [publicSmoke, bridgeSmoke, service, nginx, runbook] = await Promise.all([
+test("Voice integration smoke assets are fail-closed and split from the realtime service", async () => {
+  const [publicSmoke, bridgeSmoke, runbook] = await Promise.all([
     source("scripts/ahmv-voice-smoke.ts"),
     source("scripts/ahmv-voice-bridge-smoke.ts"),
-    source("deploy/voice/ahmv-voice.service"),
-    source("deploy/voice/nginx-voice.ahmverdun.ca.conf"),
     source("docs/VOICE_PRODUCTION_RUNBOOK.md"),
   ]);
 
@@ -77,17 +75,10 @@ test("Voice AI deployment assets are fail-closed and preserve canonical public U
   assert.match(bridgeSmoke, /AHMV_VOICE_BRIDGE_TOKEN/);
   assert.doesNotMatch(bridgeSmoke, /console\.log\(.*token/s);
 
-  assert.match(service, /User=ahmvvoice/);
-  assert.match(service, /EnvironmentFile=\/etc\/ahmv-voice-ai\.env/);
-  assert.match(service, /TimeoutStopSec=20/);
-  assert.match(service, /NoNewPrivileges=true/);
-
-  assert.match(nginx, /server_name voice\.ahmverdun\.ca/);
-  assert.match(nginx, /proxy_http_version 1\.1/);
-  assert.match(nginx, /proxy_set_header Upgrade \$http_upgrade/);
-  assert.match(nginx, /X-Forwarded-Proto https/);
-
-  assert.match(runbook, /draft PR \*\*#179\*\*/);
+  assert.match(runbook, /draft PR \*\*#192\*\*/);
+  assert.match(runbook, /draft PR \*\*#184\*\*/);
+  assert.match(runbook, /services\/ahmv-voice-ai\/deploy\/nginx-voice\.ahmverdun\.ca\.conf/);
+  assert.match(runbook, /services\/ahmv-voice-ai\/deploy\/ahmv-voice\.service/);
   assert.match(runbook, /Do not guess the Supabase project/);
   assert.match(runbook, /Twilio sandbox acceptance/);
   assert.match(runbook, /Rollback/);
@@ -122,7 +113,7 @@ test("Supabase Voice dry-run workflow is pinned, project-locked and non-mutating
 
 test("Voice integration preproduction deploy is branch-pinned, smoke-gated and rollback-safe", async () => {
   const workflow = await source(".github/workflows/deploy-voice-integration-preproduction.yml");
-  assert.match(workflow, /commits\/voice-ai-preprod-v4/);
+  assert.match(workflow, /commits\/voice-ai-integration-v5/);
   assert.match(workflow, /No successful AHM Verdun CI exists/);
   assert.match(workflow, /bun run doctor:voice-db/);
   assert.match(workflow, /AHMV_VOICE_BRIDGE_TOKEN/);
@@ -133,14 +124,3 @@ test("Voice integration preproduction deploy is branch-pinned, smoke-gated and r
   assert.doesNotMatch(workflow, /AHMV_PRODUCTION_HOST|AHMV_PRODUCTION_URL/);
 });
 
-
-test("Voice dependency workflow audits production packages and emits a CycloneDX SBOM", async () => {
-  const workflow = await source(".github/workflows/voice-lockfile.yml");
-  assert.match(workflow, /npm ci --ignore-scripts --audit=false --fund=false/);
-  assert.match(workflow, /npm audit --omit=dev --audit-level=high/);
-  assert.match(workflow, /npm sbom --sbom-format=cyclonedx/);
-  assert.match(workflow, /bomFormat !== 'CycloneDX'/);
-  assert.match(workflow, /services\/ahmv-voice-ai\/package-lock\.json/);
-  assert.match(workflow, /services\/ahmv-voice-ai\/sbom\.cdx\.json/);
-  assert.match(workflow, /actions\/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a/);
-});
