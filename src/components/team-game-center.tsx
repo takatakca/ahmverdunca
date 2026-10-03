@@ -77,7 +77,7 @@ export function TeamGameCenter({
   const officialSchedule = legacyTeamScheduleUrl(team);
   const officialResults = officialTeamResultsUrl(team);
   const doubleLetter = isDoubleLetter(team.level);
-  const fallbackCompetition = doubleLetter ? `${EXTERNAL_LINKS.wllv}schedules` : officialSchedule;
+  const fallbackCompetition = doubleLetter ? EXTERNAL_LINKS.wllvSchedules : officialSchedule;
   const sourceLabel = doubleLetter ? "WLLV · Scoresheets" : "AHMV · GameData · Scoresheets";
 
   useEffect(() => {
