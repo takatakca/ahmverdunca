@@ -1,6 +1,9 @@
 name: AHMV Voice DB dry-run
 
 on:
+  push:
+    branches:
+      - ops/ahmv-voice-db-dry-run-20261003
   workflow_dispatch:
     inputs:
       confirmation:
@@ -32,10 +35,17 @@ jobs:
           CONFIRMATION: ${{ inputs.confirmation }}
         run: |
           set -euo pipefail
-          test "$CONFIRMATION" = "AHMV-VOICE-DB-DRY-RUN" || {
-            echo "Refusing to continue without the exact dry-run confirmation."
-            exit 1
-          }
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            test "$CONFIRMATION" = "AHMV-VOICE-DB-DRY-RUN" || {
+              echo "Refusing to continue without the exact dry-run confirmation."
+              exit 1
+            }
+          else
+            test "$GITHUB_REF_NAME" = "ops/ahmv-voice-db-dry-run-20261003" || {
+              echo "Refusing non-dispatch dry-run outside the dedicated ops branch."
+              exit 1
+            }
+          fi
 
       - name: Checkout exact workflow ref
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
