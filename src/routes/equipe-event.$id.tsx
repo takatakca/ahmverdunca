@@ -7,6 +7,7 @@ import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-directory";
 import { useI18n } from "@/lib/i18n";
 import { SITE } from "@/lib/site";
+import { OFFICIAL_WEEK_META } from "@/data/official-week";
 
 export const Route = createFileRoute("/equipe-event/$id")({
   head: () => ({
@@ -30,12 +31,21 @@ function TeamEventDemoPage() {
   const level = search.get("level") ?? "";
   const type = search.get("type") === "practice" ? "practice" : "game";
   const slot = search.get("slot") ?? "1";
+  const published = search.get("published") === "ahmv-week";
+  const publishedDate = search.get("date") ?? "";
+  const publishedTime = search.get("time") ?? "";
+  const publishedVenue = search.get("venue") ?? "";
+  const publishedActivity = search.get("activity") ?? "";
+  const publishedGroup = search.get("group") ?? "";
+  const isPublishedPractice = type === "practice" && published && Boolean(publishedDate && publishedTime && publishedVenue);
   const team = getPublicTeamById(teamId);
-  const officialUrl = team
-    ? type === "game"
-      ? officialTeamResultsUrl(team)
-      : legacyTeamScheduleUrl(team)
-    : "/horaires";
+  const officialUrl = isPublishedPractice
+    ? OFFICIAL_WEEK_META.sourceUrl
+    : team
+      ? type === "game"
+        ? officialTeamResultsUrl(team)
+        : legacyTeamScheduleUrl(team)
+      : "/horaires";
   const media = type === "game" ? OFFICIAL_MEDIA.practicePlayers : OFFICIAL_MEDIA.practiceCoach;
 
   return (
@@ -59,7 +69,9 @@ function TeamEventDemoPage() {
           </a>
 
           <div className="mt-8 flex flex-wrap gap-2">
-            <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.15em] text-sport-foreground">DEMO</span>
+            <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.15em] text-sport-foreground">
+              {isPublishedPractice ? (lang === "fr" ? "SOURCE AHMV" : "AHMV SOURCE") : "DEMO"}
+            </span>
             {level && <span className="border border-white/18 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/70">{level}</span>}
             <span className="border border-white/18 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/70">
               {type === "game" ? (lang === "fr" ? "Partie" : "Game") : (lang === "fr" ? "Pratique" : "Practice")}
@@ -70,9 +82,13 @@ function TeamEventDemoPage() {
             {teamName}
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/62">
-            {lang === "fr"
-              ? "Cette fiche montre exactement à quoi ressemblera le détail d’une activité une fois le flux officiel branché. Les données ci-dessous sont volontairement des placeholders de démonstration."
-              : "This page shows exactly how an activity detail will look once the official feed is connected. The values below are intentionally demo placeholders."}
+            {isPublishedPractice
+              ? (lang === "fr"
+                  ? "Cette activité provient de la grille hebdomadaire publique AHMV intégrée au site. Le groupe publié est affiché tel quel afin de ne pas attribuer à tort une glace à une équipe précise."
+                  : "This activity comes from the public AHMV weekly grid integrated into the site. The published group is shown as-is so the rink time is not incorrectly assigned to a specific team.")
+              : (lang === "fr"
+                  ? "Cette fiche montre exactement à quoi ressemblera le détail d’une activité une fois le flux officiel branché. Les données ci-dessous sont volontairement des placeholders de démonstration."
+                  : "This page shows exactly how an activity detail will look once the official feed is connected. The values below are intentionally demo placeholders.")}
           </p>
         </div>
       </section>
@@ -88,10 +104,34 @@ function TeamEventDemoPage() {
 
             <div className="mt-6 grid gap-px bg-navy/10 sm:grid-cols-2">
               {[
-                { Icon: CalendarDays, labelFr: "Date", labelEn: "Date", valueFr: `À connecter · slot ${slot}`, valueEn: `To connect · slot ${slot}` },
-                { Icon: Clock3, labelFr: "Heure", labelEn: "Time", valueFr: "Source officielle", valueEn: "Official source" },
-                { Icon: MapPin, labelFr: "Aréna", labelEn: "Arena", valueFr: "À connecter", valueEn: "To connect" },
-                { Icon: type === "game" ? Trophy : ShieldCheck, labelFr: type === "game" ? "Adversaire" : "Groupe", labelEn: type === "game" ? "Opponent" : "Group", valueFr: "À connecter", valueEn: "To connect" },
+                {
+                  Icon: CalendarDays,
+                  labelFr: "Date",
+                  labelEn: "Date",
+                  valueFr: isPublishedPractice ? publishedDate : `À connecter · slot ${slot}`,
+                  valueEn: isPublishedPractice ? publishedDate : `To connect · slot ${slot}`,
+                },
+                {
+                  Icon: Clock3,
+                  labelFr: "Heure",
+                  labelEn: "Time",
+                  valueFr: isPublishedPractice ? publishedTime : "Source officielle",
+                  valueEn: isPublishedPractice ? publishedTime : "Official source",
+                },
+                {
+                  Icon: MapPin,
+                  labelFr: "Aréna",
+                  labelEn: "Arena",
+                  valueFr: isPublishedPractice ? publishedVenue : "À connecter",
+                  valueEn: isPublishedPractice ? publishedVenue : "To connect",
+                },
+                {
+                  Icon: type === "game" ? Trophy : ShieldCheck,
+                  labelFr: type === "game" ? "Adversaire" : "Groupe",
+                  labelEn: type === "game" ? "Opponent" : "Group",
+                  valueFr: isPublishedPractice ? (publishedGroup || publishedActivity) : "À connecter",
+                  valueEn: isPublishedPractice ? (publishedGroup || publishedActivity) : "To connect",
+                },
               ].map(({ Icon, labelFr, labelEn, valueFr, valueEn }) => (
                 <article key={labelFr} className="bg-background p-5">
                   <Icon className="size-5 text-sport" />
@@ -118,15 +158,27 @@ function TeamEventDemoPage() {
           </div>
 
           <aside className="border-t border-navy/10 bg-ice p-5 lg:border-l lg:border-t-0 md:p-7">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Quand le flux sera actif" : "When the feed is live"}</p>
+            <p className="eyebrow text-sport">
+              {isPublishedPractice
+                ? (lang === "fr" ? "Source de l’activité" : "Activity source")
+                : (lang === "fr" ? "Quand le flux sera actif" : "When the feed is live")}
+            </p>
             <div className="mt-5 space-y-3">
-              {[
-                lang === "fr" ? "Date, heure et aréna officiels" : "Official date, time and arena",
-                lang === "fr" ? "Adversaire et statut du match" : "Opponent and game status",
-                lang === "fr" ? "Score final et feuille de match" : "Final score and scoresheet",
-                lang === "fr" ? "Buts, pénalités et liens officiels si disponibles" : "Goals, penalties and official links when available",
-                lang === "fr" ? "Google Maps, Waze et Apple Plans" : "Google Maps, Waze and Apple Maps",
-              ].map((item) => (
+              {(isPublishedPractice
+                ? [
+                    lang === "fr" ? OFFICIAL_WEEK_META.title : OFFICIAL_WEEK_META.title,
+                    lang === "fr" ? `Publié le ${OFFICIAL_WEEK_META.publishedAt}` : `Published ${OFFICIAL_WEEK_META.publishedAt}`,
+                    lang === "fr" ? `Activité : ${publishedActivity || "Pratique"}` : `Activity: ${publishedActivity || "Practice"}`,
+                    lang === "fr" ? "Groupe affiché exactement comme dans la grille publique" : "Group shown exactly as published in the public grid",
+                    lang === "fr" ? "Aucune attribution d’équipe supplémentaire n’est déduite" : "No additional team assignment is inferred",
+                  ]
+                : [
+                    lang === "fr" ? "Date, heure et aréna officiels" : "Official date, time and arena",
+                    lang === "fr" ? "Adversaire et statut du match" : "Opponent and game status",
+                    lang === "fr" ? "Score final et feuille de match" : "Final score and scoresheet",
+                    lang === "fr" ? "Buts, pénalités et liens officiels si disponibles" : "Goals, penalties and official links when available",
+                    lang === "fr" ? "Google Maps, Waze et Apple Plans" : "Google Maps, Waze and Apple Maps",
+                  ]).map((item) => (
                 <div key={item} className="flex items-start gap-3 border-b border-navy/10 pb-3 text-sm text-navy last:border-b-0">
                   <span className="mt-1 size-2 shrink-0 rounded-full bg-sport" />
                   <span>{item}</span>
