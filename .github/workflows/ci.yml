@@ -81,6 +81,13 @@ jobs:
         run: |
           bunx eslint . --rule 'prettier/prettier: off'
 
+      - name: Standalone Voice runtime
+        working-directory: services/ahmv-voice-ai
+        run: |
+          npm ci --ignore-scripts --audit=false --fund=false
+          npm run check
+          npm audit --omit=dev --audit-level=high
+
       - name: Build
         run: bun run build
 

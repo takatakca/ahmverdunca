@@ -79,6 +79,7 @@ const requirePersistentStore = bool('REQUIRE_PERSISTENT_STORE', nodeEnv === 'pro
 const supabaseRaw = process.env.SUPABASE_URL?.trim() || '';
 const supabaseUrl = absoluteUrl('SUPABASE_URL', supabaseRaw, nodeEnv === 'production' ? ['https:'] : ['https:', 'http:']);
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || '';
+const supabaseProjectRef = process.env.AHMV_SUPABASE_PROJECT_REF?.trim() || '';
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER?.trim() || '+15816666246';
 const voiceInstanceMode = oneOf('VOICE_INSTANCE_MODE', ['single'], 'single');
 const openaiReasoningEffort = oneOf(
@@ -105,6 +106,14 @@ if (nodeEnv === 'production' && ahmDataMode === 'api') {
 }
 if (nodeEnv === 'production' && requirePersistentStore && (!supabaseUrl || !supabaseServiceRoleKey)) {
   throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required when REQUIRE_PERSISTENT_STORE=true');
+}
+if (nodeEnv === 'production' && requirePersistentStore) {
+  if (supabaseProjectRef !== 'bqflllsjxmhqsvemhhwv') {
+    throw new Error('AHMV_SUPABASE_PROJECT_REF must be bqflllsjxmhqsvemhhwv');
+  }
+  if (new URL(supabaseUrl).hostname !== `${supabaseProjectRef}.supabase.co`) {
+    throw new Error('SUPABASE_URL does not match the approved AHMV Supabase project');
+  }
 }
 if (!/^\+[1-9][0-9]{7,14}$/.test(twilioPhoneNumber)) {
   throw new Error('TWILIO_PHONE_NUMBER must be E.164');
@@ -147,6 +156,7 @@ export const config = {
   ahmReadinessProbeTtlMs: int('AHM_READINESS_PROBE_TTL_MS', 30000, { min: 5000, max: 300000 }),
   ahmWebsiteUrl,
   supabaseUrl,
+  supabaseProjectRef,
   supabaseServiceRoleKey,
   requirePersistentStore,
   persistActiveContext: bool('PERSIST_ACTIVE_CONTEXT', false),
