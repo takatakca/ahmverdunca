@@ -29,10 +29,14 @@ function requiredHttpsUrl(name: string): URL {
 }
 
 function noStoreRedirect(url: URL | string, status = 303) {
-  const response = Response.redirect(url, status);
-  response.headers.set("cache-control", "no-store");
-  response.headers.set("X-Robots-Tag", "noindex, nofollow");
-  return response;
+  return new Response(null, {
+    status,
+    headers: {
+      location: url.toString(),
+      "cache-control": "no-store",
+      "X-Robots-Tag": "noindex, nofollow",
+    },
+  });
 }
 
 async function exchangeLaunchCode(code: string): Promise<ExchangeResponse["session"]> {
