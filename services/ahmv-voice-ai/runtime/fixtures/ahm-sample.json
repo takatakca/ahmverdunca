@@ -1,0 +1,25 @@
+{
+  "schedule": [
+    {
+      "id": "fixture-m13a-1",
+      "type": "practice",
+      "team": "M13 A",
+      "category": "M13",
+      "date": "2099-10-03",
+      "time": "17:00",
+      "endTime": "18:00",
+      "status": "scheduled",
+      "arena": "Auditorium de Verdun",
+      "arenaAddress": "4110 Boulevard LaSalle, Montréal, QC",
+      "sourceUrl": "https://ahmverdun.ca/horaires"
+    }
+  ],
+  "arenas": [
+    {
+      "name": "Auditorium de Verdun",
+      "address": "4110 Boulevard LaSalle, Montréal, QC",
+      "addressVerified": true,
+      "sourceUrl": "https://ahmverdun.ca/arenas"
+    }
+  ]
+}
