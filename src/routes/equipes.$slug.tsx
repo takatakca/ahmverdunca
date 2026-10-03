@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { TeamPortfolio } from "@/components/team-portfolio";
 import { getTeam } from "@/data/teams";
 import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
@@ -291,6 +292,16 @@ function TeamPage() {
             </div>
           </section>
         )}
+        {exactTeam && (
+          <TeamPortfolio
+            team={exactTeam}
+            lang={lang}
+            newsCount={news.length}
+            albumCount={albums.length}
+            approvedSocialCount={socialLinks.length}
+          />
+        )}
+
         <section
           aria-labelledby="team-command-title"
           className="overflow-hidden border border-navy/12 bg-background"
