@@ -113,7 +113,7 @@ test("Supabase Voice dry-run workflow is pinned, project-locked and non-mutating
 
 test("Voice integration preproduction deploy is branch-pinned, smoke-gated and rollback-safe", async () => {
   const workflow = await source(".github/workflows/deploy-voice-integration-preproduction.yml");
-  assert.match(workflow, /commits\/voice-ai-preprod-v6/);
+  assert.match(workflow, /commits\/voice-ai-preprod-v8/);
   assert.match(workflow, /No successful AHM Verdun CI exists/);
   assert.match(workflow, /bun run doctor:voice-db/);
   assert.match(workflow, /AHMV_VOICE_BRIDGE_TOKEN/);
