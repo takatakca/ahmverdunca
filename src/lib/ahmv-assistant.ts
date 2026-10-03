@@ -197,7 +197,7 @@ export function buildAssistantReply(query: string, language: AssistantLanguageCo
         : wantsSchedule
           ? [{ label: c.openSchedule, href: legacyTeamScheduleUrl(team), kind: "schedule", external: true }, { label: c.openTeam, href: publicTeamHubUrl(team), kind: "team" }]
           : teamActions(team, language),
-      bookmarkTeamId,
+      ...(bookmarkTeamId ? { bookmarkTeamId } : {}),
       matchedTeamIds: [team.legacyScheduleTeamId],
     };
   }
