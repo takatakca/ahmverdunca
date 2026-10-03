@@ -285,7 +285,7 @@ jobs:
           echo "Testing production SSH command channel..."
 
           set +e
-          AHMV_SSH_MAX_ATTEMPTS=2 ahmv-ssh \
+          AHMV_SSH_MAX_ATTEMPTS=8 ahmv-ssh \
             "printf 'AHM Verdun production SSH command channel OK\n'"
           SSH_STATUS=$?
           set -e
