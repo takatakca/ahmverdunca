@@ -29,7 +29,8 @@
     "check:phone-preflight": "bun scripts/ahmv-phone-preflight.ts",
     "preflight:voice": "tsx scripts/ahmv-voice-preflight.ts",
     "smoke:voice": "tsx scripts/ahmv-voice-smoke.ts",
-    "smoke:voice-bridge": "tsx scripts/ahmv-voice-bridge-smoke.ts"
+    "smoke:voice-bridge": "tsx scripts/ahmv-voice-bridge-smoke.ts",
+    "doctor:voice-db": "tsx scripts/ahmv-voice-db-doctor.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
