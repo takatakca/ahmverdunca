@@ -148,7 +148,7 @@ function Home() {
 
       {/* Current / important strip */}
       <section className="border-b border-navy/10 bg-ice">
-        <div className="container-site flex flex-col gap-4 py-4 md:flex-row md:items-center md:justify-between">
+        <div className="container-site flex flex-col gap-3 py-3.5 sm:py-4 md:flex-row md:items-center md:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <span className="shrink-0 bg-sport px-2.5 py-1 font-display text-xs font-bold uppercase tracking-[0.12em] text-sport-foreground">
               {lang === "fr" ? "Cette semaine" : "This week"}
@@ -161,7 +161,7 @@ function Home() {
                   : "Schedules, teams and AHMV information in one place."}
             </p>
           </div>
-          <div className="flex shrink-0 gap-4 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <div className="scrollbar-none flex shrink-0 gap-4 overflow-x-auto text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             <Link to="/horaires" className="hover:text-sport">{lang === "fr" ? "Horaires" : "Schedules"}</Link>
             <Link to="/equipes" className="hover:text-sport">{lang === "fr" ? "Équipes" : "Teams"}</Link>
             <Link to="/nouvelles" className="hover:text-sport">{lang === "fr" ? "Nouvelles" : "News"}</Link>
@@ -224,7 +224,7 @@ function Home() {
                 to="/equipes/$slug"
                 params={{ slug: team.slug }}
                 className={cn(
-                  "group relative min-h-56 min-w-[170px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-4 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[205px]",
+                  "interactive-surface group relative min-h-56 min-w-[170px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-4 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[205px]",
                   preferredTeam === team.slug && "bg-sport/15",
                 )}
               >
@@ -306,7 +306,7 @@ function Home() {
                     key={article.slug}
                     to="/nouvelles/$slug"
                     params={{ slug: article.slug }}
-                    className="group flex min-h-52 flex-col justify-between bg-ice p-6 transition-colors hover:bg-background md:p-7"
+                    className="interactive-surface group flex min-h-52 flex-col justify-between bg-ice p-6 transition-colors hover:bg-background md:p-7"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
@@ -371,7 +371,7 @@ function Home() {
                 to="/galerie/$slug"
                 params={{ slug: album.slug }}
                 className={cn(
-                  "group relative overflow-hidden bg-navy",
+                  "interactive-surface group relative overflow-hidden bg-navy",
                   index === 0 && "sm:row-span-2 lg:col-span-2 lg:row-span-2",
                   index === 1 && "lg:col-span-2",
                 )}
