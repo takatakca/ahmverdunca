@@ -10,7 +10,7 @@ export type AhmvPhoneCapability =
 
 export interface AhmvEntitlement {
   tier: AhmvAccessTier;
-  trialExpiresAt?: string;
+  trialExpiresAt?: string | undefined;
   capabilities: ReadonlySet<AhmvPhoneCapability>;
 }
 
