@@ -1,10 +1,11 @@
 import { useEffect, useState, type FormEvent } from "react";
-import { CalendarDays, Mail, PhoneCall, X } from "lucide-react";
+import { CalendarDays, Coffee, Mail, PhoneCall, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { LogoSlot } from "./logo-slot";
+import { DEVELOPMENT_SUPPORT } from "@/lib/monetization";
 
 const HIDE_KEY = "ahmv-communications-preview-hidden";
 const SESSION_KEY = "ahmv-communications-preview-seen";
@@ -13,6 +14,9 @@ export function CommunicationsPreview() {
   const { lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const supportAvailable =
+    DEVELOPMENT_SUPPORT.enabled &&
+    (DEVELOPMENT_SUPPORT.customUrl || DEVELOPMENT_SUPPORT.tiers.some((tier) => Boolean(tier.url)));
   useEffect(() => {
     const closeForNavigation = () => setOpen(false);
     window.addEventListener("ahmv:navigation-open", closeForNavigation);
@@ -195,6 +199,23 @@ export function CommunicationsPreview() {
               {lang === "fr" ? "Ne plus afficher" : "Don't show again"}
             </Button>
           </div>
+
+          {supportAvailable && (
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                window.requestAnimationFrame(() => window.dispatchEvent(new CustomEvent("ahmv:support-open")));
+              }}
+              className="premium-control mt-3 flex min-h-11 w-full items-center justify-between border border-sport/30 bg-sport/5 px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport"
+            >
+              <span className="flex items-center gap-2">
+                <Coffee className="size-4 text-sport" />
+                {lang === "fr" ? "Soutenir le développement du site" : "Support site development"}
+              </span>
+              <span className="text-sport">{DEVELOPMENT_SUPPORT.beneficiary}</span>
+            </button>
+          )}
 
           <div className="mt-4 hidden items-start gap-2 text-xs text-muted-foreground sm:flex">
             <PhoneCall className="mt-0.5 size-3.5 shrink-0 text-sport" aria-hidden />
