@@ -2,7 +2,6 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
-  BellRing,
   CalendarDays,
   HandHeart,
   Mail,
@@ -41,7 +40,6 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const { t, lang } = useI18n();
-  const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const showPhone = phonePublic;
 
@@ -168,57 +166,26 @@ function ContactPage() {
           </Button>
         </section>
 
-        {(showPhone || showPlannedServices) && (
-          <section className={showPlannedServices && showPhone ? "grid gap-6 lg:grid-cols-[1.1fr_0.9fr]" : "grid gap-6"}>
-          {showPhone && (
-            <div className="competition-panel border border-navy/12 p-6 text-navy-foreground md:p-8">
-              <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
-              </p>
-              {phonePublic ? (
-                <a
-                  href={`tel:${phoneE164}`}
-                  className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
-                >
-                  <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
-                  {phoneDisplay}
-                </a>
-              ) : (
-                <div className="mt-4 flex flex-wrap items-center gap-3">
-                  <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
-                  <span className="font-display text-4xl font-extrabold tracking-tight md:text-5xl">{phoneDisplay}</span>
-                  <span className="border border-sport-foreground/35 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
-                    {lang === "fr" ? "Réservé · activation à venir" : "Reserved · activation upcoming"}
-                  </span>
-                </div>
-              )}
-              <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
-                {showPlannedServices
-                  ? lang === "fr"
-                    ? "Numéro AHMV réservé pour l'information générale. L'assistance vocale automatisée sera offerte seulement lorsqu'elle aura été officiellement activée."
-                    : "AHMV number reserved for general information. Automated voice assistance will be offered only after it has been officially activated."
-                  : lang === "fr"
-                    ? "Appelez ce numéro pour l'information générale AHMV."
-                    : "Call this number for general AHMV information."}
-              </p>
-            </div>
-          )}
-
-          {showPlannedServices && (
-            <div className="border border-navy/12 bg-background p-6 md:p-8">
-              <BellRing className="size-6 text-sport" aria-hidden />
-              <h2 className="heading-card mt-5">
-                {lang === "fr" ? "Services d’information à venir" : "Information services coming later"}
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                {lang === "fr"
-                  ? "Les futurs canaux d’information, dont l’infolettre et l’assistance téléphonique, seront affichés ici seulement après activation officielle par l’association."
-                  : "Future information channels, including newsletter and phone assistance, will appear here only after official activation by the association."}
-              </p>
-            </div>
-          )}
+        {showPhone && (
+          <section className="competition-panel border border-navy/12 p-6 text-navy-foreground md:p-8">
+            <p className="eyebrow text-sport-foreground">
+              {lang === "fr" ? "Téléphone AHMV" : "AHMV phone"}
+            </p>
+            <a
+              href={`tel:${phoneE164}`}
+              className="mt-4 inline-flex items-center gap-3 font-display text-4xl font-extrabold tracking-tight hover:text-sport-foreground md:text-5xl"
+            >
+              <PhoneCall className="size-7 shrink-0 text-sport-foreground" aria-hidden />
+              {phoneDisplay}
+            </a>
+            <p className="mt-4 max-w-2xl text-sm text-navy-foreground/70">
+              {lang === "fr"
+                ? "Appelez ce numéro pour l’information générale AHMV."
+                : "Call this number for general AHMV information."}
+            </p>
           </section>
         )}
+
         <HouseSponsorSlot placement="contact-path" count={1} compact />
 
         <section>
