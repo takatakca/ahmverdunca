@@ -9,6 +9,7 @@ export { buildSmsBody } from './sms-body.js';
 export async function sendPostCallSms(session) {
   if (
     !config.smsEnabled ||
+    !config.featureSmsRecap ||
     !session?.smsEnabled ||
     session.transactionalSmsAllowed === false ||
     !isSmsCapableCaller(session.from)
