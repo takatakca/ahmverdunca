@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, Menu, PhoneCall, Search, X } from "lucide-react";
+import { CalendarDays, ChevronDown, CircleHelp, Images, LogIn, MapPin, Menu, Newspaper, PhoneCall, Search, Trophy, Users, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -236,13 +236,19 @@ export function SiteHeader() {
           </Button>
           <button
             type="button"
-            className="premium-control tap-target inline-flex size-11 shrink-0 items-center justify-center border border-navy-foreground/15 text-navy-foreground hover:bg-navy-foreground/10 lg:hidden"
+            className={cn(
+              "premium-control tap-target inline-flex h-11 shrink-0 items-center justify-center gap-2 border px-3 font-display text-xs font-extrabold uppercase tracking-[0.12em] lg:hidden",
+              open
+                ? "border-sport bg-sport text-sport-foreground"
+                : "border-navy-foreground/18 bg-navy-foreground/[0.035] text-navy-foreground hover:bg-navy-foreground/10",
+            )}
             aria-label={open ? t("nav.close") : t("nav.menu")}
             aria-expanded={open}
             aria-controls="mobile-menu"
             onClick={() => setOpen((v) => !v)}
           >
-            {open ? <X className="size-6" /> : <Menu className="size-6" />}
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+            <span>{open ? (lang === "fr" ? "Fermer" : "Close") : "Menu"}</span>
           </button>
         </div>
       </div>
@@ -262,93 +268,151 @@ export function SiteHeader() {
             aria-label={lang === "fr" ? "Navigation mobile" : "Mobile navigation"}
             className="container-site py-5"
           >
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Accès rapides" : "Quick access"}
+            <div className="flex items-start justify-between gap-4 border-b border-navy-foreground/12 pb-5">
+              <div>
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Navigation AHMV" : "AHMV navigation"}
+                </p>
+                <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-white">
+                  {lang === "fr" ? "Tout le hockey. Ici." : "All hockey. Here."}
+                </p>
+                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
+                  {SITE.season} · Verdun
+                </p>
+              </div>
+              <LogoSlot className="size-16 sm:size-20" />
+            </div>
+
+            {savedTeam && (
+              <Link
+                to="/equipes/$slug"
+                params={{ slug: savedTeam.slug }}
+                className="interactive-surface mt-4 flex items-center justify-between gap-4 border border-sport/35 bg-sport/10 px-4 py-4"
+              >
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/75">
+                    {lang === "fr" ? "Mon équipe enregistrée" : "My saved team"}
+                  </p>
+                  <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-white">
+                    {savedTeam.code}
+                  </p>
+                </div>
+                <span className="font-display text-sm font-bold uppercase tracking-[0.12em] text-sport-foreground">
+                  {lang === "fr" ? "Ouvrir" : "Open"}
+                </span>
+              </Link>
+            )}
+
+            <Link
+              to="/recherche"
+              className="premium-control mt-4 flex min-h-12 items-center justify-between border border-navy-foreground/15 bg-navy-foreground/[0.035] px-4 text-sm font-semibold text-white/85"
+            >
+              <span className="flex items-center gap-2">
+                <Search className="size-4 text-sport-foreground" />
+                {lang === "fr" ? "Rechercher équipe, aréna, nouvelle…" : "Search team, arena, news…"}
+              </span>
+              <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-white/35">
+                {lang === "fr" ? "Chercher" : "Search"}
+              </span>
+            </Link>
+
+            <p className="eyebrow mt-6 text-sport-foreground">
+              {lang === "fr" ? "Essentiel pour les familles" : "Family essentials"}
             </p>
-            <div className="mt-3 grid grid-cols-2 gap-3">
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
               {[
-                { key: "schedule", to: "/horaires" },
-                { key: "teams", to: "/equipes" },
-                { key: "registration", to: "/inscriptions" },
-                { key: "arenas", to: "/arenas" },
-              ].map((item) => (
+                { key: "schedule", to: "/horaires", icon: CalendarDays },
+                { key: "teams", to: "/equipes", icon: Users },
+                { key: "registration", to: "/inscriptions", icon: LogIn },
+                { key: "arenas", to: "/arenas", icon: MapPin },
+              ].map(({ key, to, icon: Icon }) => (
                 <Link
-                  key={item.key}
-                  to={item.to}
-                  className="interactive-surface relative overflow-hidden border border-navy-foreground/15 bg-navy-foreground/[0.035] px-4 py-5 font-display text-xl font-extrabold uppercase leading-none text-navy-foreground/90"
+                  key={key}
+                  to={to}
+                  className="interactive-surface group min-h-28 border border-navy-foreground/15 bg-navy-foreground/[0.035] p-4 text-navy-foreground/90"
                   activeProps={{ className: "border-sport bg-sport/10 text-sport-foreground" }}
                 >
-                  {t(`nav.${item.key}` as TranslationKey)}
+                  <Icon className="size-5 text-sport-foreground" />
+                  <p className="mt-5 font-display text-xl font-extrabold uppercase leading-[0.92]">
+                    {t(`nav.${key}` as TranslationKey)}
+                  </p>
                 </Link>
               ))}
             </div>
 
-            <div className="mt-7 flex items-center justify-between">
+            <div className="mt-7 flex items-center justify-between border-b border-navy-foreground/12 pb-2">
               <p className="eyebrow text-navy-foreground/50">
-                {lang === "fr" ? "Explorer" : "Explore"}
+                {lang === "fr" ? "Explorer l'association" : "Explore the association"}
               </p>
-              <Link
-                to="/recherche"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-navy-foreground/80"
-              >
-                <Search className="size-4" />
-                {t("nav.search")}
-              </Link>
+              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">
+                AHMV
+              </span>
             </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-x-5">
+            <div className="grid grid-cols-2 gap-x-5">
               {[
-                { key: "news", to: "/nouvelles" },
-                { key: "tournaments", to: "/tournois" },
-                { key: "gallery", to: "/galerie" },
-                { key: "wllv", to: "/wllv" },
-                { key: "coaches", to: "/entraineurs" },
-                { key: "faq", to: "/faq" },
-                { key: "resources", to: "/ressources" },
-                { key: "partners", to: "/partenaires" },
-                { key: "contact", to: "/contact" },
-              ].map((item) => (
+                { key: "news", to: "/nouvelles", icon: Newspaper },
+                { key: "tournaments", to: "/tournois", icon: Trophy },
+                { key: "gallery", to: "/galerie", icon: Images },
+                { key: "wllv", to: "/wllv", icon: Users },
+                { key: "coaches", to: "/entraineurs", icon: Users },
+                { key: "faq", to: "/faq", icon: CircleHelp },
+                { key: "resources", to: "/ressources", icon: CircleHelp },
+                { key: "partners", to: "/partenaires", icon: Users },
+                { key: "contact", to: "/contact", icon: PhoneCall },
+              ].map(({ key, to, icon: Icon }) => (
                 <Link
-                  key={item.key}
-                  to={item.to}
-                  className="premium-control border-b border-navy-foreground/10 py-3 text-base font-medium text-navy-foreground/85"
+                  key={key}
+                  to={to}
+                  className="premium-control flex min-h-12 items-center gap-2 border-b border-navy-foreground/10 py-3 text-sm font-semibold text-navy-foreground/82"
                   activeProps={{ className: "text-sport-foreground" }}
                 >
-                  {t(`nav.${item.key}` as TranslationKey)}
+                  <Icon className="size-4 shrink-0 text-navy-foreground/42" />
+                  <span>{t(`nav.${key}` as TranslationKey)}</span>
                 </Link>
               ))}
             </div>
 
-            <div className="mt-7 flex flex-col gap-3">
-              <Button asChild variant="sport" size="lg">
+            <div className="mt-7 grid gap-2">
+              <Button asChild variant="sport" size="lg" className="justify-between">
                 <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
-                  <CalendarDays className="size-4" />
-                  {lang === "fr" ? "Voir mon horaire" : "View my schedule"}
+                  <span className="flex items-center gap-2">
+                    <CalendarDays className="size-4" />
+                    {lang === "fr" ? "Voir mon horaire" : "View my schedule"}
+                  </span>
+                  <ChevronDown className="size-4 -rotate-90" />
                 </Link>
               </Button>
-              <Button asChild variant="outline-light" size="lg">
-                <Link to="/connexion">{t("nav.login")}</Link>
+              <Button asChild variant="outline-light" size="lg" className="justify-between">
+                <Link to="/connexion">
+                  <span className="flex items-center gap-2"><LogIn className="size-4" />{t("nav.login")}</span>
+                  <ChevronDown className="size-4 -rotate-90" />
+                </Link>
               </Button>
-              {showPhone && (
-                SITE.phonePublic ? (
-                  <Button asChild variant="outline-light" size="lg">
+            </div>
+
+            {showPhone && (
+              <div className="mt-2">
+                {SITE.phonePublic ? (
+                  <Button asChild variant="outline-light" size="lg" className="w-full justify-between">
                     <a href={`tel:${SITE.phoneE164}`}>
-                      <PhoneCall className="size-4" />
-                      {SITE.phoneDisplay}
+                      <span className="flex items-center gap-2"><PhoneCall className="size-4" />{SITE.phoneDisplay}</span>
+                      <ChevronDown className="size-4 -rotate-90" />
                     </a>
                   </Button>
                 ) : (
-                  <div className="flex min-h-11 items-center justify-center gap-2 border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/75">
-                    <PhoneCall className="size-4" />
-                    {SITE.phoneDisplay}
-                    <span className="text-[10px] uppercase tracking-wider text-sport-foreground">{lang === "fr" ? "à venir" : "coming soon"}</span>
+                  <div className="flex min-h-11 items-center justify-between border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/75">
+                    <span className="flex items-center gap-2"><PhoneCall className="size-4" />{SITE.phoneDisplay}</span>
+                    <span className="text-[9px] uppercase tracking-[0.16em] text-sport-foreground">{lang === "fr" ? "à venir" : "coming soon"}</span>
                   </div>
-                )
-              )}
-              <div className="flex items-center justify-between border border-navy-foreground/15 px-4 py-3">
-                <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
-                <LangSwitch />
+                )}
               </div>
+            )}
+
+            <div className="mt-2 flex items-center justify-between border border-navy-foreground/15 px-4 py-3">
+              <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
+              <LangSwitch />
             </div>
           </nav>
         </div>
