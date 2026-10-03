@@ -54,3 +54,41 @@ test("Voice AI sessions are covered by the AHMV privacy retention policy", async
   assert.match(retention, /AHMV_VOICE_SESSION_RETENTION_DAYS/);
   assert.match(retention, /\.from\("ahmv_voice_sessions"\)/);
 });
+
+
+test("Voice AI deployment assets are fail-closed and preserve canonical public URLs", async () => {
+  const [publicSmoke, bridgeSmoke, service, nginx, runbook] = await Promise.all([
+    source("scripts/ahmv-voice-smoke.ts"),
+    source("scripts/ahmv-voice-bridge-smoke.ts"),
+    source("deploy/voice/ahmv-voice.service"),
+    source("deploy/voice/nginx-voice.ahmverdun.ca.conf"),
+    source("docs/VOICE_PRODUCTION_RUNBOOK.md"),
+  ]);
+
+  assert.match(publicSmoke, /https:\/\/voice\.ahmverdun\.ca/);
+  assert.match(publicSmoke, /\/healthz/);
+  assert.match(publicSmoke, /\/readyz/);
+  assert.match(publicSmoke, /no-store/);
+  assert.match(publicSmoke, /noindex/);
+  assert.match(publicSmoke, /Sensitive key exposed/);
+
+  assert.match(bridgeSmoke, /https:\/\/ahmverdun\.ca/);
+  assert.match(bridgeSmoke, /\/api\/ahmv\/voice\/readiness/);
+  assert.match(bridgeSmoke, /AHMV_VOICE_BRIDGE_TOKEN/);
+  assert.doesNotMatch(bridgeSmoke, /console\.log\(.*token/s);
+
+  assert.match(service, /User=ahmvvoice/);
+  assert.match(service, /EnvironmentFile=\/etc\/ahmv-voice-ai\.env/);
+  assert.match(service, /TimeoutStopSec=20/);
+  assert.match(service, /NoNewPrivileges=true/);
+
+  assert.match(nginx, /server_name voice\.ahmverdun\.ca/);
+  assert.match(nginx, /proxy_http_version 1\.1/);
+  assert.match(nginx, /proxy_set_header Upgrade \$http_upgrade/);
+  assert.match(nginx, /X-Forwarded-Proto https/);
+
+  assert.match(runbook, /draft PR \*\*#179\*\*/);
+  assert.match(runbook, /Do not guess the Supabase project/);
+  assert.match(runbook, /Twilio sandbox acceptance/);
+  assert.match(runbook, /Rollback/);
+});
