@@ -149,7 +149,7 @@ export function TeamPortfolio({
             alt={lang === "fr"
               ? (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.fr)
               : (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.en : OFFICIAL_MEDIA.practiceGroup.alt.en)}
-            loading="eager"
+            loading="lazy"
             decoding="async"
             className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
           />
