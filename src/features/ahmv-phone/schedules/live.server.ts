@@ -196,6 +196,8 @@ function torontoParts(value: string) {
 export function liveEventToVoiceMatch(event: AhmvLiveScheduleEvent) {
   const start = torontoParts(event.startsAt);
   const end = event.endsAt ? torontoParts(event.endsAt) : undefined;
+  const destination = event.venueAddress;
+  const encoded = destination ? encodeURIComponent(destination) : null;
   return {
     id: event.id,
     type: event.type,
@@ -207,7 +209,10 @@ export function liveEventToVoiceMatch(event: AhmvLiveScheduleEvent) {
     status: event.status,
     opponent: event.opponent ?? null,
     arena: event.venue ?? null,
-    arenaAddress: event.venueAddress ?? null,
+    arenaAddress: destination ?? null,
+    mapsUrl: encoded ? `https://www.google.com/maps/dir/?api=1&destination=${encoded}` : null,
+    wazeUrl: encoded ? `https://www.waze.com/ul?q=${encoded}&navigate=yes` : null,
+    appleMapsUrl: encoded ? `https://maps.apple.com/?daddr=${encoded}` : null,
     sourceUrl: event.officialUrl ?? event.sourceUrl ?? null,
   };
 }
