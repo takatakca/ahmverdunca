@@ -1,5 +1,5 @@
 import twilio from "twilio";
-import { officialPhoneSchedule, parseSms } from "../../../lib/ahmv-phone.ts";
+import { parseSms } from "../../../lib/ahmv-phone.ts";
 import {
   normalizePhoneE164,
   safeApplyMarketingSmsConsentEvent,
@@ -20,8 +20,10 @@ import {
   memberActivationUrl,
   resolvePhoneEntitlement,
 } from "../entitlements/service.server.ts";
-import { nextEventService } from "../schedules/service.ts";
-import { scheduleRangeAnswer } from "../schedules/range.ts";
+import {
+  nextEventServiceAuthoritative,
+  scheduleRangeAnswerAuthoritative,
+} from "../schedules/authoritative.server.ts";
 import {
   compactTeamChoices,
   resolvePublicTeam,
@@ -235,10 +237,11 @@ export async function handleTwilioSms(
       return xmlResponse(response.toString());
     }
 
-    const answer = nextEventService(
+    const answer = await nextEventServiceAuthoritative(
       command.teamQuery,
       lang,
       teamAliases(settings),
+      settings,
     );
 
     if (!answer.event || answer.outcome !== "scheduled") {
@@ -340,10 +343,11 @@ export async function handleTwilioSms(
       return xmlResponse(response.toString());
     }
 
-    const answer = nextEventService(
+    const answer = await nextEventServiceAuthoritative(
       command.teamQuery,
       lang,
       teamAliases(settings),
+      settings,
     );
 
     if (!answer.event || answer.outcome !== "scheduled") {
@@ -589,13 +593,12 @@ export async function handleTwilioSms(
       return xmlResponse(response.toString());
     }
 
-    const rangeAnswer = scheduleRangeAnswer(
+    const rangeAnswer = await scheduleRangeAnswerAuthoritative(
       command.teamQuery,
       command.kind,
       lang,
-      officialPhoneSchedule,
-      new Date(),
       teamAliases(settings),
+      settings,
     );
     response.message(rangeAnswer.text.slice(0, 1500));
     await safeRecordPhoneInteraction({
@@ -610,10 +613,11 @@ export async function handleTwilioSms(
     return xmlResponse(response.toString());
   }
 
-  const answer = nextEventService(
+  const answer = await nextEventServiceAuthoritative(
     command.teamQuery,
     lang,
     teamAliases(settings),
+    settings,
   );
   const alert = urgentBulletin(settings, lang);
   response.message(
