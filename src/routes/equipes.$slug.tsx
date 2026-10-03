@@ -14,6 +14,7 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { TeamPortfolio } from "@/components/team-portfolio";
+import { TeamLiveFeed } from "@/components/team-live-feed";
 import { getTeam } from "@/data/teams";
 import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
@@ -302,6 +303,8 @@ function TeamPage() {
           />
         )}
 
+        {exactTeam && <TeamLiveFeed team={exactTeam} lang={lang} />}
+
         <section
           aria-labelledby="team-command-title"
           className="overflow-hidden border border-navy/12 bg-background"
@@ -373,7 +376,7 @@ function TeamPage() {
                     <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
                   </a>
                 )}
-                {socialLinks.length > 0 && (
+                {(exactTeam || socialLinks.length > 0) && (
                   <a
                     href="#social-equipe"
                     className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
@@ -644,7 +647,7 @@ function TeamPage() {
         )}
 
         {socialLinks.length > 0 && (
-          <section id="social-equipe">
+          <section id="social-links-equipe">
             <SectionHeading
               eyebrow={lang === "fr" ? "Médias d'équipe" : "Team media"}
               title={lang === "fr" ? "Réseaux sociaux officiels" : "Official social media"}
