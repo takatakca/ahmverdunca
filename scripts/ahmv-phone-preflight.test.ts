@@ -125,3 +125,29 @@ test("reminder worker safety gates pass with explicit mapping and provider confi
   assert.equal(checks.find((check) => check.id === "worker-cron-secret")?.ok, true);
   assert.equal(checks.find((check) => check.id === "reminder-team-map")?.ok, true);
 });
+
+
+test("calendar links require a dedicated 32-character server secret when enabled", () => {
+  const missing = phonePreflight({
+    AHMV_PHONE_ENABLED: "false",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_CALENDAR_LINKS_ENABLED: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+  });
+  assert.equal(missing.find((check) => check.id === "calendar-link-secret")?.ok, false);
+
+  const configured = phonePreflight({
+    AHMV_PHONE_ENABLED: "false",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_CALENDAR_LINKS_ENABLED: "true",
+    AHMV_CALENDAR_LINK_SECRET: "12345678901234567890123456789012",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+  });
+  assert.equal(configured.find((check) => check.id === "calendar-link-secret")?.ok, true);
+});

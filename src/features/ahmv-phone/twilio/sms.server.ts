@@ -7,6 +7,7 @@ import {
   safeTouchPhoneContact,
 } from "../contacts/store.server.ts";
 import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
+import { createSignedCalendarLink } from "../calendar/link.server.ts";
 import { parsePhoneCommand } from "../conversation/commands.ts";
 import { canUse } from "../entitlements/access.ts";
 import {
@@ -61,7 +62,7 @@ export async function handleTwilioSms(
     response.message(
       lang === "fr"
         ? "AHMV: envoyez votre équipe pour le prochain événement. Essai 30 jours: AUJOURD'HUI, DEMAIN, SEMAINE, SAUVE ou RAPPEL + équipe. EN pour anglais. GROUPE TAKATAK."
-        : "AHMV: text your team for the next event. 30-day trial: TODAY, TOMORROW, WEEK, SAVE or REMIND + team. GROUPE TAKATAK.",
+        : "AHMV: text your team for the next event. 30-day trial: TODAY, TOMORROW, WEEK, SAVE, REMIND or CALENDAR + team. GROUPE TAKATAK.",
     );
     await safeRecordPhoneInteraction({
       contactId: contact?.id,
@@ -93,6 +94,100 @@ export async function handleTwilioSms(
       teamCode: command.teamQuery.slice(0, 80),
     });
     log("team-ambiguous");
+    return xmlResponse(response.toString());
+  }
+
+  if (command.kind === "calendar") {
+    if (!contact) {
+      response.message(
+        lang === "fr"
+          ? "AHMV: impossible d'associer le calendrier à ce numéro pour le moment."
+          : "AHMV: unable to associate calendar access with this number right now.",
+      );
+      return xmlResponse(response.toString());
+    }
+
+    const entitlement = await resolvePhoneEntitlement(
+      contact,
+      "calendar_sync",
+      settings,
+    );
+
+    if (!canUse(entitlement, "calendar_sync")) {
+      response.message(
+        lang === "fr"
+          ? `AHMV: le calendrier personnalisé est une fonction membre après la période découverte. Activez: ${memberActivationUrl(settings)}`
+          : `AHMV: personalized calendar access is a member feature after the introductory period. Activate: ${memberActivationUrl(settings)}`,
+      );
+      await safeRecordPhoneInteraction({
+        contactId: contact.id,
+        channel: "sms",
+        providerReferenceHash: ref,
+        intent: "calendar",
+        outcome: "membership-required",
+        teamCode: resolution.kind === "exact"
+          ? resolution.team.legacyScheduleTeamId
+          : command.teamQuery,
+      });
+      return xmlResponse(response.toString());
+    }
+
+    const answer = nextEventService(
+      command.teamQuery,
+      lang,
+      teamAliases(settings),
+    );
+
+    if (!answer.event || answer.outcome !== "scheduled") {
+      response.message(answer.text);
+      await safeRecordPhoneInteraction({
+        contactId: contact.id,
+        channel: "sms",
+        providerReferenceHash: ref,
+        intent: "calendar",
+        outcome: answer.outcome,
+        teamCode: answer.group ?? command.teamQuery,
+      });
+      return xmlResponse(response.toString());
+    }
+
+    const calendarLink = createSignedCalendarLink(
+      answer.event.id,
+      settings,
+    );
+
+    if (!calendarLink) {
+      response.message(
+        lang === "fr"
+          ? "AHMV: le lien calendrier est temporairement indisponible. Les détails de l'événement restent accessibles sur ahmverdun.ca."
+          : "AHMV: the calendar link is temporarily unavailable. Event details remain available on ahmverdun.ca.",
+      );
+      await safeRecordPhoneInteraction({
+        contactId: contact.id,
+        channel: "sms",
+        providerReferenceHash: ref,
+        intent: "calendar",
+        outcome: "configuration-unavailable",
+        teamCode: answer.group ?? command.teamQuery,
+      });
+      return xmlResponse(response.toString());
+    }
+
+    response.message(
+      lang === "fr"
+        ? `AHMV — Ajouter le prochain événement de ${answer.group ?? command.teamQuery} au calendrier: ${calendarLink}`
+        : `AHMV — Add the next ${answer.group ?? command.teamQuery} event to your calendar: ${calendarLink}`,
+    );
+    await safeRecordPhoneInteraction({
+      contactId: contact.id,
+      channel: "sms",
+      providerReferenceHash: ref,
+      intent: "calendar",
+      outcome: "link-created",
+      teamCode: answer.group ?? command.teamQuery,
+      arenaSlug: answer.directions?.arenaSlug,
+    });
+    log("calendar-link-created");
     return xmlResponse(response.toString());
   }
 

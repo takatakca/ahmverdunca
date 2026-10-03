@@ -4,11 +4,20 @@ export type AhmvPhoneCommand =
   | { kind: "tomorrow"; teamQuery: string }
   | { kind: "week"; teamQuery: string }
   | { kind: "save"; teamQuery: string }
+  | { kind: "calendar"; teamQuery: string }
   | { kind: "reminder-on"; teamQuery: string }
   | { kind: "reminder-off"; teamQuery: string };
 
 export function parsePhoneCommand(query: string): AhmvPhoneCommand {
   const value = query.trim().slice(0, 160);
+
+  const calendar = /^(CALENDRIER|CALENDAR|CAL)\s+(.+)$/i.exec(value);
+  if (calendar) {
+    return {
+      kind: "calendar",
+      teamQuery: calendar[2]!.trim(),
+    };
+  }
 
   const reminderOff =
     /^(RAPPEL|REMIND)\s+(OFF|NON|STOP)\s+(.+)$/i.exec(value);
