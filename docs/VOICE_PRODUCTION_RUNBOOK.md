@@ -5,7 +5,7 @@ This runbook covers the infrastructure step after the AHMV Voice integration CI 
 ## Current integration authority
 
 - Repository: `takatakca/ahmverdunca`
-- Active Voice integration: draft PR **#179**
+- Website Voice integration: draft PR **#192**\n- Standalone realtime Voice service: draft PR **#184**
 - Production website: `https://ahmverdun.ca`
 - Dedicated realtime host: `https://voice.ahmverdun.ca`
 - Public AHMV phone: `+1 581-666-6246`
@@ -107,7 +107,7 @@ Do not restart the service if any command fails.
 Install:
 
 ```bash
-sudo install -m 0644 deploy/voice/nginx-voice.ahmverdun.ca.conf /etc/nginx/sites-available/voice.ahmverdun.ca
+sudo install -m 0644 services/ahmv-voice-ai/deploy/nginx-voice.ahmverdun.ca.conf /etc/nginx/sites-available/voice.ahmverdun.ca
 sudo ln -sfn /etc/nginx/sites-available/voice.ahmverdun.ca /etc/nginx/sites-enabled/voice.ahmverdun.ca
 sudo nginx -t
 ```
@@ -121,7 +121,7 @@ The reverse proxy must preserve the public host and HTTPS scheme exactly because
 Install the supplied service:
 
 ```bash
-sudo install -m 0644 deploy/voice/ahmv-voice.service /etc/systemd/system/ahmv-voice.service
+sudo install -m 0644 services/ahmv-voice-ai/deploy/ahmv-voice.service /etc/systemd/system/ahmv-voice.service
 sudo systemctl daemon-reload
 sudo systemctl enable ahmv-voice
 sudo systemctl restart ahmv-voice
