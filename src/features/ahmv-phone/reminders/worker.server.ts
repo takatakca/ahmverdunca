@@ -63,7 +63,7 @@ function contactFromRow(row: ContactRow): AhmvPhoneContact {
   return {
     id: row.id,
     phoneE164: row.phone_e164,
-    language: row.language === "en" ? "en" : "fr",
+    language: row.language === "en" ? "en" : row.language === "es" ? "es" : "fr",
     accessTier: row.access_tier,
     trialExpiresAt: row.trial_expires_at,
     smsConsent: Boolean(row.sms_consent),
