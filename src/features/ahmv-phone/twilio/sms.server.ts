@@ -3,6 +3,7 @@ import { officialPhoneSchedule, parseSms } from "../../../lib/ahmv-phone.ts";
 import {
   normalizePhoneE164,
   safeSavePrimaryTeamPreference,
+  safeSetTeamReminderPreference,
   safeTouchPhoneContact,
 } from "../contacts/store.server.ts";
 import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
@@ -59,8 +60,8 @@ export async function handleTwilioSms(
   if (!query || /^(HELP|AIDE|FR|EN)$/i.test(query)) {
     response.message(
       lang === "fr"
-        ? "AHMV: envoyez votre équipe pour le prochain événement. Essai 30 jours: AUJOURD'HUI équipe, DEMAIN équipe, SEMAINE équipe, SAUVE équipe. EN pour anglais. GROUPE TAKATAK."
-        : "AHMV: text your team for the next event. 30-day trial: TODAY team, TOMORROW team, WEEK team, SAVE team. GROUPE TAKATAK.",
+        ? "AHMV: envoyez votre équipe pour le prochain événement. Essai 30 jours: AUJOURD'HUI, DEMAIN, SEMAINE, SAUVE ou RAPPEL + équipe. EN pour anglais. GROUPE TAKATAK."
+        : "AHMV: text your team for the next event. 30-day trial: TODAY, TOMORROW, WEEK, SAVE or REMIND + team. GROUPE TAKATAK.",
     );
     await safeRecordPhoneInteraction({
       contactId: contact?.id,
@@ -92,6 +93,80 @@ export async function handleTwilioSms(
       teamCode: command.teamQuery.slice(0, 80),
     });
     log("team-ambiguous");
+    return xmlResponse(response.toString());
+  }
+
+  if (command.kind === "reminder-on" || command.kind === "reminder-off") {
+    if (!contact) {
+      response.message(
+        lang === "fr"
+          ? "AHMV: impossible d'associer les rappels à ce numéro pour le moment."
+          : "AHMV: unable to associate reminders with this number right now.",
+      );
+      return xmlResponse(response.toString());
+    }
+
+    if (resolution.kind !== "exact") {
+      response.message(
+        lang === "fr"
+          ? "AHMV: équipe non reconnue de façon certaine. Envoyez RAPPEL suivi de la catégorie et du niveau exacts."
+          : "AHMV: team could not be identified with certainty. Send REMIND followed by the exact category and level.",
+      );
+      return xmlResponse(response.toString());
+    }
+
+    if (command.kind === "reminder-on") {
+      const entitlement = await resolvePhoneEntitlement(
+        contact,
+        "game_reminders",
+        settings,
+      );
+      if (!canUse(entitlement, "game_reminders")) {
+        response.message(
+          lang === "fr"
+            ? `AHMV: les rappels personnalisés sont une fonction membre après la période découverte. Activez: ${memberActivationUrl(settings)}`
+            : `AHMV: personalized reminders are a member feature after the introductory period. Activate: ${memberActivationUrl(settings)}`,
+        );
+        await safeRecordPhoneInteraction({
+          contactId: contact.id,
+          channel: "sms",
+          providerReferenceHash: ref,
+          intent: "reminder-on",
+          outcome: "membership-required",
+          teamCode: resolution.team.legacyScheduleTeamId,
+        });
+        return xmlResponse(response.toString());
+      }
+    }
+
+    const enabled = command.kind === "reminder-on";
+    const saved = await safeSetTeamReminderPreference(
+      contact.id,
+      resolution.team.legacyScheduleTeamId,
+      enabled,
+    );
+    response.message(
+      saved
+        ? enabled
+          ? lang === "fr"
+            ? `AHMV: rappels activés pour ${resolution.team.categorySlug.toUpperCase()} ${resolution.team.level} ${resolution.team.name}. Vous pouvez les désactiver avec RAPPEL OFF suivi de l'équipe.`
+            : `AHMV: reminders enabled for ${resolution.team.categorySlug.toUpperCase()} ${resolution.team.level} ${resolution.team.name}. Disable them with REMIND OFF followed by the team.`
+          : lang === "fr"
+            ? `AHMV: rappels désactivés pour ${resolution.team.categorySlug.toUpperCase()} ${resolution.team.level} ${resolution.team.name}.`
+            : `AHMV: reminders disabled for ${resolution.team.categorySlug.toUpperCase()} ${resolution.team.level} ${resolution.team.name}.`
+        : lang === "fr"
+          ? "AHMV: impossible de modifier les rappels pour le moment."
+          : "AHMV: unable to update reminders right now.",
+    );
+    await safeRecordPhoneInteraction({
+      contactId: contact.id,
+      channel: "sms",
+      providerReferenceHash: ref,
+      intent: command.kind,
+      outcome: saved ? (enabled ? "enabled" : "disabled") : "failed",
+      teamCode: resolution.team.legacyScheduleTeamId,
+    });
+    log(saved ? `reminder-${enabled ? "enabled" : "disabled"}` : "reminder-failed");
     return xmlResponse(response.toString());
   }
 
