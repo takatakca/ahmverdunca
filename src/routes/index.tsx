@@ -9,7 +9,6 @@ import {
   ExternalLink,
   Facebook,
   Instagram,
-  Images,
   MapPin,
   Trophy,
   Users,
@@ -303,11 +302,11 @@ function Home() {
 
             <div className="grid h-[380px] grid-cols-[1.35fr_0.65fr] grid-rows-2 gap-1 sm:h-[460px]">
               <a
-                href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+                href={OFFICIAL_MEDIA.practiceGroup.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="photo-stage broadcast-cut interactive-surface group relative row-span-2 overflow-hidden bg-navy"
-                aria-label={lang === "fr" ? "Archive photo officielle AHMV — Tournoi M11" : "Official AHMV photo archive — U11 Tournament"}
+                aria-label={lang === "fr" ? "Photo réelle AHMV — entraînement sur glace" : "Real AHMV photo — on-ice practice"}
               >
                 <img
                   src={OFFICIAL_MEDIA.practiceGroup.url}
