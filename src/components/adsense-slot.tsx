@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { ADSENSE_CONFIG } from "@/lib/monetization";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { useDemoMemberMode } from "@/lib/demo-member-mode";
 
 declare global {
   interface Window {
@@ -9,14 +10,18 @@ declare global {
 }
 
 export function AdSenseSlot({ className = "", placement = "generic" }: { className?: string; placement?: string }) {
+  const { isDemoMember } = useDemoMemberMode();
+
   useEffect(() => {
-    if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) return;
+    if (isDemoMember || !ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
       // Ad blockers or provider timing can prevent a slot from initializing.
     }
-  }, []);
+  }, [isDemoMember]);
+
+  if (isDemoMember) return null;
 
   if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) {
     return <HouseSponsorSlot placement={placement} className={className} />;
