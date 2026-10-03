@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import { isSmsCapableCaller, languageKey, normalizeLanguage } from '../runtime/src/caller.js';
 import { createConcurrencyController } from '../runtime/src/concurrency.js';
 import { buildSmsBody } from '../runtime/src/sms-body.js';
+import { accessFromBootstrap, scheduleCapability } from '../runtime/src/access-policy.js';
 import {
   applyConversationDraft,
   cloneConversationSession,
@@ -14,6 +15,60 @@ import {
   canonicalTwilioRequestUrl,
   websocketTrailingSlashSignatureUrl,
 } from '../runtime/src/twilio-signature-url.js';
+
+test('access policy preserves base next-event access after trial while gating weekly schedule', () => {
+  const expired = accessFromBootstrap({
+    contact: { accessTier: 'trial' },
+    entitlement: {
+      trialActive: false,
+      premium: false,
+      nextEvent: true,
+      weeklySchedule: false,
+    },
+  }, {
+    accessMode: 'paid',
+    paidAccessPolicy: 'premium_or_trial',
+  });
+  assert.equal(expired.allowed, true);
+  assert.equal(expired.reason, 'base_next_event');
+  assert.equal(expired.nextEvent, true);
+  assert.equal(expired.weeklySchedule, false);
+  assert.deepEqual(scheduleCapability(expired), {
+    nextEvent: true,
+    weeklySchedule: false,
+  });
+
+  const activeTrial = accessFromBootstrap({
+    contact: { accessTier: 'trial' },
+    entitlement: {
+      trialActive: true,
+      premium: false,
+      nextEvent: true,
+      weeklySchedule: true,
+    },
+  }, {
+    accessMode: 'paid',
+    paidAccessPolicy: 'premium_or_trial',
+  });
+  assert.equal(activeTrial.allowed, true);
+  assert.equal(activeTrial.reason, 'trial');
+  assert.equal(activeTrial.weeklySchedule, true);
+
+  const blocked = accessFromBootstrap({
+    contact: { accessTier: 'blocked' },
+    entitlement: {
+      trialActive: false,
+      premium: false,
+      nextEvent: false,
+      weeklySchedule: false,
+    },
+  }, {
+    accessMode: 'paid',
+    paidAccessPolicy: 'premium_or_trial',
+  });
+  assert.equal(blocked.allowed, false);
+  assert.equal(blocked.reason, 'membership_required');
+});
 
 test('caller and language normalization cover FR EN ES and private callers', () => {
   assert.equal(isSmsCapableCaller('+15816666246'), true);
