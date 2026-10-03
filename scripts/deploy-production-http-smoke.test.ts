@@ -19,4 +19,7 @@ test("production deploy smoke bypasses the public WAF only through the authentic
   assert.match(workflow, /deploy-production-http-smoke\.sh body \/robots\.txt/);
   assert.match(workflow, /deploy-production-http-smoke\.sh body \/sitemap\.xml/);
   assert.match(workflow, /deploy-production-http-smoke\.sh status "\$asset"/);
+  assert.match(workflow, /AHMV_SSH_MAX_ATTEMPTS=6 ahmv-ssh/);
+  assert.match(workflow, /SFTP_MAX_ATTEMPTS=6/);
+  assert.match(workflow, /Neither SSH command\/shell channels nor SFTP became available/);
 });
