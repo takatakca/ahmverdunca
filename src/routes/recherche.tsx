@@ -14,9 +14,9 @@ import { RESOURCES } from "@/data/resources";
 import { COACH_RESOURCES } from "@/data/coaches";
 import { SPONSORS } from "@/data/sponsors";
 import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
-import { SITE } from "@/lib/site";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { montrealDateKey } from "@/lib/montreal-date";
+import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 
 export const Route = createFileRoute("/recherche")({
   head: () => ({
@@ -136,7 +136,8 @@ function normalize(value: string) {
 function SearchPage() {
   const { t, l, lang } = useI18n();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
-  const showPhone = SITE.phonePublic;
+  const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
+  const showPhone = phonePublic;
   const [q, setQ] = useState("");
   const today = montrealDateKey();
   const officialWeekActive =
@@ -360,9 +361,9 @@ function SearchPage() {
             <VoiceSearchButton onTranscript={setQ} />
             {showPhone && (
               <Button asChild variant="outline">
-                <a href={`tel:${SITE.phoneE164}`}>
+                <a href={`tel:${phoneE164}`}>
                   <PhoneCall className="size-4" />
-                  {SITE.phoneDisplay}
+                  {phoneDisplay}
                 </a>
               </Button>
             )}
