@@ -1,0 +1,54 @@
+name: Probe AHM Verdun cPanel production transport
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ahmverdun-cpanel-probe
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 5
+
+    env:
+      AHMV_CPANEL_HOST: ${{ secrets.AHMV_CPANEL_HOST }}
+      AHMV_CPANEL_USER: ${{ secrets.AHMV_CPANEL_USER }}
+      AHMV_CPANEL_API_TOKEN: ${{ secrets.AHMV_CPANEL_API_TOKEN }}
+      AHMV_APP_ROOT: ${{ secrets.AHMV_PRODUCTION_APP_ROOT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate cPanel probe configuration
+        run: |
+          set -euo pipefail
+          for name in AHMV_CPANEL_HOST AHMV_CPANEL_USER AHMV_CPANEL_API_TOKEN AHMV_APP_ROOT; do
+            test -n "${!name:-}" || {
+              echo "Missing required cPanel production secret: $name"
+              exit 1
+            }
+          done
+
+      - name: Probe cPanel HTTPS API
+        run: |
+          set -euo pipefail
+          chmod +x scripts/probe-production-cpanel.sh
+          scripts/probe-production-cpanel.sh
+
+      - name: Summary
+        if: success()
+        run: |
+          {
+            echo "## AHM Verdun cPanel production transport"
+            echo
+            echo "- HTTPS API authentication: PASS"
+            echo "- AHMV application root access: PASS"
+            echo "- Production files changed: NO"
+          } >> "$GITHUB_STEP_SUMMARY"
