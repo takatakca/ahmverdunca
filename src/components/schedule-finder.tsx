@@ -10,7 +10,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TEAMS } from "@/data/teams";
+import { TEAMS, CURRENT_TEAMS } from "@/data/teams";
 import { arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -88,7 +88,7 @@ export function ScheduleFinder() {
                     }}
                   >
                     <option value="">{lang === "fr" ? "Choisir…" : "Choose…"}</option>
-                    {TEAMS.map((item) => (
+                    {CURRENT_TEAMS.map((item) => (
                       <option key={item.slug} value={item.slug}>
                         {item.code === "F" ? l(item.name) : `${item.code} · ${l(item.name)}`}
                       </option>
