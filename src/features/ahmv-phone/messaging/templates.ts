@@ -28,5 +28,16 @@ export function lifecycleMessageText(
       "AHMV — Keep reminders, expanded schedules and personalized features with GROUPE TAKATAK membership: " + memberUrl,
   } as const;
 
-  return (lang === "fr" ? fr : en)[kind];
+  const es = {
+    trial_welcome:
+      "AHMV — Su período de prueba de 30 días de GROUPE TAKATAK está activo. El próximo evento sigue disponible; algunas funciones personalizadas pueden estar disponibles durante la prueba.",
+    trial_expiry_3d:
+      "AHMV — Su período de prueba de GROUPE TAKATAK termina en 3 días. El próximo evento seguirá disponible. Para conservar las funciones personalizadas: " + memberUrl,
+    trial_expired:
+      "AHMV — Su período de prueba ha terminado. El próximo evento sigue disponible. Las funciones personalizadas ahora requieren una membresía: " + memberUrl,
+    membership_offer:
+      "AHMV — Mantenga recordatorios, horarios ampliados y funciones personalizadas con la membresía de GROUPE TAKATAK: " + memberUrl,
+  } as const;
+
+  return (lang === "fr" ? fr : lang === "es" ? es : en)[kind];
 }

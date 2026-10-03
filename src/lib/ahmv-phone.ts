@@ -4,7 +4,7 @@ import {
   type OfficialWeekActivity,
 } from "../data/official-week.ts";
 
-export type PhoneLanguage = "fr" | "en";
+export type PhoneLanguage = "fr" | "en" | "es";
 export interface ScheduleSnapshot {
   start: string;
   end: string;
@@ -61,7 +61,9 @@ export function scheduleAnswer(
       text:
         lang === "fr"
           ? `Horaire actuel non disponible dans la source intégrée. Consultez ${link}`
-          : `Current schedule unavailable in the integrated source. Check ${link}`,
+          : lang === "es"
+            ? `El horario actual no está disponible en la fuente integrada. Consulte ${link}`
+            : `Current schedule unavailable in the integrated source. Check ${link}`,
       group,
       link,
       event: undefined,
@@ -83,7 +85,9 @@ export function scheduleAnswer(
       text:
         lang === "fr"
           ? `Aucun prochain événement confirmé dans la source intégrée pour ${query.slice(0, 80)}. Horaire possiblement à venir. ${link}`
-          : `No upcoming event confirmed in the integrated source for ${query.slice(0, 80)}. Schedule may still be pending. ${link}`,
+          : lang === "es"
+            ? `No hay un próximo evento confirmado en la fuente integrada para ${query.slice(0, 80)}. El horario puede estar pendiente. ${link}`
+            : `No upcoming event confirmed in the integrated source for ${query.slice(0, 80)}. Schedule may still be pending. ${link}`,
       group,
       link,
       event: undefined,
@@ -92,7 +96,7 @@ export function scheduleAnswer(
   const cancelled = next.status === "cancelled";
   return {
     outcome: cancelled ? "cancelled" : "scheduled",
-    text: `${cancelled ? (lang === "fr" ? "ANNULÉ — " : "CANCELLED — ") : ""}${next.group}: ${next.date} ${next.start}, ${next.activity}, ${next.venue}. ${link}`,
+    text: `${cancelled ? (lang === "fr" ? "ANNULÉ — " : lang === "es" ? "CANCELADO — " : "CANCELLED — ") : ""}${next.group}: ${next.date} ${next.start}, ${next.activity}, ${next.venue}. ${link}`,
     group,
     link,
     event: next,
@@ -101,9 +105,10 @@ export function scheduleAnswer(
 
 export function parseSms(body: string) {
   const value = body.trim().slice(0, 160);
-  const prefix = /^(FR|EN)(?:\s+|$)/i.exec(value);
+  const prefix = /^(FR|EN|ES)(?:\s+|$)/i.exec(value);
+  const code = prefix?.[1]?.toUpperCase();
   return {
-    lang: prefix?.[1]?.toUpperCase() === "EN" ? ("en" as const) : ("fr" as const),
+    lang: code === "EN" ? ("en" as const) : code === "ES" ? ("es" as const) : ("fr" as const),
     query: prefix ? value.slice(prefix[0].length).trim() : value,
   };
 }

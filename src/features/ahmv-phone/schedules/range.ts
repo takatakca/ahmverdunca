@@ -46,7 +46,9 @@ export function scheduleRangeAnswer(
       text:
         lang === "fr"
           ? `Horaire détaillé non disponible pour ${query.slice(0, 80)}. ${link}`
-          : `Detailed schedule unavailable for ${query.slice(0, 80)}. ${link}`,
+          : lang === "es"
+            ? `El horario detallado no está disponible para ${query.slice(0, 80)}. ${link}`
+            : `Detailed schedule unavailable for ${query.slice(0, 80)}. ${link}`,
       events: [],
       link,
     };
@@ -66,7 +68,9 @@ export function scheduleRangeAnswer(
       text:
         lang === "fr"
           ? `Aucun événement confirmé pour ${group} dans cette période. ${link}`
-          : `No confirmed events for ${group} in this period. ${link}`,
+          : lang === "es"
+            ? `No hay eventos confirmados para ${group} en este período. ${link}`
+            : `No confirmed events for ${group} in this period. ${link}`,
       events,
       link,
     };
@@ -74,13 +78,13 @@ export function scheduleRangeAnswer(
 
   const label =
     range === "today"
-      ? lang === "fr" ? "Aujourd'hui" : "Today"
+      ? lang === "fr" ? "Aujourd'hui" : lang === "es" ? "Hoy" : "Today"
       : range === "tomorrow"
-        ? lang === "fr" ? "Demain" : "Tomorrow"
-        : lang === "fr" ? "Cette semaine" : "This week";
+        ? lang === "fr" ? "Demain" : lang === "es" ? "Mañana" : "Tomorrow"
+        : lang === "fr" ? "Cette semaine" : lang === "es" ? "Esta semana" : "This week";
   const lines = events.map((event) => {
     const cancelled = event.status === "cancelled"
-      ? lang === "fr" ? "ANNULÉ " : "CANCELLED "
+      ? lang === "fr" ? "ANNULÉ " : lang === "es" ? "CANCELADO " : "CANCELLED "
       : "";
     return `${cancelled}${event.date} ${event.start} — ${event.activity} — ${event.venue}`;
   });
