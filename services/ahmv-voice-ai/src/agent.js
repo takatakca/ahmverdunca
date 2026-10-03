@@ -7,6 +7,7 @@ import { persistSessionSnapshot, saveSession } from './store.js';
 import { throwIfAborted } from './turn-controller.js';
 import { assertCompletedResponse } from './openai-contract.js';
 import { recordOpenAiUsage } from './usage.js';
+import { recordArenaLookup, recordHumanHandoff, recordScheduleLookup } from './metrics.js';
 
 const openai = new OpenAI({
   apiKey: config.openaiApiKey,
@@ -189,6 +190,7 @@ async function runTool(session, call, { signal, persist = true } = {}) {
         break;
       }
       result = await findSchedule(args);
+      recordScheduleLookup(session, result);
       rememberScheduleResults(session, result);
       break;
     case 'find_arena':
@@ -197,6 +199,7 @@ async function runTool(session, call, { signal, persist = true } = {}) {
         break;
       }
       result = await findArena(args);
+      recordArenaLookup(session, result);
       rememberArenaResults(session, result);
       break;
     case 'remember_official_page': {
@@ -237,6 +240,7 @@ async function runTool(session, call, { signal, persist = true } = {}) {
         preferredWindow: args.preferredWindow
       });
 
+      recordHumanHandoff(session, result);
       if (result?.ok && result.requested) {
         session.handoffRequested = true;
         session.handoffReason = args.reason;
