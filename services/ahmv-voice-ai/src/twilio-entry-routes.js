@@ -83,7 +83,13 @@ export function registerTwilioEntryRoutes(app) {
     }
 
     saveSession(session);
-    if (!session.access.allowed && session.access.mode === 'paid') addMembershipSmsItem(session);
+    if (
+      !session.access.allowed &&
+      session.access.mode === 'paid' &&
+      session.access.reason === 'membership_required'
+    ) {
+      addMembershipSmsItem(session);
+    }
 
     await persistCallStart(session).catch((error) => request.log.error(error, 'persistCallStart failed'));
     await persistSessionSnapshot(session).catch((error) => request.log.error(error, 'persistSessionSnapshot failed'));
