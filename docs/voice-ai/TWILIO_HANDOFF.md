@@ -68,7 +68,7 @@ src/lib/
   ahmv-voice-bridge.server.ts          private website API for Voice runtime
   ahmv-twilio.server.ts                existing deterministic Twilio SMS/IVR
 
-deploy/voice/
+services/ahmv-voice-ai/deploy/
   ahmv-voice.service                   systemd unit
   nginx-voice.ahmverdun.ca.conf        TLS/WebSocket reverse proxy
 
@@ -147,7 +147,7 @@ Critical production classes:
 - `TWILIO_VALIDATE_SIGNATURES=true`
 - `TWILIO_TTS_VOICE=<approved/listening-tested ElevenLabs voice id>`
 - `OPENAI_API_KEY`
-- `OPENAI_MODEL=gpt-6-luna`
+- `OPENAI_MODEL=gpt-5.6-terra`
 - `AHM_VOICE_BRIDGE_URL=https://ahmverdun.ca/api/ahmv/voice/`
 - `AHM_VOICE_BRIDGE_TOKEN`
 - `SUPABASE_URL`
