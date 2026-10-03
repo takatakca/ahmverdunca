@@ -78,6 +78,7 @@ const twilioTtsVoice = process.env.TWILIO_TTS_VOICE?.trim() || '';
 const requirePersistentStore = bool('REQUIRE_PERSISTENT_STORE', nodeEnv === 'production');
 const supabaseRaw = process.env.SUPABASE_URL?.trim() || '';
 const supabaseUrl = absoluteUrl('SUPABASE_URL', supabaseRaw, nodeEnv === 'production' ? ['https:'] : ['https:', 'http:']);
+const ahmvSupabaseProjectRef = process.env.AHMV_SUPABASE_PROJECT_REF?.trim() || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || '';
 const supabaseProjectRef = process.env.AHMV_SUPABASE_PROJECT_REF?.trim() || '';
 const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER?.trim() || '+15816666246';
@@ -108,6 +109,15 @@ if (nodeEnv === 'production' && requirePersistentStore && (!supabaseUrl || !supa
   throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required when REQUIRE_PERSISTENT_STORE=true');
 }
 if (nodeEnv === 'production' && requirePersistentStore) {
+  if (ahmvSupabaseProjectRef !== 'bqflllsjxmhqsvemhhwv') {
+    throw new Error('AHMV_SUPABASE_PROJECT_REF must identify the approved AHMV project');
+  }
+  const databaseHost = new URL(supabaseUrl).hostname;
+  if (databaseHost !== ahmvSupabaseProjectRef + '.supabase.co') {
+    throw new Error('SUPABASE_URL does not match the approved AHMV Supabase project');
+  }
+}
+if (nodeEnv === 'production' && requirePersistentStore) {
   if (supabaseProjectRef !== 'bqflllsjxmhqsvemhhwv') {
     throw new Error('AHMV_SUPABASE_PROJECT_REF must be bqflllsjxmhqsvemhhwv');
   }
@@ -120,7 +130,7 @@ if (!/^\+[1-9][0-9]{7,14}$/.test(twilioPhoneNumber)) {
 }
 
 export const config = {
-  appVersion: '0.9.0-preproduction',
+  appVersion: '0.7.0-preproduction',
   nodeEnv,
   voiceInstanceMode,
   port: int('PORT', 3000, { min: 1, max: 65535 }),
