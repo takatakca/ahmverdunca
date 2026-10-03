@@ -489,3 +489,91 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* ---------- Premium interaction system ---------- */
+@keyframes masthead-line-in {
+  from { transform: scaleX(.18); opacity: .2; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+@keyframes content-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.premium-control {
+  position: relative;
+  border-radius: 2px;
+  overflow: hidden;
+  transition:
+    transform 180ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 220ms ease,
+    filter 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease;
+  touch-action: manipulation;
+}
+.premium-control::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 25%, color-mix(in oklab, white 22%, transparent) 50%, transparent 75%);
+  transform: translateX(-130%);
+  transition: transform 420ms cubic-bezier(.2,.8,.2,1);
+}
+.premium-control:hover::after { transform: translateX(130%); }
+.premium-control:hover { transform: translateY(-1px); }
+.premium-control:active { transform: translateY(1px) scale(.985); transition-duration: 80ms; }
+
+.page-masthead::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 1px;
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--color-sport), color-mix(in oklab, var(--color-sport) 28%, transparent) 42%, transparent 76%);
+  animation: masthead-line-in 650ms cubic-bezier(.2,.8,.2,1) both;
+}
+.section-heading h2 { text-wrap: balance; }
+
+.interactive-surface {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 240ms cubic-bezier(.2,.8,.2,1),
+    box-shadow 260ms ease,
+    border-color 220ms ease;
+}
+.interactive-surface::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+  border: 1px solid transparent;
+  transition: border-color 220ms ease, inset 220ms ease;
+}
+.interactive-surface:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 24px 50px -36px color-mix(in oklab, var(--color-navy) 72%, transparent);
+}
+.interactive-surface:hover::after {
+  inset: 4px;
+  border-color: color-mix(in oklab, var(--color-sport) 28%, transparent);
+}
+.interactive-surface:active {
+  transform: translateY(0) scale(.992);
+  transition-duration: 90ms;
+}
+
+@media (max-width: 639px) {
+  .page-masthead .technical-grid { opacity: .16; }
+  .section-heading { margin-bottom: 1.25rem; padding-bottom: 1rem; }
+  .interactive-surface:hover { transform: none; box-shadow: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .section-heading { animation: content-reveal 460ms cubic-bezier(.2,.8,.2,1) both; }
+}
