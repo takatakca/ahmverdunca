@@ -1,6 +1,6 @@
 {
   "name": "ahmv-voice-ai",
-  "version": "0.7.0-preproduction",
+  "version": "0.8.0-preproduction",
   "private": true,
   "type": "module",
   "description": "AHM Verdun trilingual Twilio ConversationRelay + OpenAI voice assistant",
@@ -14,5 +14,10 @@
     "fastify": "5.12.5",
     "openai": "6.9.0",
     "twilio": "5.10.4"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "verify": "node --check src/server.js && node --test test/*.test.js",
+    "preflight": "node scripts/preflight.js"
   }
 }
