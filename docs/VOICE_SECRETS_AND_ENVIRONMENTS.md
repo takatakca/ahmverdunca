@@ -59,7 +59,7 @@ The standalone Voice service uses its own protected environment file, for exampl
 - Voice-session persistence: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`;
 - bounded concurrency/call duration and `VOICE_INSTANCE_MODE=single`.
 
-Use the standalone v0.5 `.env.example` as the exact variable contract. Never copy a real `.env` into Git or a support ticket.
+Use `services/ahmv-voice-ai/.env.example` from current `main` as the exact variable contract. Never copy a real `.env` into Git, Cursor rules, a support ticket, or a PR comment.
 
 ## Rotation order
 
