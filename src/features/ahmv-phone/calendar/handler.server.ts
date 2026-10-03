@@ -159,7 +159,7 @@ export function handleAhmvCalendarLink(
       '">' +
       htmlEscape(
         t(
-          "Apple / Outlook / fichier .ics",
+          "Apple / Outlook / .ics",
           "Apple / Outlook / .ics file",
           "Apple / Outlook / archivo .ics",
         ),
