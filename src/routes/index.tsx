@@ -201,6 +201,72 @@ function Home() {
 
       <OfficialWeekPreview />
 
+      {/* Real AHMV photography — keep the portal visibly rooted in the association */}
+      <section className="overflow-hidden border-y border-navy/10 bg-background py-9 md:py-12">
+        <div className="container-site">
+          <div className="grid gap-5 lg:grid-cols-[0.72fr_1.28fr] lg:items-end">
+            <div>
+              <p className="eyebrow text-sport">{lang === "fr" ? "La glace · Les jeunes · Verdun" : "The rink · The players · Verdun"}</p>
+              <h2 className="mt-2 max-w-xl font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] text-navy sm:text-5xl md:text-6xl">
+                {lang === "fr" ? "Un vrai portail de hockey." : "A real hockey portal."}
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                {lang === "fr"
+                  ? "Les photos officielles AHMV restent au cœur de l’expérience. Le design sert le hockey, les équipes et les familles — il ne remplace pas leur histoire."
+                  : "Official AHMV photography stays at the heart of the experience. The design supports hockey, teams and families — it does not replace their story."}
+              </p>
+              <Link
+                to="/galerie"
+                className="mt-5 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-sport"
+              >
+                {lang === "fr" ? "Voir les albums AHMV" : "View AHMV albums"} <ArrowRight className="size-4" />
+              </Link>
+            </div>
+
+            <div className="grid h-[360px] grid-cols-[1.35fr_0.65fr] grid-rows-2 gap-2 sm:h-[430px]">
+              <a
+                href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="interactive-surface group relative row-span-2 overflow-hidden bg-navy"
+                aria-label={lang === "fr" ? "Archive photo officielle AHMV — Tournoi M11" : "Official AHMV photo archive — U11 Tournament"}
+              >
+                <img
+                  src={OFFICIAL_MEDIA.tournamentM11Primary.url}
+                  alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.86)_100%)]" />
+                <span className="absolute bottom-4 left-4 bg-navy/80 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
+                  {lang === "fr" ? "Archive officielle AHMV" : "Official AHMV archive"}
+                </span>
+              </a>
+
+              {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media) => (
+                <a
+                  key={media.url}
+                  href={media.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="interactive-surface group relative overflow-hidden bg-navy"
+                >
+                  <img
+                    src={media.url}
+                    alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_55%,rgba(7,16,43,0.72)_100%)]" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Team universe */}
       <section className="relative overflow-hidden bg-navy-deep py-10 text-navy-foreground md:py-14">
         <div className="arena-light opacity-40" aria-hidden />
@@ -272,15 +338,17 @@ function Home() {
                 params={{ slug: news[0].slug }}
                 className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
-                <SportArtwork
-                  index={String(news[0].legacyId ?? "01").padStart(2, "0")}
-                  kicker={newsDateLabel(news[0], lang)}
-                  title={l(news[0].title)}
-                  code="NEWS"
-                  aspect="absolute inset-0"
-                  className="absolute inset-0 opacity-95"
+                <img
+                  src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
+                  alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                 />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_18%,rgba(7,16,43,0.12)_45%,rgba(7,16,43,0.96)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.16)_0%,rgba(7,16,43,0.22)_40%,rgba(7,16,43,0.96)_100%)]" />
+                <span className="absolute left-5 top-5 border border-white/20 bg-navy/72 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur md:left-7 md:top-7">
+                  {lang === "fr" ? "Photo d’archive AHMV" : "AHMV archive photo"}
+                </span>
                 <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground md:p-9">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">

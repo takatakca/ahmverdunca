@@ -3,8 +3,8 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { SportArtwork } from "@/components/sport-artwork";
 import { NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
@@ -68,6 +68,27 @@ function NewsPage() {
           </div>
         </div>
 
+        <div className="mt-7 grid h-44 grid-cols-3 gap-2 overflow-hidden sm:h-56 md:h-64">
+          {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary, OFFICIAL_MEDIA.volunteerArchive].map((media) => (
+            <a
+              key={media.url}
+              href={media.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="interactive-surface group relative overflow-hidden bg-navy"
+            >
+              <img
+                src={media.url}
+                alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+              />
+              <div className="absolute inset-0 bg-navy/10 transition-colors group-hover:bg-transparent" />
+            </a>
+          ))}
+        </div>
+
         <div
           className="scrollbar-none -mx-1 flex gap-1 overflow-x-auto border-b border-navy/10 px-1 py-5"
           aria-label={lang === "fr" ? "Filtres des nouvelles" : "News filters"}
@@ -96,13 +117,19 @@ function NewsPage() {
 
         {featured && (
           <section className="interactive-surface mt-8 grid overflow-hidden border border-navy/12 lg:grid-cols-[0.9fr_1.1fr]">
-            <SportArtwork
-              index={String(featured.legacyId ?? "01").padStart(2, "0")}
-              kicker={newsDateLabel(featured, lang)}
-              title={l(featured.title)}
-              code="AHMV"
-              aspect="min-h-[280px] lg:min-h-[460px]"
-            />
+            <div className="group relative min-h-[300px] overflow-hidden bg-navy lg:min-h-[460px]">
+              <img
+                src={OFFICIAL_MEDIA.tournamentM11Primary.url}
+                alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.56))]" />
+              <span className="absolute bottom-5 left-5 bg-navy/80 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur md:bottom-7 md:left-7">
+                {lang === "fr" ? "Photo d’archive officielle AHMV" : "Official AHMV archive photo"}
+              </span>
+            </div>
             <Link
               to="/nouvelles/$slug"
               params={{ slug: featured.slug }}
