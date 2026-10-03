@@ -18,9 +18,11 @@ export function CommunicationsPreview() {
     if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
 
     const timer = window.setTimeout(() => {
+      // Never interrupt an open navigation/menu or another modal-like action.
+      if (document.body.style.overflow === "hidden") return;
       setOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 320);
+    }, 9000);
 
     return () => window.clearTimeout(timer);
   }, []);
