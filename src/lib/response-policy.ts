@@ -7,6 +7,9 @@ export function robotsDirectiveForResponse({
   status: number;
   publicIndexingEnabled: boolean;
 }) {
+  if (pathname === "/experience" || pathname.startsWith("/experience/")) {
+    return "noindex, nofollow";
+  }
   if (pathname === "/recherche" || pathname === "/healthz" || status >= 400) {
     return "noindex, follow";
   }
@@ -29,11 +32,16 @@ export function applyPublicResponsePolicy(
     "camera=(), geolocation=(), payment=(), usb=()",
   );
 
+  const pathname = new URL(request.url).pathname;
+  if (pathname === "/experience" || pathname.startsWith("/experience/")) {
+    headers.set("Cache-Control", "private, no-store");
+  }
+
   if (contentType.includes("text/html")) {
     headers.set(
       "X-Robots-Tag",
       robotsDirectiveForResponse({
-        pathname: new URL(request.url).pathname,
+        pathname,
         status: response.status,
         publicIndexingEnabled,
       }),
