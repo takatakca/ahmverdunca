@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFile(path.join(root, p), "utf8");
 
 const [
-  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env
+  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env, usage
 ] = await Promise.all([
   read("package.json"),
   read("package-lock.json"),
@@ -20,6 +20,7 @@ const [
   read("deploy/nginx-voice.ahmverdun.ca.conf"),
   read("deploy/ahmv-voice.service"),
   read(".env.example"),
+  read("src/usage.js"),
 ]);
 
 const pkg = JSON.parse(pkgRaw);
@@ -35,6 +36,14 @@ assert.match(config, /AHM_DATA_MODE=fixture is forbidden in production/);
 assert.match(config, /VOICE_INSTANCE_MODE/);
 assert.match(config, /\['single'\]/);
 assert.match(config, /TWILIO_TTS_VOICE is required in production/);
+assert.match(config, /OPENAI_INPUT_USD_PER_MILLION/);
+assert.match(config, /TWILIO_CONVERSATION_RELAY_USD_PER_MINUTE/);
+assert.match(config, /FEATURE_SCHEDULE_LOOKUP_ENABLED/);
+assert.match(config, /FEATURE_ARENA_LOOKUP_ENABLED/);
+assert.match(config, /FEATURE_SMS_RECAP_ENABLED/);
+assert.match(config, /FEATURE_HUMAN_HANDOFF_ENABLED/);
+assert.match(usage, /estimatedSessionUsd/);
+assert.match(usage, /costGuardExceeded/);
 assert.doesNotMatch(config, /AHM_DATA_API_URL|AHM_DATA_API_TOKEN/);
 
 assert.match(agent, /store:\s*false/);
@@ -48,7 +57,10 @@ assert.match(store, /includeMessages:\s*false/);
 assert.match(store, /claim_ahmv_voice_sms/);
 assert.match(store, /claim_ahmv_voice_audit/);
 
-assert.match(bridge, /AHM_VOICE_BRIDGE/);
+assert.match(config, /AHM_VOICE_BRIDGE_URL/);
+assert.match(config, /AHM_VOICE_BRIDGE_TOKEN/);
+assert.match(bridge, /config\.ahmBridgeApiUrl/);
+assert.match(bridge, /config\.ahmBridgeToken/);
 assert.doesNotMatch(bridge, /AHM_DATA_API/);
 assert.match(security, /validateRequest/);
 assert.match(twiml, /ConversationRelay/);
