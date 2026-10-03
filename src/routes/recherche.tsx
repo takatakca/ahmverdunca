@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { TEAMS } from "@/data/teams";
-import { PUBLIC_TEAM_DIRECTORY } from "@/data/team-directory";
+import { PUBLIC_TEAM_DIRECTORY, publicTeamHubUrl } from "@/data/team-directory";
 import { ARENAS } from "@/data/arenas";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { FAQ } from "@/data/faq";
@@ -174,7 +174,7 @@ function SearchPage() {
           label: item.name,
           kind: lang === "fr" ? "Équipe publiée" : "Published team",
           detail: `${item.level} · ${lang === "fr" ? "horaire et classement" : "schedule and standings"}`,
-          href: `/equipes/${item.categorySlug}#team-${item.legacyScheduleTeamId}`,
+          href: publicTeamHubUrl(item),
         });
       }
     });
