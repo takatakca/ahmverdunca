@@ -55,3 +55,11 @@ export const teamsForCategory = (categorySlug: string) =>
 
 export const legacyTeamScheduleUrl = (entry: PublicTeamDirectoryEntry) =>
   scheduleUrl(entry.legacyScheduleTeamId);
+
+/**
+ * Today the legacy public team surface exposes schedule + standings from the
+ * same GameData entry point. Keep a semantically separate helper so a future
+ * direct results connector can change independently without rewriting pages.
+ */
+export const officialTeamResultsUrl = (entry: PublicTeamDirectoryEntry) =>
+  scheduleUrl(entry.legacyScheduleTeamId);
