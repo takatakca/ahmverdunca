@@ -4,7 +4,7 @@
 
 AHM Verdun remains the public hockey portal. Exact team mini-sites use the public AHMV team ID as their stable key.
 
-GROUPE TAKATAK remains the authority for social-provider OAuth, subscriptions, cross-app permissions, and future payment/campaign services. AHMV must never store Facebook, Instagram, X, TikTok or YouTube provider tokens in browser code.
+GROUPE TAKATAK is the company/agency. TAKATAK Dashboard remains the operational authority for social-provider OAuth connections, subscriptions, cross-app permissions, Stripe billing and future payment/campaign services. TAKATAK Auth is the shared identity layer. AHMV must never store Facebook, Instagram, X, TikTok or YouTube provider tokens in browser code.
 
 ## Exact team personalization
 
@@ -12,7 +12,7 @@ Browser-only family bookmarks are stored locally on the device. Multiple exact p
 
 The public team ID is not a roster identifier. It is used only to route families to the correct public team page, schedule, results and approved public content.
 
-## GROUPE TAKATAK team feed bridge
+## TAKATAK Dashboard team feed bridge
 
 Server-only settings:
 
@@ -24,7 +24,7 @@ Optional browser flag:
 
 - `VITE_TAKATAK_TEAM_FEED_ENABLED=true|false`
 
-Both sides should remain disabled until the GROUPE TAKATAK endpoint exists and the production token is provisioned.
+Both sides should remain disabled until the TAKATAK Dashboard endpoint exists and the production token is provisioned.
 
 Expected upstream endpoint:
 
@@ -64,7 +64,7 @@ The site loads no AdSense script while `VITE_ADSENSE_ENABLED` is false.
 
 Every CI and deployment path runs:
 
-- GROUPE TAKATAK team-feed security tests
+- TAKATAK Dashboard team-feed security tests
 - monetization configuration validation
 - existing AHMV phone/SMS tests
 - data, SEO, runtime, navigation, media, canonical and external-link gates
