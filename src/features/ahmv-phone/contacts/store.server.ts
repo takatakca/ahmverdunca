@@ -155,46 +155,55 @@ export async function safeFindPhoneContactByNumber(
   }
 }
 
-export async function setMarketingSmsConsent(
-  contactId: string,
-  enabled: boolean,
-  source: "sms_keyword" | "takatak_verified",
-  now = new Date(),
-) {
-  const values = enabled
-    ? {
-        marketing_sms_consent: true,
-        marketing_sms_consented_at: now.toISOString(),
-        marketing_sms_consent_source: source,
-        marketing_sms_revoked_at: null,
-        updated_at: now.toISOString(),
-      }
-    : {
-        marketing_sms_consent: false,
-        marketing_sms_revoked_at: now.toISOString(),
-        updated_at: now.toISOString(),
-      };
+export type MarketingConsentEvidenceSource =
+  | "sms_keyword"
+  | "takatak_verified"
+  | "carrier_opt_out";
 
-  const result = await db()
-    .from("ahmv_phone_contacts")
-    .update(values)
-    .eq("id", contactId);
+export async function applyMarketingSmsConsentEvent(input: {
+  eventId: string;
+  contactId: string;
+  enabled: boolean;
+  source: MarketingConsentEvidenceSource;
+  occurredAt?: Date | undefined;
+  now?: Date | undefined;
+}) {
+  const occurredAt = input.occurredAt ?? new Date();
+  const now = input.now ?? new Date();
+
+  const result = await db().rpc("ahmv_apply_marketing_consent_event", {
+    p_event_id: input.eventId,
+    p_contact_id: input.contactId,
+    p_source: input.source,
+    p_consent: input.enabled,
+    p_occurred_at: occurredAt.toISOString(),
+    p_now: now.toISOString(),
+  });
 
   if (result.error) throw result.error;
+
+  const row = Array.isArray(result.data)
+    ? result.data[0]
+    : result.data;
+  if (!row || typeof row !== "object") {
+    throw new Error("Marketing consent projection returned no result");
+  }
+
+  const value = row as Record<string, unknown>;
+  return {
+    duplicate: value["duplicate"] === true,
+    applied: value["applied"] === true,
+  };
 }
 
-export async function safeSetMarketingSmsConsent(
-  contactId: string,
-  enabled: boolean,
-  source: "sms_keyword" | "takatak_verified",
-  now = new Date(),
+export async function safeApplyMarketingSmsConsentEvent(
+  input: Parameters<typeof applyMarketingSmsConsentEvent>[0],
 ) {
   try {
-    await setMarketingSmsConsent(contactId, enabled, source, now);
-    return true;
+    return await applyMarketingSmsConsentEvent(input);
   } catch (error) {
     console.error("[AHMV marketing consent]", error);
-    return false;
+    return null;
   }
 }
 
