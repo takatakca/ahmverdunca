@@ -27,6 +27,7 @@ import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
+import heroHockey from "@/assets/hero-hockey.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -58,11 +59,11 @@ function Home() {
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
       <section className="relative isolate min-h-[62svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[66svh] md:min-h-[72svh]">
         <img
-          src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-          alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+          src={heroHockey}
+          alt=""
           fetchPriority="high"
           decoding="async"
-          className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-60"
+          className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-80"
         />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.96)_0%,rgba(7,16,43,0.78)_45%,rgba(7,16,43,0.48)_100%)]" aria-hidden />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.18)_0%,rgba(7,16,43,0.32)_45%,rgba(7,16,43,0.96)_100%)]" aria-hidden />
