@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
+  <title id="title">QMAPS — Découvrez les entreprises locales</title>
+  <desc id="desc">Créative publicitaire QMAPS bleu nuit et or pour les familles AHM Verdun.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#07102b"/>
+      <stop offset=".58" stop-color="#0d2858"/>
+      <stop offset="1" stop-color="#174778"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" x2="1">
+      <stop offset="0" stop-color="#ffc928"/>
+      <stop offset="1" stop-color="#f4a81c"/>
+    </linearGradient>
+    <radialGradient id="ice" cx=".12" cy=".2" r=".9">
+      <stop offset="0" stop-color="#bfe9ff" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#bfe9ff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="18"/></filter>
+  </defs>
+  <rect width="1200" height="520" fill="url(#bg)"/>
+  <rect width="1200" height="520" fill="url(#ice)"/>
+  <circle cx="1040" cy="80" r="140" fill="#ffc928" opacity=".1" filter="url(#blur)"/>
+  <path d="M0 420 C170 330 330 470 500 370 S850 250 1200 340" fill="none" stroke="#bde8ff" stroke-opacity=".16" stroke-width="4"/>
+  <path d="M0 455 C220 355 390 485 565 395 S880 305 1200 370" fill="none" stroke="url(#gold)" stroke-opacity=".55" stroke-width="6"/>
+  <g opacity=".2" fill="none" stroke="#fff">
+    <path d="M650 0v520M770 0v520M890 0v520M1010 0v520M1130 0v520"/>
+    <path d="M600 90h600M600 190h600M600 290h600M600 390h600"/>
+  </g>
+  <g transform="translate(72 72)">
+    <path d="M0 62C0 27.8 27.8 0 62 0s62 27.8 62 62c0 42-62 94-62 94S0 104 0 62Z" fill="url(#gold)"/>
+    <circle cx="62" cy="60" r="25" fill="#07102b"/>
+  </g>
+  <text x="220" y="155" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="84" letter-spacing="2">QMAPS</text>
+  <text x="72" y="255" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="48">DÉCOUVREZ LES</text>
+  <text x="72" y="315" fill="#ffc928" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="48">ENTREPRISES LOCALES</text>
+  <text x="72" y="370" fill="#d8e6f4" font-family="Arial,Helvetica,sans-serif" font-size="24">Une vitrine locale propulsée par GROUPE TAKATAK</text>
+  <g transform="translate(72 410)">
+    <rect width="205" height="62" rx="31" fill="url(#gold)"/>
+    <text x="35" y="40" fill="#07102b" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="24">EXPLORER →</text>
+  </g>
+  <g transform="translate(760 105)">
+    <rect width="300" height="310" rx="34" fill="#fff" opacity=".96"/>
+    <rect x="18" y="20" width="264" height="46" rx="23" fill="#edf4f8"/>
+    <circle cx="48" cy="43" r="8" fill="#ffc928"/>
+    <rect x="70" y="36" width="145" height="14" rx="7" fill="#8aa1b5"/>
+    <g fill="#ffc928" stroke="#07102b" stroke-width="7">
+      <path d="M72 126c0-27 22-49 49-49s49 22 49 49c0 34-49 74-49 74s-49-40-49-74Z"/>
+      <path d="M176 180c0-22 18-40 40-40s40 18 40 40c0 29-40 61-40 61s-40-32-40-61Z"/>
+    </g>
+    <circle cx="121" cy="126" r="12" fill="#07102b"/>
+    <circle cx="216" cy="180" r="10" fill="#07102b"/>
+    <path d="M34 260h232" stroke="#d8e4ec" stroke-width="3"/>
+    <circle cx="62" cy="286" r="12" fill="#07102b"/><circle cx="150" cy="286" r="12" fill="#ffc928"/><circle cx="238" cy="286" r="12" fill="#07102b"/>
+  </g>
+</svg>
