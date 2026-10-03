@@ -1,0 +1,26 @@
+{
+  "schedule": [
+    {
+      "type": "game",
+      "team": "M13 B Example",
+      "category": "M13",
+      "date": "2026-10-10",
+      "time": "18:30",
+      "opponent": "Équipe exemple",
+      "arena": "Aréna exemple",
+      "arenaAddress": "123 rue Exemple, Montréal, QC",
+      "mapsUrl": "https://maps.google.com/?q=123+rue+Exemple+Montreal+QC",
+      "sourceUrl": "https://ahmverdun.ca/horaires",
+      "endTime": "19:45",
+      "status": "cancelled"
+    }
+  ],
+  "arenas": [
+    {
+      "name": "Aréna exemple",
+      "address": "123 rue Exemple, Montréal, QC",
+      "mapsUrl": "https://maps.google.com/?q=123+rue+Exemple+Montreal+QC",
+      "sourceUrl": "https://ahmverdun.ca/arenas"
+    }
+  ]
+}
