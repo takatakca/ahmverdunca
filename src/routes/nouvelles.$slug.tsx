@@ -40,7 +40,17 @@ function ArticlePage() {
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const category = NEWS_CATEGORIES.find((c) => c.id === a.category);
   const body = lang === "en" && a.body.en ? a.body.en : a.body.fr;
-  const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
+  const related = NEWS
+    .filter((n) => n.slug !== a.slug)
+    .map((article) => ({
+      article,
+      relevance:
+        (article.category === a.category ? 2 : 0) +
+        (article.teamSlugs.some((slug) => a.teamSlugs.includes(slug)) ? 1 : 0),
+    }))
+    .sort((left, right) => right.relevance - left.relevance)
+    .slice(0, 2)
+    .map(({ article }) => article);
   const teams = a.teamSlugs.map(getTeam).filter(Boolean);
 
   return (
