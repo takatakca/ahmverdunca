@@ -20,12 +20,6 @@ export const Route = createFileRoute("/membership")({
 
 function MembershipPreviewPage() {
   const { lang } = useI18n();
-  const price = PARENT_PREMIUM.weeklyPriceCad.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA", {
-    style: "currency",
-    currency: "CAD",
-    minimumFractionDigits: 2,
-  });
-
   const benefits = [
     { Icon: ShieldCheck, fr: "Navigation sans publicité", en: "Ad-free browsing" },
     { Icon: Bell, fr: "Rappels et changements importants", en: "Reminders and important changes" },
@@ -59,11 +53,15 @@ function MembershipPreviewPage() {
 
           <div className="border border-white/14 bg-white/[0.04] p-6 md:p-8">
             <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">
-              {lang === "fr" ? "Tarif de lancement prévu" : "Planned launch price"}
+              {lang === "fr" ? "Accès AHMV" : "AHMV access"}
             </p>
-            <p className="mt-3 font-display text-6xl font-extrabold uppercase leading-none text-white">
-              {price}
-              <span className="ml-2 text-sm font-bold text-white/50">{lang === "fr" ? "/ semaine" : "/ week"}</span>
+            <p className="mt-3 font-display text-4xl font-extrabold uppercase leading-none text-white">
+              {lang === "fr" ? "Plans gérés par GROUPE TAKATAK" : "Plans managed by GROUPE TAKATAK"}
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-white/55">
+              {lang === "fr"
+                ? "Le prix et la fréquence de facturation sont chargés depuis le catalogue TAKATAK au moment de l’abonnement — jamais codés dans le site AHMV."
+                : "Price and billing cadence are loaded from the TAKATAK catalog at subscription time — never hard-coded in the AHMV site."}
             </p>
 
             <div className="mt-6 space-y-3">
