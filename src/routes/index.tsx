@@ -196,6 +196,81 @@ function Home() {
         </div>
       </section>
 
+      <section className="relative overflow-hidden border-b border-navy/10 bg-competition text-white">
+        <div className="grid min-h-[360px] md:min-h-[430px] lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="relative z-10 flex flex-col justify-center p-6 md:p-10 lg:p-12 xl:pl-[max(3rem,calc((100vw-80rem)/2))]">
+            <p className="eyebrow text-sport-foreground">
+              {lang === "fr" ? "Tournoi M11 · Verdun en vrai" : "U11 Tournament · Real Verdun hockey"}
+            </p>
+            <h2 className="mt-3 max-w-[11ch] font-display text-[clamp(3rem,6vw,6.7rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.045em]">
+              {lang === "fr" ? "Des équipes. Des coupes. Des souvenirs." : "Teams. Trophies. Memories."}
+            </h2>
+            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/65 md:text-base">
+              {lang === "fr"
+                ? "Le nouveau portail s’appuie sur de vraies images AHM Verdun. Les jeunes, les entraîneurs, les familles et les moments de tournoi doivent rester au centre du site."
+                : "The new portal is built around real AHM Verdun photography. Players, coaches, families and tournament moments stay at the centre of the experience."}
+            </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Link
+                to="/galerie/$slug"
+                params={{ slug: "tournoi-m11-2025" }}
+                className="premium-control inline-flex min-h-11 items-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground"
+              >
+                <Images className="size-4" />
+                {lang === "fr" ? "Voir le tournoi M11" : "View U11 tournament"}
+              </Link>
+              <Link
+                to="/equipes/$slug"
+                params={{ slug: "m11" }}
+                className="premium-control inline-flex min-h-11 items-center gap-2 border border-white/18 px-4 text-[10px] font-bold uppercase tracking-[0.14em] text-white hover:border-sport"
+              >
+                {lang === "fr" ? "Entrer dans M11" : "Enter U11"}
+                <ArrowRight className="size-4 text-sport-foreground" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid min-h-[360px] grid-cols-2 grid-rows-2 gap-px bg-white/10 md:min-h-[430px]">
+            <a
+              href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative row-span-2 overflow-hidden bg-navy"
+            >
+              <img
+                src={OFFICIAL_MEDIA.tournamentM11Primary.url}
+                alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_46%,rgba(7,16,43,0.78)_100%)]" />
+              <span className="absolute bottom-4 left-4 bg-competition/88 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
+                {lang === "fr" ? "Archive officielle · M11 2025" : "Official archive · U11 2025"}
+              </span>
+            </a>
+            {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media) => (
+              <a
+                key={media.url}
+                href={media.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative overflow-hidden bg-navy"
+              >
+                <img
+                  src={media.url}
+                  alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.60)_100%)]" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <ScheduleFinder />
 
       {selectedTeams.length > 0 && (
