@@ -647,7 +647,7 @@ jobs:
           while IFS= read -r asset; do
             test -n "$asset" || continue
             echo "  $asset"
-            curl --fail --silent --show-error --location --connect-timeout 15 --max-time 30 --retry 5 --retry-delay 2 --retry-all-errors -o /dev/null "$AHMV_PRODUCTION_URL$asset"
+            scripts/deploy-production-http-smoke.sh status "$asset"
           done <<< "$ASSET_PATHS"
 
           echo "Production homepage and exact release CSS/JS asset verification passed."
