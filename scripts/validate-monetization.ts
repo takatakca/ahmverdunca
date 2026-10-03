@@ -1,3 +1,6 @@
+const takatakAdsEnabled = process.env["VITE_TAKATAK_ADS_ENABLED"] === "true";
+const takatakAdsOrigin = process.env["VITE_TAKATAK_ADS_ORIGIN"] ?? "https://takatak.ca";
+const takatakAdsPublisher = process.env["VITE_TAKATAK_ADS_PUBLISHER"] ?? "ahmv";
 const adsEnabled = process.env["VITE_ADSENSE_ENABLED"] === "true";
 const adsClient = process.env["VITE_ADSENSE_CLIENT"] ?? "";
 const adsSlot = process.env["VITE_ADSENSE_SLOT"] ?? "";
@@ -12,6 +15,21 @@ const supportUrls = [
 ].filter((value): value is string => Boolean(value));
 
 const errors: string[] = [];
+
+if (takatakAdsEnabled) {
+  try {
+    const url = new URL(takatakAdsOrigin);
+    if (url.protocol !== "https:") {
+      errors.push("VITE_TAKATAK_ADS_ORIGIN must use HTTPS when TAKATAK ADS is enabled.");
+    }
+  } catch {
+    errors.push("VITE_TAKATAK_ADS_ORIGIN must be a valid URL when TAKATAK ADS is enabled.");
+  }
+
+  if (!/^[a-z0-9][a-z0-9_-]{1,63}$/i.test(takatakAdsPublisher)) {
+    errors.push("VITE_TAKATAK_ADS_PUBLISHER must be a valid publisher code.");
+  }
+}
 
 if (adsEnabled) {
   if (!/^ca-pub-\d+$/.test(adsClient)) {
@@ -46,5 +64,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `AHM Verdun monetization check passed. AdSense=${adsEnabled ? (adsSlot ? "manual+auto-ready" : "auto-ready") : "off"}; support=${supportEnabled ? "configured" : "off"}.`,
+  `AHM Verdun monetization check passed. TAKATAK_ADS=${takatakAdsEnabled ? takatakAdsPublisher : "off"}; AdSense=${adsEnabled ? (adsSlot ? "manual+auto-ready" : "auto-ready") : "off"}; support=${supportEnabled ? "configured" : "off"}.`,
 );
