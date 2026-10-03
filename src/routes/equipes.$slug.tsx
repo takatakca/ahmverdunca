@@ -161,56 +161,138 @@ function TeamPage() {
       />
 
       <div className="container-site space-y-14 py-8 md:py-12">
-        <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
-          <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
-            <img
-              src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
-              alt={lang === "fr" ? "Archive photographique publique AHM Verdun" : "AHM Verdun public photo archive"}
-              loading="eager"
-              decoding="async"
-              className="absolute inset-0 size-full object-cover"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.82))]" />
-            <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Vie AHMV" : "AHMV life"}</p>
-              <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] sm:text-5xl">
-                {team.code} · {l(team.ages)}
-              </p>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
-                {lang === "fr"
-                  ? "Une entrée directe vers ce qui compte pour cette catégorie : horaires, équipes publiées, arénas, nouvelles et ressources."
-                  : "A direct route to what matters for this category: schedules, published teams, arenas, news and resources."}
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
-            <div>
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Repères rapides" : "Quick facts"}</p>
-              <div className="mt-5 border-y border-white/12">
-                <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
-                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Catégorie" : "Category"}</span>
-                  <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
+        {exactTeam ? (
+          <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.35fr_0.65fr]">
+            <div className="relative min-h-[320px] overflow-hidden sm:min-h-[410px]">
+              <img
+                src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
+                alt={lang === "fr" ? "Photo d’ambiance issue des archives publiques AHM Verdun" : "Atmosphere photo from AHM Verdun public archives"}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.10),rgba(7,16,43,0.88))]" />
+              <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-9">
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Hub public d’équipe" : "Public team hub"}
+                </p>
+                <p className="mt-2 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl md:text-6xl">
+                  {exactTeam.name}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">
+                  <span className="border border-white/18 px-2.5 py-1">{team.code}</span>
+                  <span className="border border-white/18 px-2.5 py-1">{exactTeam.level}</span>
+                  <span className="border border-white/18 px-2.5 py-1">#{exactTeam.legacyScheduleTeamId.slice(-4)}</span>
                 </div>
-                <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
-                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes publiées" : "Published teams"}</span>
-                  <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
-                </div>
-                <div className="flex items-end justify-between gap-4 py-4">
-                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Saison" : "Season"}</span>
-                  <span className="font-display text-xl font-extrabold uppercase">2026–2027</span>
-                </div>
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
+                  {lang === "fr"
+                    ? "Photo d’archive AHMV utilisée comme ambiance; elle n’est pas présentée comme une photo spécifique de cette équipe."
+                    : "AHMV archive photo used for atmosphere; it is not presented as a photo of this specific team."}
+                </p>
               </div>
             </div>
-            <a
-              href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/55 hover:text-white"
-            >
-              {lang === "fr" ? "Archives publiques AHMV" : "AHMV public archives"} <ArrowRight className="size-3.5" />
-            </a>
-          </div>
-        </section>
+
+            <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
+              <div>
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Accès officiels" : "Official access"}
+                </p>
+                <div className="mt-5 border-y border-white/12">
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
+                      {lang === "fr" ? "Catégorie" : "Category"}
+                    </span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
+                      {lang === "fr" ? "Niveau" : "Level"}
+                    </span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{exactTeam.level}</span>
+                  </div>
+                  <div className="py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">
+                      {lang === "fr" ? "Référence publique" : "Public reference"}
+                    </span>
+                    <p className="mt-2 break-all font-mono text-sm text-white/78">{exactTeam.legacyScheduleTeamId}</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-7 grid gap-2">
+                <a
+                  href={legacyTeamScheduleUrl(exactTeam)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-control flex min-h-12 items-center justify-between bg-sport px-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-sport-foreground"
+                >
+                  {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                  <CalendarDays className="size-4" />
+                </a>
+                <a
+                  href={officialTeamResultsUrl(exactTeam)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-control flex min-h-12 items-center justify-between border border-white/18 px-4 font-display text-sm font-bold uppercase tracking-[0.1em] text-white"
+                >
+                  {lang === "fr" ? "Résultats / classement" : "Results / standings"}
+                  <ExternalLink className="size-4" />
+                </a>
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
+            <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
+              <img
+                src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
+                alt={lang === "fr" ? "Archive photographique publique AHM Verdun" : "AHM Verdun public photo archive"}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.82))]" />
+              <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Vie AHMV" : "AHMV life"}</p>
+                <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] sm:text-5xl">
+                  {team.code} · {l(team.ages)}
+                </p>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
+                  {lang === "fr"
+                    ? "Une entrée directe vers ce qui compte pour cette catégorie : horaires, équipes publiées, arénas, nouvelles et ressources."
+                    : "A direct route to what matters for this category: schedules, published teams, arenas, news and resources."}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
+              <div>
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Repères rapides" : "Quick facts"}</p>
+                <div className="mt-5 border-y border-white/12">
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Catégorie" : "Category"}</span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes publiées" : "Published teams"}</span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-4 py-4">
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Saison" : "Season"}</span>
+                    <span className="font-display text-xl font-extrabold uppercase">2026–2027</span>
+                  </div>
+                </div>
+              </div>
+              <a
+                href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-6 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/55 hover:text-white"
+              >
+                {lang === "fr" ? "Archives publiques AHMV" : "AHMV public archives"} <ArrowRight className="size-3.5" />
+              </a>
+            </div>
+          </section>
+        )}
         <section
           aria-labelledby="team-command-title"
           className="overflow-hidden border border-navy/12 bg-background"
