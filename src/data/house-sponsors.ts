@@ -4,13 +4,14 @@ export type HouseSponsor = {
   short: string;
   tagline: { fr: string; en: string };
   href?: string;
+  creative?: string;
   group: "takatak" | "hospitality" | "food" | "local";
 };
 
 export const HOUSE_SPONSORS: HouseSponsor[] = [
-  { id: "qmaps", name: "QMAPS", short: "QM", tagline: { fr: "Découvrir les entreprises locales.", en: "Discover local businesses." }, href: "https://qmaps.ca", group: "takatak" },
-  { id: "flexs", name: "FLEXS", short: "FX", tagline: { fr: "Demandes locales et génération de leads.", en: "Local requests and lead generation." }, group: "takatak" },
-  { id: "r2nette", name: "R2NETTE", short: "R2", tagline: { fr: "Réservation simple de services.", en: "Simple service booking." }, group: "takatak" },
+  { id: "qmaps", name: "QMAPS", short: "QM", tagline: { fr: "Découvrir les entreprises locales.", en: "Discover local businesses." }, href: "https://qmaps.ca", creative: "/sponsor-creatives/qmaps.svg", group: "takatak" },
+  { id: "flexs", name: "FLEXS", short: "FX", tagline: { fr: "Demandes locales et génération de leads.", en: "Local requests and lead generation." }, creative: "/sponsor-creatives/flexs.svg", group: "takatak" },
+  { id: "r2nette", name: "R2NETTE", short: "R2", tagline: { fr: "Réservation simple de services.", en: "Simple service booking." }, creative: "/sponsor-creatives/r2nette.svg", group: "takatak" },
   { id: "havana", name: "Havana Resort", short: "HR", tagline: { fr: "Escapades, événements et plein air.", en: "Getaways, events and outdoor fun." }, href: "https://havanaresort.ca", group: "hospitality" },
   { id: "destination-camping", name: "Destination Camping", short: "DC", tagline: { fr: "Idées et destinations plein air.", en: "Outdoor ideas and destinations." }, group: "hospitality" },
   { id: "ooeuf", name: "OOEUF", short: "OO", tagline: { fr: "Déjeuners et brunchs montréalais.", en: "Montreal breakfast and brunch." }, href: "https://ooeuf.ca", group: "food" },
