@@ -52,7 +52,7 @@ jobs:
         working-directory: services/ahmv-voice-ai
         run: |
           set -euo pipefail
-          npm run verify
+          npm run check
 
       - name: Audit production dependency vulnerabilities
         working-directory: services/ahmv-voice-ai
