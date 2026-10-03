@@ -3,10 +3,11 @@ import { ChevronLeft, ChevronRight, ExternalLink, Megaphone, Pause, Sparkles } f
 import { HOUSE_SPONSORS, houseSponsorsForPlacement } from "@/data/house-sponsors";
 import { useI18n } from "@/lib/i18n";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
+import { TakatakAdSlot } from "@/components/takatak-ad-slot";
 
 const ROTATION_MS = 6500;
 
-export function HouseSponsorSlot({
+function HouseSponsorInventory({
   placement,
   className = "",
   count = 2,
@@ -160,5 +161,34 @@ export function HouseSponsorSlot({
         </span>
       </div>
     </aside>
+  );
+}
+
+
+type HouseSponsorSlotProps = {
+  placement: string;
+  className?: string;
+  count?: number;
+  compact?: boolean;
+  network?: boolean;
+};
+
+export function HouseSponsorSlot({
+  network = true,
+  ...props
+}: HouseSponsorSlotProps) {
+  const { isDemoMember } = useDemoMemberMode();
+  if (isDemoMember) return null;
+
+  const fallback = <HouseSponsorInventory {...props} />;
+  if (!network) return fallback;
+
+  return (
+    <TakatakAdSlot
+      placement={props.placement}
+      className={props.className}
+      compact={props.compact}
+      fallback={fallback}
+    />
   );
 }
