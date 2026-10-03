@@ -5,14 +5,17 @@ This runbook covers the infrastructure step after the AHMV Voice integration CI 
 ## Current integration authority
 
 - Repository: `takatakca/ahmverdunca`
-- Website Voice integration: draft PR **#192**\n- Standalone realtime Voice service: draft PR **#184**
+- Production code authority: `main`
+- Website Voice integration: merged into `main`
+- Standalone realtime Voice service: merged into `main`
+- Current Voice service line: v0.9 preproduction
 - Production website: `https://ahmverdun.ca`
 - Dedicated realtime host: `https://voice.ahmverdun.ca`
 - Public AHMV phone: `+1 581-666-6246`
 
 The live phone webhook stays unchanged until every gate below passes.
 
-Before any infrastructure operation, review `docs/VOICE_SECRETS_AND_ENVIRONMENTS.md`. Never place secret values in Git.
+Before any infrastructure operation, review `docs/VOICE_SECRETS_AND_ENVIRONMENTS.md` and `docs/CURSOR_TWILIO_HANDOFF.md`. Never place secret values in Git.
 
 Useful repository workflows:
 - `.github/workflows/voice-db-dry-run.yml` — project-locked Supabase migration preview only;
