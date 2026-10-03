@@ -143,11 +143,14 @@ export function SiteHeader() {
       <div className={cn("container-site flex items-center justify-between gap-3 transition-[height] duration-300", scrolled ? "h-[68px] lg:h-[72px]" : "h-[76px] lg:h-[86px]")}>
         <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label={t("nav.home")}>
           <LogoSlot className="transition-transform duration-300 group-hover:scale-[1.045]" />
-          <span className="hidden min-w-0 items-center gap-3 sm:flex">
-            <span className="h-8 w-px bg-navy-foreground/20" aria-hidden />
+          <span className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <span className="hidden h-8 w-px bg-navy-foreground/20 sm:block" aria-hidden />
             <span className="flex min-w-0 flex-col leading-none">
-              <span className="font-display text-[1.48rem] font-extrabold uppercase tracking-[-0.025em]">AHM Verdun</span>
-              <span className="mt-1 truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/55">
+              <span className="font-display text-[1.05rem] font-extrabold uppercase tracking-[-0.025em] xs:text-[1.15rem] sm:text-[1.48rem]">
+                <span className="sm:hidden">AHMV</span>
+                <span className="hidden sm:inline">AHM Verdun</span>
+              </span>
+              <span className="mt-1 hidden truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/55 sm:block">
                 {lang === "fr" ? "Leafs · Louves · Hockey mineur" : "Leafs · Louves · Minor hockey"}
               </span>
             </span>
@@ -222,10 +225,10 @@ export function SiteHeader() {
           >
             <Link to="/recherche"><Search className="size-5" /></Link>
           </Button>
-          <Button asChild variant="sport" size="sm" className="px-2.5 sm:hidden">
+          <Button asChild variant="sport" size="sm" className="h-11 gap-1.5 px-2 sm:hidden">
             <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
               <CalendarDays className="size-4" />
-              <span className="text-xs">{lang === "fr" ? "Horaire" : "Schedule"}</span>
+              <span className="hidden text-[11px] xs:inline">{lang === "fr" ? "Horaire" : "Schedule"}</span>
             </Link>
           </Button>
           <Button asChild variant="sport" size="sm" className="hidden sm:inline-flex">
@@ -237,7 +240,7 @@ export function SiteHeader() {
           <button
             type="button"
             className={cn(
-              "premium-control tap-target inline-flex h-11 shrink-0 items-center justify-center gap-2 border px-3 font-display text-xs font-extrabold uppercase tracking-[0.12em] lg:hidden",
+              "premium-control tap-target inline-flex h-11 shrink-0 items-center justify-center gap-1.5 border px-2.5 font-display text-[11px] font-extrabold uppercase tracking-[0.1em] xs:gap-2 xs:px-3 xs:text-xs xs:tracking-[0.12em] lg:hidden",
               open
                 ? "border-sport bg-sport text-sport-foreground"
                 : "border-navy-foreground/18 bg-navy-foreground/[0.035] text-navy-foreground hover:bg-navy-foreground/10",
@@ -248,7 +251,7 @@ export function SiteHeader() {
             onClick={() => setOpen((v) => !v)}
           >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
-            <span>{open ? (lang === "fr" ? "Fermer" : "Close") : "Menu"}</span>
+            <span className="hidden min-[360px]:inline">{open ? (lang === "fr" ? "Fermer" : "Close") : "Menu"}</span>
           </button>
         </div>
       </div>
@@ -320,23 +323,29 @@ export function SiteHeader() {
               {lang === "fr" ? "Essentiel pour les familles" : "Family essentials"}
             </p>
 
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-3 grid gap-px overflow-hidden border border-navy-foreground/12 bg-navy-foreground/12 sm:grid-cols-2">
               {[
-                { key: "schedule", to: "/horaires", icon: CalendarDays },
-                { key: "teams", to: "/equipes", icon: Users },
-                { key: "registration", to: "/inscriptions", icon: LogIn },
-                { key: "arenas", to: "/arenas", icon: MapPin },
-              ].map(({ key, to, icon: Icon }) => (
+                { key: "schedule", to: "/horaires", icon: CalendarDays, number: "01" },
+                { key: "teams", to: "/equipes", icon: Users, number: "02" },
+                { key: "registration", to: "/inscriptions", icon: LogIn, number: "03" },
+                { key: "arenas", to: "/arenas", icon: MapPin, number: "04" },
+              ].map(({ key, to, icon: Icon, number }) => (
                 <Link
                   key={key}
                   to={to}
-                  className="interactive-surface group min-h-28 border border-navy-foreground/15 bg-navy-foreground/[0.035] p-4 text-navy-foreground/90"
-                  activeProps={{ className: "border-sport bg-sport/10 text-sport-foreground" }}
+                  className="group flex min-h-[78px] items-center gap-4 bg-competition px-4 py-3 text-navy-foreground/90 transition-colors hover:bg-navy-foreground/[0.055]"
+                  activeProps={{ className: "!bg-sport/10 !text-sport-foreground" }}
                 >
-                  <Icon className="size-5 text-sport-foreground" />
-                  <p className="mt-5 font-display text-xl font-extrabold uppercase leading-[0.92]">
-                    {t(`nav.${key}` as TranslationKey)}
-                  </p>
+                  <span className="flex size-10 shrink-0 items-center justify-center border border-navy-foreground/14">
+                    <Icon className="size-5 text-sport-foreground" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">{number}</span>
+                    <span className="mt-1 block font-display text-xl font-extrabold uppercase leading-none">
+                      {t(`nav.${key}` as TranslationKey)}
+                    </span>
+                  </span>
+                  <ChevronDown className="size-4 -rotate-90 text-white/25 transition-transform group-hover:translate-x-0.5 group-hover:text-sport-foreground" />
                 </Link>
               ))}
             </div>
