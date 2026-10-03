@@ -68,7 +68,13 @@ function httpsUrl(value) {
   }
 }
 
-function accessFromBootstrap(data) {
+function accessFromBootstrap(
+  data,
+  {
+    accessMode = config.accessMode,
+    paidAccessPolicy = config.paidAccessPolicy
+  } = {}
+) {
   const tier = clean(data?.contact?.accessTier, 30) || 'guest';
   const trialActive = Boolean(data?.entitlement?.trialActive);
   const premium = tier === 'premium' || Boolean(data?.entitlement?.premium);
@@ -78,7 +84,7 @@ function accessFromBootstrap(data) {
   if (tier === 'blocked') {
     return {
       allowed: false,
-      mode: config.accessMode,
+      mode: accessMode,
       reason: 'blocked',
       tier,
       premium: false,
@@ -88,7 +94,7 @@ function accessFromBootstrap(data) {
     };
   }
 
-  if (config.accessMode === 'free_beta') {
+  if (accessMode === 'free_beta') {
     return {
       allowed: true,
       mode: 'free_beta',
@@ -103,7 +109,7 @@ function accessFromBootstrap(data) {
 
   const fullAccess =
     premium ||
-    (config.paidAccessPolicy !== 'premium_only' && trialActive);
+    (paidAccessPolicy !== 'premium_only' && trialActive);
   const allowed = fullAccess || nextEvent;
 
   return {
@@ -132,7 +138,7 @@ export async function bootstrapVoiceCaller(session) {
       transactionalSmsAllowed: isSmsCapableCaller(session.from),
       access: {
         allowed: true,
-        mode: config.accessMode,
+        mode: accessMode,
         reason: 'fixture',
         tier: 'trial',
         premium: false,
