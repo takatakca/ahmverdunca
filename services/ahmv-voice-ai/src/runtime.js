@@ -7,6 +7,7 @@ import { createDrainController } from './drain.js';
 import { createConcurrencyController } from './concurrency.js';
 import { safeRequestPath } from './log-safe.js';
 import { recordBridgeInteraction } from './ahm-bridge.js';
+import { finalizeUsageCost } from './usage.js';
 
 export const drain = createDrainController({ graceMs: config.shutdownGraceMs });
 export const concurrency = createConcurrencyController({
@@ -82,6 +83,14 @@ export async function finalizeSession(session, request, reason) {
   concurrency.release(session.callSid);
   session.endedAt ||= new Date().toISOString();
   session.endReason ||= reason || null;
+  if (!Number.isFinite(session.sessionDurationSeconds)) {
+    const startedAt = Date.parse(session.createdAt || '');
+    const endedAt = Date.parse(session.endedAt || '');
+    if (Number.isFinite(startedAt) && Number.isFinite(endedAt) && endedAt >= startedAt) {
+      session.sessionDurationSeconds = Math.round((endedAt - startedAt) / 1000);
+    }
+  }
+  finalizeUsageCost(session);
   saveSession(session);
 
   if (!session.auditRecorded) {
