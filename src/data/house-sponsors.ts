@@ -15,12 +15,12 @@ export const HOUSE_SPONSORS: HouseSponsor[] = [
   { id: "havana", name: "Havana Resort", short: "HR", tagline: { fr: "Escapades, événements et plein air.", en: "Getaways, events and outdoor fun." }, href: "https://havanaresort.ca", creative: "/sponsor-creatives/havana.svg", group: "hospitality" },
   { id: "destination-camping", name: "Destination Camping", short: "DC", tagline: { fr: "Idées et destinations plein air.", en: "Outdoor ideas and destinations." }, creative: "/sponsor-creatives/destination-camping.svg", group: "hospitality" },
   { id: "ooeuf", name: "OOEUF", short: "OO", tagline: { fr: "Déjeuners et brunchs montréalais.", en: "Montreal breakfast and brunch." }, href: "https://ooeuf.ca", creative: "/sponsor-creatives/ooeuf.svg", group: "food" },
-  { id: "viennoise", name: "La Viennoise", short: "LV", tagline: { fr: "Boulangerie, café et gourmandises.", en: "Bakery, coffee and treats." }, href: "https://viennoise.ca", group: "food" },
+  { id: "viennoise", name: "La Viennoise", short: "LV", tagline: { fr: "Boulangerie, café et gourmandises.", en: "Bakery, coffee and treats." }, href: "https://viennoise.ca", creative: "/sponsor-creatives/viennoise.svg", group: "food" },
   { id: "ppp", name: "PPP Pizzeria", short: "PPP", tagline: { fr: "Pizza montréalaise.", en: "Montreal pizza." }, href: "https://pppmtl.com", creative: "/sponsor-creatives/ppp.svg", group: "food" },
-  { id: "bolon", name: "Bolon Café", short: "BC", tagline: { fr: "Café de quartier.", en: "Neighbourhood café." }, href: "https://bolon.ca", group: "food" },
-  { id: "po-poulet", name: "PO Poulet", short: "PO", tagline: { fr: "Poulet et repas généreux.", en: "Chicken and generous meals." }, href: "https://popoulet.ca", group: "food" },
-  { id: "nutrishake", name: "Nutri Shake", short: "NS", tagline: { fr: "Boissons et options protéinées.", en: "Protein drinks and options." }, href: "https://nutrishake.ca", group: "food" },
-  { id: "pi-pita", name: "Pi Pita", short: "PI", tagline: { fr: "Pitas et repas rapides.", en: "Pitas and quick meals." }, href: "https://pipita.ca", group: "food" },
+  { id: "bolon", name: "Bolon Café", short: "BC", tagline: { fr: "Café de quartier.", en: "Neighbourhood café." }, href: "https://bolon.ca", creative: "/sponsor-creatives/bolon.svg", group: "food" },
+  { id: "po-poulet", name: "PO Poulet", short: "PO", tagline: { fr: "Poulet et repas généreux.", en: "Chicken and generous meals." }, href: "https://popoulet.ca", creative: "/sponsor-creatives/po-poulet.svg", group: "food" },
+  { id: "nutrishake", name: "Nutri Shake", short: "NS", tagline: { fr: "Boissons et options protéinées.", en: "Protein drinks and options." }, href: "https://nutrishake.ca", creative: "/sponsor-creatives/nutrishake.svg", group: "food" },
+  { id: "pi-pita", name: "Pi Pita", short: "PI", tagline: { fr: "Pitas et repas rapides.", en: "Pitas and quick meals." }, href: "https://pipita.ca", creative: "/sponsor-creatives/pi-pita.svg", group: "food" },
 ] as const;
 
 export function houseSponsorsForPlacement(seed: string, count = 2) {
