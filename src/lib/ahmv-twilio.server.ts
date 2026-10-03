@@ -6,6 +6,20 @@ import {
   scheduleAnswer,
   type PhoneLanguage,
 } from "./ahmv-phone.ts";
+import {
+  normalizePhoneE164,
+  safeRecordPhoneInteraction,
+  safeTouchPhoneContact,
+} from "../features/ahmv-phone/contacts/store.server.ts";
+import {
+  sendTransactionalSms,
+  updateSmsDeliveryStatus,
+} from "../features/ahmv-phone/messaging/send.server.ts";
+import { nextEventService } from "../features/ahmv-phone/schedules/service.ts";
+import {
+  compactTeamChoices,
+  resolvePublicTeam,
+} from "../features/ahmv-phone/teams/resolve.ts";
 
 const ROOT = "/api/ahmv/twilio";
 const routes = new Set([`${ROOT}/sms`, `${ROOT}/voice`, `${ROOT}/status`]);
@@ -37,6 +51,22 @@ function urgent(settings: Settings, lang: PhoneLanguage) {
   if (!Number.isFinite(until) || until <= Date.now()) return "";
   return (settings[lang === "fr" ? "AHMV_URGENT_FR" : "AHMV_URGENT_EN"] ?? "").slice(0, 1000);
 }
+function referenceHash(value: string) {
+  return createHash("sha256").update(value).digest("hex").slice(0, 16);
+}
+function spokenAnswer(text: string, lang: PhoneLanguage) {
+  return text.replace(
+    /https:\/\/\S+/g,
+    lang === "fr"
+      ? "Consultez ahmverdun point c a pour les détails."
+      : "Visit ahmverdun dot c a for details.",
+  );
+}
+function compactSmsFallback(lang: PhoneLanguage) {
+  return lang === "fr"
+    ? "AHMV: répondez à ce texto avec votre équipe ou groupe (ex. M11 groupe 5). Aide: AIDE. https://ahmverdun.ca/horaires"
+    : "AHMV: reply with your team or group (e.g. M11 group 5). Help: HELP. https://ahmverdun.ca/horaires";
+}
 
 export async function handleAhmvTwilio(
   request: Request,
@@ -50,10 +80,12 @@ export async function handleAhmvTwilio(
       headers: { ...headers, Allow: "POST" },
     });
   if (settings["AHMV_PHONE_ENABLED"] !== "true") return failure(503);
+
   const token = settings["TWILIO_AUTH_TOKEN"];
   const account = settings["TWILIO_ACCOUNT_SID"];
   const origin = settings["AHMV_WEBHOOK_ORIGIN"];
   if (!token || !account || !origin) return failure(503);
+
   let publicOrigin: URL;
   try {
     publicOrigin = new URL(origin);
@@ -61,6 +93,7 @@ export async function handleAhmvTwilio(
   } catch {
     return failure(503);
   }
+
   if (
     !request.headers
       .get("content-type")
@@ -68,7 +101,7 @@ export async function handleAhmvTwilio(
       .startsWith("application/x-www-form-urlencoded")
   )
     return failure(415);
-  // Enforce the limit while streaming, even when Content-Length is absent.
+
   const reader = request.body?.getReader();
   if (!reader) return failure(400);
   const chunks: Uint8Array[] = [];
@@ -87,16 +120,16 @@ export async function handleAhmvTwilio(
   } catch {
     return failure(400);
   }
+
   const body = Buffer.concat(chunks);
   const form = new URLSearchParams(body.toString("utf8"));
   const params: Record<string, string> = Object.create(null);
   for (const [key, value] of form) {
-    // The supported Twilio forms use scalar fields. Reject ambiguous duplicates.
     if (Object.hasOwn(params, key)) return failure(400);
     params[key] = value;
   }
+
   const signature = request.headers.get("x-twilio-signature") ?? "";
-  // Trusted configured origin, never untrusted Host or X-Forwarded-* headers.
   const publicUrl = `${publicOrigin.origin}${url.pathname}${url.search}`;
   if (
     !signature ||
@@ -104,87 +137,195 @@ export async function handleAhmvTwilio(
     params["AccountSid"] !== account
   )
     return failure(403);
+
   const sid = params["MessageSid"] ?? params["CallSid"] ?? "";
+  const ref = referenceHash(sid);
   const log = (outcome: string) =>
     console.info(
       JSON.stringify({
         service: "ahmv-phone",
         channel: url.pathname.split("/").pop(),
-        reference: createHash("sha256").update(sid).digest("hex").slice(0, 16),
+        reference: ref,
         outcome,
       }),
     );
+
   if (url.pathname === `${ROOT}/status`) {
+    try {
+      await updateSmsDeliveryStatus(params["MessageSid"] ?? "", params["MessageStatus"] ?? "");
+    } catch (error) {
+      console.error("[AHMV SMS delivery callback]", error);
+    }
     log("status-received");
     return new Response(null, { status: 204, headers });
   }
+
   if (params["To"] !== (settings["AHMV_PUBLIC_PHONE"] ?? "+15816666246")) return failure(403);
+
   try {
     if (url.pathname === `${ROOT}/sms`) {
       const response = new twilio.twiml.MessagingResponse();
       const { lang, query } = parseSms(params["Body"] ?? "");
-      // Twilio Advanced Opt-Out owns these keywords. Do not override its reply.
+      const caller = normalizePhoneE164(params["From"]);
+      const contact = caller
+        ? await safeTouchPhoneContact({
+            phoneE164: caller,
+            language: lang,
+            smsRequested: true,
+            settings,
+          })
+        : null;
+
       if (
         params["OptOutType"] ||
         /^(STOP|STOPALL|UNSUBSCRIBE|CANCEL|END|QUIT|START)$/i.test(query)
       ) {
+        await safeRecordPhoneInteraction({
+          contactId: contact?.id,
+          channel: "sms",
+          providerReferenceHash: ref,
+          intent: "opt-out",
+          outcome: "managed-by-twilio",
+        });
         log("opt-out-managed-by-twilio");
         return xml(response.toString());
       }
+
       if (!query || /^(HELP|AIDE|FR|EN)$/i.test(query)) {
         response.message(
           lang === "fr"
-            ? "AHMV: envoyez votre équipe (ex. M12B). Pour l’anglais: EN M12B. https://ahmverdun.ca/horaires"
-            : "AHMV: text your team (e.g. EN M12B). https://ahmverdun.ca/horaires",
+            ? "AHMV: envoyez votre équipe ou groupe. Ex.: M11 groupe 5. EN pour anglais. Service d'information par GROUPE TAKATAK. https://ahmverdun.ca/horaires"
+            : "AHMV: text your team or group. Example: M11 group 5. Information service by GROUPE TAKATAK. https://ahmverdun.ca/horaires",
         );
+        await safeRecordPhoneInteraction({
+          contactId: contact?.id,
+          channel: "sms",
+          providerReferenceHash: ref,
+          intent: "help",
+          outcome: "help",
+        });
         log("help");
-      } else {
-        const answer = scheduleAnswer(
-          query,
-          lang,
-          officialPhoneSchedule,
-          new Date(),
-          aliases(settings),
-        );
-        const alert = urgent(settings, lang);
-        response.message(`${alert ? `${alert.slice(0, 240)}\n` : ""}${answer.text}`);
-        log(answer.outcome);
+        return xml(response.toString());
       }
+
+      const resolution = resolvePublicTeam(query);
+      if (resolution.kind === "ambiguous") {
+        const choices = compactTeamChoices(resolution.teams, 4).join("; ");
+        response.message(
+          lang === "fr"
+            ? `AHMV: précisez l'équipe. Choix trouvés: ${choices}. https://ahmverdun.ca/equipes`
+            : `AHMV: please specify the team. Matches: ${choices}. https://ahmverdun.ca/equipes`,
+        );
+        await safeRecordPhoneInteraction({
+          contactId: contact?.id,
+          channel: "sms",
+          providerReferenceHash: ref,
+          intent: "team-lookup",
+          outcome: "ambiguous",
+          teamCode: query.slice(0, 80),
+        });
+        log("team-ambiguous");
+        return xml(response.toString());
+      }
+
+      const answer = nextEventService(query, lang, aliases(settings));
+      const alert = urgent(settings, lang);
+      response.message(`${alert ? `${alert.slice(0, 240)}\n` : ""}${answer.smsText}`);
+      await safeRecordPhoneInteraction({
+        contactId: contact?.id,
+        channel: "sms",
+        providerReferenceHash: ref,
+        intent: "next-event",
+        outcome: answer.outcome,
+        teamCode: answer.group ?? query.slice(0, 80),
+        arenaSlug: answer.directions?.arenaSlug,
+      });
+      log(answer.outcome);
       return xml(response.toString());
     }
+
     const voice = new twilio.twiml.VoiceResponse();
     const step = url.searchParams.get("step") ?? "language";
     const lang: PhoneLanguage = url.searchParams.get("lang") === "en" ? "en" : "fr";
+    const smsRequested = url.searchParams.get("sms") === "1";
     const language = lang === "fr" ? "fr-CA" : "en-US";
+    const caller = normalizePhoneE164(params["From"]);
     const say = (text: string) =>
       voice.say({ language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" }, text);
-    const action = (next: string, attempt = 0) =>
-      `${ROOT}/voice?step=${next}&lang=${lang}&attempt=${attempt}`;
+    const action = (next: string, attempt = 0, sms = smsRequested) =>
+      `${ROOT}/voice?step=${next}&lang=${lang}&attempt=${attempt}&sms=${sms ? "1" : "0"}`;
     const attempt = Number(url.searchParams.get("attempt") ?? "0");
     if (!Number.isInteger(attempt) || attempt < 0 || attempt > 3) return failure(400);
+
     if (step === "language") {
       const gather = voice.gather({
         input: ["dtmf"],
         numDigits: 1,
         action: `${ROOT}/voice?step=select&attempt=${attempt}`,
         method: "POST",
-        timeout: 6,
+        timeout: 4,
       });
       gather.say(
         { language: "fr-CA", voice: "Polly.Chantal" },
-        "Bienvenue à AHM Verdun. Pour le français, appuyez sur 1.",
+        "Bienvenue à l'Association du hockey mineur de Verdun. Pour le français, appuyez sur 1.",
       );
-      gather.say({ language: "en-US", voice: "Polly.Joanna" }, "For English, press 2.");
+      gather.say(
+        { language: "en-US", voice: "Polly.Joanna" },
+        "Welcome to the Verdun Minor Hockey Association. For English, press 2.",
+      );
       voice.hangup();
     } else if (step === "select") {
       if (!["1", "2"].includes(params["Digits"] ?? "")) {
-        if (attempt < 2) voice.redirect({ method: "POST" }, action("language", attempt + 1));
-        else voice.hangup();
+        if (attempt < 1) {
+          voice.redirect({ method: "POST" }, `${ROOT}/voice?step=language&attempt=${attempt + 1}`);
+        } else {
+          voice.hangup();
+        }
       } else {
+        const selectedLang: PhoneLanguage = params["Digits"] === "2" ? "en" : "fr";
+        if (caller) {
+          await safeTouchPhoneContact({
+            phoneE164: caller,
+            language: selectedLang,
+            settings,
+          });
+        }
         voice.redirect(
           { method: "POST" },
-          `${ROOT}/voice?step=menu&lang=${params["Digits"] === "2" ? "en" : "fr"}`,
+          `${ROOT}/voice?step=delivery&lang=${selectedLang}&attempt=0&sms=0`,
         );
+      }
+    } else if (step === "delivery") {
+      const gather = voice.gather({
+        input: ["dtmf"],
+        numDigits: 1,
+        action: action("delivery-choice"),
+        method: "POST",
+        timeout: 4,
+      });
+      gather.say(
+        { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
+        lang === "fr"
+          ? "Pour recevoir par texto les renseignements que vous demandez pendant cet appel, appuyez sur 1. Ce service est offert par GROUPE TAKATAK avec une période découverte de 30 jours. Pour voix seulement, appuyez sur 2."
+          : "To receive the information you request during this call by text message, press 1. This GROUPE TAKATAK service includes a 30 day introductory period. For voice only, press 2.",
+      );
+      voice.hangup();
+    } else if (step === "delivery-choice") {
+      const digit = params["Digits"] ?? "";
+      if (!["1", "2"].includes(digit)) {
+        if (attempt < 1) voice.redirect({ method: "POST" }, action("delivery", attempt + 1, false));
+        else voice.redirect({ method: "POST" }, action("menu", 0, false));
+      } else {
+        const wantsSms = digit === "1" && Boolean(caller);
+        if (caller) {
+          await safeTouchPhoneContact({
+            phoneE164: caller,
+            language: lang,
+            smsRequested: wantsSms,
+            settings,
+          });
+        }
+        voice.redirect({ method: "POST" }, action("menu", 0, wantsSms));
       }
     } else if (step === "menu") {
       const alert = urgent(settings, lang);
@@ -192,47 +333,47 @@ export async function handleAhmvTwilio(
       const gather = voice.gather({
         input: ["dtmf"],
         numDigits: 1,
-        action: action("choice", attempt),
+        action: action("choice"),
         method: "POST",
-        timeout: 6,
+        timeout: 4,
       });
       gather.say(
         { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
         lang === "fr"
-          ? "Pour l’horaire de votre équipe, appuyez sur 1. Pour les équipes, 2. Pour les arénas, 3."
-          : "For your team schedule, press 1. For teams, 2. For arenas, 3.",
+          ? "Pour votre prochain match ou entraînement, appuyez sur 1. Pour entendre les équipes disponibles, 2. Pour les arénas, 3."
+          : "For your next game or practice, press 1. For available teams, press 2. For arenas, press 3.",
       );
       voice.hangup();
     } else if (step === "choice") {
-      if (params["Digits"] === "1") voice.redirect({ method: "POST" }, action("team"));
-      else if (["2", "3"].includes(params["Digits"] ?? "")) {
+      if (params["Digits"] === "1") {
+        voice.redirect({ method: "POST" }, action("team"));
+      } else if (["2", "3"].includes(params["Digits"] ?? "")) {
         const items = [
           ...new Set(
             officialPhoneSchedule.activities.map((item) =>
               params["Digits"] === "2" ? item.group : item.venue,
             ),
           ),
-        ];
+        ].slice(0, 8);
         say(
           lang === "fr"
-            ? "Voici les entrées de la dernière source intégrée."
-            : "These are the entries in the latest integrated source.",
+            ? "Voici les entrées validées dans la source présentement intégrée."
+            : "These are the validated entries in the currently integrated source.",
         );
         say(items.join(". "));
-        say(
-          lang === "fr"
-            ? "Consultez ahmverdun point c a pour la liste complète."
-            : "Visit ahmverdun dot c a for the complete list.",
-        );
+        say(lang === "fr" ? "Merci." : "Thank you.");
         voice.hangup();
-      } else if (attempt < 2) voice.redirect({ method: "POST" }, action("menu", attempt + 1));
-      else voice.hangup();
+      } else if (attempt < 1) {
+        voice.redirect({ method: "POST" }, action("menu", attempt + 1));
+      } else {
+        voice.hangup();
+      }
     } else if (step === "team") {
       const gather = voice.gather({
         input: ["speech"],
         language,
         speechTimeout: "auto",
-        timeout: 6,
+        timeout: 3,
         action: action("answer", attempt),
         method: "POST",
         actionOnEmptyResult: true,
@@ -240,34 +381,125 @@ export async function handleAhmvTwilio(
       gather.say(
         { language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" },
         lang === "fr"
-          ? "Dites le nom exact de votre équipe ou groupe. Vous pouvez aussi envoyer votre code par texto."
-          : "Say your exact team or group name. You can also text your team code.",
+          ? "Dites votre équipe ou votre groupe maintenant."
+          : "Say your team or group now.",
       );
     } else if (step === "answer") {
-      if (!params["SpeechResult"] && attempt < 2)
-        voice.redirect({ method: "POST" }, action("team", attempt + 1));
-      else {
-        const answer = scheduleAnswer(
-          (params["SpeechResult"] ?? "").slice(0, 80),
-          lang,
-          officialPhoneSchedule,
-          new Date(),
-          aliases(settings),
-        );
-        say(
-          answer.text.replace(
-            /https:\/\/\S+/g,
+      const spoken = (params["SpeechResult"] ?? "").slice(0, 80).trim();
+      const contact = caller
+        ? await safeTouchPhoneContact({
+            phoneE164: caller,
+            language: lang,
+            smsRequested,
+            settings,
+          })
+        : null;
+
+      if (!spoken) {
+        if (attempt < 1) {
+          voice.redirect({ method: "POST" }, action("team", attempt + 1));
+        } else {
+          if (smsRequested && caller) {
+            const sent = await sendTransactionalSms({
+              to: caller,
+              body: compactSmsFallback(lang),
+              purpose: "voice-fallback",
+              contactId: contact?.id,
+              settings,
+            });
+            say(
+              sent.sent
+                ? lang === "fr"
+                  ? "Je vous ai envoyé un texto. Répondez simplement avec votre équipe. Merci."
+                  : "I sent you a text. Simply reply with your team. Thank you."
+                : lang === "fr"
+                  ? "Je n'ai pas pu envoyer le texto. Consultez ahmverdun point c a. Merci."
+                  : "I could not send the text. Visit ahmverdun dot c a. Thank you.",
+            );
+          } else {
+            say(
+              lang === "fr"
+                ? "Je n'ai rien entendu. Vous pouvez texter votre équipe au même numéro. Merci."
+                : "I did not hear anything. You can text your team to this same number. Thank you.",
+            );
+          }
+          await safeRecordPhoneInteraction({
+            contactId: contact?.id,
+            channel: "voice",
+            providerReferenceHash: ref,
+            intent: "next-event",
+            outcome: "no-speech",
+          });
+          voice.hangup();
+        }
+      } else {
+        const resolution = resolvePublicTeam(spoken);
+        if (resolution.kind === "ambiguous") {
+          const choices = compactTeamChoices(resolution.teams, 3).join(". ");
+          say(
             lang === "fr"
-              ? "Consultez ahmverdun point c a, page horaires."
-              : "Visit ahmverdun dot c a, schedules page.",
-          ),
-        );
-        log(answer.outcome);
-        voice.hangup();
+              ? `J'ai trouvé plusieurs équipes. ${choices}. Envoyez votre équipe exacte par texto pour aller plus vite.`
+              : `I found multiple teams. ${choices}. Text your exact team for a faster result.`,
+          );
+          if (smsRequested && caller) {
+            await sendTransactionalSms({
+              to: caller,
+              body:
+                lang === "fr"
+                  ? `AHMV: plusieurs équipes correspondent. Répondez avec l'équipe exacte: ${choices}`
+                  : `AHMV: multiple teams match. Reply with the exact team: ${choices}`,
+              purpose: "team-ambiguity",
+              contactId: contact?.id,
+              settings,
+            });
+          }
+          await safeRecordPhoneInteraction({
+            contactId: contact?.id,
+            channel: "voice",
+            providerReferenceHash: ref,
+            intent: "team-lookup",
+            outcome: "ambiguous",
+            teamCode: spoken,
+          });
+          voice.hangup();
+        } else {
+          const answer = nextEventService(spoken, lang, aliases(settings));
+          say(spokenAnswer(answer.text, lang));
+          if (smsRequested && caller) {
+            const sent = await sendTransactionalSms({
+              to: caller,
+              body: answer.smsText,
+              purpose: "voice-next-event",
+              contactId: contact?.id,
+              settings,
+            });
+            if (sent.sent) {
+              say(lang === "fr" ? "Je vous envoie les détails par texto. Merci." : "I am sending the details by text. Thank you.");
+            }
+          } else {
+            say(lang === "fr" ? "Merci." : "Thank you.");
+          }
+          await safeRecordPhoneInteraction({
+            contactId: contact?.id,
+            channel: "voice",
+            providerReferenceHash: ref,
+            intent: "next-event",
+            outcome: answer.outcome,
+            teamCode: answer.group ?? spoken,
+            arenaSlug: answer.directions?.arenaSlug,
+            metadata: { smsRequested },
+          });
+          log(answer.outcome);
+          voice.hangup();
+        }
       }
-    } else return failure(400);
+    } else {
+      return failure(400);
+    }
+
     return xml(voice.toString());
-  } catch {
+  } catch (error) {
+    console.error("[AHMV Twilio webhook]", error);
     log("configuration-error");
     return failure(503);
   }
