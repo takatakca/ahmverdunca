@@ -15,10 +15,14 @@ export function gateAhmvExperience(request: Request): Response | null {
 
   if (!readAhmvExperienceSession(request)) {
     const login = new URL("/api/ahmv/experience/login", url.origin);
-    const response = Response.redirect(login, 303);
-    response.headers.set("cache-control", "no-store");
-    response.headers.set("X-Robots-Tag", "noindex, nofollow");
-    return response;
+    return new Response(null, {
+      status: 303,
+      headers: {
+        location: login.toString(),
+        "cache-control": "no-store",
+        "X-Robots-Tag": "noindex, nofollow",
+      },
+    });
   }
 
   return null;
