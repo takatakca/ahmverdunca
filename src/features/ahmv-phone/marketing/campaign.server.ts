@@ -211,6 +211,7 @@ export async function queueMarketingCampaign(
     .update({
       target_count: contacts.length,
       queued_count: contacts.length,
+      status: contacts.length === 0 ? "completed" : campaign.status,
       updated_at: new Date().toISOString(),
     })
     .eq("id", campaign.id);
@@ -263,8 +264,8 @@ async function campaignCanDispatch(campaignId: string) {
   const campaign = await findCampaign(campaignId);
   return Boolean(
     campaign &&
-      campaign.status !== "cancelled" &&
-      campaign.status !== "failed",
+      (campaign.status === "queued" ||
+        campaign.status === "dispatching"),
   );
 }
 
