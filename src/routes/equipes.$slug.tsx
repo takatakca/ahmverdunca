@@ -14,7 +14,7 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
-import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, teamsForCategory } from "@/data/team-directory";
+import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
@@ -127,9 +127,9 @@ function TeamPage() {
                 </a>
               </Button>
               <Button asChild variant="outline-light">
-                <Link to="/equipes/$slug" params={{ slug }} search={{ teamId: undefined }}>
+                <a href={`/equipes/${slug}`}>
                   {lang === "fr" ? "Retour à la catégorie" : "Back to category"}
-                </Link>
+                </a>
               </Button>
             </>
           ) : (
@@ -306,20 +306,31 @@ function TeamPage() {
                 id="team-command-title"
                 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl"
               >
-                {team.code}
+                {exactTeam ? exactTeam.name : team.code}
               </h2>
               <p className="mt-4 max-w-2xl text-sm text-navy-foreground/75 md:text-base">
-                {lang === "fr"
-                  ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
-                  : "A simple starting point for families: schedules, arenas, registration, news and public media."}
+                {exactTeam
+                  ? (lang === "fr"
+                      ? "Le point d’entrée de cette équipe exacte : horaire et résultats officiels, médias approuvés, arénas et mises à jour révisées."
+                      : "The entry point for this exact team: official schedule and results, approved media, arenas and reviewed updates.")
+                  : (lang === "fr"
+                      ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
+                      : "A simple starting point for families: schedules, arenas, registration, news and public media.")}
               </p>
 
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Button asChild variant="sport">
-                  <Link to="/horaires" search={{ team: slug }}>
-                    <CalendarDays className="size-4" />
-                    {lang === "fr" ? "Horaires officiels" : "Official schedules"}
-                  </Link>
+                  {exactTeam ? (
+                    <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
+                      <CalendarDays className="size-4" />
+                      {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                    </a>
+                  ) : (
+                    <Link to="/horaires" search={{ team: slug }}>
+                      <CalendarDays className="size-4" />
+                      {lang === "fr" ? "Horaires officiels" : "Official schedules"}
+                    </Link>
+                  )}
                 </Button>
                 <Button asChild variant="outline-light">
                   <Link to="/arenas">
@@ -398,7 +409,7 @@ function TeamPage() {
           <div className="flex min-w-[250px] flex-col justify-center border-t border-navy/12 p-6 lg:border-l lg:border-t-0 md:p-8">
             <Button asChild variant="sport" size="lg" className="justify-between">
               <a
-                href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(`AHMV — mise à jour ${team.code}`)}&body=${encodeURIComponent(lang === "fr" ? "Bonjour, je souhaite proposer une mise à jour pour cette catégorie/équipe AHMV.\n\nÉquipe :\nInformation à publier :\nSource ou lien :\n" : "Hello, I would like to suggest an update for this AHMV category/team.\n\nTeam:\nInformation to publish:\nSource or link:\n")}`}
+                href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(updateSubject)}&body=${encodeURIComponent(updateBody)}`}
               >
                 <span className="flex items-center gap-2"><Mail className="size-4" />{lang === "fr" ? "Proposer une mise à jour" : "Suggest an update"}</span>
                 <ArrowRight className="size-4" />
@@ -412,17 +423,21 @@ function TeamPage() {
           </div>
         </section>
 
-        {publicTeams.length > 0 && (
+        {visiblePublicTeams.length > 0 && (
           <section aria-labelledby="public-team-directory-title">
             <SectionHeading
               eyebrow={lang === "fr" ? "Répertoire public 2026–2027" : "2026–2027 public directory"}
-              title={lang === "fr" ? "Équipes publiées" : "Published teams"}
+              title={
+                exactTeam
+                  ? (lang === "fr" ? "Autres équipes de la catégorie" : "Other teams in this category")
+                  : (lang === "fr" ? "Équipes publiées" : "Published teams")
+              }
               description={lang === "fr"
                 ? "Noms et niveaux actuellement affichés dans le répertoire public AHM Verdun. Aucun alignement de joueurs ni donnée personnelle n’est recopié."
                 : "Names and levels currently shown in AHM Verdun’s public directory. No player roster or personal information is mirrored."}
             />
             <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-              {publicTeams.map((entry) => {
+              {visiblePublicTeams.map((entry) => {
                 const teamSocialLinks = getPublicTeamSocialLinks(entry.legacyScheduleTeamId);
                 return (
                   <div id={`team-${entry.legacyScheduleTeamId}`} key={entry.legacyScheduleTeamId} className="interactive-surface scroll-mt-28 flex min-h-56 flex-col bg-background p-5">
@@ -438,6 +453,13 @@ function TeamPage() {
 
                     <div className="mt-auto pt-6">
                       <div className="grid gap-2">
+                        <a
+                          href={publicTeamHubUrl(entry)}
+                          className="premium-control flex min-h-10 items-center justify-between bg-navy px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-white hover:bg-navy-deep"
+                        >
+                          {lang === "fr" ? "Ouvrir la page équipe" : "Open team page"}
+                          <ArrowRight className="size-3.5" />
+                        </a>
                         <a
                           href={legacyTeamScheduleUrl(entry)}
                           target="_blank"
