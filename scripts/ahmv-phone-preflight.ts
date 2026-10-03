@@ -46,6 +46,7 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const departureEnabled = bool(settings["AHMV_SMART_DEPARTURE_ENABLED"]);
   const membershipSyncEnabled = bool(settings["AHMV_TAKATAK_MEMBERSHIP_SYNC_ENABLED"]);
   const campaignsEnabled = bool(settings["AHMV_PHONE_CAMPAIGNS_ENABLED"]);
+  const marketingConsentSyncEnabled = bool(settings["AHMV_TAKATAK_MARKETING_CONSENT_SYNC_ENABLED"]);
 
   return [
     {
@@ -85,6 +86,14 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       ok: present(settings["TAKATAK_AHMV_MEMBER_URL"]),
       required: true,
       detail: "TAKATAK member activation URL is configured.",
+    },
+    {
+      id: "marketing-consent-sync-token",
+      ok:
+        !marketingConsentSyncEnabled ||
+        present(settings["TAKATAK_AHMV_SERVICE_TOKEN"]),
+      required: marketingConsentSyncEnabled,
+      detail: "TAKATAK marketing consent sync requires the server-to-server service token.",
     },
     {
       id: "campaign-service-token",
