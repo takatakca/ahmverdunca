@@ -55,6 +55,7 @@ jobs:
           bun run check:data
           bun run check:seo
           bun run check:runtime-policy
+          bun run check:mobile-nav
           bun run check:supabase-key-safety
           bun run check:media-policy
           bun run check:canonical
