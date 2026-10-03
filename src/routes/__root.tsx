@@ -103,6 +103,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#111a33" },
       { name: "application-name", content: "AHM Verdun" },
       { name: "apple-mobile-web-app-title", content: "AHM Verdun" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "mobile-web-app-capable", content: "yes" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },

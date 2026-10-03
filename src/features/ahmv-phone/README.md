@@ -12,6 +12,7 @@ This folder contains the communication edge used by AHM Verdun. It is intentiona
 - `arenas/` — verified arena destination resolution and Google Maps / Apple Maps / Waze links.
 - `messaging/` — transactional SMS delivery and delivery-state persistence.
 - `entitlements/` — base/trial/premium capability gates.
+- `calendar/` — signed temporary calendar landing, Google Calendar and ICS export.
 - `takatak/` — tenant-scoped GROUPE TAKATAK identity/entitlement boundary.
 - `audit/` — reserved for centralized audit/export helpers.
 
@@ -42,6 +43,7 @@ Examples:
 - `DEMAIN Junior`
 - `SEMAINE Junior`
 - `SAUVE M13A`
+- `CALENDRIER M13A` / `CALENDAR M13A`
 - `EN WEEK Junior`
 - `AIDE` / `HELP`
 

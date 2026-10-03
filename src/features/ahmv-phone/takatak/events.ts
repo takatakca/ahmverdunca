@@ -13,6 +13,7 @@ export interface TakatakAhmvPhoneContactSync {
   language: AhmvPhoneLanguage;
   accessTier: AhmvPhoneContact["accessTier"];
   trialExpiresAt: string;
+  premiumExpiresAt?: string | undefined;
   smsConsent: boolean;
   marketingSmsConsent: boolean;
   takatakIdentityId?: string | undefined;
@@ -50,6 +51,7 @@ export function takatakContactSyncEvent(
     language: contact.language,
     accessTier: contact.accessTier,
     trialExpiresAt: contact.trialExpiresAt,
+    premiumExpiresAt: contact.premiumExpiresAt,
     smsConsent: contact.smsConsent,
     marketingSmsConsent: contact.marketingSmsConsent,
     takatakIdentityId: contact.takatakIdentityId,

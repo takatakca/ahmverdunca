@@ -1,3 +1,5 @@
+import { approvedReminderTeamMap } from "../src/features/ahmv-phone/reminders/source.ts";
+
 type Settings = Record<string, string | undefined>;
 
 export interface PhonePreflightCheck {
@@ -29,6 +31,11 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const demoEnabled = bool(settings["AHMV_PHONE_DEMO_ENABLED"]);
   const phoneEnabled = bool(settings["AHMV_PHONE_ENABLED"]);
   const publicEnabled = bool(settings["AHMV_PHONE_PUBLIC"]);
+  const lifecycleEnabled = bool(settings["AHMV_PHONE_LIFECYCLE_ENABLED"]);
+  const remindersEnabled = bool(settings["AHMV_PHONE_REMINDERS_ENABLED"]);
+  const calendarEnabled = bool(settings["AHMV_CALENDAR_LINKS_ENABLED"]);
+  const departureEnabled = bool(settings["AHMV_SMART_DEPARTURE_ENABLED"]);
+  const membershipSyncEnabled = bool(settings["AHMV_TAKATAK_MEMBERSHIP_SYNC_ENABLED"]);
 
   return [
     {
@@ -48,13 +55,13 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
     {
       id: "twilio-account",
       ok: present(settings["TWILIO_ACCOUNT_SID"]),
-      required: phoneEnabled || publicEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled,
       detail: "Twilio Account SID is configured server-side.",
     },
     {
       id: "twilio-auth",
       ok: present(settings["TWILIO_AUTH_TOKEN"]),
-      required: phoneEnabled || publicEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled,
       detail: "Twilio Auth Token is configured server-side.",
     },
     {
@@ -70,6 +77,14 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       detail: "TAKATAK member activation URL is configured.",
     },
     {
+      id: "membership-sync-token",
+      ok:
+        !membershipSyncEnabled ||
+        present(settings["TAKATAK_AHMV_SERVICE_TOKEN"]),
+      required: membershipSyncEnabled,
+      detail: "TAKATAK membership sync requires the shared server-to-server service token.",
+    },
+    {
       id: "takatak-entitlement",
       ok:
         present(settings["TAKATAK_AHMV_ENTITLEMENT_URL"]) &&
@@ -82,6 +97,64 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       ok: !demoEnabled || present(settings["AHMV_PHONE_DEMO_TOKEN"]),
       required: demoEnabled,
       detail: "Internal demo endpoint has a separate token when enabled.",
+    },
+    {
+      id: "worker-cron-secret",
+      ok:
+        !(lifecycleEnabled || remindersEnabled) ||
+        present(settings["LOVABLE_CRON_SECRET"]),
+      required: lifecycleEnabled || remindersEnabled,
+      detail: "Phone background workers require the protected cron secret.",
+    },
+    {
+      id: "reminder-team-map",
+      ok:
+        !remindersEnabled ||
+        (() => {
+          try {
+            return Object.keys(approvedReminderTeamMap(settings)).length > 0;
+          } catch {
+            return false;
+          }
+        })(),
+      required: remindersEnabled,
+      detail: "Reminder delivery requires a valid explicit official-group to public-team mapping.",
+    },
+    {
+      id: "departure-link-secret",
+      ok:
+        !departureEnabled ||
+        (settings["AHMV_DEPARTURE_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+      required: departureEnabled,
+      detail: "Smart-departure links require a dedicated server secret of at least 32 characters.",
+    },
+    {
+      id: "departure-provider",
+      ok:
+        Boolean(settings["TAKATAK_ROUTE_MATRIX_URL"]?.trim()) &&
+        Boolean(settings["TAKATAK_ROUTE_SERVICE_TOKEN"]?.trim()),
+      required: false,
+      detail: "Optional TAKATAK route/traffic provider is connected for live ETA.",
+    },
+    {
+      id: "calendar-link-secret",
+      ok:
+        !calendarEnabled ||
+        (settings["AHMV_CALENDAR_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+      required: calendarEnabled,
+      detail: "Signed calendar links require a dedicated server secret of at least 32 characters.",
+    },
+    {
+      id: "safe-lifecycle-gate",
+      ok: !lifecycleEnabled || phoneEnabled,
+      required: true,
+      detail: "Lifecycle dispatch cannot be enabled while the phone integration is disabled.",
+    },
+    {
+      id: "safe-reminder-gate",
+      ok: !remindersEnabled || phoneEnabled,
+      required: true,
+      detail: "Reminder dispatch cannot be enabled while the phone integration is disabled.",
     },
     {
       id: "safe-public-gate",

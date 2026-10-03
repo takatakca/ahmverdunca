@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, Radio } from "lucide-react";
+import { ExternalLink, Facebook, Instagram, Newspaper, Radio } from "lucide-react";
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 
 type FeedItem = {
   id: string;
@@ -124,29 +125,56 @@ export function TeamLiveFeed({
           {[
             {
               platform: "Facebook",
-              label: lang === "fr" ? "EMPLACEMENT FACEBOOK" : "FACEBOOK PLACEMENT",
-              body: lang === "fr" ? "Le mini-site est prêt à afficher les publications publiques approuvées de cette équipe." : "The mini-site is ready to display this team's approved public posts.",
+              Icon: Facebook,
+              media: OFFICIAL_MEDIA.practiceGroup,
+              label: lang === "fr" ? "Fil Facebook prêt" : "Facebook feed ready",
+              body: lang === "fr"
+                ? "Les publications publiques approuvées de cette équipe pourront prendre cette place sans refaire le design."
+                : "Approved public team posts can take over this space without redesigning the page.",
             },
             {
               platform: "Instagram",
-              label: lang === "fr" ? "EMPLACEMENT INSTAGRAM" : "INSTAGRAM PLACEMENT",
-              body: lang === "fr" ? "Photos, stories et publications pourront apparaître ici lorsque le compte sera connecté." : "Photos, stories and posts can appear here once the account is connected.",
+              Icon: Instagram,
+              media: OFFICIAL_MEDIA.practicePlayers,
+              label: lang === "fr" ? "Galerie Instagram prête" : "Instagram gallery ready",
+              body: lang === "fr"
+                ? "Photos, reels et publications approuvées pourront s’intégrer ici quand le compte sera relié."
+                : "Approved photos, reels and posts can appear here when the account is connected.",
             },
             {
-              platform: "Mini-blog",
-              label: lang === "fr" ? "PUBLICATION D’ÉQUIPE" : "TEAM POST",
-              body: lang === "fr" ? "Victoire, changement d’horaire, tournoi, bénévoles ou nouvelle rapide : la carte est prête." : "Win, schedule change, tournament, volunteers or quick news: this card is ready.",
+              platform: lang === "fr" ? "Mini-blog" : "Mini-blog",
+              Icon: Newspaper,
+              media: OFFICIAL_MEDIA.practiceCoach,
+              label: lang === "fr" ? "Journal d’équipe prêt" : "Team journal ready",
+              body: lang === "fr"
+                ? "Victoire, tournoi, changement d’horaire, bénévoles ou message du coach : la devanture est déjà prête."
+                : "Win, tournament, schedule change, volunteers or a coach note: the storefront is already ready.",
             },
-          ].map((item) => (
-            <article key={item.platform} className="flex min-h-52 flex-col bg-background p-5">
-              <div className="flex items-center justify-between">
-                <p className="eyebrow text-sport">{item.platform}</p>
-                <span className="border border-navy/10 bg-ice px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">DEMO</span>
+          ].map(({ platform, Icon, media, label, body }) => (
+            <article key={platform} className="group relative min-h-[330px] overflow-hidden bg-competition text-white">
+              <img
+                src={media.url}
+                alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover opacity-68 transition-transform duration-700 group-hover:scale-[1.025]"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.14)_0%,rgba(7,16,43,0.38)_40%,rgba(7,16,43,0.95)_100%)]" />
+              <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
+                <span className="flex size-9 items-center justify-center border border-white/18 bg-navy/52 backdrop-blur">
+                  <Icon className="size-4 text-sport-foreground" />
+                </span>
+                <span className="border border-white/18 bg-navy/52 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/72 backdrop-blur">
+                  DEMO
+                </span>
               </div>
-              <h3 className="mt-7 font-display text-2xl font-extrabold uppercase leading-[0.9] text-navy">{item.label}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.body}</p>
-              <div className="mt-auto border-t border-navy/10 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport">
-                {lang === "fr" ? "Prêt à connecter" : "Ready to connect"}
+              <div className="absolute inset-x-0 bottom-0 p-5">
+                <p className="eyebrow text-sport-foreground">{platform}</p>
+                <h3 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.88]">{label}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/62">{body}</p>
+                <p className="mt-5 border-t border-white/12 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
+                  {lang === "fr" ? "Prêt à connecter" : "Ready to connect"}
+                </p>
               </div>
             </article>
           ))}

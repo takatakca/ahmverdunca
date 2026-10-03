@@ -2,10 +2,16 @@ import { CalendarDays, ChevronRight, Clock3, ExternalLink, MapPin, Trophy } from
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-directory";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
 
 type Lang = "fr" | "en";
 
-function eventHref(team: PublicTeamDirectoryEntry, kind: "game" | "practice", slot: number) {
+function eventHref(
+  team: PublicTeamDirectoryEntry,
+  kind: "game" | "practice",
+  slot: number,
+  details?: { date: string; time: string; venue: string; activity: string; group: string },
+) {
   const params = new URLSearchParams({
     teamId: team.legacyScheduleTeamId,
     team: team.name,
@@ -13,7 +19,32 @@ function eventHref(team: PublicTeamDirectoryEntry, kind: "game" | "practice", sl
     type: kind,
     slot: String(slot),
   });
+
+  if (details) {
+    params.set("published", "ahmv-week");
+    params.set("date", details.date);
+    params.set("time", details.time);
+    params.set("venue", details.venue);
+    params.set("activity", details.activity);
+    params.set("group", details.group);
+  }
+
   return `/equipe-event/${kind}-${slot}?${params.toString()}`;
+}
+
+type CalendarRow = {
+  dayFr: string;
+  dayEn: string;
+  time: string;
+  noteFr: string;
+  noteEn: string;
+  href?: string;
+  verified?: boolean;
+};
+
+function weekdayLabel(date: string, locale: string) {
+  const parsed = new Date(`${date}T12:00:00-04:00`);
+  return new Intl.DateTimeFormat(locale, { weekday: "short" }).format(parsed).replace(".", "").toUpperCase();
 }
 
 const DEMO_GAMES = [
@@ -22,11 +53,10 @@ const DEMO_GAMES = [
   { dayFr: "SAM.", dayEn: "SAT.", time: "17:15", noteFr: "Horaire saison", noteEn: "Season schedule" },
 ] as const;
 
-const DEMO_PRACTICES = [
-  { dayFr: "MAR.", dayEn: "TUE.", time: "18:00", noteFr: "Glace à connecter", noteEn: "Rink to connect" },
-  { dayFr: "JEU.", dayEn: "THU.", time: "19:00", noteFr: "Pratique équipe", noteEn: "Team practice" },
-  { dayFr: "DIM.", dayEn: "SUN.", time: "09:15", noteFr: "Activité équipe", noteEn: "Team activity" },
-] as const;
+const DEMO_PRACTICES: CalendarRow[] = [
+  { dayFr: "À VENIR", dayEn: "COMING", time: "—", noteFr: "Pratique à connecter", noteEn: "Practice to connect" },
+  { dayFr: "SOURCE", dayEn: "SOURCE", time: "—", noteFr: "Grille AHMV officielle", noteEn: "Official AHMV grid" },
+];
 
 function MiniCalendar({
   title,
@@ -35,13 +65,15 @@ function MiniCalendar({
   team,
   kind,
   lang,
+  sourceHref,
 }: {
   title: string;
   eyebrow: string;
-  rows: readonly { dayFr: string; dayEn: string; time: string; noteFr: string; noteEn: string }[];
+  rows: readonly CalendarRow[];
   team: PublicTeamDirectoryEntry;
   kind: "game" | "practice";
   lang: Lang;
+  sourceHref?: string | undefined;
 }) {
   return (
     <section className="overflow-hidden border border-white/12 bg-white/[0.04]">
@@ -57,15 +89,22 @@ function MiniCalendar({
         {rows.map((row, index) => (
           <a
             key={`${kind}-${index}`}
-            href={eventHref(team, kind, index + 1)}
-            className="group grid grid-cols-[3.3rem_4.2rem_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 text-white transition-colors hover:bg-white/[0.055]"
+            href={row.href ?? eventHref(team, kind, index + 1)}
+            className="group grid grid-cols-[3.5rem_4.2rem_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 text-white transition-colors hover:bg-white/[0.055]"
           >
             <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/42">
               {lang === "fr" ? row.dayFr : row.dayEn}
             </span>
             <span className="font-display text-lg font-extrabold uppercase text-white">{row.time}</span>
-            <span className="truncate text-[10px] font-semibold uppercase tracking-[0.08em] text-white/54">
-              {lang === "fr" ? row.noteFr : row.noteEn}
+            <span className="min-w-0">
+              <span className="block truncate text-[10px] font-semibold uppercase tracking-[0.08em] text-white/54">
+                {lang === "fr" ? row.noteFr : row.noteEn}
+              </span>
+              {row.verified && (
+                <span className="mt-0.5 block text-[7px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
+                  {lang === "fr" ? "Publié AHMV" : "Published AHMV"}
+                </span>
+              )}
             </span>
             <ChevronRight className="size-3.5 text-sport-foreground transition-transform group-hover:translate-x-0.5" />
           </a>
@@ -73,7 +112,7 @@ function MiniCalendar({
       </div>
 
       <a
-        href={kind === "game" ? officialTeamResultsUrl(team) : legacyTeamScheduleUrl(team)}
+        href={sourceHref ?? (kind === "game" ? officialTeamResultsUrl(team) : legacyTeamScheduleUrl(team))}
         target="_blank"
         rel="noopener noreferrer"
         className="flex min-h-10 items-center justify-between border-t border-white/10 px-4 text-[8px] font-bold uppercase tracking-[0.14em] text-white/48 hover:text-white"
@@ -96,6 +135,36 @@ export function TeamMicrositeHero({
 }) {
   const heroMedia = team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary : OFFICIAL_MEDIA.practiceGroup;
 
+  const categoryToken = team.categorySlug === "feminin"
+    ? "M12"
+    : team.categorySlug === "junior"
+      ? "JUNIOR"
+      : team.categorySlug.toUpperCase();
+
+  const publishedPracticeRows: CalendarRow[] = OFFICIAL_WEEK_ACTIVITIES
+    .filter((activity) => {
+      const scope = `${activity.group} ${activity.activity}`.toUpperCase();
+      return scope.includes(categoryToken) && /PRATIQUE|HOCKEY SUR MESURE|WLLV/.test(scope);
+    })
+    .slice(0, 3)
+    .map((activity, index) => ({
+      dayFr: weekdayLabel(activity.date, "fr-CA"),
+      dayEn: weekdayLabel(activity.date, "en-CA"),
+      time: activity.start,
+      noteFr: `${activity.group} · ${activity.venue}`,
+      noteEn: `${activity.group} · ${activity.venue}`,
+      verified: true,
+      href: eventHref(team, "practice", index + 1, {
+        date: activity.date,
+        time: activity.start,
+        venue: activity.venue,
+        activity: activity.activity,
+        group: activity.group,
+      }),
+    }));
+
+  const practiceRows = publishedPracticeRows.length > 0 ? publishedPracticeRows : DEMO_PRACTICES;
+
   return (
     <section className="overflow-hidden border border-navy/12 bg-competition text-white shadow-[0_30px_70px_-52px_rgba(7,16,43,0.9)]">
       <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
@@ -108,6 +177,7 @@ export function TeamMicrositeHero({
             className="absolute inset-0 size-full object-cover"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.06)_20%,rgba(7,16,43,0.90)_100%)]" />
+          <div className="ahmv-motion-sheen" aria-hidden />
           <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7 md:p-8">
             <div className="flex flex-wrap gap-2">
               <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.15em] text-sport-foreground">
@@ -158,7 +228,7 @@ export function TeamMicrositeHero({
               </p>
             </div>
             <span className="border border-sport/30 bg-sport/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
-              DEMO
+              {publishedPracticeRows.length > 0 ? "PUBLIC + DEMO" : "DEMO"}
             </span>
           </div>
 
@@ -174,10 +244,11 @@ export function TeamMicrositeHero({
           <MiniCalendar
             title={lang === "fr" ? "Pratiques" : "Practices"}
             eyebrow={lang === "fr" ? "Prochaines glaces" : "Upcoming ice"}
-            rows={DEMO_PRACTICES}
+            rows={practiceRows}
             team={team}
             kind="practice"
             lang={lang}
+            sourceHref={publishedPracticeRows.length > 0 ? OFFICIAL_WEEK_META.sourceUrl : undefined}
           />
         </div>
       </div>

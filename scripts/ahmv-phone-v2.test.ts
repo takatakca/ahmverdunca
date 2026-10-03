@@ -24,9 +24,29 @@ test("expired trial keeps only base information capabilities", () => {
   assert.equal(canUse(entitlement, "weekly_schedule"), false);
 });
 
-test("premium unlocks all phone capabilities", () => {
-  const entitlement = localEntitlement("premium");
-  assert.equal(canUse(entitlement, "smart_departure"), true);
+test("premium unlocks capabilities only while TAKATAK expiry is active", () => {
+  const active = localEntitlement(
+    "premium",
+    undefined,
+    new Date("2026-10-03T12:00:00.000Z"),
+    "2026-10-10T12:00:00.000Z",
+  );
+  const expired = localEntitlement(
+    "premium",
+    undefined,
+    new Date("2026-10-11T12:00:00.000Z"),
+    "2026-10-10T12:00:00.000Z",
+  );
+  const unbounded = localEntitlement(
+    "premium",
+    undefined,
+    new Date("2026-10-03T12:00:00.000Z"),
+  );
+
+  assert.equal(canUse(active, "smart_departure"), true);
+  assert.equal(canUse(expired, "smart_departure"), false);
+  assert.equal(canUse(unbounded, "smart_departure"), false);
+  assert.equal(canUse(expired, "next_event"), true);
 });
 
 test("M11B is treated as ambiguous instead of guessing a team", () => {
@@ -63,6 +83,12 @@ test("member SMS commands parse in French and English", () => {
   assert.deepEqual(parsePhoneCommand("TODAY M13A"), { kind: "today", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("DEMAIN M13A"), { kind: "tomorrow", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("SAVE M13A"), { kind: "save", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("CALENDRIER M13A"), { kind: "calendar", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("CALENDAR M13A"), { kind: "calendar", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("CAL M13A"), { kind: "calendar", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("DÉPART M13A"), { kind: "departure", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("DEPART M13A"), { kind: "departure", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("LEAVE M13A"), { kind: "departure", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("RAPPEL M13A"), { kind: "reminder-on", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("REMIND M13A"), { kind: "reminder-on", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("RAPPEL OFF M13A"), { kind: "reminder-off", teamQuery: "M13A" });

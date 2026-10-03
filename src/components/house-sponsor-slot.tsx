@@ -40,7 +40,22 @@ export function HouseSponsorSlot({
 
       <div className={compact ? "grid gap-px bg-navy/10 sm:grid-cols-2" : "grid gap-px bg-navy/10 md:grid-cols-2"}>
         {sponsors.map((sponsor) => {
-          const card = (
+          const card = sponsor.creative ? (
+            <div className="group relative overflow-hidden bg-competition">
+              <img
+                src={sponsor.creative}
+                alt={`${sponsor.name} — ${sponsor.tagline[lang]}`}
+                loading="lazy"
+                decoding="async"
+                className={`w-full object-cover transition-transform duration-700 group-hover:scale-[1.015] ${compact ? "aspect-[12/4.4]" : "aspect-[12/5.2]"}`}
+              />
+              {sponsor.href && (
+                <span className="absolute bottom-3 right-3 flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur">
+                  <ExternalLink className="size-4" aria-hidden />
+                </span>
+              )}
+            </div>
+          ) : (
             <div className={`group flex min-w-0 items-center gap-4 bg-background ${compact ? "p-3" : "p-4 md:p-5"}`}>
               <div className={`flex shrink-0 items-center justify-center border border-sport/25 bg-competition font-display font-extrabold uppercase text-sport-foreground ${compact ? "size-10 text-sm" : "size-14 text-lg"}`}>
                 {sponsor.short}

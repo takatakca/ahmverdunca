@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { TeamPortfolio } from "@/components/team-portfolio";
 import { TeamGameCenter } from "@/components/team-game-center";
 import { TeamMicrositeHero } from "@/components/team-microsite-hero";
+import { TeamParentDeck } from "@/components/team-parent-deck";
+import { TeamShareTools } from "@/components/team-share-tools";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { TeamLiveFeed } from "@/components/team-live-feed";
 import { TeamParentPremium } from "@/components/team-parent-premium";
@@ -162,6 +164,8 @@ function TeamPage() {
           </nav>
         )}
 
+        {exactTeam && <TeamShareTools team={exactTeam} lang={lang} />}
+
         {exactTeam ? null : (
           <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
             <div className="relative min-h-[240px] overflow-hidden sm:min-h-[320px]">
@@ -217,7 +221,7 @@ function TeamPage() {
 
         {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
 
-        {exactTeam && <HouseSponsorSlot placement={`team-top-${exactTeam.legacyScheduleTeamId}`} count={1} compact />}
+        {exactTeam && <TeamParentDeck team={exactTeam} lang={lang} />}
         {exactTeam && (
           <TeamPortfolio
             team={exactTeam}

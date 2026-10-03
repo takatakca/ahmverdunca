@@ -28,11 +28,27 @@ export function localEntitlement(
   tier: AhmvAccessTier,
   trialExpiresAt?: string,
   now = new Date(),
+  premiumExpiresAt?: string,
 ): AhmvEntitlement {
   const activeTrial =
-    tier === "trial" && !!trialExpiresAt && Number.isFinite(Date.parse(trialExpiresAt))
-      && Date.parse(trialExpiresAt) > now.getTime();
-  const capabilities = tier === "premium" || activeTrial ? PREMIUM : tier === "blocked" ? [] : BASE;
+    tier === "trial" &&
+    !!trialExpiresAt &&
+    Number.isFinite(Date.parse(trialExpiresAt)) &&
+    Date.parse(trialExpiresAt) > now.getTime();
+
+  const activePremium =
+    tier === "premium" &&
+    !!premiumExpiresAt &&
+    Number.isFinite(Date.parse(premiumExpiresAt)) &&
+    Date.parse(premiumExpiresAt) > now.getTime();
+
+  const capabilities =
+    activePremium || activeTrial
+      ? PREMIUM
+      : tier === "blocked"
+        ? []
+        : BASE;
+
   return { tier, trialExpiresAt, capabilities: new Set(capabilities) };
 }
 

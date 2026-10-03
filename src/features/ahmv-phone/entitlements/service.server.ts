@@ -15,7 +15,12 @@ export async function resolvePhoneEntitlement(
   settings: Settings = process.env,
 ): Promise<AhmvEntitlement> {
   const local = contact
-    ? localEntitlement(contact.accessTier, contact.trialExpiresAt)
+    ? localEntitlement(
+        contact.accessTier,
+        contact.trialExpiresAt,
+        new Date(),
+        contact.premiumExpiresAt,
+      )
     : localEntitlement("guest");
 
   if (canUse(local, capability) || !contact) return local;
@@ -30,7 +35,7 @@ export async function resolvePhoneEntitlement(
   );
 
   return remote?.active
-    ? localEntitlement("premium", remote.expiresAt)
+    ? localEntitlement("premium", undefined, new Date(), remote.expiresAt)
     : local;
 }
 

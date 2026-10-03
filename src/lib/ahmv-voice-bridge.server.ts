@@ -99,7 +99,7 @@ async function schedule(request: Request, settings: Settings) {
   const category = limited(url.searchParams.get("category"), 80);
   const date = limited(url.searchParams.get("date"), 10);
   const now = localClock(new Date());
-  if (date && !/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) {
+  if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return json({ ok: false, code: "INVALID_DATE" }, 400);
   }
 
@@ -166,7 +166,7 @@ async function schedule(request: Request, settings: Settings) {
     .filter((item) => {
       const groupKey = normalizeTeam(item.group);
       if (teamKey && groupKey !== teamKey) return false;
-      const groupCategory = item.group.match(/^M\\d+/i)?.[0] ?? "";
+      const groupCategory = item.group.match(/^M\d+/i)?.[0] ?? "";
       if (categoryKey && normalizeTeam(groupCategory) !== categoryKey) return false;
       if (date && item.date !== date) return false;
       if (!date && (item.date < now.date || (item.date === now.date && item.end <= now.time))) {
@@ -183,7 +183,7 @@ async function schedule(request: Request, settings: Settings) {
         id: item.id,
         type: item.activity,
         team: item.group,
-        category: item.group.match(/^M\\d+/i)?.[0]?.toUpperCase() ?? null,
+        category: item.group.match(/^M\d+/i)?.[0]?.toUpperCase() ?? null,
         date: item.date,
         time: item.start,
         endTime: item.end,
@@ -242,10 +242,34 @@ async function bootstrap(request: Request, settings: Settings) {
     ? body["language"] as VoiceLanguage
     : "fr";
   const smsRequested = body["smsRequested"] === true && Boolean(phone);
+  const existingLanguageResult =
+    phone && language === "es"
+      ? await db()
+          .from("ahmv_phone_contacts")
+          .select("language")
+          .eq("phone_e164", phone)
+          .maybeSingle()
+      : null;
+  if (existingLanguageResult?.error) {
+    return json({ ok: false, code: "CONTACT_STORE_UNAVAILABLE" }, 503);
+  }
+  const contactLanguage =
+    language === "en"
+      ? "en"
+      : existingLanguageResult?.data?.language === "en"
+        ? "en"
+        : "fr";
   const contact = phone
-    ? await safeTouchPhoneContact({ phoneE164: phone, language, smsRequested, settings })
+    ? await safeTouchPhoneContact({
+        phoneE164: phone,
+        language: contactLanguage,
+        smsRequested,
+        settings,
+      })
     : null;
-  if (phone && !contact) return json({ ok: false, code: "CONTACT_STORE_UNAVAILABLE" }, 503);
+  if (phone && !contact) {
+    return json({ ok: false, code: "CONTACT_STORE_UNAVAILABLE" }, 503);
+  }
 
   const entitlement = await resolvePhoneEntitlement(contact, "weekly_schedule", settings);
   const trialActive = contact?.accessTier === "trial" && canUse(entitlement, "weekly_schedule");
@@ -290,9 +314,33 @@ async function voiceLanguage(request: Request, settings: Settings) {
   if (!validUuid(contactId) || !validPhone(phone)) {
     return json({ ok: false, code: "INVALID_LANGUAGE_REQUEST" }, 400);
   }
-  const touched = await safeTouchPhoneContact({ phoneE164: phone, language, settings });
-  if (!touched) return json({ ok: false, code: "CONTACT_STORE_UNAVAILABLE" }, 503);
-  if (touched.id !== contactId) return json({ ok: false, code: "CONTACT_MISMATCH" }, 409);
+  if (language === "es") {
+    const existing = await db()
+      .from("ahmv_phone_contacts")
+      .select("id")
+      .eq("id", contactId)
+      .eq("phone_e164", phone)
+      .maybeSingle();
+    if (existing.error) {
+      return json({ ok: false, code: "CONTACT_STORE_UNAVAILABLE" }, 503);
+    }
+    if (!existing.data) {
+      return json({ ok: false, code: "CONTACT_MISMATCH" }, 409);
+    }
+    return json({ ok: true, language });
+  }
+
+  const touched = await safeTouchPhoneContact({
+    phoneE164: phone,
+    language,
+    settings,
+  });
+  if (!touched) {
+    return json({ ok: false, code: "CONTACT_STORE_UNAVAILABLE" }, 503);
+  }
+  if (touched.id !== contactId) {
+    return json({ ok: false, code: "CONTACT_MISMATCH" }, 409);
+  }
   return json({ ok: true, language });
 }
 async function voiceSms(request: Request, settings: Settings) {
@@ -303,7 +351,7 @@ async function voiceSms(request: Request, settings: Settings) {
   const text = limited(body["body"], 1500);
   const purpose = limited(body["purpose"], 80) || "voice-ai-recap";
   const callSid = limited(body["callSid"], 100);
-  const idempotencyKey = callSid ? `voice-ai:${purpose}:${callSid}` : undefined;
+  const dedupeKey = callSid ? `voice-ai:${purpose}:${callSid}` : undefined;
   if (!validUuid(contactId) || !validPhone(phone) || !text) {
     return json({ ok: false, code: "INVALID_SMS_REQUEST" }, 400);
   }
@@ -320,7 +368,7 @@ async function voiceSms(request: Request, settings: Settings) {
     body: text,
     purpose,
     contactId,
-    idempotencyKey,
+    dedupeKey,
     settings,
   });
   return json(sent.sent

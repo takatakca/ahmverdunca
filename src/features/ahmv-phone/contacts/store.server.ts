@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "../../../integrations/supabase/client.server";
 
-export type AhmvPhoneLanguage = "fr" | "en" | "es";
+export type AhmvPhoneLanguage = "fr" | "en";
 export type AhmvPhoneChannel = "voice" | "sms" | "system";
 
 export interface AhmvPhoneContact {
@@ -14,6 +14,7 @@ export interface AhmvPhoneContact {
   transactionalSmsAllowed: boolean;
   marketingSmsConsent: boolean;
   takatakIdentityId?: string | undefined;
+  premiumExpiresAt?: string | undefined;
 }
 
 function db(): SupabaseClient {
@@ -36,18 +37,14 @@ function mapContact(row: Record<string, unknown>): AhmvPhoneContact {
   return {
     id: String(row["id"]),
     phoneE164: String(row["phone_e164"]),
-    language:
-      row["language"] === "en"
-        ? "en"
-        : row["language"] === "es"
-          ? "es"
-          : "fr",
+    language: row["language"] === "en" ? "en" : "fr",
     accessTier: row["access_tier"] as AhmvPhoneContact["accessTier"],
     trialExpiresAt: String(row["trial_expires_at"]),
     smsConsent: Boolean(row["sms_consent"]),
     transactionalSmsAllowed: Boolean(row["transactional_sms_allowed"]),
     marketingSmsConsent: Boolean(row["marketing_sms_consent"]),
     takatakIdentityId: row["takatak_identity_id"] ? String(row["takatak_identity_id"]) : undefined,
+    premiumExpiresAt: row["premium_expires_at"] ? String(row["premium_expires_at"]) : undefined,
   };
 }
 
@@ -64,7 +61,7 @@ export async function touchPhoneContact(input: {
 
   const existingResult = await client
     .from("ahmv_phone_contacts")
-    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id")
+    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
     .eq("phone_e164", phone)
     .maybeSingle();
 
@@ -81,7 +78,7 @@ export async function touchPhoneContact(input: {
         updated_at: new Date().toISOString(),
       })
       .eq("id", current.id)
-      .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id")
+      .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
       .single();
     if (updateResult.error) throw updateResult.error;
     return mapContact(updateResult.data);
@@ -102,7 +99,7 @@ export async function touchPhoneContact(input: {
       marketing_sms_consent: false,
       last_seen_at: now.toISOString(),
     })
-    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id")
+    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
     .single();
 
   if (insertResult.error) {

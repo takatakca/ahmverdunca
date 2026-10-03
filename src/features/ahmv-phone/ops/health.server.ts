@@ -24,11 +24,15 @@ export async function getAhmvPhoneInternalHealth(
     teamPreferences,
     interactions,
     messageJobs,
+    eventSnapshots,
+    entitlementSyncEvents,
   ] = await Promise.all([
     tableReady("ahmv_phone_contacts"),
     tableReady("ahmv_phone_team_preferences"),
     tableReady("ahmv_phone_interactions"),
     tableReady("ahmv_phone_message_jobs"),
+    tableReady("ahmv_phone_event_snapshots"),
+    tableReady("ahmv_phone_entitlement_sync_events"),
   ]);
 
   const databaseReady =
@@ -56,8 +60,39 @@ export async function getAhmvPhoneInternalHealth(
       teamPreferences,
       interactions,
       messageJobs,
+      eventSnapshots,
+      entitlementSyncEvents,
+    },
+    features: {
+      reminders: {
+        enabled: settings["AHMV_PHONE_REMINDERS_ENABLED"] === "true",
+        eventSnapshotsReady: eventSnapshots,
+        teamMapConfigured:
+          Boolean(settings["AHMV_REMINDER_TEAM_MAP_JSON"]?.trim()) &&
+          settings["AHMV_REMINDER_TEAM_MAP_JSON"] !== "{}",
+      },
+      calendar: {
+        enabled: settings["AHMV_CALENDAR_LINKS_ENABLED"] === "true",
+        signingSecretConfigured:
+          (settings["AHMV_CALENDAR_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+      },
+      smartDeparture: {
+        enabled: settings["AHMV_SMART_DEPARTURE_ENABLED"] === "true",
+        signingSecretConfigured:
+          (settings["AHMV_DEPARTURE_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+        routeProviderConfigured: Boolean(
+          settings["TAKATAK_ROUTE_MATRIX_URL"]?.trim() &&
+            settings["TAKATAK_ROUTE_SERVICE_TOKEN"]?.trim(),
+        ),
+      },
     },
     takatak: {
+      membershipSyncEnabled:
+        settings["AHMV_TAKATAK_MEMBERSHIP_SYNC_ENABLED"] === "true",
+      membershipProjectionReady: entitlementSyncEvents,
+      serviceTokenConfigured: Boolean(
+        settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim(),
+      ),
       entitlementConfigured: Boolean(
         settings["TAKATAK_AHMV_ENTITLEMENT_URL"]?.trim() &&
           settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim(),

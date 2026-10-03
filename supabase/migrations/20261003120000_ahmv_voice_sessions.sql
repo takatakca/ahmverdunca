@@ -9,7 +9,7 @@ create table if not exists public.ahmv_voice_sessions (
   ahmv_phone_contact_id uuid references public.ahmv_phone_contacts(id) on delete set null,
   access_mode text not null default 'free_beta' check (access_mode in ('free_beta','paid')),
   access_allowed boolean not null default false,
-  detected_language text,
+  detected_language text check (detected_language is null or detected_language in ('fr','en','es')),
   sms_opt_in boolean not null default false,
   sms_items jsonb not null default '[]'::jsonb,
   transcript_summary jsonb not null default '[]'::jsonb,
