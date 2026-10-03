@@ -4,6 +4,7 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { applyPublicResponsePolicy } from "./lib/response-policy";
 import { handleAhmvTwilio } from "./lib/ahmv-twilio.server";
+import { handleAhmvPhoneStatus } from "./lib/ahmv-phone-status.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 
 type ServerEntry = {
@@ -88,6 +89,8 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
+    const phoneStatusResponse = handleAhmvPhoneStatus(request);
+    if (phoneStatusResponse) return phoneStatusResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);
