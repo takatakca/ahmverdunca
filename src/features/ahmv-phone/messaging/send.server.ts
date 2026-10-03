@@ -13,8 +13,10 @@ async function createJob(
   contactId: string | undefined,
   purpose: string,
   body: string,
+  dedupeKey?: string | undefined,
 ) {
-  if (!contactId) return undefined;
+  if (!contactId) return { shouldSend: true as const, jobId: undefined };
+
   const result = await db()
     .from("ahmv_phone_message_jobs")
     .insert({
@@ -23,11 +25,58 @@ async function createJob(
       payload: { body },
       status: "sending",
       attempts: 1,
+      dedupe_key: dedupeKey ?? null,
+      consent_basis: "requested",
     })
     .select("id")
     .single();
-  if (result.error) throw result.error;
-  return String(result.data.id);
+
+  if (!result.error) {
+    return { shouldSend: true as const, jobId: String(result.data.id) };
+  }
+  if (result.error.code !== "23505" || !dedupeKey) throw result.error;
+
+  const existing = await db()
+    .from("ahmv_phone_message_jobs")
+    .select("id,status,provider_sid,attempts")
+    .eq("dedupe_key", dedupeKey)
+    .maybeSingle();
+  if (existing.error) throw existing.error;
+  if (!existing.data) throw result.error;
+
+  if (existing.data.status === "sent") {
+    return {
+      shouldSend: false as const,
+      jobId: String(existing.data.id),
+      duplicate: true as const,
+      sid: existing.data.provider_sid ? String(existing.data.provider_sid) : undefined,
+    };
+  }
+
+  if (existing.data.status === "sending" || existing.data.status === "pending") {
+    return {
+      shouldSend: false as const,
+      jobId: String(existing.data.id),
+      duplicate: true as const,
+      reason: "already_in_flight" as const,
+    };
+  }
+
+  const retry = await db()
+    .from("ahmv_phone_message_jobs")
+    .update({
+      status: "sending",
+      payload: { body },
+      attempts: Number(existing.data.attempts ?? 0) + 1,
+      last_error: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", existing.data.id)
+    .select("id")
+    .single();
+  if (retry.error) throw retry.error;
+
+  return { shouldSend: true as const, jobId: String(retry.data.id) };
 }
 
 async function updateJob(
@@ -132,15 +181,31 @@ export async function sendTransactionalSms(input: {
   body: string;
   purpose: string;
   contactId?: string | undefined;
+  dedupeKey?: string | undefined;
   settings?: Settings | undefined;
 }) {
   const settings = input.settings ?? process.env;
 
   let jobId: string | undefined;
   try {
-    jobId = await createJob(input.contactId, input.purpose, input.body);
+    const job = await createJob(
+      input.contactId,
+      input.purpose,
+      input.body,
+      input.dedupeKey,
+    );
+    jobId = job.jobId;
+    if (!job.shouldSend) {
+      if (job.reason === "already_in_flight") {
+        return { sent: false as const, reason: job.reason, duplicate: true as const };
+      }
+      return { sent: true as const, sid: job.sid, duplicate: true as const };
+    }
   } catch (error) {
     console.error("[AHMV SMS queue]", error);
+    if (input.dedupeKey) {
+      return { sent: false as const, reason: "idempotency_store" as const };
+    }
   }
 
   const result = await createProviderMessage({
