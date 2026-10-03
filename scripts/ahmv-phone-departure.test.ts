@@ -156,3 +156,23 @@ test("estimate endpoint rejects an invalid signed request before using location"
   assert.equal(response?.status, 403);
   assert.doesNotMatch(await response!.text(), /45\.5|-73\.57/);
 });
+
+
+test("signed smart-departure page follows Spanish language preference", async () => {
+  const link = createSignedDepartureLink(
+    "ow-0929-1700",
+    settings,
+    new Date(),
+    3600,
+  );
+  const url = new URL(link!);
+  url.searchParams.set("lang", "es");
+  const response = await handleAhmvDeparture(new Request(url), settings);
+  assert.equal(response?.status, 200);
+  assert.equal(response?.headers.get("content-language"), "es");
+  const body = await response!.text();
+  assert.match(body, /Salida inteligente/);
+  assert.match(body, /Usar mi ubicación/);
+  assert.match(body, /Abrir Waze/);
+  assert.match(body, /No se deduce ninguna ubicación GPS/);
+});

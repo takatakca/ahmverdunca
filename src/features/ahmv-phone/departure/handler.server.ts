@@ -1,5 +1,7 @@
+import type { PhoneLanguage } from "../../../lib/ahmv-phone.ts";
 import { calendarEventTimes } from "../calendar/event.ts";
 import { navigationLinksForVenue } from "../arenas/navigation.ts";
+import { phoneDateLocale, phoneText } from "../i18n.ts";
 import {
   arrivalBufferMinutes,
   recommendedDepartureAt,
@@ -41,6 +43,11 @@ function signedInput(url: URL) {
     expires: url.searchParams.get("exp") ?? "",
     signature: url.searchParams.get("sig") ?? "",
   };
+}
+
+function linkLanguage(url: URL): PhoneLanguage {
+  const value = url.searchParams.get("lang");
+  return value === "en" ? "en" : value === "es" ? "es" : "fr";
 }
 
 function validOrigin(value: unknown) {
@@ -212,6 +219,9 @@ export async function handleAhmvDeparture(
   if (!eventValue) return json({ error: "event_not_found" }, 404);
 
   const { event, startIso } = eventValue;
+  const lang = linkLanguage(url);
+  const t = (fr: string, en: string, es: string) =>
+    phoneText(lang, { fr, en, es });
   const directions = navigationLinksForVenue(event.venue);
   const estimateEndpoint = "/api/ahmv/departure/estimate";
   const payload = JSON.stringify({
@@ -222,42 +232,91 @@ export async function handleAhmvDeparture(
 
   const cancelled =
     event.status === "cancelled"
-      ? '<div class="alert">Cet événement est actuellement indiqué ANNULÉ. Le calcul de départ est désactivé.</div>'
+      ? '<div class="alert">' +
+        htmlEscape(
+          t(
+            "Cet événement est actuellement indiqué ANNULÉ. Le calcul de départ est désactivé.",
+            "This event is currently marked CANCELLED. Departure calculation is disabled.",
+            "Este evento aparece actualmente como CANCELADO. El cálculo de salida está desactivado.",
+          ),
+        ) +
+        "</div>"
       : "";
 
   const disabled = event.status === "cancelled" ? " disabled" : "";
 
+  const ui = {
+    noGeolocation: t(
+      "La localisation n’est pas disponible sur cet appareil. Utilisez un bouton d’itinéraire.",
+      "Location is not available on this device. Use a directions button.",
+      "La ubicación no está disponible en este dispositivo. Use un botón de navegación.",
+    ),
+    calculating: t("Calcul en cours…", "Calculating…", "Calculando…"),
+    failed: t(
+      "Impossible de calculer le départ pour le moment.",
+      "Unable to calculate departure right now.",
+      "No es posible calcular la salida en este momento.",
+    ),
+    noTraffic: t(
+      "Le trafic en direct n’est pas encore connecté. Utilisez Waze, Google Maps ou Apple Maps ci-dessous.",
+      "Live traffic is not connected yet. Use Waze, Google Maps or Apple Maps below.",
+      "El tráfico en tiempo real aún no está conectado. Use Waze, Google Maps o Apple Maps a continuación.",
+    ),
+    recommended: t(
+      "Départ recommandé: ",
+      "Recommended departure: ",
+      "Salida recomendada: ",
+    ),
+    traffic: t(
+      " · trajet avec trafic: ",
+      " · traffic travel time: ",
+      " · tiempo de viaje con tráfico: ",
+    ),
+    buffer: t(
+      " min · marge arrivée: ",
+      " min · arrival buffer: ",
+      " min · margen de llegada: ",
+    ),
+    denied: t(
+      "Localisation refusée ou indisponible. Aucune position n’a été enregistrée.",
+      "Location denied or unavailable. No position was stored.",
+      "Ubicación rechazada o no disponible. No se guardó ninguna posición.",
+    ),
+    locale: phoneDateLocale(lang),
+  };
+
   const script =
     "(function(){" +
     "const base=" + payload + ";" +
+    "const s=" + JSON.stringify(ui).replace(/</g, "\\u003c") + ";" +
     "const b=document.getElementById('locate');" +
     "const out=document.getElementById('result');" +
     "if(!b||!out)return;" +
     "function show(t){out.textContent=t;}" +
     "b.addEventListener('click',function(){" +
-    "if(!navigator.geolocation){show('La localisation n’est pas disponible sur cet appareil. Utilisez un bouton d’itinéraire.');return;}" +
-    "b.disabled=true;show('Calcul en cours…');" +
+    "if(!navigator.geolocation){show(s.noGeolocation);return;}" +
+    "b.disabled=true;show(s.calculating);" +
     "navigator.geolocation.getCurrentPosition(async function(p){" +
     "try{" +
     "const r=await fetch('" + estimateEndpoint + "',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({...base,origin:{latitude:p.coords.latitude,longitude:p.coords.longitude}})});" +
     "const d=await r.json();" +
-    "if(!r.ok){show('Impossible de calculer le départ pour le moment.');return;}" +
-    "if(!d.available){show('Le trafic en direct n’est pas encore connecté. Utilisez Waze, Google Maps ou Apple Maps ci-dessous.');return;}" +
+    "if(!r.ok){show(s.failed);return;}" +
+    "if(!d.available){show(s.noTraffic);return;}" +
     "const leave=new Date(d.departureAt);" +
-    "show('Départ recommandé: '+leave.toLocaleString('fr-CA')+' · trajet avec trafic: '+d.trafficDurationMinutes+' min · marge arrivée: '+d.arrivalBufferMinutes+' min.');" +
-    "}catch(e){show('Impossible de calculer le départ pour le moment.');}" +
+    "show(s.recommended+leave.toLocaleString(s.locale)+s.traffic+d.trafficDurationMinutes+s.buffer+d.arrivalBufferMinutes+' min.');" +
+    "}catch(e){show(s.failed);}" +
     "finally{b.disabled=false;}" +
-    "},function(){b.disabled=false;show('Localisation refusée ou indisponible. Aucune position n’a été enregistrée.');},{enableHighAccuracy:false,timeout:8000,maximumAge:300000});" +
+    "},function(){b.disabled=false;show(s.denied);},{enableHighAccuracy:false,timeout:8000,maximumAge:300000});" +
     "});" +
     "})();";
 
   const body = [
     "<!doctype html>",
-    '<html lang="fr"><head>',
+    '<html lang="' + lang + '"><head>',
     '<meta charset="utf-8">',
     '<meta name="viewport" content="width=device-width,initial-scale=1">',
     '<meta name="robots" content="noindex,nofollow">',
-    "<title>Départ intelligent — AHMV</title>",
+    "<title>" + htmlEscape(t("Départ intelligent — AHMV", "Smart departure — AHMV", "Salida inteligente — AHMV")) + "</title>",
     "<style>",
     "body{font-family:system-ui,-apple-system,sans-serif;background:#0b1320;color:#fff;margin:0;padding:24px}",
     "main{max-width:680px;margin:36px auto;background:#142238;border:1px solid #29405f;border-radius:18px;padding:24px}",
@@ -267,7 +326,7 @@ export async function handleAhmvDeparture(
     "button{background:#fff;color:#0b1320;cursor:pointer}button:disabled{opacity:.55}.nav{background:#d8e6f7;color:#0b1320}",
     "#result{min-height:48px;margin-top:16px;padding:12px;background:#0b1320;border-radius:10px;white-space:pre-wrap}",
     "</style></head><body><main>",
-    "<h1>Départ intelligent — " + htmlEscape(event.group) + "</h1>",
+    "<h1>" + htmlEscape(t("Départ intelligent — ", "Smart departure — ", "Salida inteligente — ")) + htmlEscape(event.group) + "</h1>",
     '<p class="meta">' +
       htmlEscape(event.date) +
       " " +
@@ -278,12 +337,12 @@ export async function handleAhmvDeparture(
       htmlEscape(directions.destination) +
       "</p>",
     cancelled,
-    '<button id="locate"' + disabled + ">Utiliser ma position pour calculer mon départ</button>",
-    '<div id="result" aria-live="polite">La position n’est demandée qu’après votre clic.</div>',
-    '<a class="nav" href="' + htmlEscape(directions.waze) + '" rel="noopener noreferrer">Ouvrir Waze</a>',
-    '<a class="nav" href="' + htmlEscape(directions.googleMaps) + '" rel="noopener noreferrer">Ouvrir Google Maps</a>',
-    '<a class="nav" href="' + htmlEscape(directions.appleMaps) + '" rel="noopener noreferrer">Ouvrir Apple Maps</a>',
-    '<p class="privacy">Votre position sert uniquement au calcul demandé et n’est pas enregistrée par cette page. Aucun GPS n’est déduit de votre numéro de téléphone.</p>',
+    '<button id="locate"' + disabled + ">" + htmlEscape(t("Utiliser ma position pour calculer mon départ", "Use my location to calculate my departure", "Usar mi ubicación para calcular mi salida")) + "</button>",
+    '<div id="result" aria-live="polite">' + htmlEscape(t("La position n’est demandée qu’après votre clic.", "Location is requested only after you click.", "La ubicación se solicita solamente después de hacer clic.")) + "</div>",
+    '<a class="nav" href="' + htmlEscape(directions.waze) + '" rel="noopener noreferrer">' + htmlEscape(t("Ouvrir Waze", "Open Waze", "Abrir Waze")) + "</a>",
+    '<a class="nav" href="' + htmlEscape(directions.googleMaps) + '" rel="noopener noreferrer">' + htmlEscape(t("Ouvrir Google Maps", "Open Google Maps", "Abrir Google Maps")) + "</a>",
+    '<a class="nav" href="' + htmlEscape(directions.appleMaps) + '" rel="noopener noreferrer">' + htmlEscape(t("Ouvrir Apple Maps", "Open Apple Maps", "Abrir Apple Maps")) + "</a>",
+    '<p class="privacy">' + htmlEscape(t("Votre position sert uniquement au calcul demandé et n’est pas enregistrée par cette page. Aucun GPS n’est déduit de votre numéro de téléphone.", "Your location is used only for the requested calculation and is not stored by this page. No GPS location is inferred from your phone number.", "Su ubicación se usa únicamente para el cálculo solicitado y esta página no la guarda. No se deduce ninguna ubicación GPS de su número de teléfono.")) + "</p>",
     "<script>" + script + "</script>",
     "</main></body></html>",
   ].join("");
@@ -292,6 +351,7 @@ export async function handleAhmvDeparture(
     status: 200,
     headers: {
       ...BASE_HEADERS,
+      "content-language": lang,
       "content-type": "text/html; charset=utf-8",
       "content-security-policy":
         "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",

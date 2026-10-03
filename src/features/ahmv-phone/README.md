@@ -35,7 +35,7 @@ A caller phone number is a communication identifier, not sufficient authenticati
 
 ## SMS commands
 
-Default language is French. Prefix with `EN ` for English.
+Default language is French. Prefix with `EN ` for English or `ES ` for Spanish.
 
 Examples:
 - `M11 groupe 5` — next event
@@ -45,13 +45,16 @@ Examples:
 - `SAUVE M13A`
 - `CALENDRIER M13A` / `CALENDAR M13A`
 - `EN WEEK Junior`
-- `AIDE` / `HELP`
+- `ES SEMANA Junior`
+- `ES RECORDATORIO M13A`
+- `ES CALENDARIO M13A`
+- `AIDE` / `HELP` / `AYUDA`
 
 STOP/START and carrier opt-out behavior stay under Twilio Advanced Opt-Out. An inbound call or transactional request never grants marketing consent.
 
 ## Voice flow
 
-1. Language.
+1. Language: 1 French, 2 English, 3 Spanish.
 2. Offer requested SMS follow-up.
 3. Short menu.
 4. Ask for exact team/group.
@@ -92,7 +95,7 @@ Do not mark the system public until all are true:
 - Voice webhook POST points to `/api/ahmv/twilio/voice`;
 - Messaging webhook POST points to `/api/ahmv/twilio/sms`;
 - status callback POST points to `/api/ahmv/twilio/status`;
-- real French and English calls pass;
+- real French, English and Spanish calls pass;
 - real inbound and outbound SMS pass;
 - opt-out behavior is verified;
 - carrier delivery is verified;

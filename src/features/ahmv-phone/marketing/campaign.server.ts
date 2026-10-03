@@ -25,6 +25,7 @@ type CampaignRow = {
   campaign_name: string;
   body_fr: string;
   body_en: string;
+  body_es: string;
   audience: MarketingAudience;
   legal_info_url: string;
   scheduled_at: string;
@@ -68,6 +69,7 @@ function campaignMatchesInput(
     row.campaign_name === input.campaignName &&
     row.body_fr === input.bodyFr &&
     row.body_en === input.bodyEn &&
+    row.body_es === input.bodyEs &&
     new Date(row.scheduled_at).toISOString() === input.scheduledAt &&
     stableAudience(row.audience) === stableAudience(input.audience) &&
     row.legal_info_url === legalInfoUrl
@@ -78,7 +80,7 @@ async function findCampaign(campaignId: string) {
   const result = await db()
     .from("ahmv_phone_campaign_executions")
     .select(
-      "id,takatak_campaign_id,campaign_name,body_fr,body_en,audience,legal_info_url,scheduled_at,status,target_count,queued_count,created_at,updated_at",
+      "id,takatak_campaign_id,campaign_name,body_fr,body_en,body_es,audience,legal_info_url,scheduled_at,status,target_count,queued_count,created_at,updated_at",
     )
     .eq("takatak_campaign_id", campaignId)
     .maybeSingle();
@@ -147,13 +149,14 @@ async function ensureCampaignExecution(
       campaign_name: input.campaignName,
       body_fr: input.bodyFr,
       body_en: input.bodyEn,
+      body_es: input.bodyEs,
       audience: input.audience,
       legal_info_url: legalInfoUrl,
       scheduled_at: input.scheduledAt,
       status: "queued",
     })
     .select(
-      "id,takatak_campaign_id,campaign_name,body_fr,body_en,audience,legal_info_url,scheduled_at,status,target_count,queued_count,created_at,updated_at",
+      "id,takatak_campaign_id,campaign_name,body_fr,body_en,body_es,audience,legal_info_url,scheduled_at,status,target_count,queued_count,created_at,updated_at",
     )
     .single();
 
@@ -186,9 +189,12 @@ export async function queueMarketingCampaign(
   let duplicate = 0;
 
   for (const contact of contacts) {
-    const body = contact.language === "en"
-      ? marketingMessageBody(input.bodyEn, legalInfoUrl)
-      : marketingMessageBody(input.bodyFr, legalInfoUrl);
+    const body =
+      contact.language === "en"
+        ? marketingMessageBody(input.bodyEn, legalInfoUrl, "en")
+        : contact.language === "es"
+          ? marketingMessageBody(input.bodyEs, legalInfoUrl, "es")
+          : marketingMessageBody(input.bodyFr, legalInfoUrl, "fr");
 
     const result = await queueMessageJob({
       contactId: contact.id,

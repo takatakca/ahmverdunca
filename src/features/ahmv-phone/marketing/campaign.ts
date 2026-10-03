@@ -1,4 +1,6 @@
 import { PUBLIC_TEAM_DIRECTORY } from "../../../data/team-directory.ts";
+import type { PhoneLanguage } from "../../../lib/ahmv-phone.ts";
+import { phoneText } from "../i18n.ts";
 
 export type MarketingAudience =
   | { kind: "all_opted_in" }
@@ -9,6 +11,7 @@ export interface MarketingCampaignInput {
   campaignName: string;
   bodyFr: string;
   bodyEn: string;
+  bodyEs: string;
   audience: MarketingAudience;
   scheduledAt: string;
 }
@@ -34,6 +37,7 @@ export function validateMarketingCampaignInput(
   const campaignName = cleanText(row["campaignName"], 160);
   const bodyFr = cleanText(row["bodyFr"], 800);
   const bodyEn = cleanText(row["bodyEn"], 800);
+  const bodyEs = cleanText(row["bodyEs"], 800);
   const scheduledAtRaw =
     typeof row["scheduledAt"] === "string" ? row["scheduledAt"] : "";
   const scheduledTimestamp = Date.parse(scheduledAtRaw);
@@ -44,6 +48,7 @@ export function validateMarketingCampaignInput(
     !campaignName ||
     !bodyFr ||
     !bodyEn ||
+    !bodyEs ||
     !Number.isFinite(scheduledTimestamp) ||
     scheduledTimestamp < now.getTime() - 5 * 60_000 ||
     scheduledTimestamp > now.getTime() + 90 * 86_400_000
@@ -69,6 +74,7 @@ export function validateMarketingCampaignInput(
       campaignName,
       bodyFr,
       bodyEn,
+      bodyEs,
       audience: { kind: "all_opted_in" },
       scheduledAt: new Date(scheduledTimestamp).toISOString(),
     };
@@ -97,6 +103,7 @@ export function validateMarketingCampaignInput(
       campaignName,
       bodyFr,
       bodyEn,
+      bodyEs,
       audience: { kind: "teams", teamIds },
       scheduledAt: new Date(scheduledTimestamp).toISOString(),
     };
@@ -122,7 +129,13 @@ export function marketingLegalInfoUrl(
 export function marketingMessageBody(
   body: string,
   infoUrl: string,
+  lang: PhoneLanguage = "fr",
 ) {
-  const suffix = `GROUPE TAKATAK / AHMV • Infos: ${infoUrl} • STOP`;
+  const infoLabel = phoneText(lang, {
+    fr: "Infos",
+    en: "Info",
+    es: "Info",
+  });
+  const suffix = `GROUPE TAKATAK / AHMV • ${infoLabel}: ${infoUrl} • STOP`;
   return `${body.trim()}\n${suffix}`.slice(0, 1500);
 }

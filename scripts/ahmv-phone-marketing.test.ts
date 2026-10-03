@@ -29,18 +29,25 @@ test("marketing consent requires an explicit affirmative or negative command", (
   assert.deepEqual(parseMarketingConsentCommand("MARKETING NO"), {
     kind: "marketing-opt-out",
   });
+  assert.deepEqual(parseMarketingConsentCommand("OFERTAS SI"), {
+    kind: "marketing-opt-in",
+  });
+  assert.deepEqual(parseMarketingConsentCommand("OFERTAS NO"), {
+    kind: "marketing-opt-out",
+  });
   assert.equal(parseMarketingConsentCommand("M13A"), null);
   assert.equal(parseMarketingConsentCommand("OUI"), null);
   assert.equal(parseMarketingConsentCommand("YES"), null);
 });
 
-test("campaign validator accepts a bounded bilingual opted-in audience", () => {
+test("campaign validator accepts a bounded trilingual opted-in audience", () => {
   const value = validateMarketingCampaignInput(
     {
       campaignId: "camp_2026_10_03_001",
       campaignName: "Rappel inscription",
       bodyFr: "Les inscriptions sont ouvertes.",
       bodyEn: "Registration is open.",
+      bodyEs: "Las inscripciones están abiertas.",
       audience: { kind: "all_opted_in" },
       scheduledAt: "2026-10-04T12:00:00.000Z",
     },
@@ -48,6 +55,22 @@ test("campaign validator accepts a bounded bilingual opted-in audience", () => {
   );
   assert.equal(value?.campaignId, "camp_2026_10_03_001");
   assert.deepEqual(value?.audience, { kind: "all_opted_in" });
+  assert.equal(value?.bodyEs, "Las inscripciones están abiertas.");
+});
+
+test("campaign validator rejects missing Spanish copy", () => {
+  const invalid = validateMarketingCampaignInput(
+    {
+      campaignId: "camp_missing_es",
+      campaignName: "Missing Spanish",
+      bodyFr: "Message.",
+      bodyEn: "Message.",
+      audience: { kind: "all_opted_in" },
+      scheduledAt: "2026-10-04T12:00:00.000Z",
+    },
+    now,
+  );
+  assert.equal(invalid, null);
 });
 
 test("campaign team audience rejects unknown team identifiers", () => {
@@ -57,6 +80,7 @@ test("campaign team audience rejects unknown team identifiers", () => {
       campaignName: "Team message",
       bodyFr: "Message.",
       bodyEn: "Message.",
+      bodyEs: "Mensaje.",
       audience: { kind: "teams", teamIds: ["unknown-team"] },
       scheduledAt: "2026-10-04T12:00:00.000Z",
     },
@@ -73,6 +97,7 @@ test("campaign validator rejects stale far-future and oversized content", () => 
         campaignName: "Stale",
         bodyFr: "Message",
         bodyEn: "Message",
+        bodyEs: "Mensaje",
         audience: { kind: "all_opted_in" },
         scheduledAt: "2026-10-03T11:00:00.000Z",
       },
@@ -88,6 +113,7 @@ test("campaign validator rejects stale far-future and oversized content", () => 
         campaignName: "Long",
         bodyFr: "x".repeat(801),
         bodyEn: "Message",
+        bodyEs: "Mensaje",
         audience: { kind: "all_opted_in" },
         scheduledAt: "2026-10-04T12:00:00.000Z",
       },
@@ -201,6 +227,12 @@ test("marketing migration stores explicit consent evidence and campaign projecti
   assert.match(sql, /takatak_verified/i);
   assert.match(sql, /ahmv_phone_campaign_executions/i);
   assert.match(sql, /takatak_campaign_id text not null unique/i);
+  const spanishSql = readFileSync(
+    "supabase/migrations/20261003110000_ahmv_phone_spanish.sql",
+    "utf8",
+  );
+  assert.match(spanishSql, /body_es/i);
+  assert.match(spanishSql, /alter column body_es set not null/i);
   assert.match(sql, /enable row level security/i);
   assert.match(sql, /grant all[\s\S]*service_role/i);
 });

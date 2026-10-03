@@ -122,6 +122,7 @@ Example:
   "campaignName": "Registration reminder",
   "bodyFr": "Les inscriptions sont ouvertes.",
   "bodyEn": "Registration is open.",
+  "bodyEs": "Las inscripciones están abiertas.",
   "audience": {
     "kind": "all_opted_in"
   },
@@ -187,7 +188,7 @@ Reposting the same ID with the exact same campaign contract is safe.
 
 Reposting the same ID with different:
 - campaign name;
-- FR/EN body;
+- FR/EN/ES body;
 - audience;
 - schedule;
 - legal information URL
@@ -263,3 +264,14 @@ Before setting `AHMV_PHONE_CAMPAIGNS_ENABLED=true`:
 - `bun run check:phone-preflight --strict` passes.
 
 Commercial campaigns remain disabled by default.
+
+
+## Spanish campaign copy
+
+Every newly created TAKATAK campaign must provide all three message bodies:
+
+- `bodyFr`
+- `bodyEn`
+- `bodyEs`
+
+AHMV selects the copy from the contact's saved communication language. Existing pre-Spanish campaign rows are backfilled from English by the migration only for historical compatibility; new campaign API requests require explicit Spanish copy.

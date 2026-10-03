@@ -1,9 +1,10 @@
 import type { PhoneLanguage } from "../../../lib/ahmv-phone.ts";
 import { navigationLinksForVenue } from "../arenas/navigation.ts";
+import { phoneDateLocale } from "../i18n.ts";
 import type { AuthoritativeEventSnapshot } from "./change-detector.ts";
 
 function localEventTime(value: string, lang: PhoneLanguage) {
-  return new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
+  return new Intl.DateTimeFormat(phoneDateLocale(lang), {
     timeZone: "America/Toronto",
     dateStyle: "medium",
     timeStyle: "short",
@@ -22,6 +23,14 @@ export function gameReminderText(
       "AHMV — Rappel de votre événement.",
       time + " — " + event.venue + ".",
       "Itinéraire: " + directions.googleMaps,
+    ].join("\n");
+  }
+
+  if (lang === "es") {
+    return [
+      "AHMV — Recordatorio de su evento.",
+      time + " — " + event.venue + ".",
+      "Cómo llegar: " + directions.googleMaps,
     ].join("\n");
   }
 

@@ -4,6 +4,7 @@ import { parsePhoneCommand } from "../conversation/commands";
 import { canUse, localEntitlement } from "../entitlements/access";
 import { scheduleRangeAnswer } from "../schedules/range";
 import { PHONE_DEMO_ALIASES, PHONE_DEMO_NOW, PHONE_DEMO_SCHEDULE } from "./fixtures";
+import { phoneLanguagePrefix, phoneText } from "../i18n.ts";
 
 export type DemoAccess = "guest" | "trial" | "expired" | "premium";
 
@@ -49,25 +50,28 @@ function normalizeDemoTeam(query: string) {
 }
 
 function membershipText(lang: PhoneLanguage) {
-  return lang === "fr"
-    ? "DÉMO — Cette fonction personnalisée exige un essai actif ou un abonnement GROUPE TAKATAK."
-    : "DEMO — This personalized feature requires an active trial or GROUPE TAKATAK membership.";
+  return phoneText(lang, {
+    fr: "DÉMO — Cette fonction personnalisée exige un essai actif ou un abonnement GROUPE TAKATAK.",
+    en: "DEMO — This personalized feature requires an active trial or GROUPE TAKATAK membership.",
+    es: "DEMO — Esta función personalizada requiere una prueba activa o una membresía de GROUPE TAKATAK.",
+  });
 }
 
 export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
   const parsed =
     input.channel === "sms"
-      ? parseSms(input.lang === "en" ? "EN " + input.message : input.message)
+      ? parseSms((input.lang ? phoneLanguagePrefix(input.lang) + " " : "") + input.message)
       : { lang: input.lang ?? ("fr" as const), query: input.message.trim() };
 
   const lang = parsed.lang;
   const access = input.access ?? "trial";
   const command = parsePhoneCommand(parsed.query);
   const entitlement = entitlementFor(access);
-  const disclaimer =
-    lang === "fr"
-      ? "DÉMO UNIQUEMENT — horaires fictifs, jamais utilisés comme données officielles."
-      : "DEMO ONLY — fictional schedules, never used as official data.";
+  const disclaimer = phoneText(lang, {
+    fr: "DÉMO UNIQUEMENT — horaires fictifs, jamais utilisés comme données officielles.",
+    en: "DEMO ONLY — fictional schedules, never used as official data.",
+    es: "SOLO DEMO — horarios ficticios, nunca utilizados como datos oficiales.",
+  });
 
   if (!parsed.query) {
     return {
@@ -77,12 +81,19 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
       access,
       recognizedIntent: "help",
       ...(input.channel === "voice"
-        ? { spokenText: lang === "fr" ? "DÉMO. Dites votre équipe." : "DEMO. Say your team." }
+        ? {
+            spokenText: phoneText(lang, {
+              fr: "DÉMO. Dites votre équipe.",
+              en: "DEMO. Say your team.",
+              es: "DEMO. Diga su equipo.",
+            }),
+          }
         : {
-            smsText:
-              lang === "fr"
-                ? "DÉMO AHMV: envoyez M13A ou Junior."
-                : "AHMV DEMO: text M13A or Junior.",
+            smsText: phoneText(lang, {
+              fr: "DÉMO AHMV: envoyez M13A ou Junior.",
+              en: "AHMV DEMO: text M13A or Junior.",
+              es: "DEMO AHMV: envíe M13A o Junior.",
+            }),
           }),
       hangup: input.channel === "voice",
       disclaimer,
@@ -94,9 +105,11 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
   if (command.kind === "save") {
     const allowed = canUse(entitlement, "saved_teams");
     const responseText = allowed
-      ? lang === "fr"
-        ? "DÉMO — Équipe principale sauvegardée: " + team + "."
-        : "DEMO — Primary team saved: " + team + "."
+      ? phoneText(lang, {
+          fr: "DÉMO — Équipe principale sauvegardée: " + team + ".",
+          en: "DEMO — Primary team saved: " + team + ".",
+          es: "DEMO — Equipo principal guardado: " + team + ".",
+        })
       : membershipText(lang);
 
     return {
@@ -162,7 +175,7 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
     "\n" +
     answer.text +
     (directions
-      ? "\n" + (lang === "fr" ? "Itinéraire: " : "Directions: ") + directions.googleMaps
+      ? "\n" + phoneText(lang, { fr: "Itinéraire: ", en: "Directions: ", es: "Cómo llegar: " }) + directions.googleMaps
       : "");
 
   return {
