@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "../../../integrations/supabase/client.server.ts";
-import type { AhmvPhoneContact, AhmvPhoneLanguage } from "../contacts/store.server.ts";
+import type { AhmvPhoneContact } from "../contacts/store.server.ts";
 import { memberActivationUrl } from "../entitlements/service.server.ts";
 import {
   lifecycleConsentStillValid,
