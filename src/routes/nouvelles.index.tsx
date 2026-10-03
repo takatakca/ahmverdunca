@@ -79,7 +79,7 @@ function NewsPage() {
               aria-pressed={cat === category.id}
               onClick={() => setCat(category.id)}
               className={cn(
-                "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em] transition-colors",
+                "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
                 cat === category.id
                   ? "border-navy bg-navy text-navy-foreground"
                   : "border-navy/12 bg-background text-navy hover:border-sport hover:text-sport",
@@ -95,7 +95,7 @@ function NewsPage() {
         )}
 
         {featured && (
-          <section className="mt-8 grid overflow-hidden border border-navy/12 lg:grid-cols-[0.9fr_1.1fr]">
+          <section className="interactive-surface mt-8 grid overflow-hidden border border-navy/12 lg:grid-cols-[0.9fr_1.1fr]">
             <SportArtwork
               index={String(featured.legacyId ?? "01").padStart(2, "0")}
               kicker={newsDateLabel(featured, lang)}
@@ -136,7 +136,7 @@ function NewsPage() {
                 key={article.slug}
                 to="/nouvelles/$slug"
                 params={{ slug: article.slug }}
-                className="group grid gap-4 border-b border-navy/12 py-6 md:grid-cols-[5rem_10rem_minmax(0,1fr)_auto] md:items-center md:gap-6"
+                className="interactive-surface group grid gap-4 border-b border-navy/12 px-2 py-6 md:grid-cols-[5rem_10rem_minmax(0,1fr)_auto] md:items-center md:gap-6 md:px-3"
               >
                 <span className="font-display text-4xl font-extrabold tracking-[-0.06em] text-navy/12">
                   {String(index + 2).padStart(2, "0")}
