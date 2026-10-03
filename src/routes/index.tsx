@@ -9,7 +9,6 @@ import {
   ExternalLink,
   Facebook,
   Instagram,
-  Images,
   MapPin,
   Trophy,
   Users,
@@ -28,6 +27,7 @@ import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
+import { AhmvRealHockeyWall } from "@/components/home/ahmv-real-hockey-wall";
 import { LogoSlot } from "@/components/layout/logo-slot";
 import { AdSenseSlot } from "@/components/adsense-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "AHM Verdun — Le hockey commence ici" },
       { property: "og:description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun." },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: OFFICIAL_MEDIA.tournamentM11Primary.url },
+      { property: "og:image", content: OFFICIAL_MEDIA.practiceGroup.url },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
@@ -64,8 +64,8 @@ function Home() {
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
       <section className="relative isolate min-h-[68svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[72svh] md:min-h-[80svh]">
         <img
-          src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-          alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+          src={OFFICIAL_MEDIA.practiceGroup.url}
+          alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGroup.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.en}
           fetchPriority="high"
           decoding="async"
           className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-68"
@@ -197,80 +197,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-b border-navy/10 bg-competition text-white">
-        <div className="grid min-h-[360px] md:min-h-[430px] lg:grid-cols-[0.92fr_1.08fr]">
-          <div className="relative z-10 flex flex-col justify-center p-6 md:p-10 lg:p-12 xl:pl-[max(3rem,calc((100vw-80rem)/2))]">
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Tournoi M11 · Verdun en vrai" : "U11 Tournament · Real Verdun hockey"}
-            </p>
-            <h2 className="mt-3 max-w-[11ch] font-display text-[clamp(3rem,6vw,6.7rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.045em]">
-              {lang === "fr" ? "Des équipes. Des coupes. Des souvenirs." : "Teams. Trophies. Memories."}
-            </h2>
-            <p className="mt-5 max-w-xl text-sm leading-relaxed text-white/65 md:text-base">
-              {lang === "fr"
-                ? "Le nouveau portail s’appuie sur de vraies images AHM Verdun. Les jeunes, les entraîneurs, les familles et les moments de tournoi doivent rester au centre du site."
-                : "The new portal is built around real AHM Verdun photography. Players, coaches, families and tournament moments stay at the centre of the experience."}
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              <Link
-                to="/galerie/$slug"
-                params={{ slug: "tournoi-m11-2025" }}
-                className="premium-control inline-flex min-h-11 items-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground"
-              >
-                <Images className="size-4" />
-                {lang === "fr" ? "Voir le tournoi M11" : "View U11 tournament"}
-              </Link>
-              <Link
-                to="/equipes/$slug"
-                params={{ slug: "m11" }}
-                className="premium-control inline-flex min-h-11 items-center gap-2 border border-white/18 px-4 text-[10px] font-bold uppercase tracking-[0.14em] text-white hover:border-sport"
-              >
-                {lang === "fr" ? "Entrer dans M11" : "Enter U11"}
-                <ArrowRight className="size-4 text-sport-foreground" />
-              </Link>
-            </div>
-          </div>
-
-          <div className="grid min-h-[360px] grid-cols-2 grid-rows-2 gap-px bg-white/10 md:min-h-[430px]">
-            <a
-              href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative row-span-2 overflow-hidden bg-navy"
-            >
-              <img
-                src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-                alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
-                loading="eager"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_46%,rgba(7,16,43,0.78)_100%)]" />
-              <span className="absolute bottom-4 left-4 bg-competition/88 px-3 py-1.5 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
-                {lang === "fr" ? "Archive officielle · M11 2025" : "Official archive · U11 2025"}
-              </span>
-            </a>
-            {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media) => (
-              <a
-                key={media.url}
-                href={media.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative overflow-hidden bg-navy"
-              >
-                <img
-                  src={media.url}
-                  alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.60)_100%)]" />
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
+      <AhmvRealHockeyWall />
 
       <ScheduleFinder />
 
@@ -375,15 +302,15 @@ function Home() {
 
             <div className="grid h-[380px] grid-cols-[1.35fr_0.65fr] grid-rows-2 gap-1 sm:h-[460px]">
               <a
-                href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+                href={OFFICIAL_MEDIA.practiceGroup.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="photo-stage broadcast-cut interactive-surface group relative row-span-2 overflow-hidden bg-navy"
-                aria-label={lang === "fr" ? "Archive photo officielle AHMV — Tournoi M11" : "Official AHMV photo archive — U11 Tournament"}
+                aria-label={lang === "fr" ? "Photo réelle AHMV — entraînement sur glace" : "Real AHMV photo — on-ice practice"}
               >
                 <img
-                  src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-                  alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+                  src={OFFICIAL_MEDIA.practiceGroup.url}
+                  alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGroup.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.en}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
@@ -489,8 +416,8 @@ function Home() {
                 className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
                 <img
-                  src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
-                  alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+                  src={OFFICIAL_MEDIA.practicePlayers.url}
+                  alt={lang === "fr" ? OFFICIAL_MEDIA.practicePlayers.alt.fr : OFFICIAL_MEDIA.practicePlayers.alt.en}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"

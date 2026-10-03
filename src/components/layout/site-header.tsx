@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { TEAMS } from "@/data/teams";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { publicTeamHubUrl } from "@/data/team-directory";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
@@ -317,6 +318,33 @@ export function SiteHeader() {
               </div>
               <LogoSlot className="size-16 sm:size-20" />
             </div>
+
+            <Link
+              to="/galerie/$slug"
+              params={{ slug: "tournoi-m11-2025" }}
+              className="interactive-surface group relative mt-4 block min-h-[170px] overflow-hidden border border-white/12 bg-navy"
+            >
+              <img
+                src={OFFICIAL_MEDIA.practiceSkaters.url}
+                alt={lang === "fr" ? OFFICIAL_MEDIA.practiceSkaters.alt.fr : OFFICIAL_MEDIA.practiceSkaters.alt.en}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.93)_0%,rgba(7,16,43,0.58)_60%,rgba(7,16,43,0.22)_100%)]" />
+              <div className="relative flex min-h-[170px] max-w-[75%] flex-col justify-end p-4">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
+                  {lang === "fr" ? "Verdun en images" : "Verdun in pictures"}
+                </p>
+                <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.86] text-white">
+                  {lang === "fr" ? "Le vrai hockey AHMV" : "Real AHMV hockey"}
+                </p>
+                <span className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.13em] text-white/70">
+                  <Images className="size-4 text-sport-foreground" />
+                  {lang === "fr" ? "Ouvrir la galerie" : "Open gallery"}
+                </span>
+              </div>
+            </Link>
 
             {selectedTeams.length > 0 ? (
               <div className="mt-4 overflow-hidden border border-sport/35 bg-sport/10">
