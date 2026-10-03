@@ -73,6 +73,20 @@ export function usePreferredTeam() {
 
   const clearSelectedTeams = useCallback(() => saveSelectedTeamIds([]), [saveSelectedTeamIds]);
 
+  const clearAllTeamPreferences = useCallback(() => {
+    window.localStorage.removeItem(LEGACY_KEY);
+    window.localStorage.removeItem(EXACT_TEAMS_KEY);
+    setSlug("");
+    setSelectedTeamIds([]);
+    window.dispatchEvent(new Event(EVENT));
+  }, []);
+
+  const removeSelectedTeam = useCallback((teamId: string) => {
+    if (!getPublicTeamById(teamId)) return;
+    const current = readSelectedTeamIds();
+    saveSelectedTeamIds(current.filter((value) => value !== teamId));
+  }, [saveSelectedTeamIds]);
+
   const selectedTeams = useMemo(
     () => selectedTeamIds.map((teamId) => getPublicTeamById(teamId)).filter((team): team is PublicTeamDirectoryEntry => Boolean(team)),
     [selectedTeamIds],
@@ -85,6 +99,8 @@ export function usePreferredTeam() {
     selectedTeams,
     toggleSelectedTeam,
     clearSelectedTeams,
+    clearAllTeamPreferences,
+    removeSelectedTeam,
     isTeamSelected: (teamId: string) => selectedTeamIds.includes(teamId),
   };
 }
