@@ -1,7 +1,7 @@
 import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, ExternalLink, MapPin, Navigation, Search } from "lucide-react";
+import { CalendarDays, ExternalLink, MapPin, Search } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { ARENAS, ARENA_ZONES } from "@/data/arenas";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
