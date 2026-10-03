@@ -186,6 +186,24 @@ export async function dispatchDuePhoneLifecycleMessages(
   settings: Settings = process.env,
   now = new Date(),
 ) {
+  const providerReady =
+    settings["AHMV_PHONE_ENABLED"] === "true" &&
+    Boolean(settings["TWILIO_ACCOUNT_SID"]?.trim()) &&
+    Boolean(settings["TWILIO_AUTH_TOKEN"]?.trim()) &&
+    settings["AHMV_WEBHOOK_ORIGIN"] === "https://ahmverdun.ca";
+
+  if (!providerReady) {
+    return {
+      due: 0,
+      claimed: 0,
+      accepted: 0,
+      cancelled: 0,
+      retried: 0,
+      failed: 0,
+      skippedConfiguration: true,
+    };
+  }
+
   const client = db();
   const dueResult = await client
     .from("ahmv_phone_message_jobs")
@@ -212,6 +230,7 @@ export async function dispatchDuePhoneLifecycleMessages(
     cancelled: 0,
     retried: 0,
     failed: 0,
+    skippedConfiguration: false,
   };
 
   for (const row of (dueResult.data ?? []) as JobRow[]) {
