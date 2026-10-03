@@ -188,7 +188,12 @@ export function CommunicationsPreview() {
             )}
           </div>
 
-          <div className="mt-4 grid gap-2 sm:mt-6 sm:grid-cols-2">
+          <div className="mt-4 grid gap-2 sm:mt-6 sm:grid-cols-3">
+            <Button asChild variant="outline" size="lg">
+              <Link to="/equipes" onClick={() => setOpen(false)}>
+                {lang === "fr" ? "Choisir mes équipes" : "Choose my teams"}
+              </Link>
+            </Button>
             <Button asChild variant="outline" size="lg">
               <Link to="/horaires" onClick={() => setOpen(false)}>
                 <CalendarDays className="size-4" />
