@@ -75,6 +75,8 @@ for (const name of [
 }
 
 const forbiddenNames = ["transcript_summary", "AHM_DATA_API_URL", "AHM_DATA_API_TOKEN"];
+const openAiSecretPattern = new RegExp(["sk", "proj"].join("-") + "-[A-Za-z0-9_-]{20,}");
+const twilioSidPattern = new RegExp("A" + "C[0-9a-fA-F]{32}");
 async function walk(dir) {
   const out = [];
   for (const entry of await readdir(dir)) {
@@ -94,8 +96,8 @@ for (const full of files) {
     assert.ok(!source.includes(forbidden), `Forbidden legacy/privacy surface in ${path.relative(root, full)}: ${forbidden}`);
   }
   if (!full.endsWith(".env.example")) {
-    assert.doesNotMatch(source, /sk-proj-[A-Za-z0-9_-]{20,}/, `Possible OpenAI production secret in ${full}`);
-    assert.doesNotMatch(source, /AC[0-9a-fA-F]{32}/, `Possible Twilio Account SID in ${full}`);
+    assert.doesNotMatch(source, openAiSecretPattern, `Possible OpenAI production secret in ${full}`);
+    assert.doesNotMatch(source, twilioSidPattern, `Possible Twilio Account SID in ${full}`);
   }
 }
 
