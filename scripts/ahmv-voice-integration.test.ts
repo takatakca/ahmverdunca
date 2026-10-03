@@ -14,7 +14,7 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
       source("src/features/ahmv-phone/messaging/send.server.ts"),
       source(".env.example"),
       source("supabase/migrations/20261003091000_ahmv_voice_sessions.sql"),
-      source("supabase/migrations/20261003090000_ahmv_voice_language_sms_idempotency.sql"),
+      source("supabase/migrations/20261003110000_ahmv_phone_spanish.sql"),
     ]);
 
   assert.match(server, /handleAhmvVoiceBridge/);
