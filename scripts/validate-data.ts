@@ -3,7 +3,7 @@ import { ARENAS, arenaDirectionsTargetForVenue } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
 import { CURRENT_LEGACY_NEWS_IDS, DISCOVERED_ARCHIVE_NEWS_IDS, NEWS } from "../src/data/news";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory";
-import { REQUIRED_ARENA_COUNT, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
+import { REQUIRED_ARENA_COUNT, REQUIRED_COACH_RESOURCE_TITLES, REQUIRED_LEGACY_TEAM_SCHEDULE_IDS, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
 import { LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
@@ -236,6 +236,18 @@ if (ALBUMS.length !== REQUIRED_PUBLIC_ALBUM_COUNT) {
 }
 if (PUBLIC_TEAM_DIRECTORY.length !== REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT) {
   errors.push(`Expected ${REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT} mirrored public team entries, found ${PUBLIC_TEAM_DIRECTORY.length}.`);
+}
+const mirroredScheduleIds = new Set(PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
+for (const teamId of REQUIRED_LEGACY_TEAM_SCHEDULE_IDS) {
+  if (!mirroredScheduleIds.has(teamId)) {
+    errors.push(`Legacy public schedule team ID ${teamId} is missing from PUBLIC_TEAM_DIRECTORY.`);
+  }
+}
+const coachTitles = new Set(COACH_RESOURCES.map((resource) => resource.title.fr));
+for (const title of REQUIRED_COACH_RESOURCE_TITLES) {
+  if (!coachTitles.has(title)) {
+    errors.push(`Required legacy coach resource "${title}" is missing.`);
+  }
 }
 for (const entry of PUBLIC_TEAM_DIRECTORY) {
   if (!teamSlugs.has(entry.categorySlug)) {
