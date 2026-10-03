@@ -28,6 +28,15 @@ if (config.nodeEnv === 'production') {
   if (!config.supabaseUrl?.startsWith('https://')) {
     throw new Error('SUPABASE_URL must use HTTPS');
   }
+
+  const expectedRef = process.env.AHMV_SUPABASE_PROJECT_REF?.trim();
+  if (expectedRef !== 'bqflllsjxmhqsvemhhwv') {
+    throw new Error('AHMV_SUPABASE_PROJECT_REF must be bqflllsjxmhqsvemhhwv');
+  }
+  const supabaseUrl = new URL(config.supabaseUrl);
+  if (supabaseUrl.hostname !== expectedRef + '.supabase.co') {
+    throw new Error('SUPABASE_URL does not match the approved AHMV Supabase project');
+  }
 }
 
 console.log(JSON.stringify({
