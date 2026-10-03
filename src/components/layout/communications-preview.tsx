@@ -165,7 +165,7 @@ export function CommunicationsPreview() {
           <img
             src={OFFICIAL_MEDIA.practiceGoalie.url}
             alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGoalie.alt.fr : OFFICIAL_MEDIA.practiceGoalie.alt.en}
-            loading="eager"
+            loading="lazy"
             decoding="async"
             className="absolute inset-0 size-full object-cover object-center"
           />
