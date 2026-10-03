@@ -16,6 +16,7 @@ import { handleAhmvCalendarLink } from "./features/ahmv-phone/calendar/handler.s
 import { handleAhmvDeparture } from "./features/ahmv-phone/departure/handler.server";
 import { handleTakatakMembershipSync } from "./features/ahmv-phone/takatak/membership-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
+import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -121,6 +122,8 @@ export default {
     if (phoneLifecycleResponse) return phoneLifecycleResponse;
     const phoneReminderResponse = await handleAhmvPhoneReminderCron(request);
     if (phoneReminderResponse) return phoneReminderResponse;
+    const voiceBridgeResponse = await handleAhmvVoiceBridge(request);
+    if (voiceBridgeResponse) return voiceBridgeResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);
