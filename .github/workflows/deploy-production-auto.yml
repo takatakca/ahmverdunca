@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ahmverdun-production-auto
+  group: ahmverdun-production
   cancel-in-progress: false
 
 jobs:
@@ -38,6 +38,26 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Refuse stale main release
+        run: |
+          set -euo pipefail
+
+          CURRENT_MAIN="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+
+          test -n "$CURRENT_MAIN" || {
+            echo "ERROR: Could not resolve current main SHA."
+            exit 1
+          }
+
+          if [ "$RELEASE_SHA" != "$CURRENT_MAIN" ]; then
+            echo "ERROR: Refusing stale production release."
+            echo "Release SHA: $RELEASE_SHA"
+            echo "Current main: $CURRENT_MAIN"
+            exit 1
+          fi
+
+          echo "Release SHA is still the current main HEAD."
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
@@ -172,6 +192,24 @@ jobs:
 
             if [ "$last_status" -eq 0 ]; then
               exit 0
+            fi
+
+            if [ "$last_status" -eq 255 ] && [ "$#" -gt 0 ]; then
+              echo "Direct SSH exec channel failed; trying shell-channel fallback..." >&2
+
+              REMOTE_COMMAND="$*"
+
+              set +e
+              printf '%s\nexit\n' "$REMOTE_COMMAND" | ssh -T ahmv-production
+              shell_status=$?
+              set -e
+
+              if [ "$shell_status" -eq 0 ]; then
+                echo "SSH shell-channel fallback succeeded." >&2
+                exit 0
+              fi
+
+              last_status=$shell_status
             fi
 
             echo "SSH attempt ${attempt} failed with exit code ${last_status}." >&2
