@@ -1,0 +1,36 @@
+[Unit]
+Description=AHM Verdun Voice AI
+After=network-online.target
+Wants=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=simple
+User=ahmvvoice
+Group=ahmvvoice
+WorkingDirectory=/opt/ahmv-voice-ai/current
+Environment=NODE_ENV=production
+EnvironmentFile=/etc/ahmv-voice-ai.env
+ExecStart=/usr/bin/node /opt/ahmv-voice-ai/current/src/server.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=20
+KillSignal=SIGTERM
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+LockPersonality=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+MemoryMax=768M
+TasksMax=256
+
+[Install]
+WantedBy=multi-user.target
