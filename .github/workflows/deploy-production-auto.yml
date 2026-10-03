@@ -178,7 +178,7 @@ jobs:
 
           set -uo pipefail
 
-          MAX_ATTEMPTS=10
+          MAX_ATTEMPTS="${AHMV_SSH_MAX_ATTEMPTS:-10}"
           attempt=1
           last_status=255
 
@@ -273,19 +273,35 @@ jobs:
           EOF
 
           chmod +x "$RUNNER_TEMP/ahmv-scp"
+          chmod +x scripts/deploy-production-sftp.sh
 
           echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
 
-      - name: Test production SSH connection
+      - name: Detect production transport
         run: |
           set -euo pipefail
 
-          echo "Testing production SSH connection..."
+          echo "Testing production SSH command channel..."
 
-          ahmv-ssh \
-            "printf 'AHM Verdun production SSH connection OK\n'"
+          set +e
+          AHMV_SSH_MAX_ATTEMPTS=2 ahmv-ssh \
+            "printf 'AHM Verdun production SSH command channel OK\n'"
+          SSH_STATUS=$?
+          set -e
 
-          echo "Production SSH connection verified."
+          if [ "$SSH_STATUS" -eq 0 ]; then
+            echo "AHMV_DEPLOY_TRANSPORT=ssh" >> "$GITHUB_ENV"
+            echo "Production transport: SSH command channel."
+            exit 0
+          fi
+
+          echo "SSH command and shell channels are unavailable."
+          echo "Testing SFTP subsystem as a fail-closed fallback..."
+
+          scripts/deploy-production-sftp.sh test
+
+          echo "AHMV_DEPLOY_TRANSPORT=sftp" >> "$GITHUB_ENV"
+          echo "Production transport: SFTP-only fallback."
 
       - name: Create immutable release package
         run: |
@@ -321,105 +337,144 @@ jobs:
 
           echo "Reading current production release..."
 
-          PREVIOUS="$(
-            ahmv-ssh \
-              "if [ -L '$AHMV_APP_ROOT/current' ]; then
-                 readlink '$AHMV_APP_ROOT/current'
-               fi"
-          )"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            PREVIOUS_RELEASE_KEY="$(scripts/deploy-production-sftp.sh capture-previous)"
+            PREVIOUS_RELEASE_KEY="$(printf '%s' "$PREVIOUS_RELEASE_KEY" | tr -d '\r\n')"
 
-          PREVIOUS="$(
-            printf '%s' "$PREVIOUS" |
-            tr -d '\r\n'
-          )"
-
-          if [ -n "$PREVIOUS" ]; then
-            echo "Previous release detected."
-            echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+            if [ -n "$PREVIOUS_RELEASE_KEY" ]; then
+              PREVIOUS="$AHMV_APP_ROOT/releases/$PREVIOUS_RELEASE_KEY"
+              echo "Previous release detected through SFTP markers."
+              echo "PREVIOUS_RELEASE_KEY=$PREVIOUS_RELEASE_KEY" >> "$GITHUB_ENV"
+              echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+            else
+              echo "No previous release marker available through SFTP."
+              echo "PREVIOUS_RELEASE_KEY=" >> "$GITHUB_ENV"
+              echo "previous_release=" >> "$GITHUB_ENV"
+            fi
           else
-            echo "No previous release detected."
-            echo "This appears to be the first deployment using this release structure."
-            echo "previous_release=" >> "$GITHUB_ENV"
+            PREVIOUS="$(
+              ahmv-ssh \
+                "if [ -L '$AHMV_APP_ROOT/current' ]; then
+                   readlink '$AHMV_APP_ROOT/current'
+                 fi"
+            )"
+
+            PREVIOUS="$(printf '%s' "$PREVIOUS" | tr -d '\r\n')"
+
+            if [ -n "$PREVIOUS" ]; then
+              PREVIOUS_RELEASE_KEY="$(basename "$PREVIOUS")"
+              echo "Previous release detected."
+              echo "PREVIOUS_RELEASE_KEY=$PREVIOUS_RELEASE_KEY" >> "$GITHUB_ENV"
+              echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+            else
+              echo "No previous release detected."
+              echo "PREVIOUS_RELEASE_KEY=" >> "$GITHUB_ENV"
+              echo "previous_release=" >> "$GITHUB_ENV"
+            fi
           fi
 
       - name: Prepare remote release directory
         run: |
           set -euo pipefail
 
-          ahmv-ssh \
-            "mkdir -p '$AHMV_APP_ROOT/releases/$RELEASE_KEY'"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            scripts/deploy-production-sftp.sh prepare
+          else
+            ahmv-ssh \
+              "mkdir -p '$AHMV_APP_ROOT/releases/$RELEASE_KEY'"
+          fi
 
       - name: Upload release
         run: |
           set -euo pipefail
 
-          echo "Uploading release package..."
+          echo "Uploading release..."
 
-          ahmv-scp \
-            "ahmverdun-${RELEASE_KEY}.tar.gz" \
-            "ahmv-production:$AHMV_APP_ROOT/releases/$RELEASE_KEY/release.tar.gz"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            scripts/deploy-production-sftp.sh upload
+          else
+            ahmv-scp \
+              "ahmverdun-${RELEASE_KEY}.tar.gz" \
+              "ahmv-production:$AHMV_APP_ROOT/releases/$RELEASE_KEY/release.tar.gz"
+          fi
 
-          echo "Release package uploaded."
+          echo "Release uploaded."
 
       - name: Extract release
         run: |
           set -euo pipefail
 
-          echo "Extracting release on production server..."
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            echo "SFTP mode uploaded the built release tree directly; no remote extraction is required."
+          else
+            echo "Extracting release on production server..."
 
-          ahmv-ssh \
-            "set -e
-             cd '$AHMV_APP_ROOT/releases/$RELEASE_KEY'
-             test -s release.tar.gz
-             tar -xzf release.tar.gz
-             rm -f release.tar.gz
-             test -f RELEASE_SHA
-             test -f RELEASE_KEY
-             test -d server
-             test -d public
-             test -f server/index.mjs || test -f server/index.js"
+            ahmv-ssh \
+              "set -e
+               cd '$AHMV_APP_ROOT/releases/$RELEASE_KEY'
+               test -s release.tar.gz
+               tar -xzf release.tar.gz
+               rm -f release.tar.gz
+               test -f RELEASE_SHA
+               test -f RELEASE_KEY
+               test -d server
+               test -d public
+               test -f server/index.mjs || test -f server/index.js"
 
-          echo "Remote release extracted and validated."
+            echo "Remote release extracted and validated."
+          fi
 
       - name: Verify uploaded release marker
         run: |
           set -euo pipefail
 
-          REMOTE_SHA="$(
-            ahmv-ssh \
-              "cat '$AHMV_APP_ROOT/releases/$RELEASE_KEY/RELEASE_SHA'"
-          )"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            scripts/deploy-production-sftp.sh verify-upload
+          else
+            REMOTE_SHA="$(
+              ahmv-ssh \
+                "cat '$AHMV_APP_ROOT/releases/$RELEASE_KEY/RELEASE_SHA'"
+            )"
+            REMOTE_SHA="$(printf '%s' "$REMOTE_SHA" | tr -d '\r\n')"
 
-          REMOTE_SHA="$(
-            printf '%s' "$REMOTE_SHA" |
-            tr -d '\r\n'
-          )"
+            if [ "$REMOTE_SHA" != "$RELEASE_SHA" ]; then
+              echo "ERROR: Uploaded release SHA does not match expected SHA."
+              exit 1
+            fi
 
-          if [ "$REMOTE_SHA" != "$RELEASE_SHA" ]; then
-            echo "ERROR: Uploaded release SHA does not match expected SHA."
-            echo "Expected: $RELEASE_SHA"
-            echo "Received: $REMOTE_SHA"
-            exit 1
-          fi
+            REMOTE_RELEASE_KEY="$(
+              ahmv-ssh \
+                "cat '$AHMV_APP_ROOT/releases/$RELEASE_KEY/RELEASE_KEY'"
+            )"
+            REMOTE_RELEASE_KEY="$(printf '%s' "$REMOTE_RELEASE_KEY" | tr -d '\r\n')"
 
-          REMOTE_RELEASE_KEY="$(
-            ahmv-ssh \
-              "cat '$AHMV_APP_ROOT/releases/$RELEASE_KEY/RELEASE_KEY'"
-          )"
-
-          REMOTE_RELEASE_KEY="$(
-            printf '%s' "$REMOTE_RELEASE_KEY" |
-            tr -d '\r\n'
-          )"
-
-          if [ "$REMOTE_RELEASE_KEY" != "$RELEASE_KEY" ]; then
-            echo "ERROR: Uploaded release key does not match expected release key."
-            echo "Expected: $RELEASE_KEY"
-            echo "Received: $REMOTE_RELEASE_KEY"
-            exit 1
+            if [ "$REMOTE_RELEASE_KEY" != "$RELEASE_KEY" ]; then
+              echo "ERROR: Uploaded release key does not match expected release key."
+              exit 1
+            fi
           fi
 
           echo "Uploaded release markers verified."
+
+      - name: Refuse stale release before activation
+        run: |
+          set -euo pipefail
+
+          CURRENT_MAIN="$(git ls-remote origin refs/heads/main | awk '{print $1}')"
+
+          test -n "$CURRENT_MAIN" || {
+            echo "ERROR: Could not resolve current main SHA before activation."
+            exit 1
+          }
+
+          if [ "$RELEASE_SHA" != "$CURRENT_MAIN" ]; then
+            echo "ERROR: Refusing stale release immediately before activation."
+            echo "Release SHA: $RELEASE_SHA"
+            echo "Current main: $CURRENT_MAIN"
+            exit 1
+          fi
+
+          echo "Release SHA is still current immediately before activation."
 
       - name: Activate release
         run: |
@@ -427,11 +482,15 @@ jobs:
 
           echo "Activating production release..."
 
-          ahmv-ssh \
-            "set -e
-             rm -f '$AHMV_APP_ROOT/current.new'
-             ln -s '$AHMV_APP_ROOT/releases/$RELEASE_KEY' '$AHMV_APP_ROOT/current.new'
-             mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            scripts/deploy-production-sftp.sh activate
+          else
+            ahmv-ssh \
+              "set -e
+               rm -f '$AHMV_APP_ROOT/current.new'
+               ln -s '$AHMV_APP_ROOT/releases/$RELEASE_KEY' '$AHMV_APP_ROOT/current.new'
+               mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'"
+          fi
 
           echo "Release activated."
 
@@ -439,38 +498,30 @@ jobs:
         run: |
           set -euo pipefail
 
-          ACTIVE_SHA="$(
-            ahmv-ssh \
-              "cat '$AHMV_APP_ROOT/current/RELEASE_SHA'"
-          )"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            scripts/deploy-production-sftp.sh verify-active
+          else
+            ACTIVE_SHA="$(
+              ahmv-ssh \
+                "cat '$AHMV_APP_ROOT/current/RELEASE_SHA'"
+            )"
+            ACTIVE_SHA="$(printf '%s' "$ACTIVE_SHA" | tr -d '\r\n')"
 
-          ACTIVE_SHA="$(
-            printf '%s' "$ACTIVE_SHA" |
-            tr -d '\r\n'
-          )"
+            if [ "$ACTIVE_SHA" != "$RELEASE_SHA" ]; then
+              echo "ERROR: Active release SHA does not match deployment SHA."
+              exit 1
+            fi
 
-          if [ "$ACTIVE_SHA" != "$RELEASE_SHA" ]; then
-            echo "ERROR: Active release SHA does not match deployment SHA."
-            echo "Expected: $RELEASE_SHA"
-            echo "Received: $ACTIVE_SHA"
-            exit 1
-          fi
+            ACTIVE_RELEASE_KEY="$(
+              ahmv-ssh \
+                "cat '$AHMV_APP_ROOT/current/RELEASE_KEY'"
+            )"
+            ACTIVE_RELEASE_KEY="$(printf '%s' "$ACTIVE_RELEASE_KEY" | tr -d '\r\n')"
 
-          ACTIVE_RELEASE_KEY="$(
-            ahmv-ssh \
-              "cat '$AHMV_APP_ROOT/current/RELEASE_KEY'"
-          )"
-
-          ACTIVE_RELEASE_KEY="$(
-            printf '%s' "$ACTIVE_RELEASE_KEY" |
-            tr -d '\r\n'
-          )"
-
-          if [ "$ACTIVE_RELEASE_KEY" != "$RELEASE_KEY" ]; then
-            echo "ERROR: Active release key does not match deployment release key."
-            echo "Expected: $RELEASE_KEY"
-            echo "Received: $ACTIVE_RELEASE_KEY"
-            exit 1
+            if [ "$ACTIVE_RELEASE_KEY" != "$RELEASE_KEY" ]; then
+              echo "ERROR: Active release key does not match deployment release key."
+              exit 1
+            fi
           fi
 
           echo "Active production release verified."
@@ -481,9 +532,13 @@ jobs:
 
           echo "Requesting Passenger restart..."
 
-          ahmv-ssh \
-            "mkdir -p '$AHMV_APP_ROOT/tmp' &&
-             touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            scripts/deploy-production-sftp.sh restart
+          else
+            ahmv-ssh \
+              "mkdir -p '$AHMV_APP_ROOT/tmp' &&
+               touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+          fi
 
           echo "Passenger restart requested."
 
@@ -713,14 +768,22 @@ jobs:
           echo "Rolling back to previous release:"
           echo "$previous_release"
 
-          ahmv-ssh \
-            "set -e
-             test -e '$previous_release'
-             rm -f '$AHMV_APP_ROOT/current.new'
-             ln -s '$previous_release' '$AHMV_APP_ROOT/current.new'
-             mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'
-             mkdir -p '$AHMV_APP_ROOT/tmp'
-             touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
+            if [ -z "${PREVIOUS_RELEASE_KEY:-}" ]; then
+              echo "No previous SFTP release key is available for rollback."
+              exit 0
+            fi
+            scripts/deploy-production-sftp.sh rollback
+          else
+            ahmv-ssh \
+              "set -e
+               test -e '$previous_release'
+               rm -f '$AHMV_APP_ROOT/current.new'
+               ln -s '$previous_release' '$AHMV_APP_ROOT/current.new'
+               mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'
+               mkdir -p '$AHMV_APP_ROOT/tmp'
+               touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+          fi
 
           echo "Previous release restored."
           echo "Waiting for Passenger restart..."
@@ -744,7 +807,7 @@ jobs:
           echo "Rollback completed successfully."
 
       - name: Keep newest five releases
-        if: success()
+        if: success() && env.AHMV_DEPLOY_TRANSPORT == 'ssh'
         continue-on-error: true
         run: |
           set -euo pipefail
