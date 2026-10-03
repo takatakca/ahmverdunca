@@ -249,7 +249,7 @@ function TeamPage() {
 
         {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
 
-        {exactTeam && <HouseSponsorSlot placement={`team-${exactTeam.legacyScheduleTeamId}`} compact />}
+        {exactTeam && <HouseSponsorSlot placement={`team-top-${exactTeam.legacyScheduleTeamId}`} count={1} compact />}
         {exactTeam && (
           <TeamPortfolio
             team={exactTeam}
@@ -263,6 +263,7 @@ function TeamPage() {
         {exactTeam && <TeamLiveFeed team={exactTeam} lang={lang} />}
 
         {exactTeam && <TeamParentPremium team={exactTeam} lang={lang} />}
+        {exactTeam && <HouseSponsorSlot placement={`team-lower-${exactTeam.legacyScheduleTeamId}`} count={1} compact />}
         {exactTeam && <TeamCommunityBoard team={exactTeam} lang={lang} />}
 
         <section
