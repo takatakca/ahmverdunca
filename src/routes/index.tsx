@@ -82,22 +82,10 @@ function Home() {
         <div className="arena-light opacity-45" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
-        <div className="container-site pointer-events-none absolute inset-x-0 top-0 hidden pt-10 md:block">
-          <div className="ml-auto flex w-fit items-center gap-4 border-r-4 border-sport bg-competition/66 px-5 py-4 backdrop-blur-md">
-            <LogoSlot size="lg" className="size-24 lg:size-28" />
-            <div className="pr-2">
-              <p className="font-display text-2xl font-extrabold uppercase leading-none tracking-[-0.03em] text-white">AHMV</p>
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/58">
-                {lang === "fr" ? "Leafs · Louves · Verdun" : "Leafs · Louves · Verdun"}
-              </p>
-            </div>
-          </div>
-        </div>
-
         <div className="container-site relative flex min-h-[66svh] flex-col justify-end pb-8 pt-20 sm:min-h-[70svh] md:min-h-[78svh] md:pb-11">
           <div className="max-w-6xl">
             <div className="rise mb-5 flex items-center gap-4">
-              <LogoSlot size="lg" className="size-24 sm:size-28 md:size-32" />
+              <LogoSlot size="lg" className="size-20 sm:size-24 md:size-24" />
               <div className="border-l border-navy-foreground/20 pl-4">
                 <p className="font-display text-2xl font-extrabold uppercase tracking-[-0.025em] text-white sm:text-3xl">AHM Verdun</p>
                 <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/52 sm:text-xs">
@@ -106,7 +94,6 @@ function Home() {
               </div>
             </div>
             <div className="rise flex flex-wrap items-center gap-3">
-              <LogoSlot className="size-16 md:hidden" />
               <span className="hidden h-px w-10 bg-sport md:block" aria-hidden />
               <p className="eyebrow text-sport-foreground">
                 {t("common.season")} {SITE.season} · {SITE.city}
