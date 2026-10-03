@@ -81,7 +81,7 @@ export async function nextEventServiceAuthoritative(
   now = new Date(),
 ) {
   const requested = approvedQuery(teamQuery, aliases);
-  const live = await fetchLiveSchedule({ team: requested }, settings);
+  const live = await fetchLiveSchedule({ team: requested }, settings, now);
 
   if (liveScheduleIsReady(live)) {
     if (live.status === "no_match" || live.events.length === 0) {
@@ -214,6 +214,7 @@ export async function scheduleRangeAnswerAuthoritative(
       ...(date ? { date } : {}),
     },
     settings,
+    now,
   );
 
   if (liveScheduleIsReady(live)) {
