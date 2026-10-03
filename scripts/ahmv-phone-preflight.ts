@@ -27,6 +27,15 @@ function validHttpsOrigin(value: string | undefined) {
   }
 }
 
+function validHttpsUrl(value: string | undefined) {
+  if (!value) return false;
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export function phonePreflight(settings: Settings = process.env): PhonePreflightCheck[] {
   const demoEnabled = bool(settings["AHMV_PHONE_DEMO_ENABLED"]);
   const phoneEnabled = bool(settings["AHMV_PHONE_ENABLED"]);
@@ -36,6 +45,8 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const calendarEnabled = bool(settings["AHMV_CALENDAR_LINKS_ENABLED"]);
   const departureEnabled = bool(settings["AHMV_SMART_DEPARTURE_ENABLED"]);
   const membershipSyncEnabled = bool(settings["AHMV_TAKATAK_MEMBERSHIP_SYNC_ENABLED"]);
+  const campaignsEnabled = bool(settings["AHMV_PHONE_CAMPAIGNS_ENABLED"]);
+  const marketingConsentSyncEnabled = bool(settings["AHMV_TAKATAK_MARKETING_CONSENT_SYNC_ENABLED"]);
 
   return [
     {
@@ -55,13 +66,13 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
     {
       id: "twilio-account",
       ok: present(settings["TWILIO_ACCOUNT_SID"]),
-      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled || campaignsEnabled,
       detail: "Twilio Account SID is configured server-side.",
     },
     {
       id: "twilio-auth",
       ok: present(settings["TWILIO_AUTH_TOKEN"]),
-      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled || campaignsEnabled,
       detail: "Twilio Auth Token is configured server-side.",
     },
     {
@@ -75,6 +86,44 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       ok: present(settings["TAKATAK_AHMV_MEMBER_URL"]),
       required: true,
       detail: "TAKATAK member activation URL is configured.",
+    },
+    {
+      id: "marketing-consent-sync-token",
+      ok:
+        !marketingConsentSyncEnabled ||
+        present(settings["TAKATAK_AHMV_SERVICE_TOKEN"]),
+      required: marketingConsentSyncEnabled,
+      detail: "TAKATAK marketing consent sync requires the server-to-server service token.",
+    },
+    {
+      id: "campaign-service-token",
+      ok:
+        !campaignsEnabled ||
+        present(settings["TAKATAK_AHMV_SERVICE_TOKEN"]),
+      required: campaignsEnabled,
+      detail: "Commercial campaigns require the TAKATAK server-to-server service token.",
+    },
+    {
+      id: "campaign-cron-secret",
+      ok:
+        !campaignsEnabled ||
+        present(settings["LOVABLE_CRON_SECRET"]),
+      required: campaignsEnabled,
+      detail: "Commercial campaign dispatch requires the protected cron secret.",
+    },
+    {
+      id: "campaign-legal-info-url",
+      ok:
+        !campaignsEnabled ||
+        validHttpsUrl(settings["TAKATAK_SMS_CEM_INFO_URL"]),
+      required: campaignsEnabled,
+      detail: "Commercial SMS requires the configured HTTPS sender/contact information page.",
+    },
+    {
+      id: "safe-campaign-gate",
+      ok: !campaignsEnabled || phoneEnabled,
+      required: true,
+      detail: "Commercial campaign dispatch cannot be enabled while the phone integration is disabled.",
     },
     {
       id: "membership-sync-token",
