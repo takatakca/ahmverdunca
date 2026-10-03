@@ -2,8 +2,8 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { SportArtwork } from "@/components/sport-artwork";
 import { getArticle, NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { getTeam } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -56,13 +56,29 @@ function ArticlePage() {
 
         <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <article>
-            <SportArtwork
-              index={String(a.legacyId ?? "01").padStart(2, "0")}
-              kicker={category ? l(category.label) : "AHMV"}
-              title={l(a.title)}
-              code="NEWS"
-              aspect="aspect-[16/8]"
-            />
+            <div className="group relative aspect-[16/8] overflow-hidden bg-navy">
+              <img
+                src={OFFICIAL_MEDIA.tournamentM11Tertiary.url}
+                alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Tertiary.alt.fr : OFFICIAL_MEDIA.tournamentM11Tertiary.alt.en}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.05),rgba(7,16,43,0.64))]" />
+              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white md:p-7">
+                <div>
+                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/70">
+                    {lang === "fr" ? "Photo d’archive officielle AHMV" : "Official AHMV archive photo"}
+                  </p>
+                  <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none">
+                    {category ? l(category.label) : "AHMV"}
+                  </p>
+                </div>
+                <span className="font-display text-5xl font-extrabold text-white/18">
+                  {String(a.legacyId ?? "01").padStart(2, "0")}
+                </span>
+              </div>
+            </div>
             <div className="mt-0 grid gap-px border-x border-b border-navy/12 bg-navy/12 sm:grid-cols-3">
               <div className="bg-background p-4">
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{lang === "fr" ? "Publication" : "Published"}</p>
