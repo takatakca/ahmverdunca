@@ -59,7 +59,7 @@ The standalone Voice service uses its own protected environment file, for exampl
 - Voice-session persistence: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`;
 - bounded concurrency/call duration and `VOICE_INSTANCE_MODE=single`.
 
-Use the standalone v0.5 `.env.example` as the exact variable contract. Never copy a real `.env` into Git or a support ticket.
+Use `services/ahmv-voice-ai/.env.example` (v0.8) as the exact variable-name/default contract. Never place real values in that file. Never copy a real `.env` into Git or a support ticket.
 
 ## Rotation order
 
@@ -82,3 +82,21 @@ For Twilio/OpenAI/Supabase credentials, rotate provider-side first according to 
 - no bearer token in command output;
 - no raw Twilio auth token or Supabase service-role key in logs;
 - no production credential in the standalone ZIP.
+
+
+## GitHub environment: voice-preproduction
+
+Required by `.github/workflows/deploy-voice-runtime-preproduction.yml`:
+
+| Secret | Purpose |
+| --- | --- |
+| `AHMV_VOICE_PREPROD_HOST` | SSH host for the standalone Voice runtime |
+| `AHMV_VOICE_PREPROD_SSH_PORT` | SSH port |
+| `AHMV_VOICE_PREPROD_USER` | Restricted deployment user |
+| `AHMV_VOICE_PREPROD_APP_ROOT` | Absolute immutable release root, e.g. `/opt/ahmv-voice-ai` |
+| `AHMV_VOICE_PREPROD_URL` | Public HTTPS Voice runtime origin used by health/readiness smoke |
+| `AHMV_VOICE_PREPROD_SSH_PRIVATE_KEY` | Deployment SSH private key |
+| `AHMV_VOICE_PREPROD_KNOWN_HOSTS` | Pinned SSH host keys |
+| `AHMV_VOICE_PREPROD_RESTART_COMMAND` | Approved command that restarts the standalone Voice service |
+
+These GitHub secrets deploy code only. Twilio, OpenAI, Supabase and bridge credentials remain in the protected host environment file `/etc/ahmv-voice-ai.env`; the workflow never prints or copies them.
