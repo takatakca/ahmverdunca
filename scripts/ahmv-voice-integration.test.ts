@@ -28,6 +28,11 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
   assert.match(voiceMigration, /revoke all on public\.ahmv_voice_sessions from anon, authenticated/);
   assert.match(extensionMigration, /language in \('fr','en','es'\)/);
   assert.doesNotMatch(voiceMigration, /voice_memberships/);
+  assert.doesNotMatch(voiceMigration, /transcript_summary/);
+  assert.match(voiceMigration, /Raw call transcripts are intentionally not stored here/);
+  assert.match(bridge, /expected\.length < 24/);
+  assert.match(bridge, /transactional_sms_allowed !== true \|\| lookup\.data\.sms_consent !== true/);
+  assert.match(bridge, /CONTACT_MISMATCH/);
 });
 
 test("Voice AI sessions are covered by the AHMV privacy retention policy", async () => {
