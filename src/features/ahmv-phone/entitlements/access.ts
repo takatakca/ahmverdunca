@@ -38,9 +38,9 @@ export function localEntitlement(
 
   const activePremium =
     tier === "premium" &&
-    (!premiumExpiresAt ||
-      (Number.isFinite(Date.parse(premiumExpiresAt)) &&
-        Date.parse(premiumExpiresAt) > now.getTime()));
+    !!premiumExpiresAt &&
+    Number.isFinite(Date.parse(premiumExpiresAt)) &&
+    Date.parse(premiumExpiresAt) > now.getTime();
 
   const capabilities =
     activePremium || activeTrial
