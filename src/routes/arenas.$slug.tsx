@@ -170,8 +170,6 @@ function ArenaPage() {
             </div>
           </div>
 
-          <HouseSponsorSlot placement={`arena-${arena.slug}`} count={1} compact className="lg:col-span-2" />
-
           <div className="competition-panel border border-navy/12 p-6 text-navy-foreground">
             <CalendarDays className="size-6 text-sport-foreground" aria-hidden />
             <h2 className="heading-card mt-5">
@@ -189,6 +187,8 @@ function ArenaPage() {
             </Button>
           </div>
         </section>
+
+        <HouseSponsorSlot placement={`arena-${arena.slug}`} count={1} compact />
 
         {arena.website && (
           <section>
