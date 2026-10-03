@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { localEntitlement, canUse } from "../src/features/ahmv-phone/entitlements/access.ts";
+import { parseSms, scheduleAnswer } from "../src/lib/ahmv-phone.ts";
 import { navigationLinksForVenue } from "../src/features/ahmv-phone/arenas/navigation.ts";
 import { resolvePublicTeam } from "../src/features/ahmv-phone/teams/resolve.ts";
 import { nextEventService } from "../src/features/ahmv-phone/schedules/service.ts";
@@ -176,4 +177,15 @@ test("reminder lead time defaults safely to two hours", () => {
   assert.equal(reminderLeadMinutes({}), 120);
   assert.equal(reminderLeadMinutes({ AHMV_GAME_REMINDER_LEAD_MINUTES: "90" }), 90);
   assert.equal(reminderLeadMinutes({ AHMV_GAME_REMINDER_LEAD_MINUTES: "0" }), 120);
+});
+
+test("Spanish phone language remains first-class for SMS and schedule answers", () => {
+  assert.deepEqual(parseSms("ES Junior"), { lang: "es", query: "Junior" });
+  const result = scheduleAnswer(
+    "",
+    "es",
+    undefined,
+    new Date("2026-10-05T12:00:00-04:00"),
+  );
+  assert.match(result.text, /horario actual no está disponible/i);
 });
