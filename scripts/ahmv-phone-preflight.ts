@@ -36,6 +36,22 @@ function validHttpsUrl(value: string | undefined) {
   }
 }
 
+function supabaseMatchesProjectRef(
+  urlValue: string | undefined,
+  projectRef: string | undefined,
+) {
+  if (!urlValue || !projectRef) return false;
+  try {
+    const url = new URL(urlValue);
+    return (
+      url.protocol === "https:" &&
+      url.hostname === projectRef + ".supabase.co"
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function phonePreflight(settings: Settings = process.env): PhonePreflightCheck[] {
   const demoEnabled = bool(settings["AHMV_PHONE_DEMO_ENABLED"]);
   const phoneEnabled = bool(settings["AHMV_PHONE_ENABLED"]);
@@ -47,8 +63,31 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const membershipSyncEnabled = bool(settings["AHMV_TAKATAK_MEMBERSHIP_SYNC_ENABLED"]);
   const campaignsEnabled = bool(settings["AHMV_PHONE_CAMPAIGNS_ENABLED"]);
   const marketingConsentSyncEnabled = bool(settings["AHMV_TAKATAK_MARKETING_CONSENT_SYNC_ENABLED"]);
+  const databaseRequired =
+    phoneEnabled ||
+    lifecycleEnabled ||
+    remindersEnabled ||
+    campaignsEnabled ||
+    membershipSyncEnabled ||
+    marketingConsentSyncEnabled ||
+    bool(settings["AHMV_PHONE_OPS_ENABLED"]) ||
+    bool(settings["AHMV_PHONE_RETENTION_ENABLED"]);
 
   return [
+    {
+      id: "ahmv-supabase-target",
+      ok:
+        !databaseRequired ||
+        (
+          settings["AHMV_SUPABASE_PROJECT_REF"] === "bqflllsjxmhqsvemhhwv" &&
+          supabaseMatchesProjectRef(
+            settings["SUPABASE_URL"],
+            settings["AHMV_SUPABASE_PROJECT_REF"],
+          )
+        ),
+      required: databaseRequired,
+      detail: "Database-backed AHMV Phone features must target Supabase project bqflllsjxmhqsvemhhwv, never a TAKATAK/FESTI ICE/Food Hub project.",
+    },
     {
       id: "public-phone",
       ok: settings["AHMV_PUBLIC_PHONE"] === "+15816666246",
