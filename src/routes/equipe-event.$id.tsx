@@ -17,20 +17,19 @@ export const Route = createFileRoute("/equipe-event/$id")({
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
-  component: TeamEventDemoPage,
+  component: TeamEventPage,
 });
 
-function TeamEventDemoPage() {
+function TeamEventPage() {
   const { lang } = useI18n();
   const currentHref = useRouterState({ select: (state) => state.location.href });
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const id = pathname.split("/").filter(Boolean).at(-1) ?? "demo";
+  const id = pathname.split("/").filter(Boolean).at(-1) ?? "activity";
   const search = new URL(currentHref, SITE.domain).searchParams;
   const teamId = search.get("teamId") ?? "";
   const teamName = search.get("team") ?? "Équipe AHMV";
   const level = search.get("level") ?? "";
   const type = search.get("type") === "practice" ? "practice" : "game";
-  const slot = search.get("slot") ?? "1";
   const published = search.get("published") === "ahmv-week";
   const publishedDate = search.get("date") ?? "";
   const publishedTime = search.get("time") ?? "";
@@ -70,7 +69,7 @@ function TeamEventDemoPage() {
 
           <div className="mt-8 flex flex-wrap gap-2">
             <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.15em] text-sport-foreground">
-              {isPublishedPractice ? (lang === "fr" ? "SOURCE AHMV" : "AHMV SOURCE") : "DEMO"}
+              {isPublishedPractice ? (lang === "fr" ? "SOURCE AHMV" : "AHMV SOURCE") : (lang === "fr" ? "SOURCE OFFICIELLE" : "OFFICIAL SOURCE")}
             </span>
             {level && <span className="border border-white/18 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/70">{level}</span>}
             <span className="border border-white/18 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/70">
@@ -87,8 +86,8 @@ function TeamEventDemoPage() {
                   ? "Cette activité provient de la grille hebdomadaire publique AHMV intégrée au site. Le groupe publié est affiché tel quel afin de ne pas attribuer à tort une glace à une équipe précise."
                   : "This activity comes from the public AHMV weekly grid integrated into the site. The published group is shown as-is so the rink time is not incorrectly assigned to a specific team.")
               : (lang === "fr"
-                  ? "Cette fiche montre exactement à quoi ressemblera le détail d’une activité une fois le flux officiel branché. Les données ci-dessous sont volontairement des placeholders de démonstration."
-                  : "This page shows exactly how an activity detail will look once the official feed is connected. The values below are intentionally demo placeholders.")}
+                  ? "Le détail exact de cette activité n’est pas publié localement. Utilisez la source officielle ci-dessous pour confirmer l’horaire, l’aréna et les informations sportives."
+                  : "Exact activity details are not published locally. Use the official source below to confirm the schedule, arena and sport information.")}
           </p>
         </div>
       </section>
@@ -108,8 +107,8 @@ function TeamEventDemoPage() {
                   Icon: CalendarDays,
                   labelFr: "Date",
                   labelEn: "Date",
-                  valueFr: isPublishedPractice ? publishedDate : `À connecter · slot ${slot}`,
-                  valueEn: isPublishedPractice ? publishedDate : `To connect · slot ${slot}`,
+                  valueFr: isPublishedPractice ? publishedDate : "Non publié",
+                  valueEn: isPublishedPractice ? publishedDate : "Not published",
                 },
                 {
                   Icon: Clock3,
@@ -122,15 +121,15 @@ function TeamEventDemoPage() {
                   Icon: MapPin,
                   labelFr: "Aréna",
                   labelEn: "Arena",
-                  valueFr: isPublishedPractice ? publishedVenue : "À connecter",
-                  valueEn: isPublishedPractice ? publishedVenue : "To connect",
+                  valueFr: isPublishedPractice ? publishedVenue : "Non publié",
+                  valueEn: isPublishedPractice ? publishedVenue : "Not published",
                 },
                 {
                   Icon: type === "game" ? Trophy : ShieldCheck,
                   labelFr: type === "game" ? "Adversaire" : "Groupe",
                   labelEn: type === "game" ? "Opponent" : "Group",
-                  valueFr: isPublishedPractice ? (publishedGroup || publishedActivity) : "À connecter",
-                  valueEn: isPublishedPractice ? (publishedGroup || publishedActivity) : "To connect",
+                  valueFr: isPublishedPractice ? (publishedGroup || publishedActivity) : "Non publié",
+                  valueEn: isPublishedPractice ? (publishedGroup || publishedActivity) : "Not published",
                 },
               ].map(({ Icon, labelFr, labelEn, valueFr, valueEn }) => (
                 <article key={labelFr} className="bg-background p-5">
@@ -161,7 +160,7 @@ function TeamEventDemoPage() {
             <p className="eyebrow text-sport">
               {isPublishedPractice
                 ? (lang === "fr" ? "Source de l’activité" : "Activity source")
-                : (lang === "fr" ? "Quand le flux sera actif" : "When the feed is live")}
+                : (lang === "fr" ? "Vérification officielle" : "Official verification")}
             </p>
             <div className="mt-5 space-y-3">
               {(isPublishedPractice
@@ -173,11 +172,10 @@ function TeamEventDemoPage() {
                     lang === "fr" ? "Aucune attribution d’équipe supplémentaire n’est déduite" : "No additional team assignment is inferred",
                   ]
                 : [
-                    lang === "fr" ? "Date, heure et aréna officiels" : "Official date, time and arena",
-                    lang === "fr" ? "Adversaire et statut du match" : "Opponent and game status",
-                    lang === "fr" ? "Score final et feuille de match" : "Final score and scoresheet",
-                    lang === "fr" ? "Buts, pénalités et liens officiels si disponibles" : "Goals, penalties and official links when available",
-                    lang === "fr" ? "Google Maps, Waze et Apple Plans" : "Google Maps, Waze and Apple Maps",
+                    lang === "fr" ? "Le site n’invente aucune date, heure ou aréna." : "The site does not invent any date, time or arena.",
+                    lang === "fr" ? "La source officielle ci-contre demeure la référence sportive." : "The official source remains the sport reference.",
+                    lang === "fr" ? "Les résultats et classements restent reliés au circuit officiel." : "Results and standings remain linked to the official circuit.",
+                    lang === "fr" ? "Les itinéraires sont accessibles depuis le répertoire des arénas." : "Directions are available from the arena directory.",
                   ]).map((item) => (
                 <div key={item} className="flex items-start gap-3 border-b border-navy/10 pb-3 text-sm text-navy last:border-b-0">
                   <span className="mt-1 size-2 shrink-0 rounded-full bg-sport" />
