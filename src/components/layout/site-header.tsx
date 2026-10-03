@@ -101,8 +101,20 @@ export function SiteHeader() {
 
   const isMoreActive = MORE_NAV.some((n) => pathname.startsWith(n.to));
 
+  const toggleMobileMenu = () => {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+
+    // Navigation always wins over promotional/dialog overlays. Give those
+    // surfaces one frame to release their scroll lock before opening the menu.
+    window.dispatchEvent(new CustomEvent("ahmv:navigation-open"));
+    window.requestAnimationFrame(() => setOpen(true));
+  };
+
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition/96 text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+    <header ref={headerRef} className={cn("sticky top-0 border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition/96 text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)] backdrop-blur-xl", open ? "z-[110]" : "z-50")}>
       {/* Top utility bar (desktop) */}
       <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
@@ -248,7 +260,7 @@ export function SiteHeader() {
             aria-label={open ? t("nav.close") : t("nav.menu")}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            onClick={() => setOpen((v) => !v)}
+            onClick={toggleMobileMenu}
           >
             {open ? <X className="size-5" /> : <Menu className="size-5" />}
             <span className="hidden min-[360px]:inline">{open ? (lang === "fr" ? "Fermer" : "Close") : "Menu"}</span>
@@ -260,7 +272,7 @@ export function SiteHeader() {
       {open && (
         <div
           id="mobile-menu"
-          className="technical-grid fixed inset-x-0 z-[60] overflow-y-auto overscroll-contain bg-competition pb-[env(safe-area-inset-bottom)] lg:hidden animate-in fade-in slide-in-from-top-2"
+          className="technical-grid fixed inset-x-0 z-[110] overflow-y-auto overscroll-contain bg-competition pb-[env(safe-area-inset-bottom)] lg:hidden animate-in fade-in slide-in-from-top-2"
           style={{
             top: mobileMenuTop,
             bottom: "calc(3.5rem + env(safe-area-inset-bottom))",

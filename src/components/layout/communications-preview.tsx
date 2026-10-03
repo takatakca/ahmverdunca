@@ -14,12 +14,20 @@ export function CommunicationsPreview() {
   const [open, setOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
   useEffect(() => {
+    const closeForNavigation = () => setOpen(false);
+    window.addEventListener("ahmv:navigation-open", closeForNavigation);
+
+    return () => window.removeEventListener("ahmv:navigation-open", closeForNavigation);
+  }, []);
+
+  useEffect(() => {
     if (window.localStorage.getItem(HIDE_KEY) === "1") return;
     if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
 
     const timer = window.setTimeout(() => {
       // Never interrupt an open navigation/menu or another modal-like action.
       if (document.body.style.overflow === "hidden") return;
+      if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
       setOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
     }, 9000);
