@@ -6,7 +6,7 @@ const source = (path: string) =>
   readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
 test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK authority", async () => {
-  const [server, bridge, contacts, messaging, env, voiceMigration, extensionMigration, preflight] =
+  const [server, bridge, contacts, messaging, env, voiceMigration, extensionMigration, preflight, runtimeServer, runtimePackage] =
     await Promise.all([
       source("src/server.ts"),
       source("src/lib/ahmv-voice-bridge.server.ts"),
@@ -16,6 +16,8 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
       source("supabase/migrations/20261003091000_ahmv_voice_sessions.sql"),
       source("supabase/migrations/20261003110000_ahmv_phone_spanish.sql"),
       source("scripts/ahmv-voice-preflight.ts"),
+      source("services/ahmv-voice-ai/src/server.js"),
+      source("services/ahmv-voice-ai/package.json"),
     ]);
 
   assert.match(server, /handleAhmvVoiceBridge/);
@@ -47,6 +49,24 @@ test("Voice AI bridge is private, wired, trilingual and preserves AHMV/TAKATAK a
   assert.match(preflight, /TAKATAK_AHMV_SCHEDULE_URL/);
   assert.match(preflight, /scheduleUrl\.protocol/);
   assert.doesNotMatch(preflight, /console\.log\(env/);
+
+  assert.match(runtimeServer, /validateHttpWebhook/);
+  assert.match(runtimeServer, /validateWebSocketHandshake/);
+  assert.match(runtimeServer, /message\.type === 'setup'/);
+  assert.match(runtimeServer, /message\.type === 'interrupt'/);
+  assert.match(runtimeServer, /message\.type !== 'prompt'/);
+  assert.match(runtimeServer, /type: 'text'/);
+  assert.match(runtimeServer, /type: 'end'/);
+  assert.match(runtimeServer, /maxTurnsPerCall/);
+  assert.match(runtimeServer, /maxCallDurationSeconds/);
+  assert.match(runtimeServer, /sendPostCallSms/);
+  assert.match(runtimeServer, /recordBridgeInteraction/);
+  assert.doesNotMatch(runtimeServer, /console\.log\(.*From|console\.log\(.*phone/s);
+
+  const runtimePackageJson = JSON.parse(runtimePackage);
+  assert.equal(runtimePackageJson.scripts.start, "node src/server.js");
+  assert.match(runtimePackageJson.scripts.verify, /node --test test\/\*\.test\.js/);
+  assert.equal(runtimePackageJson.scripts.preflight, "node scripts/preflight.js");
 });
 
 test("Voice AI sessions are covered by the AHMV privacy retention policy", async () => {
@@ -87,7 +107,7 @@ test("Voice AI deployment assets are fail-closed and preserve canonical public U
   assert.match(nginx, /proxy_set_header Upgrade \$http_upgrade/);
   assert.match(nginx, /X-Forwarded-Proto https/);
 
-  assert.match(runbook, /draft PR \*\*#179\*\*/);
+    assert.match(runbook, /voice-ai-preprod-v5/);
   assert.match(runbook, /Do not guess the Supabase project/);
   assert.match(runbook, /Twilio sandbox acceptance/);
   assert.match(runbook, /Rollback/);
