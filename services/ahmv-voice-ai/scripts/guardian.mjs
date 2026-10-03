@@ -51,6 +51,12 @@ assert.match(agent, /parallel_tool_calls:\s*false/);
 assert.match(agent, /loops\s*<\s*5/);
 assert.match(agent, /find_schedule/);
 assert.match(agent, /find_arena/);
+assert.match(agent, /request_human_handoff/);
+assert.match(agent, /featureHumanHandoff/);
+assert.match(bridge, /requestHumanHandoff/);
+assert.match(bridge, /handoff/);
+assert.match(store, /handoffRequested/);
+assert.match(store, /handoffPreferredWindow/);
 
 assert.doesNotMatch(store, /transcript_summary/);
 assert.match(store, /includeMessages:\s*false/);

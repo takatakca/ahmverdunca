@@ -2,6 +2,7 @@ import OpenAI from 'openai';
 import { config } from './config.js';
 import { SYSTEM_PROMPT } from './prompt.js';
 import { findSchedule, findArena } from './ahm-data.js';
+import { requestHumanHandoff } from './ahm-bridge.js';
 import { persistSessionSnapshot, saveSession } from './store.js';
 import { throwIfAborted } from './turn-controller.js';
 import { assertCompletedResponse } from './openai-contract.js';
@@ -63,6 +64,27 @@ const tools = [
         }
       },
       required: ['page'],
+      additionalProperties: false
+    }
+  },
+  {
+    type: 'function',
+    name: 'request_human_handoff',
+    description: 'Record a privacy-safe request for an AHM Verdun human follow-up. Use when the caller explicitly asks to speak with a person, requests a callback, or the issue cannot be safely resolved by the automated assistant. Never promise an exact callback time.',
+    strict: true,
+    parameters: {
+      type: 'object',
+      properties: {
+        reason: {
+          type: 'string',
+          enum: ['schedule', 'registration', 'team', 'arena', 'billing_access', 'technical', 'other']
+        },
+        preferredWindow: {
+          type: 'string',
+          enum: ['asap', 'morning', 'afternoon', 'evening', 'no_preference']
+        }
+      },
+      required: ['reason', 'preferredWindow'],
       additionalProperties: false
     }
   },
@@ -197,6 +219,36 @@ async function runTool(session, call, { signal, persist = true } = {}) {
         url: new URL(selected[1], config.ahmWebsiteUrl).toString()
       });
       result = { ok: true, saved: true };
+      break;
+    }
+    case 'request_human_handoff': {
+      if (!config.featureHumanHandoff) {
+        result = { ok: false, code: 'FEATURE_DISABLED', feature: 'human_handoff' };
+        break;
+      }
+      if (session.handoffRequested) {
+        result = { ok: true, requested: true, duplicate: true };
+        break;
+      }
+
+      result = await requestHumanHandoff({
+        session,
+        reason: args.reason,
+        preferredWindow: args.preferredWindow
+      });
+
+      if (result?.ok && result.requested) {
+        session.handoffRequested = true;
+        session.handoffReason = args.reason;
+        session.handoffPreferredWindow = args.preferredWindow;
+        const lang = String(session.language || '').toLowerCase();
+        const text = lang.startsWith('en')
+          ? 'Your callback request was recorded. AHM Verdun will follow up when a representative is available.'
+          : lang.startsWith('es')
+            ? 'Su solicitud de devolución de llamada fue registrada. AHM Verdun hará el seguimiento cuando haya un representante disponible.'
+            : 'Votre demande de rappel a été enregistrée. AHM Verdun fera le suivi lorsqu’un représentant sera disponible.';
+        addSmsItem(session, { type: 'text', text });
+      }
       break;
     }
     case 'set_sms_preference':

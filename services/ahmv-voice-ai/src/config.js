@@ -111,7 +111,7 @@ if (!/^\+[1-9][0-9]{7,14}$/.test(twilioPhoneNumber)) {
 }
 
 export const config = {
-  appVersion: '0.7.0-preproduction',
+  appVersion: '0.8.0-preproduction',
   nodeEnv,
   voiceInstanceMode,
   port: int('PORT', 3000, { min: 1, max: 65535 }),

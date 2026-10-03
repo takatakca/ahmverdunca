@@ -173,6 +173,38 @@ export async function recordBridgeInteraction({ session, outcome }) {
   return result.ok ? { ok: true } : { ok: false, code: result.code };
 }
 
+export async function requestHumanHandoff({ session, reason, preferredWindow }) {
+  if (!config.featureHumanHandoff) {
+    return { ok: false, code: 'FEATURE_DISABLED', feature: 'human_handoff' };
+  }
+  if (!isSmsCapableCaller(session?.from) || !session?.contactId) {
+    return { ok: false, code: 'NO_CALLBACK_DESTINATION' };
+  }
+  if (config.ahmDataMode === 'fixture') {
+    return { ok: true, requested: true, duplicate: false };
+  }
+
+  const result = await bridgeFetch('handoff', {
+    method: 'POST',
+    body: {
+      contactId: session.contactId,
+      phoneE164: session.from,
+      callSid: session.callSid,
+      language: languageKey(session.language),
+      reason,
+      preferredWindow
+    }
+  });
+  if (!result.ok) {
+    return { ok: false, code: result.code || 'HANDOFF_BRIDGE_FAILED' };
+  }
+  return {
+    ok: true,
+    requested: result.data?.requested === true,
+    duplicate: result.data?.duplicate === true
+  };
+}
+
 export async function probeBridgeReadiness() {
   if (config.ahmDataMode === 'fixture') return { ready: true, reason: 'fixture_mode' };
   const result = await bridgeFetch('readiness');

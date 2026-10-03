@@ -62,6 +62,7 @@ Response shape:
     "voice7d": 0,
     "sms7d": 0,
     "membershipRequired7d": 0,
+    "handoffRequests7d": 0,
     "topIntents": []
   },
   "delivery": {
@@ -103,6 +104,7 @@ Recommended TAKATAK cards:
 - Trials ending within 72 hours
 - Premium members
 - Membership-gated requests
+- Human callback requests
 - Voice vs SMS usage
 - SMS delivery success rate
 - Failed messages
@@ -114,3 +116,13 @@ Do not interpret `premium / total contacts` as a true conversion rate until TAKA
 ## Scale note
 
 The seven-day interaction/message detail query is capped at 5,000 rows per source. If either cap is reached, the corresponding `limits.*Capped` flag becomes true. At that point, move the aggregation into a database view/RPC or TAKATAK analytics pipeline instead of silently undercounting.
+
+
+## Human follow-up metric
+
+`demand.handoffRequests7d` counts privacy-safe Voice AI callback requests recorded with:
+
+- `intent = "human_handoff"`
+- `outcome = "requested"`
+
+The aggregate endpoint does not expose the caller phone number, CallSid, free-form caller text or provider identifiers. Callback fulfillment must be handled by an authorized server-side TAKATAK/AHMV operator workflow rather than exposing personal phone data in a public dashboard payload.

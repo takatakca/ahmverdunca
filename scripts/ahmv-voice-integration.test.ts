@@ -124,3 +124,29 @@ test("Voice integration preproduction deploy is branch-pinned, smoke-gated and r
   assert.doesNotMatch(workflow, /AHMV_PRODUCTION_HOST|AHMV_PRODUCTION_URL/);
 });
 
+
+
+test("Voice human callback requests are structured, authenticated and privacy-safe", async () => {
+  const [bridge, funnel, voiceAgent] = await Promise.all([
+    source("src/lib/ahmv-voice-bridge.server.ts"),
+    source("src/features/ahmv-phone/ops/funnel.server.ts"),
+    source("services/ahmv-voice-ai/src/agent.js"),
+  ]);
+
+  assert.match(bridge, /\/handoff/);
+  assert.match(bridge, /human_handoff/);
+  assert.match(bridge, /preferredWindow/);
+  assert.match(bridge, /provider_reference_hash/);
+  assert.match(bridge, /CONTACT_NOT_FOUND/);
+  assert.match(bridge, /allowedReasons/);
+  assert.match(bridge, /allowedWindows/);
+  assert.doesNotMatch(bridge, /callbackNotes|handoffNotes|freeFormReason/i);
+
+  assert.match(voiceAgent, /request_human_handoff/);
+  assert.match(voiceAgent, /FEATURE_DISABLED/);
+  assert.match(voiceAgent, /handoffRequested/);
+
+  assert.match(funnel, /handoffRequests7d/);
+  assert.match(funnel, /intent === "human_handoff"/);
+  assert.match(funnel, /outcome === "requested"/);
+});

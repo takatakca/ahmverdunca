@@ -33,6 +33,7 @@ export interface AhmvPhoneOpsFunnel {
     voice7d: number;
     sms7d: number;
     membershipRequired7d: number;
+    handoffRequests7d: number;
     topIntents: Array<{ intent: string; count: number }>;
   };
   delivery: {
@@ -48,6 +49,7 @@ export interface AhmvPhoneOpsFunnel {
     voice: number;
     sms: number;
     membershipRequired: number;
+    handoffRequests: number;
   }>;
   privacy: {
     containsPhoneNumbers: false;
@@ -144,6 +146,9 @@ export async function getAhmvPhoneOpsFunnel(
   const membershipRequired7d = interactions.filter(
     (row) => row.outcome === "membership-required",
   ).length;
+  const handoffRequests7d = interactions.filter(
+    (row) => row.intent === "human_handoff" && row.outcome === "requested",
+  ).length;
 
   const intentCounts = new Map<string, number>();
   for (const row of interactions) {
@@ -165,7 +170,14 @@ export async function getAhmvPhoneOpsFunnel(
 
   const days = new Map<
     string,
-    { date: string; interactions: number; voice: number; sms: number; membershipRequired: number }
+    {
+      date: string;
+      interactions: number;
+      voice: number;
+      sms: number;
+      membershipRequired: number;
+      handoffRequests: number;
+    }
   >();
 
   for (let offset = 6; offset >= 0; offset -= 1) {
@@ -177,6 +189,7 @@ export async function getAhmvPhoneOpsFunnel(
       voice: 0,
       sms: 0,
       membershipRequired: 0,
+      handoffRequests: 0,
     });
   }
 
@@ -187,6 +200,9 @@ export async function getAhmvPhoneOpsFunnel(
     if (row.channel === "voice") day.voice += 1;
     if (row.channel === "sms") day.sms += 1;
     if (row.outcome === "membership-required") day.membershipRequired += 1;
+    if (row.intent === "human_handoff" && row.outcome === "requested") {
+      day.handoffRequests += 1;
+    }
   }
 
   return {
@@ -205,6 +221,7 @@ export async function getAhmvPhoneOpsFunnel(
       voice7d,
       sms7d,
       membershipRequired7d,
+      handoffRequests7d,
       topIntents,
     },
     delivery: {

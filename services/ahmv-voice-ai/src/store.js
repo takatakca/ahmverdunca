@@ -37,6 +37,9 @@ export function sessionState(session, { includeMessages = config.persistActiveCo
     auditRecorded: Boolean(session.auditRecorded),
     usage: session.usage || emptyUsage(),
     costGuardExceeded: Boolean(session.costGuardExceeded),
+    handoffRequested: Boolean(session.handoffRequested),
+    handoffReason: session.handoffReason || null,
+    handoffPreferredWindow: session.handoffPreferredWindow || null,
     messages: includeMessages ? compactMessages(session.messages) : []
   };
 }
@@ -66,6 +69,9 @@ export function newSession({ callSid, from, to }) {
     auditRecorded: false,
     usage: emptyUsage(),
     costGuardExceeded: false,
+    handoffRequested: false,
+    handoffReason: null,
+    handoffPreferredWindow: null,
     createdAt: new Date().toISOString(),
     endedAt: null,
     endReason: null
@@ -164,6 +170,9 @@ export async function loadSession(callSid) {
     auditRecorded: Boolean(state.auditRecorded || data.audit_recorded_at),
     usage: state.usage && typeof state.usage === 'object' ? state.usage : emptyUsage(),
     costGuardExceeded: Boolean(state.costGuardExceeded),
+    handoffRequested: Boolean(state.handoffRequested),
+    handoffReason: state.handoffReason || null,
+    handoffPreferredWindow: state.handoffPreferredWindow || null,
     createdAt: data.started_at || new Date().toISOString(),
     endedAt: data.ended_at || null,
     endReason: data.end_reason || null
