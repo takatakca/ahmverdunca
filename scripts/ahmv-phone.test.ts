@@ -8,6 +8,7 @@ import {
   scheduleAnswer,
   type ScheduleSnapshot,
 } from "../src/lib/ahmv-phone.ts";
+import { normalizeNanpDtmf } from "../src/features/ahmv-phone/contacts/phone-input.ts";
 
 const snapshot: ScheduleSnapshot = {
   start: "2026-10-01",
@@ -202,3 +203,54 @@ test("silence in team recognition retries only twice", async () => {
 });
 test("status callback is authenticated and emits no SMS", async () =>
   assert.equal((await handleAhmvTwilio(request(`${root}/status`), settings))?.status, 204));
+
+
+test("caller-supplied NANP mobile digits normalize to E.164", () => {
+  assert.equal(normalizeNanpDtmf("5145550123"), "+15145550123");
+  assert.equal(normalizeNanpDtmf("1 514 555 0123"), "+15145550123");
+  assert.equal(normalizeNanpDtmf("1111111111"), null);
+  assert.equal(normalizeNanpDtmf("514555012"), null);
+});
+
+test("private caller choosing SMS is routed to ten-digit mobile collection", async () => {
+  const response = await handleAhmvTwilio(
+    request(
+      `${root}/voice?step=delivery-choice&lang=fr&attempt=0&sms=0`,
+      { Digits: "1", From: "anonymous", CallSid: "CAtest-private" },
+    ),
+    settings,
+  );
+  const body = await response!.text();
+  assert.match(body, /step=collect-phone/);
+  assert.doesNotMatch(body, /step=menu/);
+});
+
+test("manual mobile collection asks for exactly ten DTMF digits", async () => {
+  const response = await handleAhmvTwilio(
+    request(
+      `${root}/voice?step=collect-phone&lang=en&attempt=0&sms=1`,
+      { From: "anonymous", CallSid: "CAtest-collect" },
+    ),
+    settings,
+  );
+  const body = await response!.text();
+  assert.match(body, /numDigits="10"/);
+  assert.match(body, /step=collect-phone-answer/);
+});
+
+test("invalid manually entered mobile number fails closed after retry", async () => {
+  const response = await handleAhmvTwilio(
+    request(
+      `${root}/voice?step=collect-phone-answer&lang=en&attempt=1&sms=1`,
+      {
+        From: "anonymous",
+        Digits: "1111111111",
+        CallSid: "CAtest-invalid-manual",
+      },
+    ),
+    settings,
+  );
+  const body = await response!.text();
+  assert.match(body, /<Hangup/);
+  assert.doesNotMatch(body, /<Redirect/);
+});
