@@ -274,6 +274,7 @@ jobs:
 
           chmod +x "$RUNNER_TEMP/ahmv-scp"
           chmod +x scripts/deploy-production-sftp.sh
+          chmod +x scripts/deploy-production-http-smoke.sh
 
           echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
 
@@ -553,17 +554,7 @@ jobs:
           echo "$AHMV_PRODUCTION_URL/healthz"
 
           HEALTH_BODY="$(
-            curl \
-              --fail \
-              --silent \
-              --show-error \
-              --location \
-              --connect-timeout 15 \
-              --max-time 30 \
-              --retry 8 \
-              --retry-delay 3 \
-              --retry-all-errors \
-              "$AHMV_PRODUCTION_URL/healthz"
+            scripts/deploy-production-http-smoke.sh body /healthz
           )"
 
           echo "$HEALTH_BODY"
@@ -589,19 +580,8 @@ jobs:
           HEADERS="$(mktemp)"
           BODY="$(mktemp)"
 
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --location \
-            --connect-timeout 15 \
-            --max-time 30 \
-            --retry 8 \
-            --retry-delay 3 \
-            --retry-all-errors \
-            -D "$HEADERS" \
-            -o "$BODY" \
-            "$AHMV_PRODUCTION_URL/"
+          scripts/deploy-production-http-smoke.sh headers / > "$HEADERS"
+          scripts/deploy-production-http-smoke.sh body / > "$BODY"
 
           echo "Checking production security headers..."
 
@@ -678,19 +658,7 @@ jobs:
 
           HEADERS="$(mktemp)"
 
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --location \
-            --connect-timeout 15 \
-            --max-time 30 \
-            --retry 8 \
-            --retry-delay 3 \
-            --retry-all-errors \
-            -D "$HEADERS" \
-            -o /dev/null \
-            "$AHMV_PRODUCTION_URL/recherche"
+          scripts/deploy-production-http-smoke.sh headers /recherche > "$HEADERS"
 
           grep -qi '^x-robots-tag:.*noindex' "$HEADERS" || {
             echo "ERROR: /recherche must remain noindex."
@@ -704,18 +672,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --location \
-            --connect-timeout 15 \
-            --max-time 30 \
-            --retry 5 \
-            --retry-delay 3 \
-            --retry-all-errors \
-            "$AHMV_PRODUCTION_URL/robots.txt" \
-            -o "$RUNNER_TEMP/robots.txt"
+          scripts/deploy-production-http-smoke.sh body /robots.txt > "$RUNNER_TEMP/robots.txt"
 
           test -s "$RUNNER_TEMP/robots.txt" || {
             echo "ERROR: robots.txt is empty."
@@ -728,18 +685,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --location \
-            --connect-timeout 15 \
-            --max-time 30 \
-            --retry 5 \
-            --retry-delay 3 \
-            --retry-all-errors \
-            "$AHMV_PRODUCTION_URL/sitemap.xml" \
-            -o "$RUNNER_TEMP/sitemap.xml"
+          scripts/deploy-production-http-smoke.sh body /sitemap.xml > "$RUNNER_TEMP/sitemap.xml"
 
           test -s "$RUNNER_TEMP/sitemap.xml" || {
             echo "ERROR: sitemap.xml is empty."
@@ -791,17 +737,7 @@ jobs:
 
           echo "Verifying rollback health..."
 
-          curl \
-            --fail \
-            --silent \
-            --show-error \
-            --location \
-            --connect-timeout 15 \
-            --max-time 30 \
-            --retry 8 \
-            --retry-delay 3 \
-            --retry-all-errors \
-            "$AHMV_PRODUCTION_URL/healthz"
+          scripts/deploy-production-http-smoke.sh body /healthz
 
           echo
           echo "Rollback completed successfully."
