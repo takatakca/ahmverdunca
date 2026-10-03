@@ -18,7 +18,7 @@
 - Keep `VITE_PUBLIC_INDEXING=false`.
 - Confirm the production environment contains only required secrets and public variables.
 - Do not enable analytics, advertising, social publishing, newsletter, voice or TAKATAK integrations without explicit authorization.
-- Keep `SITE.phonePublic=false` until a real inbound call succeeds.
+- Keep server-only `AHMV_PHONE_PUBLIC=false` until a real inbound call succeeds.
 - Confirm association approvals listed in `GO_LIVE_CHECKLIST.md`.
 - Confirm the GitHub `production` environment and secrets from `MOCHAHOST_PRODUCTION.md` are configured and protected.
 - Use the manual **Deploy AHM Verdun production** workflow; do not upload an untracked build by hand.
@@ -95,7 +95,7 @@ Do not expose the reserved number as an active public call channel until:
 3. language/menu behavior is verified;
 4. failure/after-hours behavior is acceptable.
 
-Then change `SITE.phonePublic` to `true` in a reviewed PR and run the full CI gate.
+Then set server-only `AHMV_PHONE_PUBLIC=true`. `/api/ahmv/phone-status` will enable click-to-call automatically; run the full CI/release gate and verify the public surfaces.
 
 ## 6. GO / NO-GO
 
