@@ -303,7 +303,7 @@ async function voiceSms(request: Request, settings: Settings) {
   const text = limited(body["body"], 1500);
   const purpose = limited(body["purpose"], 80) || "voice-ai-recap";
   const callSid = limited(body["callSid"], 100);
-  const idempotencyKey = callSid ? `voice-ai:${purpose}:${callSid}` : undefined;
+  const dedupeKey = callSid ? `voice-ai:${purpose}:${callSid}` : undefined;
   if (!validUuid(contactId) || !validPhone(phone) || !text) {
     return json({ ok: false, code: "INVALID_SMS_REQUEST" }, 400);
   }
@@ -320,7 +320,7 @@ async function voiceSms(request: Request, settings: Settings) {
     body: text,
     purpose,
     contactId,
-    idempotencyKey,
+    dedupeKey,
     settings,
   });
   return json(sent.sent
