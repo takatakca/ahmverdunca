@@ -17,6 +17,10 @@ create table if not exists public.ahmv_phone_entitlement_sync_events (
 create index if not exists idx_ahmv_phone_entitlement_sync_contact
   on public.ahmv_phone_entitlement_sync_events(contact_id, received_at desc);
 
+create unique index if not exists idx_ahmv_phone_contacts_takatak_identity
+  on public.ahmv_phone_contacts(takatak_identity_id)
+  where takatak_identity_id is not null;
+
 alter table public.ahmv_phone_entitlement_sync_events enable row level security;
 grant all on public.ahmv_phone_entitlement_sync_events to service_role;
 
@@ -72,7 +76,13 @@ begin
 
   perform pg_advisory_xact_lock(
     hashtextextended(
-      p_takatak_identity_id || '|' || p_phone_e164 || '|' || p_product_code,
+      'identity|' || p_takatak_identity_id || '|' || p_product_code,
+      0
+    )
+  );
+  perform pg_advisory_xact_lock(
+    hashtextextended(
+      'phone|' || p_phone_e164 || '|' || p_product_code,
       0
     )
   );
@@ -124,6 +134,23 @@ begin
   from public.ahmv_phone_contacts
   where phone_e164 = p_phone_e164
   for update;
+
+  if found
+     and v_contact.takatak_identity_id is not null
+     and v_contact.takatak_identity_id <> p_takatak_identity_id then
+    raise exception 'AHMV phone contact is already linked to another TAKATAK identity'
+      using errcode = '23505';
+  end if;
+
+  if exists (
+    select 1
+    from public.ahmv_phone_contacts
+    where takatak_identity_id = p_takatak_identity_id
+      and phone_e164 <> p_phone_e164
+  ) then
+    raise exception 'TAKATAK identity is already linked to another AHMV phone contact'
+      using errcode = '23505';
+  end if;
 
   if not found and p_membership_status <> 'active' then
     insert into public.ahmv_phone_entitlement_sync_events (
