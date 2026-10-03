@@ -13,10 +13,7 @@ export function CommunicationsPreview() {
   const { lang } = useI18n();
   const [open, setOpen] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
-  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
-
   useEffect(() => {
-    if (publicLaunch) return;
     if (window.localStorage.getItem(HIDE_KEY) === "1") return;
     if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
 
@@ -26,7 +23,7 @@ export function CommunicationsPreview() {
     }, 320);
 
     return () => window.clearTimeout(timer);
-  }, [publicLaunch]);
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -45,7 +42,7 @@ export function CommunicationsPreview() {
     };
   }, [open]);
 
-  if (!open || publicLaunch) return null;
+  if (!open) return null;
 
   const dismissForever = () => {
     window.localStorage.setItem(HIDE_KEY, "1");
