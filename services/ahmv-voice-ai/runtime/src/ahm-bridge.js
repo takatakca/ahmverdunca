@@ -75,7 +75,16 @@ export async function bootstrapVoiceCaller(session) {
       ok: true,
       contactId: isSmsCapableCaller(session.from) ? 'fixture-contact' : null,
       transactionalSmsAllowed: isSmsCapableCaller(session.from),
-      access: { allowed: true, mode: config.accessMode, reason: 'fixture', tier: 'trial' }
+      access: {
+        allowed: true,
+        mode: config.accessMode,
+        reason: 'fixture',
+        tier: 'trial',
+        premium: false,
+        trialActive: true,
+        nextEvent: true,
+        weeklySchedule: true
+      }
     };
   }
 
