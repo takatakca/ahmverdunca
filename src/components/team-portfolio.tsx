@@ -152,7 +152,13 @@ export function TeamPortfolio({
                     ? "#photos-equipe"
                     : service.module === "social"
                       ? "#social-equipe"
-                      : undefined;
+                      : service.module === "volunteers"
+                        ? "#benevolat-equipe"
+                        : service.module === "fundraising"
+                          ? "#collecte-equipe"
+                          : service.module === "documents"
+                            ? "#documents-equipe"
+                            : undefined;
 
           const card = (
             <>
