@@ -13,6 +13,9 @@ export interface AhmvPhoneContact {
   smsConsent: boolean;
   transactionalSmsAllowed: boolean;
   marketingSmsConsent: boolean;
+  marketingSmsConsentedAt?: string | undefined;
+  marketingSmsConsentSource?: "sms_keyword" | "takatak_verified" | undefined;
+  marketingSmsRevokedAt?: string | undefined;
   takatakIdentityId?: string | undefined;
   premiumExpiresAt?: string | undefined;
 }
@@ -43,6 +46,17 @@ function mapContact(row: Record<string, unknown>): AhmvPhoneContact {
     smsConsent: Boolean(row["sms_consent"]),
     transactionalSmsAllowed: Boolean(row["transactional_sms_allowed"]),
     marketingSmsConsent: Boolean(row["marketing_sms_consent"]),
+    marketingSmsConsentedAt: row["marketing_sms_consented_at"]
+      ? String(row["marketing_sms_consented_at"])
+      : undefined,
+    marketingSmsConsentSource:
+      row["marketing_sms_consent_source"] === "sms_keyword" ||
+      row["marketing_sms_consent_source"] === "takatak_verified"
+        ? row["marketing_sms_consent_source"]
+        : undefined,
+    marketingSmsRevokedAt: row["marketing_sms_revoked_at"]
+      ? String(row["marketing_sms_revoked_at"])
+      : undefined,
     takatakIdentityId: row["takatak_identity_id"] ? String(row["takatak_identity_id"]) : undefined,
     premiumExpiresAt: row["premium_expires_at"] ? String(row["premium_expires_at"]) : undefined,
   };
@@ -61,7 +75,7 @@ export async function touchPhoneContact(input: {
 
   const existingResult = await client
     .from("ahmv_phone_contacts")
-    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
+    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,marketing_sms_consented_at,marketing_sms_consent_source,marketing_sms_revoked_at,takatak_identity_id,premium_expires_at")
     .eq("phone_e164", phone)
     .maybeSingle();
 
@@ -78,7 +92,7 @@ export async function touchPhoneContact(input: {
         updated_at: new Date().toISOString(),
       })
       .eq("id", current.id)
-      .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
+      .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,marketing_sms_consented_at,marketing_sms_consent_source,marketing_sms_revoked_at,takatak_identity_id,premium_expires_at")
       .single();
     if (updateResult.error) throw updateResult.error;
     return mapContact(updateResult.data);
@@ -99,7 +113,7 @@ export async function touchPhoneContact(input: {
       marketing_sms_consent: false,
       last_seen_at: now.toISOString(),
     })
-    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
+    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,marketing_sms_consented_at,marketing_sms_consent_source,marketing_sms_revoked_at,takatak_identity_id,premium_expires_at")
     .single();
 
   if (insertResult.error) {
@@ -110,6 +124,119 @@ export async function touchPhoneContact(input: {
     throw insertResult.error;
   }
   return mapContact(insertResult.data);
+}
+
+export async function findPhoneContactByNumber(
+  phoneE164: string,
+): Promise<AhmvPhoneContact | null> {
+  const phone = normalizePhoneE164(phoneE164);
+  if (!phone) return null;
+
+  const result = await db()
+    .from("ahmv_phone_contacts")
+    .select(
+      "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,marketing_sms_consented_at,marketing_sms_consent_source,marketing_sms_revoked_at,takatak_identity_id,premium_expires_at",
+    )
+    .eq("phone_e164", phone)
+    .maybeSingle();
+
+  if (result.error) throw result.error;
+  return result.data ? mapContact(result.data) : null;
+}
+
+export async function safeFindPhoneContactByNumber(
+  phoneE164: string,
+): Promise<AhmvPhoneContact | null> {
+  try {
+    return await findPhoneContactByNumber(phoneE164);
+  } catch (error) {
+    console.error("[AHMV phone contact lookup]", error);
+    return null;
+  }
+}
+
+export async function setMarketingSmsConsent(
+  contactId: string,
+  enabled: boolean,
+  source: "sms_keyword" | "takatak_verified",
+  now = new Date(),
+) {
+  const values = enabled
+    ? {
+        marketing_sms_consent: true,
+        marketing_sms_consented_at: now.toISOString(),
+        marketing_sms_consent_source: source,
+        marketing_sms_revoked_at: null,
+        updated_at: now.toISOString(),
+      }
+    : {
+        marketing_sms_consent: false,
+        marketing_sms_revoked_at: now.toISOString(),
+        updated_at: now.toISOString(),
+      };
+
+  const result = await db()
+    .from("ahmv_phone_contacts")
+    .update(values)
+    .eq("id", contactId);
+
+  if (result.error) throw result.error;
+}
+
+export async function safeSetMarketingSmsConsent(
+  contactId: string,
+  enabled: boolean,
+  source: "sms_keyword" | "takatak_verified",
+  now = new Date(),
+) {
+  try {
+    await setMarketingSmsConsent(contactId, enabled, source, now);
+    return true;
+  } catch (error) {
+    console.error("[AHMV marketing consent]", error);
+    return false;
+  }
+}
+
+export async function setCarrierMessagingPermission(
+  contactId: string,
+  allowed: boolean,
+  now = new Date(),
+) {
+  const values = allowed
+    ? {
+        sms_consent: true,
+        transactional_sms_allowed: true,
+        updated_at: now.toISOString(),
+      }
+    : {
+        sms_consent: false,
+        transactional_sms_allowed: false,
+        marketing_sms_consent: false,
+        marketing_sms_revoked_at: now.toISOString(),
+        updated_at: now.toISOString(),
+      };
+
+  const result = await db()
+    .from("ahmv_phone_contacts")
+    .update(values)
+    .eq("id", contactId);
+
+  if (result.error) throw result.error;
+}
+
+export async function safeSetCarrierMessagingPermission(
+  contactId: string,
+  allowed: boolean,
+  now = new Date(),
+) {
+  try {
+    await setCarrierMessagingPermission(contactId, allowed, now);
+    return true;
+  } catch (error) {
+    console.error("[AHMV carrier messaging permission]", error);
+    return false;
+  }
 }
 
 export async function savePrimaryTeamPreference(contactId: string, publicTeamId: string) {
