@@ -343,7 +343,7 @@ function TeamPage() {
             <SectionHeading title={t("teams.albums")} />
             <div className="grid gap-5 sm:grid-cols-3">
               {albums.map((album, index) => {
-                const media = archiveImages[index % archiveImages.length];
+                const media = archiveImages[index % archiveImages.length]!;
                 const imageUrl = album.coverUrl ?? media.url;
                 return (
                   <Link
