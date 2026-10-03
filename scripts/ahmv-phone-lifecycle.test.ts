@@ -80,3 +80,23 @@ test("localized templates keep the service notice separate from the marketing of
     /membership/,
   );
 });
+
+
+test("premium contact receives no trial-expiry lifecycle messages", () => {
+  const plans = planPhoneLifecycleMessages(
+    contact({
+      accessTier: "premium",
+      marketingSmsConsent: true,
+    }),
+    new Date("2026-10-03T12:00:00.000Z"),
+  );
+  assert.deepEqual(plans, []);
+});
+
+test("guest contact receives no trial lifecycle messages", () => {
+  const plans = planPhoneLifecycleMessages(
+    contact({ accessTier: "guest" }),
+    new Date("2026-10-03T12:00:00.000Z"),
+  );
+  assert.deepEqual(plans, []);
+});
