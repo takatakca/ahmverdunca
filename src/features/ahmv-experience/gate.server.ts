@@ -1,6 +1,6 @@
-import { readAhmvExperienceSession } from "./session.server";
+import { requireLiveAhmvExperienceSession } from "./entitlement.server";
 
-export function gateAhmvExperience(request: Request): Response | null {
+export async function gateAhmvExperience(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
   if (url.pathname !== "/experience" && !url.pathname.startsWith("/experience/")) {
     return null;
@@ -13,7 +13,7 @@ export function gateAhmvExperience(request: Request): Response | null {
     });
   }
 
-  if (!readAhmvExperienceSession(request)) {
+  if (!(await requireLiveAhmvExperienceSession(request))) {
     const login = new URL("/api/ahmv/experience/login", url.origin);
     return new Response(null, {
       status: 303,
