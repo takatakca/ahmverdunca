@@ -41,6 +41,12 @@ jobs:
       - name: AHMV phone and SMS security tests
         run: bun test scripts/ahmv-phone.test.ts
 
+      - name: GROUPE TAKATAK team feed security tests
+        run: bun run test:team-feed
+
+      - name: Validate monetization configuration
+        run: bun run check:monetization
+
       - name: Validate content data
         run: bun run check:data
 

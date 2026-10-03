@@ -4,6 +4,7 @@ import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { applyPublicResponsePolicy } from "./lib/response-policy";
 import { handleAhmvTwilio } from "./lib/ahmv-twilio.server";
+import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -89,6 +90,8 @@ export default {
     const url = new URL(request.url);
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
+    const teamFeedResponse = await handleTakatakTeamFeed(request);
+    if (teamFeedResponse) return teamFeedResponse;
     if (url.pathname === "/healthz") {
       return new Response(JSON.stringify({ ok: true, service: "ahmverdun-web" }), {
         status: 200,

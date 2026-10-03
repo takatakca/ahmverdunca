@@ -47,6 +47,10 @@ function PrivacyPage() {
             body: "Les futurs outils de marketing, d'information générale et d'infolettre gérés avec GROUPE TAKATAK devront utiliser des consentements explicites et des mécanismes de désabonnement appropriés avant leur activation.",
           },
           {
+            title: "Publicité et soutien au développement",
+            body: "Les espaces publicitaires et les contributions volontaires au développement numérique restent désactivés tant qu’ils ne sont pas configurés et approuvés. Lorsqu’ils sont activés, le bénéficiaire doit être affiché clairement et les technologies publicitaires doivent respecter les exigences de consentement applicables.",
+          },
+          {
             title: "Liens externes",
             body: "Les liens vers Spordle, WLLV, Hockey Québec, Hockey Canada et d'autres organismes ouvrent leurs propres services et politiques. Les familles doivent consulter ces politiques lorsqu'elles utilisent ces plateformes.",
           },
@@ -67,6 +71,10 @@ function PrivacyPage() {
           {
             title: "Marketing and newsletters",
             body: "Future marketing, general-information and newsletter tools managed with GROUPE TAKATAK must use explicit consent and appropriate unsubscribe mechanisms before activation.",
+          },
+          {
+            title: "Advertising and development support",
+            body: "Advertising placements and voluntary digital-development contributions remain disabled until configured and approved. When enabled, the beneficiary must be clearly disclosed and advertising technologies must follow applicable consent requirements.",
           },
           {
             title: "External links",

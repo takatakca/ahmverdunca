@@ -28,7 +28,9 @@ import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { LogoSlot } from "@/components/layout/logo-slot";
+import { AdSenseSlot } from "@/components/adsense-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
+import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
 
@@ -50,7 +52,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t, l, lang } = useI18n();
-  const { preferredTeam } = usePreferredTeam();
+  const { preferredTeam, selectedTeams } = usePreferredTeam();
   const today = montrealDateKey();
   const alerts = ALERTS.filter((alert) => !alert.archived && alert.expiresAt >= today);
   const news = NEWS.slice(0, 3);
@@ -195,6 +197,53 @@ function Home() {
       </section>
 
       <ScheduleFinder />
+
+      {selectedTeams.length > 0 && (
+        <section className="border-y border-sport/25 bg-competition text-white">
+          <div className="container-site py-7 md:py-9">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail parent personnalisé" : "Personalized parent portal"}</p>
+                <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em]">
+                  {lang === "fr" ? "Mes équipes" : "My teams"}
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/62">
+                  {lang === "fr"
+                    ? "Vos équipes enregistrées passent en premier : mini-site, horaire officiel et résultats en un clic."
+                    : "Your saved teams come first: mini-site, official schedule and results in one click."}
+                </p>
+              </div>
+              <Link to="/equipes" className="premium-control inline-flex min-h-11 items-center gap-2 border border-white/18 px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white hover:border-sport">
+                {lang === "fr" ? "Gérer mes équipes" : "Manage my teams"} <ArrowRight className="size-3.5 text-sport-foreground" />
+              </Link>
+            </div>
+            <div className="mt-6 grid gap-px bg-white/12 sm:grid-cols-2 lg:grid-cols-3">
+              {selectedTeams.map((entry) => (
+                <article key={entry.legacyScheduleTeamId} className="flex min-h-48 flex-col bg-competition p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="eyebrow text-sport-foreground">{entry.level}</p>
+                      <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.88]">{entry.name}</h3>
+                    </div>
+                    <span className="font-mono text-[9px] text-white/35">#{entry.legacyScheduleTeamId.slice(-4)}</span>
+                  </div>
+                  <div className="mt-auto grid grid-cols-3 gap-2 pt-6">
+                    <a href={publicTeamHubUrl(entry)} className="premium-control flex min-h-10 items-center justify-center bg-sport px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-sport-foreground">
+                      {lang === "fr" ? "Mini-site" : "Mini-site"}
+                    </a>
+                    <a href={legacyTeamScheduleUrl(entry)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-white/14 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white hover:border-sport">
+                      {lang === "fr" ? "Horaire" : "Schedule"}
+                    </a>
+                    <a href={officialTeamResultsUrl(entry)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-white/14 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white hover:border-sport">
+                      {lang === "fr" ? "Résultats" : "Results"}
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Alerts */}
       {alerts.length > 0 && (
@@ -704,6 +753,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <AdSenseSlot className="container-site my-8 border border-navy/10 bg-ice p-3 md:my-12 md:p-4" />
 
       {/* Partners */}
       <section className="navy-texture overflow-hidden py-12 text-navy-foreground md:py-16">

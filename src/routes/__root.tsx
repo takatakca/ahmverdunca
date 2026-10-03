@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "../lib/i18n";
 import { SiteLayout } from "../components/layout/site-layout";
 import { EXTERNAL_LINKS, SITE } from "../lib/site";
+import { ADSENSE_CONFIG } from "../lib/monetization";
 
 function NotFoundComponent() {
   return (
@@ -124,6 +125,13 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd }} />
+        {ADSENSE_CONFIG.enabled && ADSENSE_CONFIG.client && (
+          <script
+            async
+            crossOrigin="anonymous"
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(ADSENSE_CONFIG.client)}`}
+          />
+        )}
       </head>
       <body>
         {children}

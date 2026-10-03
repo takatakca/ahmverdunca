@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, ExternalLink, Images, Trophy } from "lucide-react";
+import { ArrowRight, Bookmark, BookmarkCheck, CalendarDays, ExternalLink, Images, Trophy } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { TEAMS } from "@/data/teams";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -24,8 +25,24 @@ export const Route = createFileRoute("/equipes/")({
 
 function TeamsPage() {
   const { t, l, lang } = useI18n();
-  const { preferredTeam, savePreferredTeam } = usePreferredTeam();
+  const {
+    preferredTeam,
+    savePreferredTeam,
+    selectedTeamIds,
+    selectedTeams,
+    toggleSelectedTeam,
+    clearSelectedTeams,
+    isTeamSelected,
+  } = usePreferredTeam();
+  const [showAllResults, setShowAllResults] = useState(false);
+  const [showAllDirectory, setShowAllDirectory] = useState(false);
   const totalPublicTeams = TEAMS.reduce((count, team) => count + teamsForCategory(team.slug).length, 0);
+  const filterToMine = selectedTeamIds.length > 0 && !showAllResults;
+  const selectedCategorySlugs = new Set(selectedTeams.map((team) => team.categorySlug));
+  const categoriesToRender =
+    selectedTeamIds.length > 0 && !showAllDirectory
+      ? TEAMS.filter((team) => selectedCategorySlugs.has(team.slug))
+      : TEAMS;
 
   return (
     <>
@@ -98,6 +115,84 @@ function TeamsPage() {
             </a>
           </div>
         </section>
+
+        {selectedTeams.length > 0 ? (
+          <section className="mb-8 overflow-hidden border border-sport/30 bg-background">
+            <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
+              <div className="p-6 md:p-8">
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail parent" : "Parent portal"}</p>
+                <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] md:text-5xl">
+                  {lang === "fr" ? "Mes équipes" : "My teams"}
+                </h2>
+                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/62">
+                  {lang === "fr"
+                    ? "Le portail met maintenant vos équipes en priorité. Ajoutez-en plusieurs si vos enfants jouent dans des formations différentes."
+                    : "The portal now prioritizes your teams. Add several when your children play on different teams."}
+                </p>
+              </div>
+              <div className="flex items-center border-t border-white/12 p-5 lg:border-l lg:border-t-0">
+                <button
+                  type="button"
+                  onClick={clearSelectedTeams}
+                  className="premium-control min-h-11 border border-white/18 px-4 text-[10px] font-bold uppercase tracking-[0.13em] text-white hover:border-sport"
+                >
+                  {lang === "fr" ? "Effacer ma sélection" : "Clear selection"}
+                </button>
+              </div>
+            </div>
+            <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
+              {selectedTeams.map((entry) => (
+                <article key={entry.legacyScheduleTeamId} className="flex min-h-52 flex-col bg-background p-5">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="eyebrow text-sport">{entry.level}</p>
+                      <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.88] text-navy">{entry.name}</h3>
+                    </div>
+                    <BookmarkCheck className="size-5 shrink-0 text-sport" aria-hidden />
+                  </div>
+                  <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                    #{entry.legacyScheduleTeamId.slice(-4)}
+                  </p>
+                  <div className="mt-auto grid grid-cols-2 gap-2 pt-6">
+                    <a
+                      href={publicTeamHubUrl(entry)}
+                      className="premium-control flex min-h-11 items-center justify-between bg-navy px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white"
+                    >
+                      {lang === "fr" ? "Mon mini-site" : "My mini-site"} <ArrowRight className="size-3.5 text-sport-foreground" />
+                    </a>
+                    <a
+                      href={officialTeamResultsUrl(entry)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="premium-control flex min-h-11 items-center justify-between border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy hover:border-sport"
+                    >
+                      {lang === "fr" ? "Résultats" : "Results"} <Trophy className="size-3.5 text-sport" />
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : (
+          <section className="mb-8 flex flex-col gap-5 border border-navy/12 bg-ice p-6 md:flex-row md:items-center md:justify-between md:p-8">
+            <div>
+              <p className="eyebrow text-sport">{lang === "fr" ? "Personnaliser le portail" : "Personalize the portal"}</p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy">
+                {lang === "fr" ? "Choisissez les équipes de vos enfants." : "Choose your children’s teams."}
+              </p>
+              <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+                {lang === "fr"
+                  ? "Ajoutez une ou plusieurs équipes. Le portail pourra ensuite mettre leurs résultats, nouvelles et contenus en premier."
+                  : "Add one or more teams. The portal can then put their results, news and content first."}
+              </p>
+            </div>
+            <a href="#resultats" className="premium-control inline-flex min-h-12 shrink-0 items-center gap-2 bg-navy px-5 font-display text-sm font-bold uppercase tracking-[0.1em] text-white">
+              <Bookmark className="size-4 text-sport-foreground" />
+              {lang === "fr" ? "Choisir mes équipes" : "Choose my teams"}
+            </a>
+          </section>
+        )}
+
         <div className="grid gap-px border border-navy/12 bg-navy/12 md:grid-cols-2">
           <div className="bg-navy p-6 text-navy-foreground md:p-8">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Répertoire public" : "Public directory"}</p>
@@ -126,6 +221,17 @@ function TeamsPage() {
                   ? "Choisissez l’équipe exacte. Les résultats et classements restent servis par la source hockey officielle; AHMV vous amène directement au bon identifiant sans recréer une deuxième version des scores."
                   : "Choose the exact team. Results and standings remain served by the official hockey source; AHMV takes you directly to the correct identifier without creating a second version of the scores."}
               </p>
+              {selectedTeamIds.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllResults((value) => !value)}
+                  className="premium-control mt-5 min-h-11 border border-white/18 px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white hover:border-sport"
+                >
+                  {showAllResults
+                    ? (lang === "fr" ? "Afficher seulement mes équipes" : "Show only my teams")
+                    : (lang === "fr" ? "Voir toutes les équipes" : "View all teams")}
+                </button>
+              )}
             </div>
             <div className="grid grid-cols-2 border-t border-white/12 lg:border-l lg:border-t-0">
               <div className="flex flex-col justify-center p-6 md:p-8">
@@ -145,7 +251,10 @@ function TeamsPage() {
 
           <div className="divide-y divide-navy/10">
             {TEAMS.map((category) => {
-              const entries = teamsForCategory(category.slug);
+              const allEntries = teamsForCategory(category.slug);
+              const entries = filterToMine
+                ? allEntries.filter((entry) => selectedTeamIds.includes(entry.legacyScheduleTeamId))
+                : allEntries;
               if (!entries.length) return null;
               return (
                 <div key={category.slug} className="grid lg:grid-cols-[10rem_minmax(0,1fr)]">
@@ -187,6 +296,23 @@ function TeamsPage() {
                             {lang === "fr" ? "Résultats" : "Results"}
                             <ExternalLink className="size-3.5 text-sport-foreground" />
                           </a>
+                          <button
+                            type="button"
+                            onClick={() => toggleSelectedTeam(entry.legacyScheduleTeamId)}
+                            className={cn(
+                              "premium-control col-span-2 flex min-h-10 items-center justify-between border px-3 text-[9px] font-bold uppercase tracking-[0.1em]",
+                              isTeamSelected(entry.legacyScheduleTeamId)
+                                ? "border-sport bg-sport text-sport-foreground"
+                                : "border-navy/12 bg-background text-navy hover:border-sport",
+                            )}
+                          >
+                            <span>{isTeamSelected(entry.legacyScheduleTeamId)
+                              ? (lang === "fr" ? "Dans mes équipes" : "In my teams")
+                              : (lang === "fr" ? "Ajouter à mes équipes" : "Add to my teams")}</span>
+                            {isTeamSelected(entry.legacyScheduleTeamId)
+                              ? <BookmarkCheck className="size-3.5" />
+                              : <Bookmark className="size-3.5" />}
+                          </button>
                         </div>
                       </article>
                     ))}
@@ -205,8 +331,29 @@ function TeamsPage() {
           </div>
         </section>
 
-        <div className="mt-9 border-t-2 border-navy">
-          {TEAMS.map((team, index) => {
+        <div className="mt-9 flex flex-col gap-4 border-t-2 border-navy pt-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="eyebrow text-sport">{lang === "fr" ? "Répertoire des catégories" : "Category directory"}</p>
+            {selectedTeamIds.length > 0 && !showAllDirectory && (
+              <p className="mt-1 text-sm text-muted-foreground">
+                {lang === "fr" ? "Seules les catégories de vos équipes sont affichées." : "Only categories containing your teams are shown."}
+              </p>
+            )}
+          </div>
+          {selectedTeamIds.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllDirectory((value) => !value)}
+              className="premium-control min-h-11 border border-navy/12 px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport"
+            >
+              {showAllDirectory
+                ? (lang === "fr" ? "Afficher seulement mes catégories" : "Show only my categories")
+                : (lang === "fr" ? "Voir toutes les catégories" : "View all categories")}
+            </button>
+          )}
+        </div>
+        <div className="border-t border-navy/12">
+          {categoriesToRender.map((team, index) => {
             const saved = preferredTeam === team.slug;
             const publicTeams = teamsForCategory(team.slug);
             return (
