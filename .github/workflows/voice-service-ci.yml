@@ -6,6 +6,7 @@ on:
     paths:
       - "services/ahmv-voice-ai/**"
       - ".github/workflows/voice-service-ci.yml"
+      - ".github/workflows/deploy-voice-service-preproduction.yml"
   push:
     branches: [main]
     paths:
@@ -35,6 +36,19 @@ jobs:
           ! grep -R --line-number -E '(^|[^A-Za-z0-9_])(sk-proj-|sk-[A-Za-z0-9]{20,}|AC[0-9a-fA-F]{32}[^x])' services/ahmv-voice-ai \
             --exclude='package-lock.json' \
             --exclude='.env.example'
+
+      - name: Verify preproduction deployment workflow guardrails
+        run: |
+          set -euo pipefail
+          WORKFLOW=.github/workflows/deploy-voice-service-preproduction.yml
+          test -f "$WORKFLOW"
+          grep -q 'AHMV-VOICE-SERVICE-PREPROD' "$WORKFLOW"
+          grep -q 'voice-ai-service-v1' "$WORKFLOW"
+          grep -q 'voice-service-ci.yml' "$WORKFLOW"
+          grep -q 'post-deploy-smoke.mjs' "$WORKFLOW"
+          grep -q 'bridge-smoke.mjs' "$WORKFLOW"
+          grep -q 'Roll back failed Voice service activation' "$WORKFLOW"
+          ! grep -q 'TWILIO.*webhook\|incoming-phone-numbers' "$WORKFLOW"
 
       - name: Locked install and source checks on Node 22
         run: |
