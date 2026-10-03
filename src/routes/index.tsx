@@ -25,6 +25,7 @@ import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { LogoSlot } from "@/components/layout/logo-slot";
+import { LogoSlot } from "@/components/layout/logo-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
@@ -64,7 +65,7 @@ function Home() {
           decoding="async"
           className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-68"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.96)_0%,rgba(7,16,43,0.78)_45%,rgba(7,16,43,0.48)_100%)]" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.97)_0%,rgba(7,16,43,0.78)_42%,rgba(7,16,43,0.28)_100%)]" aria-hidden />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.18)_0%,rgba(7,16,43,0.32)_45%,rgba(7,16,43,0.96)_100%)]" aria-hidden />
         <div className="technical-grid absolute inset-0 opacity-25" aria-hidden />
         <div className="absolute inset-y-0 left-[17%] w-px bg-navy-foreground/8" aria-hidden />
@@ -90,6 +91,15 @@ function Home() {
 
         <div className="container-site relative flex min-h-[66svh] flex-col justify-end pb-8 pt-20 sm:min-h-[70svh] md:min-h-[78svh] md:pb-11">
           <div className="max-w-6xl">
+            <div className="rise mb-5 flex items-center gap-4">
+              <LogoSlot size="lg" className="size-24 sm:size-28 md:size-32" />
+              <div className="border-l border-navy-foreground/20 pl-4">
+                <p className="font-display text-2xl font-extrabold uppercase tracking-[-0.025em] text-white sm:text-3xl">AHM Verdun</p>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/52 sm:text-xs">
+                  {lang === "fr" ? "Association du hockey mineur de Verdun" : "Verdun Minor Hockey Association"}
+                </p>
+              </div>
+            </div>
             <div className="rise flex flex-wrap items-center gap-3">
               <LogoSlot className="size-16 md:hidden" />
               <span className="hidden h-px w-10 bg-sport md:block" aria-hidden />
@@ -102,7 +112,7 @@ function Home() {
               {lang === "fr" ? "Association du hockey mineur de Verdun" : "Verdun Minor Hockey Association"}
             </p>
 
-            <h1 className="rise mt-2 max-w-[11ch] font-display text-[clamp(3.2rem,10vw,8rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.045em] text-navy-foreground [animation-delay:140ms]">
+            <h1 className="rise mt-2 max-w-[10ch] font-display text-[clamp(3.65rem,10.8vw,8.8rem)] font-extrabold uppercase leading-[0.8] tracking-[-0.052em] text-navy-foreground [animation-delay:140ms]">
               {t("home.heroTitle")}
             </h1>
 
