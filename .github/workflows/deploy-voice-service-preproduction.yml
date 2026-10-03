@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release_sha:
-        description: "Exact green voice-ai-service-v1 commit SHA"
+        description: "Exact merged green Voice service commit SHA"
         required: true
         type: string
       confirmation:
@@ -51,32 +51,34 @@ jobs:
             echo "release_sha must be a full lowercase 40-character SHA"
             exit 1
           }
-          SERVICE_HEAD="$(gh api repos/${GITHUB_REPOSITORY}/commits/voice-ai-service-v1 --jq .sha)"
-          test "$REQUESTED_SHA" = "$SERVICE_HEAD" || {
-            echo "Refusing stale/non-service head: requested=$REQUESTED_SHA service_head=$SERVICE_HEAD"
-            exit 1
-          }
-
-          VOICE_CI_COUNT="$(
-            gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/voice-service-ci.yml/runs?head_sha=$REQUESTED_SHA&status=success&per_page=10"               --jq '.workflow_runs | length'
-          )"
-          test "$VOICE_CI_COUNT" -gt 0 || {
-            echo "No successful Voice service CI exists for $REQUESTED_SHA"
-            exit 1
-          }
-
-          APP_CI_COUNT="$(
-            gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?head_sha=$REQUESTED_SHA&status=success&per_page=10"               --jq '.workflow_runs | length'
-          )"
-          test "$APP_CI_COUNT" -gt 0 || {
-            echo "No successful AHM Verdun CI exists for $REQUESTED_SHA"
-            exit 1
-          }
 
       - name: Checkout exact Voice service release
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.release_sha }}
+          fetch-depth: 0
+
+      - name: Verify requested release is merged into main and green
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=200
+          git merge-base --is-ancestor "$REQUESTED_SHA" origin/main || {
+            echo "Refusing release that is not merged into main: $REQUESTED_SHA"
+            exit 1
+          }
+
+          for workflow in voice-service-ci.yml voice-guardian.yml ci.yml; do
+            count="$(
+              gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/$workflow/runs?head_sha=$REQUESTED_SHA&status=success&per_page=10" --jq '.workflow_runs | length'
+            )"
+            test "$count" -gt 0 || {
+              echo "No successful $workflow run exists for $REQUESTED_SHA"
+              exit 1
+            }
+          done
 
       - name: Verify service source and locked dependency graph
         working-directory: services/ahmv-voice-ai

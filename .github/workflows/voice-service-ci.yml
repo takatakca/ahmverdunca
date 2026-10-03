@@ -43,7 +43,9 @@ jobs:
           WORKFLOW=.github/workflows/deploy-voice-service-preproduction.yml
           test -f "$WORKFLOW"
           grep -q 'AHMV-VOICE-SERVICE-PREPROD' "$WORKFLOW"
-          grep -q 'voice-ai-service-v1' "$WORKFLOW"
+          grep -q 'git merge-base --is-ancestor' "$WORKFLOW"
+          grep -q 'voice-guardian.yml' "$WORKFLOW"
+          ! grep -q 'voice-ai-service-v1\|voice-ai-preprod-v6' "$WORKFLOW"
           grep -q 'voice-service-ci.yml' "$WORKFLOW"
           grep -q 'post-deploy-smoke.mjs' "$WORKFLOW"
           grep -q 'bridge-smoke.mjs' "$WORKFLOW"

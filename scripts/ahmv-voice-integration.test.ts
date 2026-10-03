@@ -75,8 +75,10 @@ test("Voice integration smoke assets are fail-closed and split from the realtime
   assert.match(bridgeSmoke, /AHMV_VOICE_BRIDGE_TOKEN/);
   assert.doesNotMatch(bridgeSmoke, /console\.log\(.*token/s);
 
-  assert.match(runbook, /draft PR \*\*#192\*\*/);
-  assert.match(runbook, /draft PR \*\*#184\*\*/);
+  assert.match(runbook, /Production code authority: `main`/);
+  assert.match(runbook, /Website Voice integration: merged into `main`/);
+  assert.match(runbook, /Standalone realtime Voice service: merged into `main`/);
+  assert.match(runbook, /docs\/CURSOR_TWILIO_HANDOFF\.md/);
   assert.match(runbook, /services\/ahmv-voice-ai\/deploy\/nginx-voice\.ahmverdun\.ca\.conf/);
   assert.match(runbook, /services\/ahmv-voice-ai\/deploy\/ahmv-voice\.service/);
   assert.match(runbook, /Do not guess the Supabase project/);
@@ -111,10 +113,12 @@ test("Supabase Voice dry-run workflow is pinned, project-locked and non-mutating
 });
 
 
-test("Voice integration preproduction deploy is branch-pinned, smoke-gated and rollback-safe", async () => {
+test("Voice integration preproduction deploy is main-merged, smoke-gated and rollback-safe", async () => {
   const workflow = await source(".github/workflows/deploy-voice-integration-preproduction.yml");
-  assert.match(workflow, /commits\/voice-ai-preprod-v6/);
+  assert.match(workflow, /git merge-base --is-ancestor/);
+  assert.match(workflow, /origin\/main/);
   assert.match(workflow, /No successful AHM Verdun CI exists/);
+  assert.doesNotMatch(workflow, /voice-ai-preprod-v6|voice-ai-service-v1/);
   assert.match(workflow, /bun run doctor:voice-db/);
   assert.match(workflow, /AHMV_VOICE_BRIDGE_TOKEN/);
   assert.match(workflow, /\/api\/ahmv\/voice\/readiness/);

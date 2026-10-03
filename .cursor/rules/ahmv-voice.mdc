@@ -1,0 +1,92 @@
+---
+description: AHM Verdun Voice AI production engineering rules
+alwaysApply: true
+---
+
+# AHM Verdun Voice AI — Cursor Agent Rules
+
+You are working on the production AHM Verdun / AHMV Voice AI system.
+
+## Sources of truth
+
+- Repository: `takatakca/ahmverdunca`
+- Production website: `https://ahmverdun.ca`
+- Realtime Voice host: `https://voice.ahmverdun.ca`
+- Public phone: `+1 581-666-6246`
+- Supabase project ref: `bqflllsjxmhqsvemhhwv`
+- Voice service: `services/ahmv-voice-ai/`
+- Website Voice bridge: `src/lib/ahmv-voice-bridge.server.ts`
+- Voice DB migration: `supabase/migrations/20261003091000_ahmv_voice_sessions.sql`
+- Production runbook: `docs/VOICE_PRODUCTION_RUNBOOK.md`
+- Cursor/Twilio handoff: `docs/CURSOR_TWILIO_HANDOFF.md`
+
+Use `main` as the current authority. Do not resurrect obsolete PR branches or old patch snapshots unless explicitly required for forensic comparison.
+
+## Non-negotiable product behavior
+
+- Caller must press 1 before AI begins.
+- FR/EN/ES are first-class.
+- Never invent schedules, games, practices, arena addresses, cancellations, scores, fees, contacts, or registration facts.
+- Dynamic hockey facts must come from verified AHMV tools/data.
+- Stale or unavailable schedule data must fail closed.
+- OpenAI calls use `store:false`.
+- Raw call transcripts are not persisted by default.
+- Caller privacy and server-only secrets must be preserved.
+- Post-call SMS must be idempotent.
+- Private/anonymous callers must not be treated as SMS-capable.
+- Production Twilio signature validation must remain enabled.
+- `VOICE_INSTANCE_MODE=single` remains required until a distributed lease exists.
+- Never place real secrets in Git, chat, issue comments, logs, test fixtures, or `.env.example`.
+
+## Required engineering loop
+
+Before editing:
+1. Read the relevant implementation and tests.
+2. Read `docs/VOICE_PRODUCTION_RUNBOOK.md` and `docs/CURSOR_TWILIO_HANDOFF.md` for deployment work.
+3. Check whether `main` already contains the capability.
+
+After every change:
+1. Run the smallest relevant tests first.
+2. Run the full Voice service gate when Voice runtime files change:
+   `cd services/ahmv-voice-ai && npm ci && npm run check && npm run guardian && npm audit --omit=dev --audit-level=high`
+3. Run AHMV app checks when bridge/site files change.
+4. Review the diff for secrets, privacy regressions, stale branch names, and accidental Twilio live mutations.
+5. Ask: "What did this change potentially break?" and add a regression test when needed.
+
+## Twilio live safety
+
+Do not modify the production number webhook until ALL of these are green:
+- AHM Verdun CI;
+- Voice Service CI;
+- Voice Guardian;
+- Supabase migration and RLS verification;
+- authoritative schedule feed readiness;
+- `voice.ahmverdun.ca/healthz`;
+- `voice.ahmverdun.ca/readyz`;
+- signed Twilio webhook smoke;
+- bridge smoke;
+- real sandbox FR call;
+- real sandbox EN call;
+- real sandbox ES call;
+- SMS exactly-once test;
+- rollback snapshot recorded.
+
+Before any live Twilio change run:
+`cd services/ahmv-voice-ai && npm run twilio:snapshot`
+
+Never use DNS propagation as the primary rollback method. Restore the previous Twilio voice configuration.
+
+## Commercial quality
+
+This is a paid managed service, not a demo. Prefer changes that improve:
+- reliability;
+- measurable client value;
+- uptime;
+- verified-answer rate;
+- admin visibility;
+- supportability;
+- cost control;
+- rollback safety;
+- multilingual UX.
+
+Avoid unnecessary complexity. Prefer built-in/open-source/free controls when they provide equivalent reliability.

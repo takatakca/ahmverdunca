@@ -31,3 +31,16 @@ For every Voice PR:
 5. Treat production-number routing changes as critical-risk.
 
 Do not approve a Voice AI release solely because unit tests pass.
+
+
+Additional hard blockers:
+- any database migration or automation targeting a Supabase project other than `bqflllsjxmhqsvemhhwv`;
+- any reintroduction of `transcript_summary` or equivalent raw transcript storage;
+- removal of OpenAI `store:false`;
+- production health/readiness output containing phone numbers, CallSid, transcript text, bearer tokens, secrets, or SMS body content;
+- production workflow that mutates the Twilio public-number routing without an explicit guarded cutover and rollback snapshot;
+- multi-instance Voice deployment while concurrency remains process-local;
+- stale branch names used as deployment authority after the change is merged to `main`;
+- unbounded retries, payloads, duration, concurrency, or usage/cost paths.
+
+For deployment PRs, verify immutable `releases/<sha>` + `current` symlink semantics, smoke tests, and rollback remain intact.
