@@ -100,7 +100,7 @@ export function TeamCommunityBoard({
             <div className="mt-5 border-l-2 border-sport bg-ice p-4">
               <p className="font-semibold text-navy">{lang === "fr" ? "Aucune publication exacte pour le moment." : "No exact-team posts yet."}</p>
               <p className="mt-1 text-sm text-muted-foreground">
-                {lang === "fr" ? "La section est prête pour les communications révisées de cette équipe." : "This section is ready for reviewed team communications."}
+                {lang === "fr" ? "Les nouvelles d’équipe apparaîtront ici uniquement après révision et publication." : "Team news appears here only after review and publication."}
               </p>
             </div>
           )}
@@ -195,7 +195,7 @@ export function TeamCommunityBoard({
             </div>
           ) : (
             <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-              {lang === "fr" ? "Aucun document exact publié. Les PDF futurs seront analysés et révisés avant d’être attachés à cette équipe." : "No exact-team documents are published yet. Future PDFs will be analyzed and reviewed before being attached to this team."}
+              {lang === "fr" ? "Aucun document exact n’est publié pour cette équipe." : "No exact-team document is currently published."}
             </p>
           )}
           <a href={proposalLink("document")} className="premium-control mt-5 inline-flex min-h-10 items-center gap-2 border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy hover:border-sport">
