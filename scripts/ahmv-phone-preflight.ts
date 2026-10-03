@@ -34,6 +34,7 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const lifecycleEnabled = bool(settings["AHMV_PHONE_LIFECYCLE_ENABLED"]);
   const remindersEnabled = bool(settings["AHMV_PHONE_REMINDERS_ENABLED"]);
   const calendarEnabled = bool(settings["AHMV_CALENDAR_LINKS_ENABLED"]);
+  const departureEnabled = bool(settings["AHMV_SMART_DEPARTURE_ENABLED"]);
 
   return [
     {
@@ -109,6 +110,22 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
         })(),
       required: remindersEnabled,
       detail: "Reminder delivery requires a valid explicit official-group to public-team mapping.",
+    },
+    {
+      id: "departure-link-secret",
+      ok:
+        !departureEnabled ||
+        (settings["AHMV_DEPARTURE_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+      required: departureEnabled,
+      detail: "Smart-departure links require a dedicated server secret of at least 32 characters.",
+    },
+    {
+      id: "departure-provider",
+      ok:
+        Boolean(settings["TAKATAK_ROUTE_MATRIX_URL"]?.trim()) &&
+        Boolean(settings["TAKATAK_ROUTE_SERVICE_TOKEN"]?.trim()),
+      required: false,
+      detail: "Optional TAKATAK route/traffic provider is connected for live ETA.",
     },
     {
       id: "calendar-link-secret",
