@@ -16,7 +16,7 @@
     "check:mobile-nav": "bun scripts/validate-mobile-navigation.ts",
     "check:monetization": "bun scripts/validate-monetization.ts",
     "check:parent-premium": "bun scripts/validate-parent-premium.ts",
-    "test:phone": "bun test scripts/ahmv-phone.test.ts scripts/ahmv-phone-status.test.ts scripts/ahmv-phone-v2.test.ts scripts/ahmv-phone-demo.test.ts scripts/ahmv-phone-preflight.test.ts",
+    "test:phone": "bun test scripts/ahmv-phone.test.ts scripts/ahmv-phone-status.test.ts scripts/ahmv-phone-v2.test.ts scripts/ahmv-phone-demo.test.ts scripts/ahmv-phone-preflight.test.ts scripts/ahmv-phone-lifecycle.test.ts scripts/ahmv-phone-ops.test.ts scripts/ahmv-phone-takatak-events.test.ts",
     "test:team-feed": "bun test scripts/takatak-team-feed.test.ts",
     "test:assistant": "bun test scripts/ahmv-assistant.test.ts",
     "check:canonical": "bun scripts/validate-canonical-seo.ts",
