@@ -14,7 +14,9 @@
     "release:report": "node scripts/release-report.mjs",
     "test:handoff": "node scripts/handoff.test.mjs",
     "test:metrics": "node scripts/metrics.test.mjs",
-    "test:turn-state": "node scripts/turn-state.test.mjs"
+    "test:turn-state": "node scripts/turn-state.test.mjs",
+    "twilio:snapshot": "node scripts/twilio-snapshot.mjs",
+    "smoke:twilio-signed": "node scripts/twilio-signed-smoke.mjs"
   },
   "engines": {
     "node": ">=22"
