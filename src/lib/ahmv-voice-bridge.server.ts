@@ -351,6 +351,81 @@ async function interaction(request: Request) {
   });
   return json({ ok: true });
 }
+async function humanHandoff(request: Request) {
+  const body = await readJson(request);
+  if (!body) return json({ ok: false, code: "INVALID_JSON" }, 400);
+
+  const contactId = body["contactId"];
+  const phone = body["phoneE164"];
+  const callSid = limited(body["callSid"], 100);
+  const language: VoiceLanguage = ["fr", "en", "es"].includes(String(body["language"]))
+    ? body["language"] as VoiceLanguage
+    : "fr";
+  const reason = limited(body["reason"], 40);
+  const preferredWindow = limited(body["preferredWindow"], 40);
+
+  const allowedReasons = new Set([
+    "schedule", "registration", "team", "arena",
+    "billing_access", "technical", "other",
+  ]);
+  const allowedWindows = new Set([
+    "asap", "morning", "afternoon", "evening", "no_preference",
+  ]);
+
+  if (
+    !validUuid(contactId) ||
+    !validPhone(phone) ||
+    !allowedReasons.has(reason) ||
+    !allowedWindows.has(preferredWindow)
+  ) {
+    return json({ ok: false, code: "INVALID_HANDOFF_REQUEST" }, 400);
+  }
+
+  const lookup = await db().from("ahmv_phone_contacts")
+    .select("id,phone_e164")
+    .eq("id", contactId)
+    .eq("phone_e164", phone)
+    .maybeSingle();
+  if (lookup.error) return json({ ok: false, code: "CONTACT_LOOKUP_FAILED" }, 503);
+  if (!lookup.data) return json({ ok: false, code: "CONTACT_NOT_FOUND" }, 404);
+
+  const providerReferenceHash = callSid
+    ? createHash("sha256").update(callSid).digest("hex")
+    : undefined;
+
+  if (providerReferenceHash) {
+    const existing = await db().from("ahmv_phone_interactions")
+      .select("id")
+      .eq("provider_reference_hash", providerReferenceHash)
+      .eq("intent", "human_handoff")
+      .eq("outcome", "requested")
+      .limit(1)
+      .maybeSingle();
+    if (existing.error) {
+      return json({ ok: false, code: "HANDOFF_LOOKUP_FAILED" }, 503);
+    }
+    if (existing.data) {
+      return json({ ok: true, requested: true, duplicate: true });
+    }
+  }
+
+  await safeRecordPhoneInteraction({
+    contactId,
+    channel: "voice",
+    providerReferenceHash,
+    intent: "human_handoff",
+    outcome: "requested",
+    metadata: {
+      language,
+      reason,
+      preferredWindow,
+      source: "voice-ai",
+    },
+  });
+
+  return json({ ok: true, requested: true, duplicate: false });
+}
+
 async function readiness(settings: Settings) {
   const live = await fetchLiveSchedule({}, settings);
   const staticScheduleReady = localClock(new Date()).date <= OFFICIAL_WEEK_META.end;
@@ -400,7 +475,7 @@ export async function handleAhmvVoiceBridge(
   const routes = new Set([
     `${ROOT}/schedule`, `${ROOT}/arena`, `${ROOT}/bootstrap`,
     `${ROOT}/language`, `${ROOT}/sms`, `${ROOT}/interaction`,
-    `${ROOT}/readiness`,
+    `${ROOT}/handoff`, `${ROOT}/readiness`,
   ]);
   if (!routes.has(url.pathname)) return null;
   if (!authorized(request, settings)) return json({ ok: false, code: "UNAUTHORIZED" }, 401);
@@ -424,6 +499,7 @@ export async function handleAhmvVoiceBridge(
   else if (url.pathname === `${ROOT}/language`) response = await voiceLanguage(request, settings);
   else if (url.pathname === `${ROOT}/sms`) response = await voiceSms(request, settings);
   else if (url.pathname === `${ROOT}/interaction`) response = await interaction(request);
+  else if (url.pathname === `${ROOT}/handoff`) response = await humanHandoff(request);
   else response = await readiness(settings);
 
   return request.method === "HEAD"
