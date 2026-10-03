@@ -101,7 +101,7 @@ if (!/^\+[1-9][0-9]{7,14}$/.test(twilioPhoneNumber)) {
 }
 
 export const config = {
-  appVersion: '0.7.0-preproduction',
+  appVersion: '0.8.0-preproduction',
   nodeEnv,
   voiceInstanceMode,
   port: int('PORT', 3000, { min: 1, max: 65535 }),
@@ -120,7 +120,7 @@ export const config = {
   speechTimeoutMs: int('TWILIO_SPEECH_TIMEOUT_MS', 900, { min: 600, max: 5000 }),
   deepgramSmartFormat: bool('TWILIO_DEEPGRAM_SMART_FORMAT', true),
   openaiApiKey: required('OPENAI_API_KEY'),
-  openaiModel: process.env.OPENAI_MODEL?.trim() || 'gpt-5.6-terra',
+  openaiModel: process.env.OPENAI_MODEL?.trim() || 'gpt-6-luna',
   openaiReasoningEffort,
   openaiTimeoutMs: int('OPENAI_TIMEOUT_MS', 15000, { min: 3000, max: 60000 }),
   openaiMaxOutputTokens: int('OPENAI_MAX_OUTPUT_TOKENS', 320, { min: 64, max: 2000 }),
