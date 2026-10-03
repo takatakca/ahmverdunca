@@ -73,7 +73,7 @@
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0.25rem;
 
   --navy: oklch(0.24 0.075 262);
   --navy-deep: oklch(0.17 0.055 263);
@@ -370,6 +370,42 @@
 @utility outline-text {
   color: transparent;
   -webkit-text-stroke: 1.5px color-mix(in oklab, var(--color-navy-foreground) 70%, transparent);
+}
+
+@utility broadcast-cut {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+}
+
+@utility photo-stage {
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    inset-inline: 0;
+    top: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-sport) 0 28%, transparent 28% 100%);
+    pointer-events: none;
+  }
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-navy-foreground) 10%, transparent);
+  }
+}
+
+@utility broadcast-label {
+  border-left: 3px solid var(--color-sport);
+  padding-left: .7rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
 }
 
 

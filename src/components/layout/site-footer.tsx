@@ -17,7 +17,7 @@ export function SiteFooter() {
         Verdun
       </div>
 
-      <div className="relative border-y border-navy-foreground/12">
+      <div className="relative border-y border-navy-foreground/12 border-t-2 border-t-sport">
         <div className="container-site grid md:grid-cols-[0.72fr_1.28fr]">
           <div className="border-b border-navy-foreground/12 py-7 md:border-b-0 md:border-r md:py-8 md:pr-10">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Le raccourci des familles" : "Families' shortcut"}</p>
@@ -52,9 +52,9 @@ export function SiteFooter() {
       <div className="container-site relative grid gap-0 py-0 lg:grid-cols-[1.25fr_0.75fr_0.75fr_0.9fr]">
         <div className="border-b border-navy-foreground/10 py-8 lg:border-b-0 lg:border-r lg:py-10 lg:pr-10">
           <div className="flex items-center gap-4">
-            <LogoSlot className="drop-shadow-[0_12px_26px_rgba(0,0,0,0.28)]" />
+            <LogoSlot size="lg" className="size-24 sm:size-28" />
             <div>
-              <p className="font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.025em]">AHM Verdun</p>
+              <p className="font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.035em]">AHM Verdun</p>
               <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/45">
                 {l(SITE.name)}
               </p>

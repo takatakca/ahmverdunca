@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { LogoSlot } from "@/components/layout/logo-slot";
 
 /** Shared compact editorial masthead for every inner page. */
 export function PageHeader({
@@ -20,11 +21,15 @@ export function PageHeader({
       <div className="technical-grid absolute inset-0 opacity-25" aria-hidden />
       <div className="absolute inset-y-0 left-[12%] w-px bg-sport/35" aria-hidden />
       <div className="absolute inset-y-0 right-[18%] hidden w-px bg-navy-foreground/7 lg:block" aria-hidden />
-      <div className="giant-watermark pointer-events-none absolute -bottom-8 -right-2 hidden select-none opacity-45 lg:block" aria-hidden>
+      <div className="giant-watermark pointer-events-none absolute -bottom-8 -right-2 hidden select-none opacity-34 lg:block" aria-hidden>
         Verdun
       </div>
+      <LogoSlot
+        size="lg"
+        className="pointer-events-none absolute right-[4vw] top-1/2 hidden size-36 -translate-y-1/2 opacity-[0.11] grayscale md:flex lg:size-44"
+      />
 
-      <div className="container-site relative grid gap-6 py-8 sm:py-10 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-14">
+      <div className="container-site relative grid gap-6 py-9 sm:py-11 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-16">
         <div className="max-w-5xl min-w-0">
           {eyebrow && (
             <p className="eyebrow mb-3 flex flex-wrap items-center gap-2.5 text-sport-foreground/90">
@@ -32,7 +37,7 @@ export function PageHeader({
               {eyebrow}
             </p>
           )}
-          <h1 className="max-w-[18ch] break-words font-display text-[clamp(2.65rem,7.5vw,6rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.035em] text-balance">
+          <h1 className="max-w-[16ch] break-words font-display text-[clamp(2.9rem,8vw,6.5rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.045em] text-balance">
             {title}
           </h1>
           {description && (

@@ -102,7 +102,7 @@ export function SiteHeader() {
   const isMoreActive = MORE_NAV.some((n) => pathname.startsWith(n.to));
 
   return (
-    <header ref={headerRef} className="sticky top-0 z-50 border-b border-navy-foreground/12 bg-competition/96 text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)] backdrop-blur-xl">
+    <header ref={headerRef} className="sticky top-0 z-50 border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition/96 text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)] backdrop-blur-xl">
       {/* Top utility bar (desktop) */}
       <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
@@ -140,15 +140,15 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className={cn("container-site flex items-center justify-between gap-3 transition-[height] duration-300", scrolled ? "h-16 lg:h-[68px]" : "h-[72px] lg:h-20")}>
+      <div className={cn("container-site flex items-center justify-between gap-3 transition-[height] duration-300", scrolled ? "h-[68px] lg:h-[72px]" : "h-[76px] lg:h-[86px]")}>
         <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label={t("nav.home")}>
-          <LogoSlot className="drop-shadow-[0_10px_22px_rgba(0,0,0,0.28)] transition-transform duration-300 group-hover:scale-[1.03]" />
+          <LogoSlot className="transition-transform duration-300 group-hover:scale-[1.045]" />
           <span className="hidden min-w-0 items-center gap-3 sm:flex">
             <span className="h-8 w-px bg-navy-foreground/20" aria-hidden />
             <span className="flex min-w-0 flex-col leading-none">
-              <span className="font-display text-[1.35rem] font-extrabold uppercase tracking-tight">AHM Verdun</span>
+              <span className="font-display text-[1.48rem] font-extrabold uppercase tracking-[-0.025em]">AHM Verdun</span>
               <span className="mt-1 truncate text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/55">
-                {lang === "fr" ? "Hockey mineur · Verdun" : "Minor hockey · Verdun"}
+                {lang === "fr" ? "Leafs · Louves · Hockey mineur" : "Leafs · Louves · Minor hockey"}
               </span>
             </span>
           </span>

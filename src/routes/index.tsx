@@ -24,6 +24,7 @@ import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
+import { LogoSlot } from "@/components/layout/logo-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
@@ -55,15 +56,15 @@ function Home() {
   return (
     <>
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
-      <section className="relative isolate min-h-[62svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[66svh] md:min-h-[72svh]">
+      <section className="relative isolate min-h-[68svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[72svh] md:min-h-[80svh]">
         <img
           src={OFFICIAL_MEDIA.tournamentM11Primary.url}
           alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
           fetchPriority="high"
           decoding="async"
-          className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-60"
+          className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-68"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.96)_0%,rgba(7,16,43,0.78)_45%,rgba(7,16,43,0.48)_100%)]" aria-hidden />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.97)_0%,rgba(7,16,43,0.78)_42%,rgba(7,16,43,0.28)_100%)]" aria-hidden />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.18)_0%,rgba(7,16,43,0.32)_45%,rgba(7,16,43,0.96)_100%)]" aria-hidden />
         <div className="technical-grid absolute inset-0 opacity-25" aria-hidden />
         <div className="absolute inset-y-0 left-[17%] w-px bg-navy-foreground/8" aria-hidden />
@@ -75,21 +76,42 @@ function Home() {
         <div className="arena-light opacity-45" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
+        <div className="container-site pointer-events-none absolute inset-x-0 top-0 hidden pt-10 md:block">
+          <div className="ml-auto flex w-fit items-center gap-4 border-r-4 border-sport bg-competition/66 px-5 py-4 backdrop-blur-md">
+            <LogoSlot size="lg" className="size-24 lg:size-28" />
+            <div className="pr-2">
+              <p className="font-display text-2xl font-extrabold uppercase leading-none tracking-[-0.03em] text-white">AHMV</p>
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/58">
+                {lang === "fr" ? "Leafs · Louves · Verdun" : "Leafs · Louves · Verdun"}
+              </p>
+            </div>
+          </div>
+        </div>
 
-        <div className="container-site relative flex min-h-[60svh] flex-col justify-end pb-8 pt-16 sm:min-h-[64svh] md:min-h-[70svh] md:pb-10">
+        <div className="container-site relative flex min-h-[66svh] flex-col justify-end pb-8 pt-20 sm:min-h-[70svh] md:min-h-[78svh] md:pb-11">
           <div className="max-w-6xl">
+            <div className="rise mb-5 flex items-center gap-4">
+              <LogoSlot size="lg" className="size-24 sm:size-28 md:size-32" />
+              <div className="border-l border-navy-foreground/20 pl-4">
+                <p className="font-display text-2xl font-extrabold uppercase tracking-[-0.025em] text-white sm:text-3xl">AHM Verdun</p>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white/52 sm:text-xs">
+                  {lang === "fr" ? "Association du hockey mineur de Verdun" : "Verdun Minor Hockey Association"}
+                </p>
+              </div>
+            </div>
             <div className="rise flex flex-wrap items-center gap-3">
-              <span className="h-px w-10 bg-sport" aria-hidden />
+              <LogoSlot className="size-16 md:hidden" />
+              <span className="hidden h-px w-10 bg-sport md:block" aria-hidden />
               <p className="eyebrow text-sport-foreground">
                 {t("common.season")} {SITE.season} · {SITE.city}
               </p>
             </div>
 
-            <p className="rise mt-4 font-display text-xl font-bold uppercase tracking-[0.08em] text-navy-foreground/80 [animation-delay:80ms] sm:text-2xl md:text-3xl">
-              AHM Verdun
+            <p className="rise mt-4 broadcast-label text-base text-navy-foreground/82 [animation-delay:80ms] sm:text-xl md:text-2xl">
+              {lang === "fr" ? "Association du hockey mineur de Verdun" : "Verdun Minor Hockey Association"}
             </p>
 
-            <h1 className="rise mt-2 max-w-[11ch] font-display text-[clamp(3.2rem,10vw,8rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.045em] text-navy-foreground [animation-delay:140ms]">
+            <h1 className="rise mt-2 max-w-[10ch] font-display text-[clamp(3.65rem,10.8vw,8.8rem)] font-extrabold uppercase leading-[0.8] tracking-[-0.052em] text-navy-foreground [animation-delay:140ms]">
               {t("home.heroTitle")}
             </h1>
 
@@ -223,12 +245,12 @@ function Home() {
               </Link>
             </div>
 
-            <div className="grid h-[360px] grid-cols-[1.35fr_0.65fr] grid-rows-2 gap-2 sm:h-[430px]">
+            <div className="grid h-[380px] grid-cols-[1.35fr_0.65fr] grid-rows-2 gap-1 sm:h-[460px]">
               <a
                 href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="interactive-surface group relative row-span-2 overflow-hidden bg-navy"
+                className="photo-stage broadcast-cut interactive-surface group relative row-span-2 overflow-hidden bg-navy"
                 aria-label={lang === "fr" ? "Archive photo officielle AHMV — Tournoi M11" : "Official AHMV photo archive — U11 Tournament"}
               >
                 <img
