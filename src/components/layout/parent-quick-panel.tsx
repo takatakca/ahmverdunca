@@ -69,7 +69,7 @@ export function ParentQuickPanel() {
             <span className="flex items-center gap-2">
               <ShieldCheck className="size-4 text-sport" />
               {isDemoMember
-                ? (lang === "fr" ? "AHMV Member · démo active" : "AHMV Member · demo active")
+                ? (lang === "fr" ? "AHMV Member · aperçu actif" : "AHMV Member · preview active")
                 : (lang === "fr" ? "Voir AHMV Member" : "View AHMV Member")}
             </span>
             <ChevronRight className="size-3.5 text-sport" />
