@@ -44,3 +44,28 @@ describe("AHMV assistant team matching", () => {
     expect(reply.actions[0]?.kind).toBe("schedule");
   });
 });
+
+
+test("lists exact saved teams from family context", () => {
+  const reply = buildAssistantReply("mes équipes", "fr", {
+    selectedTeamIds: ["2025191400019495", "2025191400035012"],
+  });
+  assert.equal(reply.matchedTeamIds.length, 2);
+  assert.equal(reply.actions.length, 2);
+  assert.ok(reply.actions.some((action) => action.href.includes("teamId=2025191400019495")));
+  assert.ok(reply.actions.some((action) => action.href.includes("teamId=2025191400035012")));
+});
+
+test("routes saved-team results to each official source", () => {
+  const reply = buildAssistantReply("résultats de mes équipes", "fr", {
+    selectedTeamIds: ["2025191400019495", "2025191400035012"],
+  });
+  assert.deepEqual(reply.actions.map((action) => action.kind), ["results", "results"]);
+  assert.ok(reply.actions.every((action) => action.external === true));
+});
+
+test("empty My Teams context never invents a family team", () => {
+  const reply = buildAssistantReply("mis equipos", "es", { selectedTeamIds: [] });
+  assert.deepEqual(reply.matchedTeamIds, []);
+  assert.equal(reply.actions[0]?.href, "/equipes");
+});
