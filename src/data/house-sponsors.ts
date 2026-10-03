@@ -23,6 +23,10 @@ export const HOUSE_SPONSORS: HouseSponsor[] = [
 ] as const;
 
 export function houseSponsorsForPlacement(seed: string, count = 2) {
+  if (seed === "home-main") {
+    return HOUSE_SPONSORS.slice(0, Math.min(count, HOUSE_SPONSORS.length));
+  }
+
   const score = [...seed].reduce((total, char) => total + char.charCodeAt(0), 0);
   return Array.from({ length: Math.min(count, HOUSE_SPONSORS.length) }, (_, index) =>
     HOUSE_SPONSORS[(score + index * 3) % HOUSE_SPONSORS.length]!,
