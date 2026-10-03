@@ -15,6 +15,9 @@ import { handleAhmvPhoneReminderCron } from "./features/ahmv-phone/reminders/han
 import { handleAhmvCalendarLink } from "./features/ahmv-phone/calendar/handler.server";
 import { handleAhmvDeparture } from "./features/ahmv-phone/departure/handler.server";
 import { handleTakatakMembershipSync } from "./features/ahmv-phone/takatak/membership-handler.server";
+import { handleTakatakMarketingCampaign } from "./features/ahmv-phone/marketing/handler.server";
+import { handleTakatakMarketingConsentSync } from "./features/ahmv-phone/marketing/consent-handler.server";
+import { handleAhmvMarketingCampaignCron } from "./features/ahmv-phone/marketing/cron-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
 
@@ -71,8 +74,6 @@ async function getServerEntry(): Promise<ServerEntry> {
   return serverEntryPromise;
 }
 
-// h3 swallows in-handler throws into a normal 500 Response with body
-// {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
 async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
   if (response.status < 500) return response;
   const contentType = response.headers.get("content-type") ?? "";
@@ -108,6 +109,10 @@ export default {
     if (departureResponse) return departureResponse;
     const membershipSyncResponse = await handleTakatakMembershipSync(request);
     if (membershipSyncResponse) return membershipSyncResponse;
+    const marketingCampaignResponse = await handleTakatakMarketingCampaign(request);
+    if (marketingCampaignResponse) return marketingCampaignResponse;
+    const marketingConsentResponse = await handleTakatakMarketingConsentSync(request);
+    if (marketingConsentResponse) return marketingConsentResponse;
     const phoneDemoResponse = await handleAhmvPhoneDemo(request);
     if (phoneDemoResponse) return phoneDemoResponse;
     const phoneOpsResponse = await handleAhmvPhoneOpsSummary(request);
@@ -122,6 +127,8 @@ export default {
     if (phoneLifecycleResponse) return phoneLifecycleResponse;
     const phoneReminderResponse = await handleAhmvPhoneReminderCron(request);
     if (phoneReminderResponse) return phoneReminderResponse;
+    const phoneCampaignResponse = await handleAhmvMarketingCampaignCron(request);
+    if (phoneCampaignResponse) return phoneCampaignResponse;
     const voiceBridgeResponse = await handleAhmvVoiceBridge(request);
     if (voiceBridgeResponse) return voiceBridgeResponse;
     const phoneResponse = await handleAhmvTwilio(request);
