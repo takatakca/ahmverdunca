@@ -1,3 +1,4 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "../../../integrations/supabase/client.server";
 
 export type AhmvPhoneLanguage = "fr" | "en";
@@ -15,13 +16,10 @@ export interface AhmvPhoneContact {
   takatakIdentityId?: string | undefined;
 }
 
-type LooseQuery = any;
-type LooseDb = { from: (table: string) => LooseQuery };
-
-function db(): LooseDb {
+function db(): SupabaseClient {
   // New communication tables are created by this branch's migration. Keeping the
   // cast local avoids hand-editing generated Supabase types before regeneration.
-  return supabaseAdmin as unknown as LooseDb;
+  return supabaseAdmin as unknown as SupabaseClient;
 }
 
 export function normalizePhoneE164(value: string | undefined): string | null {
@@ -34,17 +32,17 @@ function trialDays(settings: Record<string, string | undefined>) {
   return Number.isInteger(parsed) && parsed >= 1 && parsed <= 365 ? parsed : 30;
 }
 
-function mapContact(row: any): AhmvPhoneContact {
+function mapContact(row: Record<string, unknown>): AhmvPhoneContact {
   return {
-    id: String(row.id),
-    phoneE164: String(row.phone_e164),
-    language: row.language === "en" ? "en" : "fr",
-    accessTier: row.access_tier,
-    trialExpiresAt: String(row.trial_expires_at),
-    smsConsent: Boolean(row.sms_consent),
-    transactionalSmsAllowed: Boolean(row.transactional_sms_allowed),
-    marketingSmsConsent: Boolean(row.marketing_sms_consent),
-    takatakIdentityId: row.takatak_identity_id || undefined,
+    id: String(row["id"]),
+    phoneE164: String(row["phone_e164"]),
+    language: row["language"] === "en" ? "en" : "fr",
+    accessTier: row["access_tier"] as AhmvPhoneContact["accessTier"],
+    trialExpiresAt: String(row["trial_expires_at"]),
+    smsConsent: Boolean(row["sms_consent"]),
+    transactionalSmsAllowed: Boolean(row["transactional_sms_allowed"]),
+    marketingSmsConsent: Boolean(row["marketing_sms_consent"]),
+    takatakIdentityId: row["takatak_identity_id"] ? String(row["takatak_identity_id"]) : undefined,
   };
 }
 
