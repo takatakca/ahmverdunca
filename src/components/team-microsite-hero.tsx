@@ -47,11 +47,10 @@ function weekdayLabel(date: string, locale: string) {
   return new Intl.DateTimeFormat(locale, { weekday: "short" }).format(parsed).replace(".", "").toUpperCase();
 }
 
-const DEMO_GAMES = [
-  { dayFr: "SAM.", dayEn: "SAT.", time: "08:00", noteFr: "Adversaire à connecter", noteEn: "Opponent to connect" },
-  { dayFr: "DIM.", dayEn: "SUN.", time: "13:30", noteFr: "Match suivant", noteEn: "Next match" },
-  { dayFr: "SAM.", dayEn: "SAT.", time: "17:15", noteFr: "Horaire saison", noteEn: "Season schedule" },
-] as const;
+const DEMO_GAMES: CalendarRow[] = [
+  { dayFr: "OFFICIEL", dayEn: "OFFICIAL", time: "—", noteFr: "Voir le prochain match", noteEn: "View next game" },
+  { dayFr: "RÉSULTATS", dayEn: "RESULTS", time: "—", noteFr: "Dernières parties", noteEn: "Latest games" },
+];
 
 const DEMO_PRACTICES: CalendarRow[] = [
   { dayFr: "À VENIR", dayEn: "COMING", time: "—", noteFr: "Pratique à connecter", noteEn: "Practice to connect" },
@@ -213,8 +212,8 @@ export function TeamMicrositeHero({
 
             <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.15em] text-white/35">
               {lang === "fr"
-                ? "Photo AHMV réelle · horaire ci-contre en démonstration jusqu’au branchement du flux officiel."
-                : "Real AHMV photo · schedule preview is demo-only until the official feed is connected."}
+                ? "Photo AHMV réelle · aucune heure de partie n’est inventée. Les parties renvoient vers la source officielle tant que le flux détaillé n’est pas branché."
+                : "Real AHMV photo · no game time is fabricated. Games link to the official source until the detailed feed is connected."}
             </p>
           </div>
         </div>
@@ -228,7 +227,7 @@ export function TeamMicrositeHero({
               </p>
             </div>
             <span className="border border-sport/30 bg-sport/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
-              {publishedPracticeRows.length > 0 ? "PUBLIC + DEMO" : "DEMO"}
+              {publishedPracticeRows.length > 0 ? (lang === "fr" ? "PUBLIC + LIENS OFFICIELS" : "PUBLIC + OFFICIAL LINKS") : (lang === "fr" ? "LIENS OFFICIELS" : "OFFICIAL LINKS")}
             </span>
           </div>
 
