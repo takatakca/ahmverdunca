@@ -6,6 +6,10 @@ import { resolvePublicTeam } from "../src/features/ahmv-phone/teams/resolve.ts";
 import { nextEventService } from "../src/features/ahmv-phone/schedules/service.ts";
 import { scheduleRangeAnswer } from "../src/features/ahmv-phone/schedules/range.ts";
 import { parsePhoneCommand } from "../src/features/ahmv-phone/conversation/commands.ts";
+import {
+  planGameReminder,
+  reminderLeadMinutes,
+} from "../src/features/ahmv-phone/reminders/planner.ts";
 
 test("active 30-day trial unlocks premium-ready phone capabilities", () => {
   const entitlement = localEntitlement("trial", "2099-01-01T00:00:00Z");
@@ -59,6 +63,10 @@ test("member SMS commands parse in French and English", () => {
   assert.deepEqual(parsePhoneCommand("TODAY M13A"), { kind: "today", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("DEMAIN M13A"), { kind: "tomorrow", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("SAVE M13A"), { kind: "save", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("RAPPEL M13A"), { kind: "reminder-on", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("REMIND M13A"), { kind: "reminder-on", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("RAPPEL OFF M13A"), { kind: "reminder-off", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("REMIND OFF M13A"), { kind: "reminder-off", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("M13A"), { kind: "next", teamQuery: "M13A" });
 });
 
@@ -86,4 +94,60 @@ test("tomorrow range does not invent unpublished activities", () => {
   );
   assert.equal(result.outcome, "empty");
   assert.equal(result.events.length, 0);
+});
+
+
+test("game reminder planner requires exact future provider event identity", () => {
+  const result = planGameReminder(
+    {
+      providerEventId: "game-123",
+      publicTeamId: "team-456",
+      startsAt: "2026-10-04T17:00:00-04:00",
+      venue: "Auditorium de Verdun",
+      status: "scheduled",
+    },
+    120,
+    new Date("2026-10-03T12:00:00-04:00"),
+  );
+  assert.equal(result?.sendAt, "2026-10-04T19:00:00.000Z");
+  assert.match(result?.dedupeKey ?? "", /game-123/);
+  assert.match(result?.dedupeKey ?? "", /2026-10-04T21:00:00.000Z/);
+});
+
+test("cancelled or already-too-close events do not create a normal reminder", () => {
+  assert.equal(
+    planGameReminder(
+      {
+        providerEventId: "cancelled-1",
+        publicTeamId: "team-1",
+        startsAt: "2026-10-04T17:00:00-04:00",
+        venue: "Arena",
+        status: "cancelled",
+      },
+      120,
+      new Date("2026-10-03T12:00:00-04:00"),
+    ),
+    null,
+  );
+
+  assert.equal(
+    planGameReminder(
+      {
+        providerEventId: "soon-1",
+        publicTeamId: "team-1",
+        startsAt: "2026-10-03T13:00:00-04:00",
+        venue: "Arena",
+        status: "scheduled",
+      },
+      120,
+      new Date("2026-10-03T12:00:00-04:00"),
+    ),
+    null,
+  );
+});
+
+test("reminder lead time defaults safely to two hours", () => {
+  assert.equal(reminderLeadMinutes({}), 120);
+  assert.equal(reminderLeadMinutes({ AHMV_GAME_REMINDER_LEAD_MINUTES: "90" }), 90);
+  assert.equal(reminderLeadMinutes({ AHMV_GAME_REMINDER_LEAD_MINUTES: "0" }), 120);
 });
