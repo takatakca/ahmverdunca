@@ -10,6 +10,19 @@ export function accessFromBootstrap(data, {
   const nextEvent = Boolean(data?.entitlement?.nextEvent);
   const weeklySchedule = Boolean(data?.entitlement?.weeklySchedule);
 
+  if (tier === 'blocked') {
+    return {
+      allowed: false,
+      mode: accessMode,
+      reason: 'blocked',
+      tier,
+      premium: false,
+      trialActive: false,
+      nextEvent: false,
+      weeklySchedule: false,
+    };
+  }
+
   if (accessMode === 'free_beta') {
     return {
       allowed: true,
