@@ -3,6 +3,7 @@ import { ARENAS, arenaDirectionsTargetForVenue } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
 import { CURRENT_LEGACY_NEWS_IDS, DISCOVERED_ARCHIVE_NEWS_IDS, NEWS } from "../src/data/news";
 import { PUBLIC_TEAM_DIRECTORY, officialTeamResultsUrl, publicTeamHubUrl } from "../src/data/team-directory";
+import { TAKATAK_TEAM_PORTAL_CONTRACT, teamPortalServices } from "../src/data/team-portal";
 import { REQUIRED_ARENA_COUNT, REQUIRED_COACH_RESOURCE_TITLES, REQUIRED_LEGACY_TEAM_SCHEDULE_IDS, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
 import { LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
@@ -257,7 +258,27 @@ for (const title of REQUIRED_COACH_RESOURCE_TITLES) {
     errors.push(`Required legacy coach resource "${title}" is missing.`);
   }
 }
+if (TAKATAK_TEAM_PORTAL_CONTRACT.authority !== "GROUPE TAKATAK") {
+  errors.push("Team portal authority must remain GROUPE TAKATAK.");
+}
+
 for (const entry of PUBLIC_TEAM_DIRECTORY) {
+  const services = teamPortalServices(entry);
+  requireUnique(
+    `TEAM_PORTAL.${entry.legacyScheduleTeamId}.module`,
+    services.map((service) => service.module),
+  );
+  const scheduleService = services.find((service) => service.module === "schedule");
+  const resultsService = services.find((service) => service.module === "results");
+  const socialService = services.find((service) => service.module === "social");
+  const fundraisingService = services.find((service) => service.module === "fundraising");
+  if (scheduleService?.provider !== "official-hockey" || resultsService?.provider !== "official-hockey") {
+    errors.push(`Official hockey authority is missing for team ${entry.legacyScheduleTeamId}.`);
+  }
+  if (socialService?.provider !== "GROUPE TAKATAK" || fundraisingService?.provider !== "GROUPE TAKATAK") {
+    errors.push(`GROUPE TAKATAK authority is missing for team portal services on ${entry.legacyScheduleTeamId}.`);
+  }
+
   const hubUrl = publicTeamHubUrl(entry);
   const resultsUrl = officialTeamResultsUrl(entry);
   const expectedPrefix = `/equipes/${entry.categorySlug}?teamId=`;
