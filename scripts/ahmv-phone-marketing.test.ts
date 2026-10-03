@@ -9,6 +9,10 @@ import {
 } from "../src/features/ahmv-phone/marketing/campaign.ts";
 import { handleTakatakMarketingCampaign } from "../src/features/ahmv-phone/marketing/handler.server.ts";
 import { handleAhmvMarketingCampaignCron } from "../src/features/ahmv-phone/marketing/cron-handler.server.ts";
+import {
+  validateTakatakMarketingConsentInput,
+} from "../src/features/ahmv-phone/marketing/consent-sync.server.ts";
+import { handleTakatakMarketingConsentSync } from "../src/features/ahmv-phone/marketing/consent-handler.server.ts";
 
 const now = new Date("2026-10-03T12:00:00.000Z");
 
@@ -199,4 +203,116 @@ test("marketing migration stores explicit consent evidence and campaign projecti
   assert.match(sql, /takatak_campaign_id text not null unique/i);
   assert.match(sql, /enable row level security/i);
   assert.match(sql, /grant all[\s\S]*service_role/i);
+});
+
+
+test("TAKATAK verified consent input requires exact phone identity consent and bounded event time", () => {
+  const valid = validateTakatakMarketingConsentInput(
+    {
+      eventId: "consent_evt_001",
+      phoneE164: "+15816666246",
+      identityId: "identity_123",
+      consent: true,
+      occurredAt: "2026-10-03T11:59:00.000Z",
+    },
+    now,
+  );
+  assert.equal(valid?.consent, true);
+  assert.equal(valid?.phoneE164, "+15816666246");
+
+  assert.equal(
+    validateTakatakMarketingConsentInput(
+      {
+        eventId: "consent_evt_002",
+        phoneE164: "5145551212",
+        identityId: "identity_123",
+        consent: true,
+        occurredAt: "2026-10-03T11:59:00.000Z",
+      },
+      now,
+    ),
+    null,
+  );
+
+  assert.equal(
+    validateTakatakMarketingConsentInput(
+      {
+        eventId: "consent_evt_003",
+        phoneE164: "+15816666246",
+        identityId: "identity_123",
+        consent: true,
+        occurredAt: "2026-10-03T12:06:00.000Z",
+      },
+      now,
+    ),
+    null,
+  );
+});
+
+test("TAKATAK marketing consent sync is disabled by default", async () => {
+  const response = await handleTakatakMarketingConsentSync(
+    new Request("https://ahmverdun.ca/api/ahmv/takatak/marketing-consent", {
+      method: "POST",
+    }),
+    {},
+  );
+  assert.equal(response?.status, 404);
+});
+
+test("TAKATAK marketing consent sync rejects bad bearer before database access", async () => {
+  const response = await handleTakatakMarketingConsentSync(
+    new Request("https://ahmverdun.ca/api/ahmv/takatak/marketing-consent", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: "Bearer wrong",
+      },
+      body: JSON.stringify({}),
+    }),
+    {
+      AHMV_TAKATAK_MARKETING_CONSENT_SYNC_ENABLED: "true",
+      TAKATAK_AHMV_SERVICE_TOKEN: "secret",
+    },
+  );
+  assert.equal(response?.status, 403);
+});
+
+test("TAKATAK marketing consent sync validates input before database access", async () => {
+  const response = await handleTakatakMarketingConsentSync(
+    new Request("https://ahmverdun.ca/api/ahmv/takatak/marketing-consent", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: "Bearer secret",
+      },
+      body: JSON.stringify({
+        eventId: "bad",
+        phoneE164: "not-a-phone",
+        identityId: "identity",
+        consent: true,
+        occurredAt: "2026-10-03T12:00:00.000Z",
+      }),
+    }),
+    {
+      AHMV_TAKATAK_MARKETING_CONSENT_SYNC_ENABLED: "true",
+      TAKATAK_AHMV_SERVICE_TOKEN: "secret",
+    },
+  );
+  assert.equal(response?.status, 400);
+});
+
+test("marketing consent migration uses immutable ordered evidence RPC", () => {
+  const sql = readFileSync(
+    "supabase/migrations/20261003102000_ahmv_marketing_campaigns.sql",
+    "utf8",
+  );
+  assert.match(sql, /ahmv_phone_marketing_consent_events/i);
+  assert.match(sql, /event_id text primary key/i);
+  assert.match(sql, /carrier_opt_out/i);
+  assert.match(sql, /pg_advisory_xact_lock/i);
+  assert.match(sql, /for update/i);
+  assert.match(sql, /applied boolean not null/i);
+  assert.match(sql, /security definer/i);
+  assert.match(sql, /revoke all on function/i);
+  assert.match(sql, /grant execute on function[\s\S]*service_role/i);
 });
