@@ -1,4 +1,5 @@
-export {};
+import type { OfficialWeekActivity } from "../../../data/official-week.ts";
+import type { ScheduleSnapshot } from "../../../lib/ahmv-phone.ts";
 
 type Settings = Record<string, string | undefined>;
 
@@ -127,6 +128,7 @@ export function normalizeLiveSchedulePayload(
 export async function fetchLiveSchedule(
   input: { team?: string; category?: string; date?: string } = {},
   settings: Settings = process.env,
+  now = new Date(),
 ): Promise<AhmvLiveScheduleResult> {
   const endpoint = settings["TAKATAK_AHMV_SCHEDULE_URL"]?.trim();
   const token = settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim();
@@ -166,7 +168,7 @@ export async function fetchLiveSchedule(
     if (raw.length > 512 * 1024) {
       return { status: "invalid_upstream", events: [], reason: "response_too_large" };
     }
-    return normalizeLiveSchedulePayload(JSON.parse(raw), settings);
+    return normalizeLiveSchedulePayload(JSON.parse(raw), settings, now);
   } catch (error) {
     return {
       status: "upstream_unavailable",
@@ -219,4 +221,39 @@ export function liveEventToVoiceMatch(event: AhmvLiveScheduleEvent) {
 
 export function liveScheduleIsReady(result: AhmvLiveScheduleResult) {
   return result.status === "active" || result.status === "no_match";
+}
+
+
+export function liveEventToPhoneActivity(
+  event: AhmvLiveScheduleEvent,
+  fallbackGroup: string,
+): OfficialWeekActivity {
+  const start = torontoParts(event.startsAt);
+  const end = event.endsAt ? torontoParts(event.endsAt) : undefined;
+  return {
+    id: event.id,
+    date: start.date,
+    start: start.time,
+    end: end?.date === start.date ? end.time : start.time,
+    venue: event.venue ?? "Lieu non publié",
+    activity: event.type || "Activité",
+    group: event.team ?? event.category ?? fallbackGroup,
+    status: event.status.toLowerCase() === "cancelled" ? "cancelled" : "scheduled",
+  };
+}
+
+export function liveScheduleToPhoneSnapshot(
+  result: AhmvLiveScheduleResult,
+  fallbackGroup: string,
+): ScheduleSnapshot | null {
+  if (!liveScheduleIsReady(result) || result.events.length === 0) return null;
+  const activities = result.events.map((event) =>
+    liveEventToPhoneActivity(event, fallbackGroup)
+  );
+  const dates = activities.map((event) => event.date).sort();
+  return {
+    start: dates[0]!,
+    end: dates[dates.length - 1]!,
+    activities,
+  };
 }
