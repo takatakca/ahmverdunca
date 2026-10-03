@@ -27,6 +27,7 @@ function assistantCopy(language: AssistantLanguageCode) {
       quickTeam: "Encontrar mi equipo",
       quickSchedule: "Horario",
       quickResults: "Resultados",
+      quickMyTeams: "Mis equipos",
       phoneReady: "Llamar AHMV",
       phoneReserved: "Número reservado",
       close: "Cerrar asistente",
@@ -44,6 +45,7 @@ function assistantCopy(language: AssistantLanguageCode) {
       quickTeam: "Find my team",
       quickSchedule: "Schedule",
       quickResults: "Results",
+      quickMyTeams: "My teams",
       phoneReady: "Call AHMV",
       phoneReserved: "Reserved number",
       close: "Close assistant",
@@ -60,6 +62,7 @@ function assistantCopy(language: AssistantLanguageCode) {
     quickTeam: "Trouver mon équipe",
     quickSchedule: "Horaire",
     quickResults: "Résultats",
+    quickMyTeams: "Mes équipes",
     phoneReady: "Appeler AHMV",
     phoneReserved: "Numéro réservé",
     close: "Fermer l’assistant",
@@ -71,7 +74,7 @@ function assistantCopy(language: AssistantLanguageCode) {
 export function AhmvAssistant() {
   const { lang } = useI18n();
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
-  const { isTeamSelected, toggleSelectedTeam } = usePreferredTeam();
+  const { isTeamSelected, selectedTeamIds, toggleSelectedTeam } = usePreferredTeam();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
@@ -120,7 +123,7 @@ export function AhmvAssistant() {
     const query = raw.trim();
     if (!query) return;
 
-    const next = buildAssistantReply(query, assistantLanguage);
+    const next = buildAssistantReply(query, assistantLanguage, { selectedTeamIds });
     setReply(next);
     setBookmarkNotice("");
 
@@ -250,6 +253,9 @@ export function AhmvAssistant() {
                 </button>
                 <button type="button" onClick={() => { setInput(copy.quickResults); run(copy.quickResults); }} className="premium-control border border-navy/12 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
                   {copy.quickResults}
+                </button>
+                <button type="button" onClick={() => { setInput(copy.quickMyTeams); run(copy.quickMyTeams); }} className="premium-control border border-sport/30 bg-sport/5 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
+                  {copy.quickMyTeams}
                 </button>
               </div>
 
