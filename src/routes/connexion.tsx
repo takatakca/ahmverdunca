@@ -1,10 +1,14 @@
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink, Mail } from "lucide-react";
+import { ArrowRight, CalendarDays, ExternalLink, Mail, ShieldCheck, Trophy, Users } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { usePreferredTeam } from "@/lib/team-preference";
+import { officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/connexion")({
   head: () => ({
@@ -28,6 +32,8 @@ export const Route = createFileRoute("/connexion")({
 
 function AccessPage() {
   const { lang } = useI18n();
+  const { selectedTeams } = usePreferredTeam();
+  const primaryTeam = selectedTeams[0];
   const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
 
   return (
@@ -49,8 +55,67 @@ function AccessPage() {
         }
       />
 
-      <div className="container-site max-w-5xl space-y-10 py-8 md:py-12">
-        <div className="rounded-xl border border-border bg-ice p-5">
+      <div className="container-site max-w-6xl space-y-10 py-8 md:py-12">
+        <section className="grid overflow-hidden border border-navy/12 bg-competition text-white lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
+            <img
+              src={OFFICIAL_MEDIA.practiceGroup.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGroup.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.9))]" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail familles" : "Family portal"}</p>
+              <h2 className="mt-2 max-w-2xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl">
+                {lang === "fr" ? "Choisissez le bon accès." : "Choose the right access."}
+              </h2>
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/66">
+                {lang === "fr"
+                  ? "Le portail AHMV sert d’entrée unique. Les opérations hockey officielles restent dans leurs systèmes d’autorité."
+                  : "The AHMV portal is the single front door. Official hockey operations remain in their authoritative systems."}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center p-5 md:p-7">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Accès rapide" : "Quick access"}</p>
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              {primaryTeam ? (
+                <>
+                  <a href={publicTeamHubUrl(primaryTeam)} className="premium-control flex min-h-20 flex-col justify-between border border-white/14 bg-white/[0.035] p-3 text-white">
+                    <Users className="size-4 text-sport-foreground" />
+                    <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Mon équipe" : "My team"}</span>
+                  </a>
+                  <a href={officialTeamResultsUrl(primaryTeam)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-20 flex-col justify-between border border-white/14 bg-white/[0.035] p-3 text-white">
+                    <Trophy className="size-4 text-sport-foreground" />
+                    <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Résultats" : "Results"}</span>
+                  </a>
+                </>
+              ) : (
+                <>
+                  <Link to="/equipes" className="premium-control flex min-h-20 flex-col justify-between border border-white/14 bg-white/[0.035] p-3 text-white">
+                    <Users className="size-4 text-sport-foreground" />
+                    <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Équipes" : "Teams"}</span>
+                  </Link>
+                  <Link to="/horaires" className="premium-control flex min-h-20 flex-col justify-between border border-white/14 bg-white/[0.035] p-3 text-white">
+                    <CalendarDays className="size-4 text-sport-foreground" />
+                    <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Horaires" : "Schedules"}</span>
+                  </Link>
+                </>
+              )}
+              <a href={EXTERNAL_LINKS.spordleLogin} target="_blank" rel="noopener noreferrer" className="premium-control col-span-2 flex min-h-12 items-center justify-between bg-sport px-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
+                <span className="flex items-center gap-2"><ShieldCheck className="size-4" />Spordle · {lang === "fr" ? "service officiel" : "official service"}</span>
+                <ExternalLink className="size-4" />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <HouseSponsorSlot placement="access-gateway" count={1} compact />
+
+        <div className="border border-border bg-ice p-5">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "Le bon service, tout de suite" : "The right service, right away"}
           </p>

@@ -5,6 +5,8 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/wllv")({
   head: () => ({
@@ -50,7 +52,16 @@ function WllvPage() {
 
       <div className="container-site space-y-10 py-8 md:py-12">
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.25fr_0.75fr]">
-          <div className="technical-grid relative overflow-hidden p-7 md:p-10 lg:p-12">
+          <div className="relative min-h-[390px] overflow-hidden p-7 md:min-h-[460px] md:p-10 lg:p-12">
+            <img
+              src={OFFICIAL_MEDIA.practiceSkaters.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.practiceSkaters.alt.fr : OFFICIAL_MEDIA.practiceSkaters.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.96)_0%,rgba(7,16,43,0.76)_58%,rgba(7,16,43,0.34)_100%)]" />
+            <div className="relative flex h-full flex-col justify-end">
             <p className="eyebrow text-sport-foreground">AA / BB · WLLV</p>
             <p className="mt-5 font-display text-[clamp(4.5rem,12vw,9rem)] font-extrabold uppercase leading-[0.72] tracking-[-0.07em] text-white">
               WLLV
@@ -63,6 +74,10 @@ function WllvPage() {
                 ? "AHM Verdun sert de passerelle. Les équipes, camps, opérations et données AA/BB restent sous l’autorité du WLLV et de ses systèmes officiels."
                 : "AHM Verdun acts as a gateway. AA/BB teams, camps, operations and data remain under WLLV and its official systems."}
             </p>
+            <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.14em] text-white/34">
+              {lang === "fr" ? "Photo réelle AHMV · ambiance hockey Verdun, non présentée comme une photo d’équipe WLLV." : "Real AHMV photo · Verdun hockey atmosphere, not presented as a WLLV team photo."}
+            </p>
+            </div>
           </div>
           <div className="flex flex-col justify-between border-t border-white/12 p-7 lg:border-l lg:border-t-0 md:p-10">
             <div>
@@ -84,6 +99,8 @@ function WllvPage() {
             </Button>
           </div>
         </section>
+        <HouseSponsorSlot placement="wllv-gateway" count={1} compact />
+
         <section className="overflow-hidden border border-navy/12 bg-background">
           <div className="bg-ice p-5 md:p-6">
             <p className="eyebrow text-sport">{lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}</p>

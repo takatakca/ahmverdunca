@@ -8,6 +8,7 @@ import { COACH_CATEGORIES, COACH_RESOURCES } from "@/data/coaches";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/entraineurs")({
   head: () => ({
@@ -89,6 +90,8 @@ function CoachesPage() {
               : "The links below open services currently referenced by AHM Verdun. The medical form is never completed or stored on this site."}
           </p>
         </div>
+
+        <HouseSponsorSlot placement="coaches-path" count={1} compact className="mb-6" />
 
         <div className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
           {[{ id: "all", label: { fr: "Tout", en: "All" } }, ...COACH_CATEGORIES].map((c) => (

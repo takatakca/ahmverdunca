@@ -3,6 +3,8 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { ShareButton } from "@/components/share-button";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { getAlbum } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -115,6 +117,14 @@ function AlbumPage() {
               {al.season} · {l(al.eventType)}
             </p>
           </aside>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <ShareButton title={l(al.title)} text={l(al.description)} />
+          <Link to="/galerie" className="premium-control inline-flex min-h-10 items-center gap-2 border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.11em] text-navy">
+            <ArrowLeft className="size-3.5 text-sport" /> {lang === "fr" ? "Tous les albums" : "All albums"}
+          </Link>
+        </div>
+
+        <HouseSponsorSlot placement={`album-${al.slug}`} count={1} compact className="mt-6" />
         </div>
       </div>
     </>

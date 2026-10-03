@@ -8,6 +8,7 @@ import { getTeam } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
   loader: ({ params }) => {
@@ -139,6 +140,7 @@ function ArticlePage() {
           </article>
 
           <aside className="space-y-8 lg:border-l lg:border-navy/12 lg:pl-8">
+            <HouseSponsorSlot placement={`story-${a.slug}`} count={1} compact />
             {teams.length > 0 && (
               <div>
                 <p className="eyebrow mb-3 text-sport">{t("article.teams")}</p>
