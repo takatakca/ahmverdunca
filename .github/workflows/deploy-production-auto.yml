@@ -285,7 +285,7 @@ jobs:
           echo "Testing production SSH command channel..."
 
           set +e
-          AHMV_SSH_MAX_ATTEMPTS=2 ahmv-ssh \
+          AHMV_SSH_MAX_ATTEMPTS=6 ahmv-ssh \
             "printf 'AHM Verdun production SSH command channel OK\n'"
           SSH_STATUS=$?
           set -e
@@ -299,10 +299,36 @@ jobs:
           echo "SSH command and shell channels are unavailable."
           echo "Testing SFTP subsystem as a fail-closed fallback..."
 
-          scripts/deploy-production-sftp.sh test
+          SFTP_ATTEMPT=1
+          SFTP_MAX_ATTEMPTS=6
+          SFTP_STATUS=255
 
-          echo "AHMV_DEPLOY_TRANSPORT=sftp" >> "$GITHUB_ENV"
-          echo "Production transport: SFTP-only fallback."
+          while [ "$SFTP_ATTEMPT" -le "$SFTP_MAX_ATTEMPTS" ]; do
+            echo "SFTP probe ${SFTP_ATTEMPT}/${SFTP_MAX_ATTEMPTS}..."
+
+            set +e
+            scripts/deploy-production-sftp.sh test
+            SFTP_STATUS=$?
+            set -e
+
+            if [ "$SFTP_STATUS" -eq 0 ]; then
+              echo "AHMV_DEPLOY_TRANSPORT=sftp" >> "$GITHUB_ENV"
+              echo "Production transport: SFTP-only fallback."
+              exit 0
+            fi
+
+            if [ "$SFTP_ATTEMPT" -lt "$SFTP_MAX_ATTEMPTS" ]; then
+              DELAY=$((SFTP_ATTEMPT * 10))
+              if [ "$DELAY" -gt 60 ]; then DELAY=60; fi
+              echo "SFTP subsystem unavailable. Retrying in ${DELAY} seconds..."
+              sleep "$DELAY"
+            fi
+
+            SFTP_ATTEMPT=$((SFTP_ATTEMPT + 1))
+          done
+
+          echo "ERROR: Neither SSH command/shell channels nor SFTP became available."
+          exit "$SFTP_STATUS"
 
       - name: Create immutable release package
         run: |
