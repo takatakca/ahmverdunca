@@ -1,9 +1,7 @@
 import twilio from "twilio";
-import { createHash } from "node:crypto";
 import {
   officialPhoneSchedule,
   parseSms,
-  scheduleAnswer,
   type PhoneLanguage,
 } from "../../../lib/ahmv-phone.ts";
 import {
@@ -28,150 +26,44 @@ import {
   compactTeamChoices,
   resolvePublicTeam,
 } from "../teams/resolve.ts";
-
-const ROOT = "/api/ahmv/twilio";
-const routes = new Set([`${ROOT}/sms`, `${ROOT}/voice`, `${ROOT}/status`]);
-const headers = { "cache-control": "no-store", "X-Robots-Tag": "noindex, nofollow" };
-type Settings = Record<string, string | undefined>;
-
-function xml(value: string) {
-  return new Response(value, {
-    headers: { ...headers, "content-type": "text/xml; charset=utf-8" },
-  });
-}
-function failure(status: number) {
-  return new Response("Webhook unavailable", { status, headers });
-}
-function aliases(settings: Settings): Record<string, string> {
-  if (!settings["AHMV_TEAM_ALIASES_JSON"]) return {};
-  const value: unknown = JSON.parse(settings["AHMV_TEAM_ALIASES_JSON"]);
-  if (
-    !value ||
-    typeof value !== "object" ||
-    Array.isArray(value) ||
-    Object.values(value).some((item) => typeof item !== "string")
-  )
-    throw new Error("Invalid team aliases");
-  return value as Record<string, string>;
-}
-function urgent(settings: Settings, lang: PhoneLanguage) {
-  const until = Date.parse(settings["AHMV_URGENT_UNTIL"] ?? "");
-  if (!Number.isFinite(until) || until <= Date.now()) return "";
-  return (settings[lang === "fr" ? "AHMV_URGENT_FR" : "AHMV_URGENT_EN"] ?? "").slice(0, 1000);
-}
-function referenceHash(value: string) {
-  return createHash("sha256").update(value).digest("hex").slice(0, 16);
-}
-function spokenAnswer(text: string, lang: PhoneLanguage) {
-  return text.replace(
-    /https:\/\/\S+/g,
-    lang === "fr"
-      ? "Consultez ahmverdun point c a pour les détails."
-      : "Visit ahmverdun dot c a for details.",
-  );
-}
-function compactSmsFallback(lang: PhoneLanguage) {
-  return lang === "fr"
-    ? "AHMV: répondez à ce texto avec votre équipe ou groupe (ex. M11 groupe 5). Aide: AIDE. https://ahmverdun.ca/horaires"
-    : "AHMV: reply with your team or group (e.g. M11 group 5). Help: HELP. https://ahmverdun.ca/horaires";
-}
+import {
+  TWILIO_HEADERS,
+  TWILIO_ROOT,
+  TWILIO_ROUTES,
+  compactSmsFallback,
+  spokenScheduleAnswer,
+  teamAliases,
+  urgentBulletin,
+  webhookFailure,
+  xmlResponse,
+  type TwilioSettings,
+} from "./common.server.ts";
+import { validateTwilioWebhookRequest } from "./request.server.ts";
 
 export async function handleAhmvTwilio(
   request: Request,
-  settings: Settings = process.env,
+  settings: TwilioSettings = process.env,
 ): Promise<Response | null> {
-  const url = new URL(request.url);
-  if (!routes.has(url.pathname)) return null;
-  if (request.method !== "POST")
-    return new Response("Method not allowed", {
-      status: 405,
-      headers: { ...headers, Allow: "POST" },
-    });
-  if (settings["AHMV_PHONE_ENABLED"] !== "true") return failure(503);
+  const requestedUrl = new URL(request.url);
+  if (!TWILIO_ROUTES.has(requestedUrl.pathname)) return null;
 
-  const token = settings["TWILIO_AUTH_TOKEN"];
-  const account = settings["TWILIO_ACCOUNT_SID"];
-  const origin = settings["AHMV_WEBHOOK_ORIGIN"];
-  if (!token || !account || !origin) return failure(503);
-
-  let publicOrigin: URL;
-  try {
-    publicOrigin = new URL(origin);
-    if (publicOrigin.protocol !== "https:" || publicOrigin.origin !== origin) return failure(503);
-  } catch {
-    return failure(503);
-  }
-
-  if (
-    !request.headers
-      .get("content-type")
-      ?.toLowerCase()
-      .startsWith("application/x-www-form-urlencoded")
-  )
-    return failure(415);
-
-  const reader = request.body?.getReader();
-  if (!reader) return failure(400);
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  try {
-    while (true) {
-      const chunk = await reader.read();
-      if (chunk.done) break;
-      size += chunk.value.byteLength;
-      if (size > 16_384) {
-        await reader.cancel();
-        return failure(413);
-      }
-      chunks.push(chunk.value);
-    }
-  } catch {
-    return failure(400);
-  }
-
-  const body = Buffer.concat(chunks);
-  const form = new URLSearchParams(body.toString("utf8"));
-  const params: Record<string, string> = Object.create(null);
-  for (const [key, value] of form) {
-    if (Object.hasOwn(params, key)) return failure(400);
-    params[key] = value;
-  }
-
-  const signature = request.headers.get("x-twilio-signature") ?? "";
-  const publicUrl = `${publicOrigin.origin}${url.pathname}${url.search}`;
-  if (
-    !signature ||
-    !twilio.validateRequest(token, signature, publicUrl, params) ||
-    params["AccountSid"] !== account
-  )
-    return failure(403);
-
-  const sid = params["MessageSid"] ?? params["CallSid"] ?? "";
-  const ref = referenceHash(sid);
-  const log = (outcome: string) =>
-    console.info(
-      JSON.stringify({
-        service: "ahmv-phone",
-        channel: url.pathname.split("/").pop(),
-        reference: ref,
-        outcome,
-      }),
-    );
-
-  if (url.pathname === `${ROOT}/status`) {
+  const validation = await validateTwilioWebhookRequest(request, settings);
+  if (!validation.ok) return validation.response;
+  const { url, params, reference: ref, log } = validation.value;
+  if (url.pathname === `${TWILIO_ROOT}/status`) {
     try {
       await updateSmsDeliveryStatus(params["MessageSid"] ?? "", params["MessageStatus"] ?? "");
     } catch (error) {
       console.error("[AHMV SMS delivery callback]", error);
     }
     log("status-received");
-    return new Response(null, { status: 204, headers });
+    return new Response(null, { status: 204, TWILIO_HEADERS });
   }
 
-  if (params["To"] !== (settings["AHMV_PUBLIC_PHONE"] ?? "+15816666246")) return failure(403);
+  if (params["To"] !== (settings["AHMV_PUBLIC_PHONE"] ?? "+15816666246")) return webhookFailure(403);
 
   try {
-    if (url.pathname === `${ROOT}/sms`) {
+    if (url.pathname === `${TWILIO_ROOT}/sms`) {
       const response = new twilio.twiml.MessagingResponse();
       const { lang, query } = parseSms(params["Body"] ?? "");
       const caller = normalizePhoneE164(params["From"]);
@@ -196,7 +88,7 @@ export async function handleAhmvTwilio(
           outcome: "managed-by-twilio",
         });
         log("opt-out-managed-by-twilio");
-        return xml(response.toString());
+        return xmlResponse(response.toString());
       }
 
       if (!query || /^(HELP|AIDE|FR|EN)$/i.test(query)) {
@@ -213,7 +105,7 @@ export async function handleAhmvTwilio(
           outcome: "help",
         });
         log("help");
-        return xml(response.toString());
+        return xmlResponse(response.toString());
       }
 
       const command = parsePhoneCommand(query);
@@ -234,7 +126,7 @@ export async function handleAhmvTwilio(
           teamCode: command.teamQuery.slice(0, 80),
         });
         log("team-ambiguous");
-        return xml(response.toString());
+        return xmlResponse(response.toString());
       }
 
       if (command.kind === "save") {
@@ -253,7 +145,7 @@ export async function handleAhmvTwilio(
             outcome: "membership-required",
             teamCode: command.teamQuery,
           });
-          return xml(response.toString());
+          return xmlResponse(response.toString());
         }
 
         if (resolution.kind !== "exact") {
@@ -262,7 +154,7 @@ export async function handleAhmvTwilio(
               ? "AHMV: équipe non reconnue de façon certaine. Envoyez le code/catégorie et niveau exacts."
               : "AHMV: team could not be identified with certainty. Send the exact category and level.",
           );
-          return xml(response.toString());
+          return xmlResponse(response.toString());
         }
 
         const saved = await safeSavePrimaryTeamPreference(
@@ -286,7 +178,7 @@ export async function handleAhmvTwilio(
           outcome: saved ? "saved" : "failed",
           teamCode: resolution.team.legacyScheduleTeamId,
         });
-        return xml(response.toString());
+        return xmlResponse(response.toString());
       }
 
       if (command.kind === "today" || command.kind === "tomorrow" || command.kind === "week") {
@@ -305,7 +197,7 @@ export async function handleAhmvTwilio(
             outcome: "membership-required",
             teamCode: command.teamQuery,
           });
-          return xml(response.toString());
+          return xmlResponse(response.toString());
         }
 
         const rangeAnswer = scheduleRangeAnswer(
@@ -314,7 +206,7 @@ export async function handleAhmvTwilio(
           lang,
           officialPhoneSchedule,
           new Date(),
-          aliases(settings),
+          teamAliases(settings),
         );
         response.message(rangeAnswer.text.slice(0, 1500));
         await safeRecordPhoneInteraction({
@@ -326,11 +218,11 @@ export async function handleAhmvTwilio(
           teamCode: rangeAnswer.group ?? command.teamQuery,
         });
         log(`range-${rangeAnswer.outcome}`);
-        return xml(response.toString());
+        return xmlResponse(response.toString());
       }
 
-      const answer = nextEventService(command.teamQuery, lang, aliases(settings));
-      const alert = urgent(settings, lang);
+      const answer = nextEventService(command.teamQuery, lang, teamAliases(settings));
+      const alert = urgentBulletin(settings, lang);
       response.message(`${alert ? `${alert.slice(0, 240)}\n` : ""}${answer.smsText}`);
       await safeRecordPhoneInteraction({
         contactId: contact?.id,
@@ -342,7 +234,7 @@ export async function handleAhmvTwilio(
         arenaSlug: answer.directions?.arenaSlug,
       });
       log(answer.outcome);
-      return xml(response.toString());
+      return xmlResponse(response.toString());
     }
 
     const voice = new twilio.twiml.VoiceResponse();
@@ -354,15 +246,15 @@ export async function handleAhmvTwilio(
     const say = (text: string) =>
       voice.say({ language, voice: lang === "fr" ? "Polly.Chantal" : "Polly.Joanna" }, text);
     const action = (next: string, attempt = 0, sms = smsRequested) =>
-      `${ROOT}/voice?step=${next}&lang=${lang}&attempt=${attempt}&sms=${sms ? "1" : "0"}`;
+      `${TWILIO_ROOT}/voice?step=${next}&lang=${lang}&attempt=${attempt}&sms=${sms ? "1" : "0"}`;
     const attempt = Number(url.searchParams.get("attempt") ?? "0");
-    if (!Number.isInteger(attempt) || attempt < 0 || attempt > 3) return failure(400);
+    if (!Number.isInteger(attempt) || attempt < 0 || attempt > 3) return webhookFailure(400);
 
     if (step === "language") {
       const gather = voice.gather({
         input: ["dtmf"],
         numDigits: 1,
-        action: `${ROOT}/voice?step=select&attempt=${attempt}`,
+        action: `${TWILIO_ROOT}/voice?step=select&attempt=${attempt}`,
         method: "POST",
         timeout: 4,
       });
@@ -378,7 +270,7 @@ export async function handleAhmvTwilio(
     } else if (step === "select") {
       if (!["1", "2"].includes(params["Digits"] ?? "")) {
         if (attempt < 1) {
-          voice.redirect({ method: "POST" }, `${ROOT}/voice?step=language&attempt=${attempt + 1}`);
+          voice.redirect({ method: "POST" }, `${TWILIO_ROOT}/voice?step=language&attempt=${attempt + 1}`);
         } else {
           voice.hangup();
         }
@@ -393,7 +285,7 @@ export async function handleAhmvTwilio(
         }
         voice.redirect(
           { method: "POST" },
-          `${ROOT}/voice?step=delivery&lang=${selectedLang}&attempt=0&sms=0`,
+          `${TWILIO_ROOT}/voice?step=delivery&lang=${selectedLang}&attempt=0&sms=0`,
         );
       }
     } else if (step === "delivery") {
@@ -429,7 +321,7 @@ export async function handleAhmvTwilio(
         voice.redirect({ method: "POST" }, action("menu", 0, wantsSms));
       }
     } else if (step === "menu") {
-      const alert = urgent(settings, lang);
+      const alert = urgentBulletin(settings, lang);
       if (alert) say(alert);
       const gather = voice.gather({
         input: ["dtmf"],
@@ -564,8 +456,8 @@ export async function handleAhmvTwilio(
           });
           voice.hangup();
         } else {
-          const answer = nextEventService(spoken, lang, aliases(settings));
-          say(spokenAnswer(answer.text, lang));
+          const answer = nextEventService(spoken, lang, teamAliases(settings));
+          say(spokenScheduleAnswer(answer.text, lang));
           if (smsRequested && caller) {
             const sent = await sendTransactionalSms({
               to: caller,
@@ -595,13 +487,13 @@ export async function handleAhmvTwilio(
         }
       }
     } else {
-      return failure(400);
+      return webhookFailure(400);
     }
 
-    return xml(voice.toString());
+    return xmlResponse(voice.toString());
   } catch (error) {
     console.error("[AHMV Twilio webhook]", error);
     log("configuration-error");
-    return failure(503);
+    return webhookFailure(503);
   }
 }
