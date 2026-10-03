@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
-import { PreprodBanner } from "./preprod-banner";
 import { MobileQuickNav } from "./mobile-quick-nav";
 import { GlobalSearchShortcut } from "@/components/global-search-shortcut";
 import { CommunicationsPreview } from "./communications-preview";
@@ -16,7 +15,6 @@ export function SiteLayout({ children }: { children: ReactNode }) {
         {lang === "fr" ? "Aller au contenu" : "Skip to content"}
       </a>
       <GlobalSearchShortcut />
-      <PreprodBanner />
       <SiteHeader />
       <main id="contenu" className="flex-1">{children}</main>
       <SiteFooter />
