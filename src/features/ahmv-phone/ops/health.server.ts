@@ -25,12 +25,14 @@ export async function getAhmvPhoneInternalHealth(
     interactions,
     messageJobs,
     eventSnapshots,
+    entitlementSyncEvents,
   ] = await Promise.all([
     tableReady("ahmv_phone_contacts"),
     tableReady("ahmv_phone_team_preferences"),
     tableReady("ahmv_phone_interactions"),
     tableReady("ahmv_phone_message_jobs"),
     tableReady("ahmv_phone_event_snapshots"),
+    tableReady("ahmv_phone_entitlement_sync_events"),
   ]);
 
   const databaseReady =
@@ -59,6 +61,7 @@ export async function getAhmvPhoneInternalHealth(
       interactions,
       messageJobs,
       eventSnapshots,
+      entitlementSyncEvents,
     },
     features: {
       reminders: {
@@ -84,6 +87,12 @@ export async function getAhmvPhoneInternalHealth(
       },
     },
     takatak: {
+      membershipSyncEnabled:
+        settings["AHMV_TAKATAK_MEMBERSHIP_SYNC_ENABLED"] === "true",
+      membershipProjectionReady: entitlementSyncEvents,
+      serviceTokenConfigured: Boolean(
+        settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim(),
+      ),
       entitlementConfigured: Boolean(
         settings["TAKATAK_AHMV_ENTITLEMENT_URL"]?.trim() &&
           settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim(),

@@ -14,6 +14,7 @@ export interface AhmvPhoneContact {
   transactionalSmsAllowed: boolean;
   marketingSmsConsent: boolean;
   takatakIdentityId?: string | undefined;
+  premiumExpiresAt?: string | undefined;
 }
 
 function db(): SupabaseClient {
@@ -43,6 +44,7 @@ function mapContact(row: Record<string, unknown>): AhmvPhoneContact {
     transactionalSmsAllowed: Boolean(row["transactional_sms_allowed"]),
     marketingSmsConsent: Boolean(row["marketing_sms_consent"]),
     takatakIdentityId: row["takatak_identity_id"] ? String(row["takatak_identity_id"]) : undefined,
+    premiumExpiresAt: row["premium_expires_at"] ? String(row["premium_expires_at"]) : undefined,
   };
 }
 
@@ -59,7 +61,7 @@ export async function touchPhoneContact(input: {
 
   const existingResult = await client
     .from("ahmv_phone_contacts")
-    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id")
+    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
     .eq("phone_e164", phone)
     .maybeSingle();
 
@@ -76,7 +78,7 @@ export async function touchPhoneContact(input: {
         updated_at: new Date().toISOString(),
       })
       .eq("id", current.id)
-      .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id")
+      .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
       .single();
     if (updateResult.error) throw updateResult.error;
     return mapContact(updateResult.data);
@@ -97,7 +99,7 @@ export async function touchPhoneContact(input: {
       marketing_sms_consent: false,
       last_seen_at: now.toISOString(),
     })
-    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id")
+    .select("id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id,premium_expires_at")
     .single();
 
   if (insertResult.error) {

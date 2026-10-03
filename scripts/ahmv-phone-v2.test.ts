@@ -24,9 +24,29 @@ test("expired trial keeps only base information capabilities", () => {
   assert.equal(canUse(entitlement, "weekly_schedule"), false);
 });
 
-test("premium unlocks all phone capabilities", () => {
-  const entitlement = localEntitlement("premium");
-  assert.equal(canUse(entitlement, "smart_departure"), true);
+test("premium unlocks capabilities only while TAKATAK expiry is active", () => {
+  const active = localEntitlement(
+    "premium",
+    undefined,
+    new Date("2026-10-03T12:00:00.000Z"),
+    "2026-10-10T12:00:00.000Z",
+  );
+  const expired = localEntitlement(
+    "premium",
+    undefined,
+    new Date("2026-10-11T12:00:00.000Z"),
+    "2026-10-10T12:00:00.000Z",
+  );
+  const unbounded = localEntitlement(
+    "premium",
+    undefined,
+    new Date("2026-10-03T12:00:00.000Z"),
+  );
+
+  assert.equal(canUse(active, "smart_departure"), true);
+  assert.equal(canUse(expired, "smart_departure"), false);
+  assert.equal(canUse(unbounded, "smart_departure"), false);
+  assert.equal(canUse(expired, "next_event"), true);
 });
 
 test("M11B is treated as ambiguous instead of guessing a team", () => {
