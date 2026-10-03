@@ -105,3 +105,16 @@ test("Voice DB doctor is locked to the AHMV Supabase project and performs no rem
   assert.match(doctor, /remoteMutationPerformed: false/);
   assert.doesNotMatch(doctor, /db push|apply_migration|execute_sql/);
 });
+
+
+test("Supabase Voice dry-run workflow is pinned, project-locked and non-mutating", async () => {
+  const workflow = await source(".github/workflows/voice-db-dry-run.yml");
+  assert.match(workflow, /SUPABASE_PROJECT_REF: bqflllsjxmhqsvemhhwv/);
+  assert.match(workflow, /supabase@2\.119\.0/);
+  assert.match(workflow, /migration list --linked/);
+  assert.match(workflow, /db push --linked --dry-run/);
+  assert.match(workflow, /AHMV-VOICE-DB-DRY-RUN/);
+  assert.match(workflow, /environment: production/);
+  assert.doesNotMatch(workflow, /db push --linked(?! --dry-run)/);
+  assert.doesNotMatch(workflow, /db reset|migration repair|--include-seed/);
+});
