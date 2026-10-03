@@ -7,13 +7,10 @@ export function robotsDirectiveForResponse({
   status: number;
   publicIndexingEnabled: boolean;
 }) {
-  if (
-    pathname === "/recherche" ||
-    pathname === "/healthz" ||
-    pathname === "/experience" ||
-    pathname.startsWith("/experience/") ||
-    status >= 400
-  ) {
+  if (pathname === "/experience" || pathname.startsWith("/experience/")) {
+    return "noindex, nofollow";
+  }
+  if (pathname === "/recherche" || pathname === "/healthz" || status >= 400) {
     return "noindex, follow";
   }
   return publicIndexingEnabled ? "index, follow" : "noindex, nofollow";
