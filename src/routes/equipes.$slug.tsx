@@ -286,44 +286,61 @@ function TeamPage() {
                 : "Names and levels currently shown in AHM Verdun’s public directory. No player roster or personal information is mirrored."}
             />
             <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-              {publicTeams.map((entry) => {
+              {publicTeams.map((entry, index) => {
                 const teamSocialLinks = getPublicTeamSocialLinks(entry.legacyScheduleTeamId);
                 return (
-                  <div id={`team-${entry.legacyScheduleTeamId}`} key={entry.legacyScheduleTeamId} className="interactive-surface scroll-mt-28 flex min-h-56 flex-col bg-background p-5">
-                    <div>
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="eyebrow text-sport">{entry.level}</p>
-                        <span className="font-display text-xs font-bold uppercase tracking-[0.12em] text-navy/30">
+                  <div
+                    id={`team-${entry.legacyScheduleTeamId}`}
+                    key={entry.legacyScheduleTeamId}
+                    className="interactive-surface scoreboard-panel scroll-mt-28 flex min-h-[270px] flex-col overflow-hidden p-0 text-white"
+                  >
+                    <div className="relative flex min-h-40 flex-1 flex-col justify-between overflow-hidden p-5">
+                      <span
+                        className="pointer-events-none absolute -right-1 -top-5 font-display text-[7.5rem] font-extrabold leading-none tracking-[-0.08em] text-white/[0.035]"
+                        aria-hidden
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <div className="relative flex items-start justify-between gap-3">
+                        <p className="eyebrow text-sport-foreground">{entry.level}</p>
+                        <span className="border border-white/12 px-2 py-1 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-white/48">
                           #{entry.legacyScheduleTeamId.slice(-4)}
                         </span>
                       </div>
-                      <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-none text-navy">{entry.name}</p>
+                      <div className="relative mt-8">
+                        <p className="font-display text-[clamp(2rem,7vw,3rem)] font-extrabold uppercase leading-[0.84] tracking-[-0.035em] text-white">
+                          {entry.name}
+                        </p>
+                        <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.18em] text-white/38">
+                          {lang === "fr" ? "Équipe publiée · source officielle" : "Published team · official source"}
+                        </p>
+                      </div>
                     </div>
 
-                    <div className="mt-auto pt-6">
-                      <div className="grid gap-2">
+                    <div className="relative mt-auto border-t border-white/12 bg-white/[0.035] p-3">
+                      <div className="grid grid-cols-2 gap-2">
                         <a
                           href={legacyTeamScheduleUrl(entry)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="premium-control flex min-h-10 items-center justify-between border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+                          className="premium-control flex min-h-11 items-center justify-between border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white hover:border-sport hover:bg-white/[0.05]"
                         >
-                          {lang === "fr" ? "Horaire officiel" : "Official schedule"}
-                          <CalendarDays className="size-3.5" />
+                          <span>{lang === "fr" ? "Horaire" : "Schedule"}</span>
+                          <CalendarDays className="size-3.5 text-sport-foreground" />
                         </a>
                         <a
                           href={officialTeamResultsUrl(entry)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="premium-control flex min-h-10 items-center justify-between border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+                          className="premium-control flex min-h-11 items-center justify-between border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white hover:border-sport hover:bg-white/[0.05]"
                         >
-                          {lang === "fr" ? "Résultats / classement" : "Results / standings"}
-                          <ExternalLink className="size-3.5" />
+                          <span>{lang === "fr" ? "Résultats" : "Results"}</span>
+                          <ExternalLink className="size-3.5 text-sport-foreground" />
                         </a>
                       </div>
 
                       {teamSocialLinks.length > 0 && (
-                        <div className="mt-3 flex flex-wrap gap-2 border-t border-navy/10 pt-3">
+                        <div className="mt-3 flex flex-wrap gap-2 border-t border-white/10 pt-3">
                           {teamSocialLinks.map((social) => {
                             const Icon = social.platform === "facebook" ? Facebook : Instagram;
                             return (
@@ -332,9 +349,9 @@ function TeamPage() {
                                 href={social.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="premium-control inline-flex min-h-9 items-center gap-2 border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+                                className="premium-control inline-flex min-h-9 items-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white hover:border-sport"
                               >
-                                <Icon className="size-3.5" />
+                                <Icon className="size-3.5 text-sport-foreground" />
                                 {social.platform}
                               </a>
                             );
