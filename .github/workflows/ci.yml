@@ -41,6 +41,10 @@ jobs:
       - name: AHMV phone and SMS security tests
         run: bun run test:phone
 
+      - name: Verify standalone Voice runtime
+        working-directory: services/ahmv-voice-ai
+        run: npm run verify
+
       - name: GROUPE TAKATAK team feed security tests
         run: bun run test:team-feed
 
