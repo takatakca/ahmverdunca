@@ -54,3 +54,37 @@ test("demo mode requires a separate demo token", () => {
   assert.equal(checks.find((check) => check.id === "demo-token")?.ok, false);
   assert.equal(checks.find((check) => check.id === "demo-token")?.required, true);
 });
+
+
+test("lifecycle mode requires phone integration and cron secret", () => {
+  const checks = phonePreflight({
+    AHMV_PHONE_ENABLED: "false",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PHONE_LIFECYCLE_ENABLED: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+  });
+  assert.equal(checks.find((check) => check.id === "safe-lifecycle-gate")?.ok, false);
+  assert.equal(checks.find((check) => check.id === "lifecycle-cron-secret")?.ok, false);
+  assert.equal(checks.find((check) => check.id === "twilio-account")?.required, true);
+  assert.equal(checks.find((check) => check.id === "twilio-auth")?.required, true);
+});
+
+test("lifecycle mode passes its safety gates with provider and cron configuration", () => {
+  const checks = phonePreflight({
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PHONE_LIFECYCLE_ENABLED: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "secret",
+    LOVABLE_CRON_SECRET: "cron-secret",
+  });
+  assert.equal(checks.find((check) => check.id === "safe-lifecycle-gate")?.ok, true);
+  assert.equal(checks.find((check) => check.id === "lifecycle-cron-secret")?.ok, true);
+});
