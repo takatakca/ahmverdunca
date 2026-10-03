@@ -29,3 +29,23 @@ Safety rules:
 - stale/unavailable live data never overrides the verified weekly fallback;
 - after the weekly fallback expires, a missing/stale live feed keeps Voice readiness red;
 - no private roster, minor, billing, credential, or private-contact data belongs in this feed.
+
+
+## TAKATAK endpoint
+
+The reviewed AHMV consumer URL is:
+
+```
+https://takatak.ca/api/integrations/ahmv/schedule
+```
+
+Required request headers:
+
+```
+Authorization: Bearer <TAKATAK_AHMV_SERVICE_TOKEN>
+X-AHMV-Tenant: ahmverdun
+```
+
+TAKATAK is a normalization/distribution layer only. A fresh snapshot must first be ingested from a reviewed official AHMV source. If no fresh official snapshot exists, the endpoint returns unavailable rather than manufacturing an empty schedule.
+
+Current official-source discovery indicates AHM de Verdun publishes its organization schedule through Rétroaction. The importer should use a reviewed Rétroaction export/API/calendar feed (or another AHMV-authorized publisher), not HTML scraping.
