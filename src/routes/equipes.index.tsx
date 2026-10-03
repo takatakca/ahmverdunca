@@ -1,10 +1,10 @@
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, Images } from "lucide-react";
+import { ArrowRight, CalendarDays, ExternalLink, Images, Trophy } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { TEAMS } from "@/data/teams";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
-import { teamsForCategory } from "@/data/team-directory";
+import { officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/equipes/")({
 function TeamsPage() {
   const { t, l, lang } = useI18n();
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
+  const totalPublicTeams = TEAMS.reduce((count, team) => count + teamsForCategory(team.slug).length, 0);
 
   return (
     <>
@@ -32,8 +33,8 @@ function TeamsPage() {
         eyebrow={`${t("common.season")} · 2026–2027`}
         title={t("teams.title")}
         description={lang === "fr"
-          ? "Du premier coup de patin au parcours Junior : choisissez une catégorie pour retrouver son horaire, ses équipes publiques, ses arénas et ses informations."
-          : "From the first skate to Junior: choose a category to find its schedule, public teams, arenas and information."}
+          ? "Du premier coup de patin au parcours Junior : choisissez une catégorie pour retrouver son horaire, ses équipes publiques, ses résultats, son classement, ses arénas et ses informations."
+          : "From the first skate to Junior: choose a category to find its schedule, public teams, results, standings, arenas and information."}
       />
 
       <div className="container-site py-9 md:py-14">
@@ -71,14 +72,18 @@ function TeamsPage() {
                     {lang === "fr" ? "catégories AHMV" : "AHMV categories"}
                   </p>
                 </div>
-                <div className="grid grid-cols-2 gap-px bg-white/12">
-                  <Link to="/horaires" className="interactive-surface bg-navy p-5 hover:bg-white/[0.06]">
+                <div className="grid grid-cols-3 gap-px bg-white/12">
+                  <Link to="/horaires" className="interactive-surface bg-navy p-4 sm:p-5 hover:bg-white/[0.06]">
                     <CalendarDays className="size-5 text-sport-foreground" />
-                    <p className="mt-4 font-display text-xl font-bold uppercase">{lang === "fr" ? "Horaires" : "Schedules"}</p>
+                    <p className="mt-4 font-display text-lg font-bold uppercase sm:text-xl">{lang === "fr" ? "Horaires" : "Schedules"}</p>
                   </Link>
-                  <Link to="/galerie" className="interactive-surface bg-navy p-5 hover:bg-white/[0.06]">
+                  <a href="#resultats" className="interactive-surface bg-sport/10 p-4 sm:p-5 hover:bg-sport/15">
+                    <Trophy className="size-5 text-sport-foreground" />
+                    <p className="mt-4 font-display text-lg font-bold uppercase sm:text-xl">{lang === "fr" ? "Résultats" : "Results"}</p>
+                  </a>
+                  <Link to="/galerie" className="interactive-surface bg-navy p-4 sm:p-5 hover:bg-white/[0.06]">
                     <Images className="size-5 text-sport-foreground" />
-                    <p className="mt-4 font-display text-xl font-bold uppercase">{lang === "fr" ? "Photos" : "Photos"}</p>
+                    <p className="mt-4 font-display text-lg font-bold uppercase sm:text-xl">{lang === "fr" ? "Photos" : "Photos"}</p>
                   </Link>
                 </div>
               </div>
@@ -106,6 +111,99 @@ function TeamsPage() {
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{t("teams.privacyNote")}</p>
           </div>
         </div>
+
+        <section id="resultats" className="mt-9 scroll-mt-28 overflow-hidden border border-navy/12 bg-background">
+          <div className="grid bg-competition text-white lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="p-6 md:p-8">
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Centre officiel" : "Official centre"}
+              </p>
+              <h2 className="mt-2 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] md:text-5xl">
+                {lang === "fr" ? "Résultats & classements" : "Results & standings"}
+              </h2>
+              <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/68 md:text-base">
+                {lang === "fr"
+                  ? "Choisissez l’équipe exacte. Les résultats et classements restent servis par la source hockey officielle; AHMV vous amène directement au bon identifiant sans recréer une deuxième version des scores."
+                  : "Choose the exact team. Results and standings remain served by the official hockey source; AHMV takes you directly to the correct identifier without creating a second version of the scores."}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 border-t border-white/12 lg:border-l lg:border-t-0">
+              <div className="flex flex-col justify-center p-6 md:p-8">
+                <span className="font-display text-5xl font-extrabold text-sport-foreground">{totalPublicTeams}</span>
+                <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/48">
+                  {lang === "fr" ? "équipes publiques" : "public teams"}
+                </span>
+              </div>
+              <div className="flex flex-col justify-center border-l border-white/12 p-6 md:p-8">
+                <Trophy className="size-8 text-sport-foreground" aria-hidden />
+                <span className="mt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-white/48">
+                  {lang === "fr" ? "horaire · matchs terminés · classement" : "schedule · completed games · standings"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="divide-y divide-navy/10">
+            {TEAMS.map((category) => {
+              const entries = teamsForCategory(category.slug);
+              if (!entries.length) return null;
+              return (
+                <div key={category.slug} className="grid lg:grid-cols-[10rem_minmax(0,1fr)]">
+                  <div className="bg-ice p-4 lg:border-r lg:border-navy/10 lg:p-5">
+                    <p className="font-display text-3xl font-extrabold uppercase text-navy">{category.code}</p>
+                    <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                      {entries.length} {lang === "fr" ? "équipe(s)" : "team(s)"}
+                    </p>
+                  </div>
+                  <div className="grid gap-px bg-navy/10 sm:grid-cols-2 xl:grid-cols-3">
+                    {entries.map((entry) => (
+                      <article key={entry.legacyScheduleTeamId} className="flex min-h-40 flex-col bg-background p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="eyebrow text-sport">{entry.level}</p>
+                            <h3 className="mt-2 font-display text-xl font-extrabold uppercase leading-none text-navy">
+                              {entry.name}
+                            </h3>
+                          </div>
+                          <span className="shrink-0 border border-navy/10 px-2 py-1 font-mono text-[9px] text-muted-foreground">
+                            #{entry.legacyScheduleTeamId.slice(-4)}
+                          </span>
+                        </div>
+
+                        <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
+                          <a
+                            href={publicTeamHubUrl(entry)}
+                            className="premium-control flex min-h-10 items-center justify-between border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy hover:border-sport hover:text-sport"
+                          >
+                            {lang === "fr" ? "Équipe" : "Team"}
+                            <ArrowRight className="size-3.5" />
+                          </a>
+                          <a
+                            href={officialTeamResultsUrl(entry)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="premium-control flex min-h-10 items-center justify-between bg-navy px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white hover:bg-navy-deep"
+                          >
+                            {lang === "fr" ? "Résultats" : "Results"}
+                            <ExternalLink className="size-3.5 text-sport-foreground" />
+                          </a>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="border-t border-navy/10 bg-ice px-5 py-4">
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? "Source officielle externe : la surface publique AHMV « Horaire et Classements ». Les scores et classements ne sont pas inventés ni recopiés manuellement dans ce portail."
+                : "Official external source: AHMV’s public “Schedule and Standings” surface. Scores and standings are not invented or manually duplicated in this portal."}
+            </p>
+          </div>
+        </section>
 
         <div className="mt-9 border-t-2 border-navy">
           {TEAMS.map((team, index) => {

@@ -331,6 +331,19 @@ export function SiteHeader() {
               </span>
             </Link>
 
+            <a
+              href="/equipes#resultats"
+              className="premium-control mt-2 flex min-h-12 items-center justify-between border border-sport/30 bg-sport/10 px-4 text-sm font-semibold text-white"
+            >
+              <span className="flex items-center gap-2">
+                <Trophy className="size-4 text-sport-foreground" />
+                {lang === "fr" ? "Résultats & classements" : "Results & standings"}
+              </span>
+              <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-sport-foreground">
+                {lang === "fr" ? "Voir" : "View"}
+              </span>
+            </a>
+
             <p className="eyebrow mt-6 text-sport-foreground">
               {lang === "fr" ? "Essentiel pour les familles" : "Family essentials"}
             </p>
