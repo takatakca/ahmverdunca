@@ -28,6 +28,7 @@ import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
 import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { LogoSlot } from "@/components/layout/logo-slot";
+import { AdSenseSlot } from "@/components/adsense-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
@@ -704,6 +705,8 @@ function Home() {
           </div>
         </div>
       </section>
+
+      <AdSenseSlot className="container-site my-8 border border-navy/10 bg-ice p-3 md:my-12 md:p-4" />
 
       {/* Partners */}
       <section className="navy-texture overflow-hidden py-12 text-navy-foreground md:py-16">
