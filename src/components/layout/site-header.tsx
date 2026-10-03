@@ -247,7 +247,7 @@ export function SiteHeader() {
               <kbd className="ml-1 rounded border border-navy-foreground/20 px-1.5 py-0.5 font-sans text-[10px] font-semibold text-navy-foreground/50">
                 /
               </kbd>
-            </a>
+            </Link>
           </Button>
           <Button
             asChild
@@ -274,7 +274,7 @@ export function SiteHeader() {
             <a href="/membership">
               <Sparkles className="size-4 text-sport-foreground" />
               {lang === "fr" ? "Member · Démo" : "Member · Demo"}
-            </Link>
+            </a>
           </Button>
           <button
             type="button"
@@ -489,8 +489,8 @@ export function SiteHeader() {
               ))}
             </div>
 
-            <Link
-              to="/membership"
+            <a
+              href="/membership"
               className="premium-control mt-7 flex min-h-16 items-center justify-between border border-sport/35 bg-sport/10 px-4 text-white"
             >
               <span className="flex items-center gap-3">
