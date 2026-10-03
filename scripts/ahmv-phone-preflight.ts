@@ -33,6 +33,7 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const publicEnabled = bool(settings["AHMV_PHONE_PUBLIC"]);
   const lifecycleEnabled = bool(settings["AHMV_PHONE_LIFECYCLE_ENABLED"]);
   const remindersEnabled = bool(settings["AHMV_PHONE_REMINDERS_ENABLED"]);
+  const calendarEnabled = bool(settings["AHMV_CALENDAR_LINKS_ENABLED"]);
 
   return [
     {
@@ -108,6 +109,14 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
         })(),
       required: remindersEnabled,
       detail: "Reminder delivery requires a valid explicit official-group to public-team mapping.",
+    },
+    {
+      id: "calendar-link-secret",
+      ok:
+        !calendarEnabled ||
+        (settings["AHMV_CALENDAR_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+      required: calendarEnabled,
+      detail: "Signed calendar links require a dedicated server secret of at least 32 characters.",
     },
     {
       id: "safe-lifecycle-gate",
