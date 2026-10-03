@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { config } from './config.js';
 import { isSmsCapableCaller } from './caller.js';
+import { emptyUsage } from './usage.js';
 
 const memory = new Map();
 const memorySmsClaims = new Set();
@@ -34,6 +35,8 @@ export function sessionState(session, { includeMessages = config.persistActiveCo
     turnCount: Number(session.turnCount || 0),
     reconnectCount: Number(session.reconnectCount || 0),
     auditRecorded: Boolean(session.auditRecorded),
+    usage: session.usage || emptyUsage(),
+    costGuardExceeded: Boolean(session.costGuardExceeded),
     messages: includeMessages ? compactMessages(session.messages) : []
   };
 }
@@ -61,6 +64,8 @@ export function newSession({ callSid, from, to }) {
     turnCount: 0,
     reconnectCount: 0,
     auditRecorded: false,
+    usage: emptyUsage(),
+    costGuardExceeded: false,
     createdAt: new Date().toISOString(),
     endedAt: null,
     endReason: null
@@ -71,7 +76,7 @@ export function newSession({ callSid, from, to }) {
 
 export function activateSession(session) {
   session.started = true;
-  session.smsEnabled = config.smsEnabled && isSmsCapableCaller(session.from);
+  session.smsEnabled = config.smsEnabled && config.featureSmsRecap && isSmsCapableCaller(session.from);
   session.smsConsentAt = session.smsEnabled ? new Date().toISOString() : null;
   return saveSession(session);
 }
@@ -157,6 +162,8 @@ export async function loadSession(callSid) {
     turnCount: Number(state.turnCount ?? data.turn_count ?? 0),
     reconnectCount: Number(state.reconnectCount || 0),
     auditRecorded: Boolean(state.auditRecorded || data.audit_recorded_at),
+    usage: state.usage && typeof state.usage === 'object' ? state.usage : emptyUsage(),
+    costGuardExceeded: Boolean(state.costGuardExceeded),
     createdAt: data.started_at || new Date().toISOString(),
     endedAt: data.ended_at || null,
     endReason: data.end_reason || null
