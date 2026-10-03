@@ -12,6 +12,12 @@ This runbook covers the infrastructure step after the AHMV Voice integration CI 
 
 The live phone webhook stays unchanged until every gate below passes.
 
+Before any infrastructure operation, review `docs/VOICE_SECRETS_AND_ENVIRONMENTS.md`. Never place secret values in Git.
+
+Useful repository workflows:
+- `.github/workflows/voice-db-dry-run.yml` — project-locked Supabase migration preview only;
+- `.github/workflows/deploy-voice-integration-preproduction.yml` — isolated website-side Voice preproduction deployment with bridge smoke and rollback.
+
 ## 1. Database identity gate
 
 Do not guess the Supabase project.
