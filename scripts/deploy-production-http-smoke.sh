@@ -70,7 +70,12 @@ origin_curl_once() {
     status) remote_action="-o /dev/null" ;;
   esac
 
-  ahmv-ssh "curl --fail --silent --show-error --location --connect-timeout 10 --max-time 30 --resolve 'ahmverdun.ca:443:127.0.0.1' --user-agent '$USER_AGENT' --header 'Cache-Control: no-cache' $remote_action '$URL'"
+  # The cPanel/Passenger loopback origin can present the hosting certificate
+  # rather than the public ahmverdun.ca certificate. This request never leaves
+  # the server: --resolve pins the hostname to 127.0.0.1. TLS verification for
+  # the public site remains a separate concern; this probe validates that the
+  # just-activated Passenger application answers with the expected content.
+  ahmv-ssh "curl --insecure --fail --silent --show-error --location --connect-timeout 10 --max-time 30 --resolve 'ahmverdun.ca:443:127.0.0.1' --user-agent '$USER_AGENT' --header 'Cache-Control: no-cache' $remote_action '$URL'"
 }
 
 retry_smoke() {
