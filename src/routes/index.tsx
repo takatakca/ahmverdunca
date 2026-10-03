@@ -51,7 +51,6 @@ function Home() {
   const alerts = ALERTS.filter((alert) => !alert.archived && alert.expiresAt >= today);
   const news = NEWS.slice(0, 3);
   const featuredArena = ARENAS[0];
-  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
 
   return (
     <>
@@ -76,19 +75,6 @@ function Home() {
         <div className="arena-light opacity-45" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
-        {!publicLaunch && (
-          <span className="absolute right-3 top-3 z-10 hidden border border-white/15 bg-navy-deep/55 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-navy-foreground/80 backdrop-blur-sm sm:block md:right-8 md:top-8">
-            {t("common.demo")}
-          </span>
-        )}
-        <a
-          href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute left-3 top-3 z-10 max-w-[calc(100%-6rem)] truncate border border-white/15 bg-navy-deep/70 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.12em] text-white/80 backdrop-blur-sm hover:bg-navy-deep sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[9px] md:left-8 md:top-8"
-        >
-          {lang === "fr" ? "Archive AHMV · Tournoi M11 2025" : "AHMV archive · 2025 U11 Tournament"}
-        </a>
 
         <div className="container-site relative flex min-h-[60svh] flex-col justify-end pb-8 pt-16 sm:min-h-[64svh] md:min-h-[70svh] md:pb-10">
           <div className="max-w-6xl">
