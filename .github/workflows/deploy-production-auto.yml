@@ -571,7 +571,7 @@ jobs:
 
           echo "Production homepage and exact release CSS/JS asset verification passed."
 
-      - name: Verify search remains noindex      - name: Verify search remains noindex
+      - name: Verify search remains noindex
         run: |
           set -euo pipefail
 
