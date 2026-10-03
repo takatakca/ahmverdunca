@@ -45,7 +45,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "AHM Verdun — Le hockey commence ici" },
       { property: "og:description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun." },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: OFFICIAL_MEDIA.tournamentM11Primary.url },
+      { property: "og:image", content: OFFICIAL_MEDIA.practiceGroup.url },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
@@ -65,8 +65,8 @@ function Home() {
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
       <section className="relative isolate min-h-[68svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[72svh] md:min-h-[80svh]">
         <img
-          src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-          alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+          src={OFFICIAL_MEDIA.practiceGroup.url}
+          alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGroup.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.en}
           fetchPriority="high"
           decoding="async"
           className="hero-zoom absolute inset-0 size-full object-cover object-center opacity-68"
@@ -310,8 +310,8 @@ function Home() {
                 aria-label={lang === "fr" ? "Archive photo officielle AHMV — Tournoi M11" : "Official AHMV photo archive — U11 Tournament"}
               >
                 <img
-                  src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-                  alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+                  src={OFFICIAL_MEDIA.practiceGroup.url}
+                  alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGroup.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.en}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
@@ -417,8 +417,8 @@ function Home() {
                 className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
                 <img
-                  src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
-                  alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+                  src={OFFICIAL_MEDIA.practicePlayers.url}
+                  alt={lang === "fr" ? OFFICIAL_MEDIA.practicePlayers.alt.fr : OFFICIAL_MEDIA.practicePlayers.alt.en}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
