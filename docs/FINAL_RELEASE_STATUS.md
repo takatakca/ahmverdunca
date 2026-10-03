@@ -3,7 +3,7 @@
 **Date:** 2026-10-02  
 **Project:** AHM Verdun 2026–2027  
 **Digital delivery:** GROUPE TAKATAK  
-**Target domain:** https://ahmverdun.com
+**Target domain:** https://ahmverdun.ca
 
 ## 1. Current status
 
@@ -115,7 +115,7 @@ Until those approvals exist, the code intentionally uses safe fallbacks.
 2. Test the production hostname privately: home, schedules, teams, registration, arenas, news, gallery, search, FR/EN, mobile navigation and external gateways.
 3. Confirm the final public media, privacy approval, sponsor assets and association contact details.
 4. Confirm the current weekly schedule source/update process.
-5. Perform the approved hosting/DNS cutover for `ahmverdun.com`.
+5. Perform the approved hosting/DNS cutover for `ahmverdun.ca`.
 6. Verify HTTPS, legacy redirects, `/robots.txt`, `/sitemap.xml`, 404 behavior, `/recherche` noindex behavior and server headers on the actual production domain.
 7. Set `VITE_PUBLIC_INDEXING=true` only after the new production domain is confirmed correct.
 8. Rebuild/redeploy and verify the HTML robots meta plus `X-Robots-Tag`.
