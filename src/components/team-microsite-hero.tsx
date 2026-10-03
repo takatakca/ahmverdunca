@@ -195,6 +195,7 @@ export function TeamMicrositeHero({
             src={heroMedia.url}
             alt={lang === "fr" ? heroMedia.alt.fr : heroMedia.alt.en}
             loading="eager"
+            fetchPriority="high"
             decoding="async"
             className="premium-depth-media absolute inset-0 size-full object-cover"
           />
