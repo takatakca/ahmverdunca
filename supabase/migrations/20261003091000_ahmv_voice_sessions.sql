@@ -12,7 +12,6 @@ create table if not exists public.ahmv_voice_sessions (
   detected_language text,
   sms_opt_in boolean not null default false,
   sms_items jsonb not null default '[]'::jsonb,
-  transcript_summary jsonb not null default '[]'::jsonb,
   session_state jsonb not null default '{}'::jsonb,
   turn_count integer not null default 0 check (turn_count >= 0),
   end_reason text,
@@ -35,7 +34,6 @@ create table if not exists public.ahmv_voice_sessions (
   constraint ahmv_voice_sessions_called_phone_chk check (called_phone is null or called_phone ~ '^\+[1-9][0-9]{7,14}$'),
   constraint ahmv_voice_sessions_duration_chk check (session_duration_seconds is null or session_duration_seconds >= 0),
   constraint ahmv_voice_sessions_sms_items_chk check (jsonb_typeof(sms_items) = 'array'),
-  constraint ahmv_voice_sessions_transcript_chk check (jsonb_typeof(transcript_summary) = 'array'),
   constraint ahmv_voice_sessions_state_chk check (jsonb_typeof(session_state) = 'object')
 );
 create index if not exists idx_ahmv_voice_sessions_phone_started
@@ -110,4 +108,4 @@ grant execute on function public.claim_ahmv_voice_sms(text) to service_role;
 grant execute on function public.release_ahmv_voice_sms_claim(text,text) to service_role;
 
 comment on table public.ahmv_voice_sessions is
-  'Operational ConversationRelay state only; not CRM, roster, billing or marketing authority.';
+  'Operational ConversationRelay metadata only. Raw call transcripts are intentionally not stored here; this table is not CRM, roster, billing or marketing authority.';
