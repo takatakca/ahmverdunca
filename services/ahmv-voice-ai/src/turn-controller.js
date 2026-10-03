@@ -54,6 +54,8 @@ export function applyConversationDraft(session, draft) {
   session.smsItems = draft.smsItems;
   session.smsEnabled = draft.smsEnabled;
   session.smsConsentAt = draft.smsConsentAt;
+  session.usage = draft.usage;
+  session.costGuardExceeded = Boolean(draft.costGuardExceeded);
   return session;
 }
 
