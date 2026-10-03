@@ -5,6 +5,7 @@ import { renderErrorPage } from "./lib/error-page";
 import { applyPublicResponsePolicy } from "./lib/response-policy";
 import { handleAhmvTwilio } from "./lib/ahmv-twilio.server";
 import { handleAhmvPhoneStatus } from "./lib/ahmv-phone-status.server";
+import { handleAhmvPhoneDemo } from "./features/ahmv-phone/demo/handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 
 type ServerEntry = {
@@ -91,6 +92,8 @@ export default {
     const url = new URL(request.url);
     const phoneStatusResponse = handleAhmvPhoneStatus(request);
     if (phoneStatusResponse) return phoneStatusResponse;
+    const phoneDemoResponse = await handleAhmvPhoneDemo(request);
+    if (phoneDemoResponse) return phoneDemoResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);
