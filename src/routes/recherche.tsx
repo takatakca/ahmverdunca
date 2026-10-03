@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { TEAMS } from "@/data/teams";
+import { PUBLIC_TEAM_DIRECTORY } from "@/data/team-directory";
 import { ARENAS } from "@/data/arenas";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { FAQ } from "@/data/faq";
@@ -159,6 +160,21 @@ function SearchPage() {
           detail: l(item.ages),
           to: "/equipes/$slug",
           slug: item.slug,
+        });
+      }
+    });
+
+    PUBLIC_TEAM_DIRECTORY.forEach((item) => {
+      const haystack = normalize(
+        `${item.name} ${item.level} ${item.categorySlug} ${item.legacyScheduleTeamId} ${item.legacyScheduleTeamId.slice(-4)} leafs bulldogs coyotes broncos ducks flames jets oilers dynamos louves équipe team resultat résultat classement horaire schedule standings`,
+      );
+      if (haystack.includes(needle)) {
+        out.push({
+          key: `public-team-${item.legacyScheduleTeamId}`,
+          label: item.name,
+          kind: lang === "fr" ? "Équipe publiée" : "Published team",
+          detail: `${item.level} · ${lang === "fr" ? "horaire et classement" : "schedule and standings"}`,
+          href: `/equipes/${item.categorySlug}#team-${item.legacyScheduleTeamId}`,
         });
       }
     });
@@ -319,16 +335,16 @@ function SearchPage() {
             onChange={(event) => setQ(event.target.value)}
             placeholder={
               lang === "fr"
-                ? "Ex. M11, Denis Savard, Spordle, aide financière…"
-                : "Ex. U11, Denis Savard, Spordle, financial assistance…"
+                ? "Ex. Leafs, Louves, M11, Denis Savard, Spordle…"
+                : "Ex. Leafs, Louves, U11, Denis Savard, Spordle…"
             }
             aria-label={t("common.search")}
-            className="h-14 w-full rounded-lg border border-input bg-background pl-12 pr-4 text-base shadow-sm"
+            className="h-14 w-full border border-navy/15 bg-background pl-12 pr-4 text-base outline-none transition-colors focus:border-sport"
           />
         </div>
 
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-          <div className="rounded-xl border border-border bg-ice px-4 py-3">
+          <div className="border border-navy/12 bg-ice px-4 py-3">
             <p className="text-sm text-muted-foreground">
               {q.trim().length >= 2
                 ? lang === "fr"
@@ -363,7 +379,7 @@ function SearchPage() {
                 <Link
                   key={page.key}
                   to={page.to}
-                  className="rounded-full border border-input bg-background px-4 py-2 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  className="premium-control border border-navy/12 bg-background px-4 py-2 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
                 >
                   {lang === "fr" ? page.fr : page.en}
                 </Link>
@@ -374,7 +390,7 @@ function SearchPage() {
 
         <div className="mt-8 grid gap-3" aria-live="polite">
           {q.trim().length >= 2 && hits.length === 0 && (
-            <div className="rounded-xl border border-border bg-ice p-6">
+            <div className="border border-navy/12 bg-ice p-6">
               <p className="heading-card">
                 {lang === "fr" ? "Aucun résultat trouvé" : "No results found"}
               </p>
