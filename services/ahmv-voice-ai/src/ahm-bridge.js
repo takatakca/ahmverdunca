@@ -69,19 +69,58 @@ function httpsUrl(value) {
 }
 
 function accessFromBootstrap(data) {
-  if (config.accessMode === 'free_beta') {
-    return { allowed: true, mode: 'free_beta', reason: 'beta_open_access', tier: data?.contact?.accessTier || 'guest' };
-  }
-
   const tier = clean(data?.contact?.accessTier, 30) || 'guest';
   const trialActive = Boolean(data?.entitlement?.trialActive);
   const premium = tier === 'premium' || Boolean(data?.entitlement?.premium);
-  const allowed = config.paidAccessPolicy === 'premium_only' ? premium : premium || trialActive;
+  const nextEvent = Boolean(data?.entitlement?.nextEvent);
+  const weeklySchedule = Boolean(data?.entitlement?.weeklySchedule);
+
+  if (tier === 'blocked') {
+    return {
+      allowed: false,
+      mode: config.accessMode,
+      reason: 'blocked',
+      tier,
+      premium: false,
+      trialActive: false,
+      nextEvent: false,
+      weeklySchedule: false
+    };
+  }
+
+  if (config.accessMode === 'free_beta') {
+    return {
+      allowed: true,
+      mode: 'free_beta',
+      reason: 'beta_open_access',
+      tier,
+      premium,
+      trialActive,
+      nextEvent: true,
+      weeklySchedule: true
+    };
+  }
+
+  const fullAccess =
+    premium ||
+    (config.paidAccessPolicy !== 'premium_only' && trialActive);
+  const allowed = fullAccess || nextEvent;
+
   return {
     allowed,
     mode: 'paid',
-    reason: allowed ? (premium ? 'premium' : 'trial') : 'membership_required',
-    tier
+    reason: premium
+      ? 'premium'
+      : trialActive && fullAccess
+        ? 'trial'
+        : nextEvent
+          ? 'base_next_event'
+          : 'membership_required',
+    tier,
+    premium,
+    trialActive,
+    nextEvent: fullAccess ? true : nextEvent,
+    weeklySchedule: fullAccess && weeklySchedule
   };
 }
 
@@ -91,7 +130,16 @@ export async function bootstrapVoiceCaller(session) {
       ok: true,
       contactId: isSmsCapableCaller(session.from) ? 'fixture-contact' : null,
       transactionalSmsAllowed: isSmsCapableCaller(session.from),
-      access: { allowed: true, mode: config.accessMode, reason: 'fixture', tier: 'trial' }
+      access: {
+        allowed: true,
+        mode: config.accessMode,
+        reason: 'fixture',
+        tier: 'trial',
+        premium: false,
+        trialActive: true,
+        nextEvent: true,
+        weeklySchedule: true
+      }
     };
   }
 
