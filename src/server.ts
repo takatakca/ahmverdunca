@@ -7,6 +7,8 @@ import { handleAhmvTwilio } from "./lib/ahmv-twilio.server";
 import { handleAhmvPhoneStatus } from "./lib/ahmv-phone-status.server";
 import { handleAhmvPhoneDemo } from "./features/ahmv-phone/demo/handler.server";
 import { handleAhmvPhoneOpsSummary } from "./features/ahmv-phone/ops/handler.server";
+import { handleAhmvPhoneOpsHealth } from "./features/ahmv-phone/ops/health-handler.server";
+import { handleAhmvPhoneRetention } from "./features/ahmv-phone/privacy/handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 
 type ServerEntry = {
@@ -97,6 +99,10 @@ export default {
     if (phoneDemoResponse) return phoneDemoResponse;
     const phoneOpsResponse = await handleAhmvPhoneOpsSummary(request);
     if (phoneOpsResponse) return phoneOpsResponse;
+    const phoneOpsHealthResponse = await handleAhmvPhoneOpsHealth(request);
+    if (phoneOpsHealthResponse) return phoneOpsHealthResponse;
+    const phoneRetentionResponse = await handleAhmvPhoneRetention(request);
+    if (phoneRetentionResponse) return phoneRetentionResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);

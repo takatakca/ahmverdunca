@@ -1,5 +1,5 @@
-import { getAhmvPhoneOpsSummary } from "./summary.server.ts";
 import { authorizeTakatakOpsRequest } from "./auth.server.ts";
+import { getAhmvPhoneInternalHealth } from "./health.server.ts";
 
 type Settings = Record<string, string | undefined>;
 
@@ -9,12 +9,12 @@ const HEADERS = {
   "X-Robots-Tag": "noindex, nofollow",
 };
 
-export async function handleAhmvPhoneOpsSummary(
+export async function handleAhmvPhoneOpsHealth(
   request: Request,
   settings: Settings = process.env,
 ): Promise<Response | null> {
   const url = new URL(request.url);
-  if (url.pathname !== "/api/ahmv/phone-ops/summary") return null;
+  if (url.pathname !== "/api/ahmv/phone-ops/health") return null;
 
   if (settings["AHMV_PHONE_OPS_ENABLED"] !== "true") {
     return new Response(JSON.stringify({ error: "ops_disabled" }), {
@@ -37,17 +37,14 @@ export async function handleAhmvPhoneOpsSummary(
     });
   }
 
-  try {
-    const summary = await getAhmvPhoneOpsSummary();
-    return new Response(JSON.stringify(summary), {
-      status: 200,
-      headers: HEADERS,
-    });
-  } catch (error) {
-    console.error("[AHMV phone ops summary]", error);
-    return new Response(JSON.stringify({ error: "ops_unavailable" }), {
-      status: 503,
-      headers: HEADERS,
-    });
-  }
+  const health = await getAhmvPhoneInternalHealth(settings);
+  const ready =
+    health.database.ready &&
+    health.phone.numberConfigured &&
+    health.phone.webhookOriginConfigured;
+
+  return new Response(JSON.stringify({ ...health, ready }), {
+    status: ready ? 200 : 503,
+    headers: HEADERS,
+  });
 }
