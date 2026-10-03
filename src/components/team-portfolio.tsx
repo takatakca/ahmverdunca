@@ -137,52 +137,57 @@ export function TeamPortfolio({
         </div>
       </div>
 
-      {team.categorySlug === "m11" && (
-        <div className="grid h-[260px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[340px] lg:grid-cols-[1.25fr_0.75fr]">
+      <div className="grid h-[250px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[330px] lg:grid-cols-[1.25fr_0.75fr]">
+        <a
+          href={(team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary : OFFICIAL_MEDIA.practiceGroup).sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group relative row-span-2 overflow-hidden bg-navy"
+        >
+          <img
+            src={(team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary : OFFICIAL_MEDIA.practiceGroup).url}
+            alt={lang === "fr"
+              ? (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.practiceGroup.alt.fr)
+              : (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.en : OFFICIAL_MEDIA.practiceGroup.alt.en)}
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_42%,rgba(7,16,43,0.86)_100%)]" />
+          <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
+              {lang === "fr" ? "Vraies photos AHMV" : "Real AHMV photography"}
+            </p>
+            <p className="mt-1 max-w-lg font-display text-2xl font-extrabold uppercase leading-[0.9] text-white sm:text-3xl">
+              {team.categorySlug === "m11"
+                ? (lang === "fr" ? "Tournoi, équipes et souvenirs de Verdun" : "Tournament, teams and Verdun memories")
+                : (lang === "fr" ? "La vie de l’association sur la glace" : "Association life on the ice")}
+            </p>
+          </div>
+        </a>
+
+        {[
+          team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Secondary : OFFICIAL_MEDIA.practicePlayers,
+          team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Tertiary : OFFICIAL_MEDIA.practiceCoach,
+        ].map((media) => (
           <a
-            href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+            key={media.url}
+            href={media.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative row-span-2 overflow-hidden bg-navy"
+            className="group relative overflow-hidden bg-navy"
           >
             <img
-              src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
-              loading="eager"
+              src={media.url}
+              alt={lang === "fr" ? media.alt.fr : media.alt.en}
+              loading="lazy"
               decoding="async"
-              className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+              className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
             />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_44%,rgba(7,16,43,0.84)_100%)]" />
-            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
-                {lang === "fr" ? "Archives M11 · Verdun" : "U11 archives · Verdun"}
-              </p>
-              <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-[0.9] text-white sm:text-3xl">
-                {lang === "fr" ? "Le tournoi fait partie du mini-site" : "The tournament lives inside the team hub"}
-              </p>
-            </div>
+            <div className="absolute inset-0 bg-navy/12 transition-colors group-hover:bg-transparent" />
           </a>
-
-          {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media) => (
-            <a
-              key={media.url}
-              href={media.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative overflow-hidden bg-navy"
-            >
-              <img
-                src={media.url}
-                alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-              />
-              <div className="absolute inset-0 bg-navy/10 transition-colors group-hover:bg-transparent" />
-            </a>
-          ))}
-        </div>
-      )}
+        ))}
+      </div>
 
       <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-4">
         {services.map((service) => {
