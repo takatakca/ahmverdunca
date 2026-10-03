@@ -47,16 +47,6 @@ function weekdayLabel(date: string, locale: string) {
   return new Intl.DateTimeFormat(locale, { weekday: "short" }).format(parsed).replace(".", "").toUpperCase();
 }
 
-const DEMO_GAMES: CalendarRow[] = [
-  { dayFr: "OFFICIEL", dayEn: "OFFICIAL", time: "—", noteFr: "Voir le prochain match", noteEn: "View next game" },
-  { dayFr: "RÉSULTATS", dayEn: "RESULTS", time: "—", noteFr: "Dernières parties", noteEn: "Latest games" },
-];
-
-const DEMO_PRACTICES: CalendarRow[] = [
-  { dayFr: "À VENIR", dayEn: "COMING", time: "—", noteFr: "Pratique à connecter", noteEn: "Practice to connect" },
-  { dayFr: "SOURCE", dayEn: "SOURCE", time: "—", noteFr: "Grille AHMV officielle", noteEn: "Official AHMV grid" },
-];
-
 function MiniCalendar({
   title,
   eyebrow,
@@ -85,10 +75,24 @@ function MiniCalendar({
       </div>
 
       <div className="divide-y divide-white/10">
+        {rows.length === 0 && (
+          <div className="px-4 py-5">
+            <p className="text-sm font-semibold text-white/72">
+              {lang === "fr"
+                ? "Aucune activité exacte de cette équipe n’est publiée dans la grille AHMV actuellement chargée."
+                : "No exact activity for this team is published in the currently loaded AHMV schedule."}
+            </p>
+            <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.13em] text-white/38">
+              {lang === "fr" ? "Consultez la source officielle ci-dessous." : "Use the official source below."}
+            </p>
+          </div>
+        )}
         {rows.map((row, index) => (
           <a
             key={`${kind}-${index}`}
             href={row.href ?? eventHref(team, kind, index + 1)}
+            target={row.href?.startsWith("http") ? "_blank" : undefined}
+            rel={row.href?.startsWith("http") ? "noopener noreferrer" : undefined}
             className="group grid grid-cols-[3.5rem_4.2rem_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 text-white transition-colors hover:bg-white/[0.055]"
           >
             <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/42">
@@ -162,7 +166,26 @@ export function TeamMicrositeHero({
       }),
     }));
 
-  const practiceRows = publishedPracticeRows.length > 0 ? publishedPracticeRows : DEMO_PRACTICES;
+  const gameRows: CalendarRow[] = [
+    {
+      dayFr: "HORAIRE",
+      dayEn: "SCHEDULE",
+      time: "—",
+      noteFr: "Prochaine partie · source officielle",
+      noteEn: "Next game · official source",
+      href: legacyTeamScheduleUrl(team),
+    },
+    {
+      dayFr: "SCORES",
+      dayEn: "SCORES",
+      time: "—",
+      noteFr: "Résultats et classement officiels",
+      noteEn: "Official results and standings",
+      href: officialTeamResultsUrl(team),
+    },
+  ];
+
+  const practiceRows = publishedPracticeRows;
 
   return (
     <section className="premium-depth overflow-hidden border border-navy/12 bg-competition text-white shadow-[0_30px_70px_-52px_rgba(7,16,43,0.9)]">
@@ -212,8 +235,8 @@ export function TeamMicrositeHero({
 
             <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.15em] text-white/35">
               {lang === "fr"
-                ? "Photo AHMV réelle · aucune heure de partie n’est inventée. Les parties renvoient vers la source officielle tant que le flux détaillé n’est pas branché."
-                : "Real AHMV photo · no game time is fabricated. Games link to the official source until the detailed feed is connected."}
+                ? "Photo AHMV réelle · aucune heure de partie n’est inventée. Les informations sportives exactes restent reliées aux sources officielles."
+                : "Real AHMV photo · no game time is fabricated. Exact sport information remains linked to official sources."}
             </p>
           </div>
         </div>
@@ -221,9 +244,11 @@ export function TeamMicrositeHero({
         <div className="flex flex-col justify-center gap-3 border-t border-white/12 p-4 sm:p-5 lg:border-l lg:border-t-0 lg:p-6">
           <div className="mb-1 flex items-center justify-between gap-3">
             <div>
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "À venir" : "Coming up"}</p>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Parties & pratiques" : "Games & practices"}</p>
               <p className="mt-1 text-xs leading-relaxed text-white/48">
-                {lang === "fr" ? "Deux calendriers rapides, pensés pour le pouce." : "Two quick calendars designed for one-thumb use."}
+                {lang === "fr"
+                  ? "Les données publiées d’abord; la source officielle lorsque le détail exact n’est pas disponible ici."
+                  : "Published data first; the official source whenever exact detail is not available here."}
               </p>
             </div>
             <span className="border border-sport/30 bg-sport/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
@@ -233,8 +258,8 @@ export function TeamMicrositeHero({
 
           <MiniCalendar
             title={lang === "fr" ? "Parties" : "Games"}
-            eyebrow={lang === "fr" ? "Prochaines games" : "Upcoming games"}
-            rows={DEMO_GAMES}
+            eyebrow={lang === "fr" ? "Source officielle" : "Official source"}
+            rows={gameRows}
             team={team}
             kind="game"
             lang={lang}
@@ -242,7 +267,7 @@ export function TeamMicrositeHero({
 
           <MiniCalendar
             title={lang === "fr" ? "Pratiques" : "Practices"}
-            eyebrow={lang === "fr" ? "Prochaines glaces" : "Upcoming ice"}
+            eyebrow={lang === "fr" ? "Grille AHMV publiée" : "Published AHMV grid"}
             rows={practiceRows}
             team={team}
             kind="practice"
