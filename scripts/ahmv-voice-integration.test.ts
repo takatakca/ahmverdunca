@@ -75,9 +75,9 @@ test("Voice integration smoke assets are fail-closed and split from the realtime
   assert.match(bridgeSmoke, /AHMV_VOICE_BRIDGE_TOKEN/);
   assert.doesNotMatch(bridgeSmoke, /console\.log\(.*token/s);
 
-  assert.match(runbook, /Production code authority: \`main\`/);
-  assert.match(runbook, /Website Voice integration: merged into \`main\`/);
-  assert.match(runbook, /Standalone realtime Voice service: merged into \`main\`/);
+  assert.match(runbook, /Production code authority: `main`/);
+  assert.match(runbook, /Website Voice integration: merged into `main`/);
+  assert.match(runbook, /Standalone realtime Voice service: merged into `main`/);
   assert.match(runbook, /docs\/CURSOR_TWILIO_HANDOFF\.md/);
   assert.match(runbook, /services\/ahmv-voice-ai\/deploy\/nginx-voice\.ahmverdun\.ca\.conf/);
   assert.match(runbook, /services\/ahmv-voice-ai\/deploy\/ahmv-voice\.service/);
