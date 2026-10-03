@@ -8,7 +8,7 @@ import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl } from
 import { useI18n } from "@/lib/i18n";
 import { SITE } from "@/lib/site";
 
-export const Route = createFileRoute("/equipe-event/$id" as any)({
+export const Route = createFileRoute("/equipe-event/$id" as never)({
   head: () => ({
     links: canonicalLink("/equipes"),
     meta: [
