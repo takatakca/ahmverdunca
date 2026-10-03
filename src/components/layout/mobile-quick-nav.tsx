@@ -2,17 +2,20 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { CalendarDays, Home, Newspaper, Search, Users } from "lucide-react";
 import { TEAMS } from "@/data/teams";
 import { usePreferredTeam } from "@/lib/team-preference";
+import { publicTeamHubUrl } from "@/data/team-directory";
 import { useI18n } from "@/lib/i18n";
 
 export function MobileQuickNav() {
   const { lang } = useI18n();
-  const { preferredTeam } = usePreferredTeam();
+  const { preferredTeam, selectedTeams } = usePreferredTeam();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const hasPreferredTeam = preferredTeam && TEAMS.some((team) => team.slug === preferredTeam);
+  const exactTeam = selectedTeams[0];
+  const teamTarget = exactTeam ? publicTeamHubUrl(exactTeam) : hasPreferredTeam ? `/equipes/${preferredTeam}` : "/equipes";
 
   const links = [
     { id: "home", label: lang === "fr" ? "Accueil" : "Home", to: "/" as const, icon: Home },
-    { id: "team", label: hasPreferredTeam ? (lang === "fr" ? "Mon équipe" : "My team") : (lang === "fr" ? "Équipes" : "Teams"), to: hasPreferredTeam ? `/equipes/${preferredTeam}` : "/equipes", icon: Users },
+    { id: "team", label: exactTeam || hasPreferredTeam ? (lang === "fr" ? "Mon équipe" : "My team") : (lang === "fr" ? "Équipes" : "Teams"), to: teamTarget, icon: Users },
     { id: "schedule", label: lang === "fr" ? "Horaire" : "Schedule", to: "/horaires" as const, icon: CalendarDays, primary: true },
     { id: "news", label: lang === "fr" ? "Nouvelles" : "News", to: "/nouvelles" as const, icon: Newspaper },
     { id: "search", label: lang === "fr" ? "Recherche" : "Search", to: "/recherche" as const, icon: Search },
