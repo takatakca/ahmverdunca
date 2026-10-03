@@ -26,11 +26,20 @@ export const Route = createFileRoute("/galerie/")({
 function GalleryPage() {
   const { l, lang } = useI18n();
   const [season, setSeason] = useState("all");
+  const [eventType, setEventType] = useState("all");
   const seasons = useMemo(
     () => Array.from(new Set(ALBUMS.map((album) => album.season))).sort().reverse(),
     [],
   );
-  const albums = season === "all" ? ALBUMS : ALBUMS.filter((album) => album.season === season);
+  const eventTypes = useMemo(
+    () => Array.from(new Map(ALBUMS.map((album) => [album.eventType.fr, album.eventType])).values()),
+    [],
+  );
+  const albums = ALBUMS.filter((album) => {
+    const seasonMatch = season === "all" || album.season === season;
+    const typeMatch = eventType === "all" || album.eventType.fr === eventType;
+    return seasonMatch && typeMatch;
+  });
 
   return (
     <>
@@ -95,39 +104,69 @@ function GalleryPage() {
                   {albums.length} {lang === "fr" ? "albums" : "albums"}
                 </p>
               </div>
-              <div className="scrollbar-none flex gap-1 overflow-x-auto pb-1">
-                <button
-                  type="button"
-                  aria-pressed={season === "all"}
-                  onClick={() => setSeason("all")}
-                  className={cn(
-                    "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
-                    season === "all" ? "border-navy bg-navy text-navy-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
-                  )}
-                >
-                  {lang === "fr" ? "Toutes" : "All"}
-                </button>
-                {seasons.map((value) => (
+              <div className="space-y-2 sm:max-w-[58%]">
+                <div className="scrollbar-none flex gap-1 overflow-x-auto pb-1" aria-label={lang === "fr" ? "Filtrer par saison" : "Filter by season"}>
                   <button
-                    key={value}
                     type="button"
-                    aria-pressed={season === value}
-                    onClick={() => setSeason(value)}
+                    aria-pressed={season === "all"}
+                    onClick={() => setSeason("all")}
                     className={cn(
-                      "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
-                      season === value ? "border-navy bg-navy text-navy-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                      "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
+                      season === "all" ? "border-navy bg-navy text-navy-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
                     )}
                   >
-                    {value}
+                    {lang === "fr" ? "Toutes saisons" : "All seasons"}
                   </button>
-                ))}
+                  {seasons.map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={season === value}
+                      onClick={() => setSeason(value)}
+                      className={cn(
+                        "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
+                        season === value ? "border-navy bg-navy text-navy-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                      )}
+                    >
+                      {value}
+                    </button>
+                  ))}
+                </div>
+                <div className="scrollbar-none flex gap-1 overflow-x-auto pb-1" aria-label={lang === "fr" ? "Filtrer par type d’événement" : "Filter by event type"}>
+                  <button
+                    type="button"
+                    aria-pressed={eventType === "all"}
+                    onClick={() => setEventType("all")}
+                    className={cn(
+                      "premium-control shrink-0 border px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em]",
+                      eventType === "all" ? "border-sport bg-sport text-sport-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                    )}
+                  >
+                    {lang === "fr" ? "Tous types" : "All types"}
+                  </button>
+                  {eventTypes.map((value) => (
+                    <button
+                      key={value.fr}
+                      type="button"
+                      aria-pressed={eventType === value.fr}
+                      onClick={() => setEventType(value.fr)}
+                      className={cn(
+                        "premium-control shrink-0 border px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em]",
+                        eventType === value.fr ? "border-sport bg-sport text-sport-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                      )}
+                    >
+                      {l(value)}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <div className="mt-7 grid auto-rows-[220px] gap-2 sm:auto-rows-[240px] sm:grid-cols-2 lg:grid-cols-4">
-          {albums.map((album, index) => (
+        {albums.length > 0 ? (
+          <div className="mt-7 grid auto-rows-[220px] gap-2 sm:auto-rows-[240px] sm:grid-cols-2 lg:grid-cols-4">
+            {albums.map((album, index) => (
             <Link
               key={album.slug}
               to="/galerie/$slug"
@@ -165,8 +204,26 @@ function GalleryPage() {
                 <ArrowRight className="size-4 text-sport-foreground transition-transform group-hover:translate-x-1" />
               </div>
             </Link>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-7 border border-navy/12 bg-ice p-8 text-center">
+            <Images className="mx-auto size-6 text-sport" aria-hidden />
+            <p className="mt-3 font-display text-2xl font-extrabold uppercase text-navy">
+              {lang === "fr" ? "Aucune archive pour ces filtres" : "No archives for these filters"}
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                setSeason("all");
+                setEventType("all");
+              }}
+              className="mt-4 min-h-11 border border-navy/15 bg-background px-4 text-[9px] font-bold uppercase tracking-[0.14em] text-navy hover:border-sport"
+            >
+              {lang === "fr" ? "Réinitialiser les filtres" : "Reset filters"}
+            </button>
+          </div>
+        )}
 
         <div className="mt-8 flex items-center gap-3 border-t border-navy/12 pt-5 text-xs text-muted-foreground">
           <CalendarDays className="size-4 text-sport" />
