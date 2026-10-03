@@ -14,6 +14,7 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { TeamPortfolio } from "@/components/team-portfolio";
+import { TeamGameCenter } from "@/components/team-game-center";
 import { TeamLiveFeed } from "@/components/team-live-feed";
 import { TeamParentPremium } from "@/components/team-parent-premium";
 import { TeamCommunityBoard } from "@/components/team-community-board";
@@ -162,13 +163,15 @@ function TeamPage() {
         }
       />
 
-      <div className="container-site space-y-14 py-8 md:py-12">
+      <div className="container-site space-y-10 py-6 md:space-y-12 md:py-10">
+        {exactTeam && <TeamGameCenter team={exactTeam} lang={lang} />}
+
         {exactTeam ? (
           <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.35fr_0.65fr]">
-            <div className="relative min-h-[320px] overflow-hidden sm:min-h-[410px]">
+            <div className="relative min-h-[250px] overflow-hidden sm:min-h-[330px]">
               <img
-                src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
-                alt={lang === "fr" ? "Photo d’ambiance issue des archives publiques AHM Verdun" : "Atmosphere photo from AHM Verdun public archives"}
+                src={slug === "m11" ? OFFICIAL_MEDIA.practiceSkaters.url : OFFICIAL_MEDIA.practiceCoach.url}
+                alt={lang === "fr" ? "Photo réelle AHM Verdun — jeunes et entraîneur sur la glace" : "Real AHM Verdun photo — players and coach on the ice"}
                 loading="eager"
                 decoding="async"
                 className="absolute inset-0 size-full object-cover"
@@ -188,8 +191,8 @@ function TeamPage() {
                 </div>
                 <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
                   {lang === "fr"
-                    ? "Photo d’archive AHMV utilisée comme ambiance; elle n’est pas présentée comme une photo spécifique de cette équipe."
-                    : "AHMV archive photo used for atmosphere; it is not presented as a photo of this specific team."}
+                    ? "Photo réelle AHMV utilisée comme ambiance; elle n’est pas présentée comme une photo spécifique de cette équipe."
+                    : "Real AHMV photo used for atmosphere; it is not presented as a photo of this specific team."}
                 </p>
               </div>
             </div>
@@ -245,10 +248,10 @@ function TeamPage() {
           </section>
         ) : (
           <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
-            <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
+            <div className="relative min-h-[240px] overflow-hidden sm:min-h-[320px]">
               <img
-                src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
-                alt={lang === "fr" ? "Archive photographique publique AHM Verdun" : "AHM Verdun public photo archive"}
+                src={slug === "m11" ? OFFICIAL_MEDIA.practiceSkaters.url : OFFICIAL_MEDIA.practiceCoach.url}
+                alt={lang === "fr" ? "Photo réelle AHM Verdun — entraînement sur glace" : "Real AHM Verdun photo — on-ice practice"}
                 loading="eager"
                 decoding="async"
                 className="absolute inset-0 size-full object-cover"
