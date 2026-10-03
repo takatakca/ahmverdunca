@@ -10,7 +10,43 @@ if [[ ! "$AHMV_APP_ROOT" =~ ^/[A-Za-z0-9._/-]+$ ]]; then
 fi
 
 sftp_batch() {
-  sftp -q -b - ahmv-production 1>&2
+  : "${RUNNER_TEMP:?RUNNER_TEMP is required}"
+  local batch
+  batch="$(mktemp "${RUNNER_TEMP}/ahmv-sftp-batch.XXXXXX")"
+  cat > "$batch"
+
+  local max_attempts="${AHMV_SFTP_MAX_ATTEMPTS:-5}"
+  local attempt=1
+  local last_status=255
+
+  while [ "$attempt" -le "$max_attempts" ]; do
+    echo "SFTP batch attempt ${attempt}/${max_attempts}..." >&2
+
+    set +e
+    sftp -q -b "$batch" ahmv-production 1>&2
+    last_status=$?
+    set -e
+
+    if [ "$last_status" -eq 0 ]; then
+      rm -f "$batch"
+      return 0
+    fi
+
+    echo "SFTP batch attempt ${attempt} failed with exit code ${last_status}." >&2
+
+    if [ "$attempt" -lt "$max_attempts" ]; then
+      local delay=$((attempt * 10))
+      if [ "$delay" -gt 45 ]; then delay=45; fi
+      echo "Transient SFTP failure detected. Waiting ${delay} seconds..." >&2
+      sleep "$delay"
+    fi
+
+    attempt=$((attempt + 1))
+  done
+
+  rm -f "$batch"
+  echo "SFTP batch failed after ${max_attempts} attempts." >&2
+  return "$last_status"
 }
 
 require_release() {
