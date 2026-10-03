@@ -67,7 +67,22 @@ test('access policy preserves base next-event access after trial while gating we
     paidAccessPolicy: 'premium_or_trial',
   });
   assert.equal(blocked.allowed, false);
-  assert.equal(blocked.reason, 'membership_required');
+  assert.equal(blocked.reason, 'blocked');
+
+  const blockedBeta = accessFromBootstrap({
+    contact: { accessTier: 'blocked' },
+    entitlement: {
+      trialActive: false,
+      premium: false,
+      nextEvent: false,
+      weeklySchedule: false,
+    },
+  }, {
+    accessMode: 'free_beta',
+    paidAccessPolicy: 'premium_or_trial',
+  });
+  assert.equal(blockedBeta.allowed, false);
+  assert.equal(blockedBeta.reason, 'blocked');
 });
 
 test('caller and language normalization cover FR EN ES and private callers', () => {
