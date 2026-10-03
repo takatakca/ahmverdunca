@@ -103,7 +103,7 @@ function Home() {
               AHM Verdun
             </p>
 
-            <h1 className="display-mega rise mt-2 max-w-[9ch] text-navy-foreground [animation-delay:140ms]">
+            <h1 className="rise mt-2 max-w-[11ch] font-display text-[clamp(3.2rem,10vw,8rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.045em] text-navy-foreground [animation-delay:140ms]">
               {t("home.heroTitle")}
             </h1>
 
