@@ -9,10 +9,10 @@ export type DemoAccess = "guest" | "trial" | "expired" | "premium";
 
 export interface PhoneDemoInput {
   channel: "sms" | "voice";
-  lang?: PhoneLanguage;
+  lang?: PhoneLanguage | undefined;
   message: string;
-  access?: DemoAccess;
-  wantsSms?: boolean;
+  access?: DemoAccess | undefined;
+  wantsSms?: boolean | undefined;
 }
 
 export interface PhoneDemoOutput {
@@ -21,8 +21,8 @@ export interface PhoneDemoOutput {
   language: PhoneLanguage;
   access: DemoAccess;
   recognizedIntent: string;
-  spokenText?: string;
-  smsText?: string;
+  spokenText?: string | undefined;
+  smsText?: string | undefined;
   hangup: boolean;
   disclaimer: string;
 }
