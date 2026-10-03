@@ -12,6 +12,17 @@ on:
       - ".cursor/**"
       - "docs/VOICE_*"
       - "docs/CURSOR_TWILIO_HANDOFF.md"
+  push:
+    branches: [main]
+    paths:
+      - "services/ahmv-voice-ai/**"
+      - "src/lib/ahmv-voice-bridge.server.ts"
+      - "src/features/ahmv-phone/**"
+      - "supabase/migrations/*voice*"
+      - ".github/workflows/*voice*"
+      - ".cursor/**"
+      - "docs/VOICE_*"
+      - "docs/CURSOR_TWILIO_HANDOFF.md"
   schedule:
     - cron: "17 4 * * *"
   workflow_dispatch:
