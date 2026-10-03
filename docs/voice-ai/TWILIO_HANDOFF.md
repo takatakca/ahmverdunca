@@ -38,17 +38,17 @@ The application already contains:
 ```text
 services/ahmv-voice-ai/
   src/server.js                         standalone Fastify + WebSocket runtime
-  runtime/src/agent.js                 OpenAI tool-calling agent
-  runtime/src/access-policy.js         base vs member capability enforcement
-  runtime/src/ahm-bridge.js            private calls to ahmverdun.ca
-  runtime/src/ahm-data.js              schedule/arena adapter
-  runtime/src/twiml.js                 ConversationRelay TwiML
-  runtime/src/twilio-security.js       HTTP + WebSocket signature validation
-  runtime/src/store.js                 Voice session persistence
-  runtime/src/sms.js                   post-call SMS
-  runtime/src/sms-body.js              FR/EN/ES recap content
-  runtime/src/turn-controller.js       interruption / cancellation handling
-  test/runtime.test.js                 standalone runtime tests
+  src/agent.js                 OpenAI tool-calling agent
+  src/access-policy.js         base vs member capability enforcement
+  src/ahm-bridge.js            private calls to ahmverdun.ca
+  src/ahm-data.js              schedule/arena adapter
+  src/twiml.js                 ConversationRelay TwiML
+  src/twilio-security.js       HTTP + WebSocket signature validation
+  src/store.js                 Voice session persistence
+  src/sms.js                   post-call SMS
+  src/sms-body.js              FR/EN/ES recap content
+  src/turn-controller.js       interruption / cancellation handling
+  test/access-policy.test.js                 standalone runtime tests
   .env.example                         Voice host variable contract
 
 src/features/ahmv-phone/
@@ -68,7 +68,7 @@ src/lib/
   ahmv-voice-bridge.server.ts          private website API for Voice runtime
   ahmv-twilio.server.ts                existing deterministic Twilio SMS/IVR
 
-deploy/voice/
+services/ahmv-voice-ai/deploy/
   ahmv-voice.service                   systemd unit
   nginx-voice.ahmverdun.ca.conf        TLS/WebSocket reverse proxy
 
@@ -147,7 +147,7 @@ Critical production classes:
 - `TWILIO_VALIDATE_SIGNATURES=true`
 - `TWILIO_TTS_VOICE=<approved/listening-tested ElevenLabs voice id>`
 - `OPENAI_API_KEY`
-- `OPENAI_MODEL=gpt-6-luna`
+- `OPENAI_MODEL=gpt-5.6-terra`
 - `AHM_VOICE_BRIDGE_URL=https://ahmverdun.ca/api/ahmv/voice/`
 - `AHM_VOICE_BRIDGE_TOKEN`
 - `SUPABASE_URL`
