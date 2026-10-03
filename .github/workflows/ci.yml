@@ -50,6 +50,9 @@ jobs:
       - name: Validate monetization configuration
         run: bun run check:monetization
 
+      - name: Validate Parent Premium contract
+        run: bun run check:parent-premium
+
       - name: Validate content data
         run: bun run check:data
 
