@@ -191,10 +191,10 @@ export async function queueMarketingCampaign(
   for (const contact of contacts) {
     const body =
       contact.language === "en"
-        ? marketingMessageBody(input.bodyEn, legalInfoUrl)
+        ? marketingMessageBody(input.bodyEn, legalInfoUrl, "en")
         : contact.language === "es"
-          ? marketingMessageBody(input.bodyEs, legalInfoUrl)
-          : marketingMessageBody(input.bodyFr, legalInfoUrl);
+          ? marketingMessageBody(input.bodyEs, legalInfoUrl, "es")
+          : marketingMessageBody(input.bodyFr, legalInfoUrl, "fr");
 
     const result = await queueMessageJob({
       contactId: contact.id,
