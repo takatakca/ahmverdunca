@@ -1,4 +1,5 @@
 import { canonicalLink } from "@/lib/seo";
+import { AhmvCommunityFeed } from "@/components/home/ahmv-community-feed";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
@@ -190,6 +191,7 @@ function NewsPage() {
           </div>
         )}
       </div>
+      <AhmvCommunityFeed />
     </>
   );
 }
