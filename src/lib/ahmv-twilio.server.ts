@@ -9,6 +9,7 @@ import {
 import {
   normalizePhoneE164,
   safeRecordPhoneInteraction,
+  safeSavePrimaryTeamPreference,
   safeTouchPhoneContact,
 } from "../features/ahmv-phone/contacts/store.server.ts";
 import {
@@ -16,6 +17,13 @@ import {
   updateSmsDeliveryStatus,
 } from "../features/ahmv-phone/messaging/send.server.ts";
 import { nextEventService } from "../features/ahmv-phone/schedules/service.ts";
+import { scheduleRangeAnswer } from "../features/ahmv-phone/schedules/range.ts";
+import { parsePhoneCommand } from "../features/ahmv-phone/conversation/commands.ts";
+import { canUse } from "../features/ahmv-phone/entitlements/access.ts";
+import {
+  memberActivationUrl,
+  resolvePhoneEntitlement,
+} from "../features/ahmv-phone/entitlements/service.server.ts";
 import {
   compactTeamChoices,
   resolvePublicTeam,
@@ -194,8 +202,8 @@ export async function handleAhmvTwilio(
       if (!query || /^(HELP|AIDE|FR|EN)$/i.test(query)) {
         response.message(
           lang === "fr"
-            ? "AHMV: envoyez votre équipe ou groupe. Ex.: M11 groupe 5. EN pour anglais. Service d'information par GROUPE TAKATAK. https://ahmverdun.ca/horaires"
-            : "AHMV: text your team or group. Example: M11 group 5. Information service by GROUPE TAKATAK. https://ahmverdun.ca/horaires",
+            ? "AHMV: envoyez votre équipe pour le prochain événement. Essai 30 jours: AUJOURD'HUI équipe, DEMAIN équipe, SEMAINE équipe, SAUVE équipe. EN pour anglais. GROUPE TAKATAK."
+            : "AHMV: text your team for the next event. 30-day trial: TODAY team, TOMORROW team, WEEK team, SAVE team. GROUPE TAKATAK.",
         );
         await safeRecordPhoneInteraction({
           contactId: contact?.id,
@@ -208,7 +216,8 @@ export async function handleAhmvTwilio(
         return xml(response.toString());
       }
 
-      const resolution = resolvePublicTeam(query);
+      const command = parsePhoneCommand(query);
+      const resolution = resolvePublicTeam(command.teamQuery);
       if (resolution.kind === "ambiguous") {
         const choices = compactTeamChoices(resolution.teams, 4).join("; ");
         response.message(
@@ -222,13 +231,105 @@ export async function handleAhmvTwilio(
           providerReferenceHash: ref,
           intent: "team-lookup",
           outcome: "ambiguous",
-          teamCode: query.slice(0, 80),
+          teamCode: command.teamQuery.slice(0, 80),
         });
         log("team-ambiguous");
         return xml(response.toString());
       }
 
-      const answer = nextEventService(query, lang, aliases(settings));
+      if (command.kind === "save") {
+        const entitlement = await resolvePhoneEntitlement(contact, "saved_teams", settings);
+        if (!contact || !canUse(entitlement, "saved_teams")) {
+          response.message(
+            lang === "fr"
+              ? `AHMV: sauvegarder une équipe est une fonction membre après la période découverte. Activez ici: ${memberActivationUrl(settings)}`
+              : `AHMV: saving a team is a member feature after the introductory period. Activate here: ${memberActivationUrl(settings)}`,
+          );
+          await safeRecordPhoneInteraction({
+            contactId: contact?.id,
+            channel: "sms",
+            providerReferenceHash: ref,
+            intent: "save-team",
+            outcome: "membership-required",
+            teamCode: command.teamQuery,
+          });
+          return xml(response.toString());
+        }
+
+        if (resolution.kind !== "exact") {
+          response.message(
+            lang === "fr"
+              ? "AHMV: équipe non reconnue de façon certaine. Envoyez le code/catégorie et niveau exacts."
+              : "AHMV: team could not be identified with certainty. Send the exact category and level.",
+          );
+          return xml(response.toString());
+        }
+
+        const saved = await safeSavePrimaryTeamPreference(
+          contact.id,
+          resolution.team.legacyScheduleTeamId,
+        );
+        response.message(
+          saved
+            ? lang === "fr"
+              ? `AHMV: équipe principale sauvegardée — ${resolution.team.categorySlug.toUpperCase()} ${resolution.team.level} ${resolution.team.name}.`
+              : `AHMV: primary team saved — ${resolution.team.categorySlug.toUpperCase()} ${resolution.team.level} ${resolution.team.name}.`
+            : lang === "fr"
+              ? "AHMV: impossible de sauvegarder l'équipe pour le moment."
+              : "AHMV: unable to save the team right now.",
+        );
+        await safeRecordPhoneInteraction({
+          contactId: contact.id,
+          channel: "sms",
+          providerReferenceHash: ref,
+          intent: "save-team",
+          outcome: saved ? "saved" : "failed",
+          teamCode: resolution.team.legacyScheduleTeamId,
+        });
+        return xml(response.toString());
+      }
+
+      if (command.kind === "today" || command.kind === "tomorrow" || command.kind === "week") {
+        const entitlement = await resolvePhoneEntitlement(contact, "weekly_schedule", settings);
+        if (!contact || !canUse(entitlement, "weekly_schedule")) {
+          response.message(
+            lang === "fr"
+              ? `AHMV: aujourd'hui/demain/semaine est une fonction membre après la période découverte. Le prochain événement reste disponible. Activez: ${memberActivationUrl(settings)}`
+              : `AHMV: today/tomorrow/week is a member feature after the introductory period. The next event remains available. Activate: ${memberActivationUrl(settings)}`,
+          );
+          await safeRecordPhoneInteraction({
+            contactId: contact?.id,
+            channel: "sms",
+            providerReferenceHash: ref,
+            intent: command.kind,
+            outcome: "membership-required",
+            teamCode: command.teamQuery,
+          });
+          return xml(response.toString());
+        }
+
+        const rangeAnswer = scheduleRangeAnswer(
+          command.teamQuery,
+          command.kind,
+          lang,
+          officialPhoneSchedule,
+          new Date(),
+          aliases(settings),
+        );
+        response.message(rangeAnswer.text.slice(0, 1500));
+        await safeRecordPhoneInteraction({
+          contactId: contact.id,
+          channel: "sms",
+          providerReferenceHash: ref,
+          intent: command.kind,
+          outcome: rangeAnswer.outcome,
+          teamCode: rangeAnswer.group ?? command.teamQuery,
+        });
+        log(`range-${rangeAnswer.outcome}`);
+        return xml(response.toString());
+      }
+
+      const answer = nextEventService(command.teamQuery, lang, aliases(settings));
       const alert = urgent(settings, lang);
       response.message(`${alert ? `${alert.slice(0, 240)}\n` : ""}${answer.smsText}`);
       await safeRecordPhoneInteraction({
@@ -237,7 +338,7 @@ export async function handleAhmvTwilio(
         providerReferenceHash: ref,
         intent: "next-event",
         outcome: answer.outcome,
-        teamCode: answer.group ?? query.slice(0, 80),
+        teamCode: answer.group ?? command.teamQuery.slice(0, 80),
         arenaSlug: answer.directions?.arenaSlug,
       });
       log(answer.outcome);
