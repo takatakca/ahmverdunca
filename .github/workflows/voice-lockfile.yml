@@ -3,7 +3,7 @@ name: AHMV Voice dependency lock
 on:
   push:
     branches:
-      - voice-ai-preprod-v6
+      - voice-ai-preprod-v8
     paths:
       - services/ahmv-voice-ai/**
       - .github/workflows/voice-lockfile.yml
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout Voice branch
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: voice-ai-preprod-v6
+          ref: voice-ai-preprod-v8
           fetch-depth: 0
 
       - name: Setup Node 22
@@ -52,7 +52,7 @@ jobs:
         working-directory: services/ahmv-voice-ai
         run: |
           set -euo pipefail
-          npm run check
+          npm run verify
 
       - name: Audit production dependency vulnerabilities
         working-directory: services/ahmv-voice-ai
@@ -89,4 +89,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "voice-ai: generate verified npm lockfile"
-          git push origin HEAD:voice-ai-preprod-v6
+          git push origin HEAD:voice-ai-preprod-v8
