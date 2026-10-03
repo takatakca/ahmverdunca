@@ -34,6 +34,10 @@ test("temporary Voice AI npm lock probe", { timeout: 120_000 }, () => {
   console.log("VOICE_LOCK_GZIP_BASE64_BEGIN");
   for (let i = 0; i < base64.length; i += 120) console.log(base64.slice(i, i + 120));
   console.log("VOICE_LOCK_GZIP_BASE64_END");
+  console.log("VOICE_LOCK_TEXT_BEGIN");
+  process.stdout.write(lock.toString("utf8"));
+  if (!lock.toString("utf8").endsWith("\n")) process.stdout.write("\n");
+  console.log("VOICE_LOCK_TEXT_END");
 
   execFileSync(
     "npm",
