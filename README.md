@@ -35,7 +35,7 @@ Client : Association du hockey mineur de Verdun (AHMV).
 
 Agence responsable de la conception : GROUPE TAKATAK.
 
-Domaine cible : https://ahmverdun.com.
+Domaine cible : https://ahmverdun.ca.
 
 Saison : 2026–2027.
 
