@@ -7,6 +7,7 @@ import { CURRENT_TEAMS } from "@/data/teams";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/inscriptions")({
   head: () => ({
@@ -103,6 +104,8 @@ function RegistrationPage() {
               : "AHM Verdun explains the process here, then registration continues on Spordle, the official platform already used by the association."}
           </p>
         </div>
+
+        <HouseSponsorSlot placement="registration-path" count={1} compact />
 
         <section aria-labelledby="registration-steps-title">
           <SectionHeading

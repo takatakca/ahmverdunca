@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { SITE } from "@/lib/site";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 
 export const Route = createFileRoute("/contact")({
@@ -218,6 +219,8 @@ function ContactPage() {
           )}
           </section>
         )}
+        <HouseSponsorSlot placement="contact-path" count={1} compact />
+
         <section>
           <SectionHeading
             eyebrow={lang === "fr" ? "Coordonnées" : "Contact details"}
