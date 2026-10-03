@@ -43,7 +43,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   return (
     <article
       className={cn(
-        "grid gap-3 rounded-lg border border-border bg-background p-4 sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-center",
+        "interactive-surface grid gap-3 border border-navy/12 bg-background p-4 sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-center",
         cancelled && "border-status-cancelled/40 bg-status-cancelled-soft/40",
       )}
     >
@@ -63,7 +63,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
         <div className="flex flex-wrap items-center gap-2">
           <h4 className="font-display text-lg font-bold uppercase leading-tight">{item.group}</h4>
           {cancelled && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-status-cancelled px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+            <span className="inline-flex items-center gap-1  bg-status-cancelled px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
               <XCircle className="size-3" aria-hidden />
               {lang === "fr" ? "Annulée" : "Cancelled"}
             </span>
@@ -151,21 +151,21 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
   return (
     <section
       aria-labelledby="official-week-heading"
-      className="overflow-hidden rounded-xl border border-sport/25 bg-ice shadow-card"
+      className="broadcast-cut overflow-hidden border border-sport/30 bg-ice shadow-[0_24px_60px_-48px_rgba(7,16,43,0.85)]"
     >
-      <div className="grid gap-5 border-b border-border bg-background p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-6">
+      <div className="scoreboard-panel grid gap-5 border-b border-navy-foreground/10 p-5 text-navy-foreground md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-7">
         <div>
-          <p className="eyebrow text-sport">
+          <p className="eyebrow text-sport-foreground">
             {weekExpired
               ? (lang === "fr" ? "Dernier horaire intégré — archive" : "Last integrated schedule — archive")
               : weekUpcoming
                 ? (lang === "fr" ? "Horaire officiel publié — à venir" : "Published official schedule — upcoming")
                 : (lang === "fr" ? "Horaire officiel publié" : "Published official schedule")}
           </p>
-          <h2 id="official-week-heading" className="heading-section mt-2">
+          <h2 id="official-week-heading" className="heading-section mt-2 text-navy-foreground">
             {rangeLabel}
           </h2>
-          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          <p className="mt-2 max-w-2xl text-sm text-navy-foreground/62">
             {lang === "fr"
               ? `Transcription fidèle du PDF hebdomadaire AHMV publié le ${publishedLabel}. Aucune catégorie n'a été déduite ou renommée.`
               : `Faithful transcription of the AHMV weekly PDF published ${publishedLabel}. No category was inferred or renamed.`}
@@ -239,13 +239,13 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                   ? "M11, Louves, Chacals, Denis Savard…"
                   : "U11, Louves, Chacals, Denis Savard…"
               }
-              className="h-12 w-full rounded-lg border border-input bg-background pl-11 pr-11 text-base"
+              className="h-12 w-full border border-navy/15 bg-background pl-11 pr-11 text-base outline-none transition-colors focus:border-sport"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-ice hover:text-foreground"
+                className="premium-control absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center text-muted-foreground hover:bg-ice hover:text-foreground"
                 aria-label={lang === "fr" ? "Effacer la recherche" : "Clear search"}
               >
                 <XCircle className="size-4" aria-hidden />
@@ -288,7 +288,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                     {formatDate(date, lang, { weekday: "long", day: "numeric", month: "long" })}
                   </h3>
                   {date === today && (
-                    <span className="rounded-full bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-sport-foreground">
+                    <span className=" bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-sport-foreground">
                       {lang === "fr" ? "Aujourd'hui" : "Today"}
                     </span>
                   )}
