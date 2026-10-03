@@ -38,6 +38,9 @@ jobs:
       - name: Type check
         run: bunx tsc --noEmit
 
+      - name: AHMV phone and SMS security tests
+        run: bun test scripts/ahmv-phone.test.ts
+
       - name: Validate content data
         run: bun run check:data
 
