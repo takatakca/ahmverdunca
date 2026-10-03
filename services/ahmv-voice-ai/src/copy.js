@@ -43,6 +43,12 @@ export const ACCESS_DENIED_BETA_QUOTA = {
   es: 'Se alcanzó el límite de uso gratuito de este número durante las últimas 24 horas. Visite ahmverdun.ca para horarios e información.'
 };
 
+export const ACCESS_DENIED_BLOCKED = {
+  fr: 'Ce service téléphonique n’est pas disponible pour ce numéro. Consultez ahmverdun.ca pour les informations publiques.',
+  en: 'This phone service is not available for this number. Please use ahmverdun.ca for public information.',
+  es: 'Este servicio telefónico no está disponible para este número. Consulte ahmverdun.ca para información pública.'
+};
+
 export const ACCESS_DENIED_BUSY = {
   fr: 'Le service téléphonique reçoit déjà le maximum d’appels permis. Réessayez dans quelques instants ou consultez ahmverdun.ca.',
   en: 'The phone service is already handling the maximum number of calls. Please try again shortly or visit ahmverdun.ca.',
