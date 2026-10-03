@@ -1,0 +1,161 @@
+name: Deploy AHMV Voice service preproduction
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: "Exact green voice-ai-service-v1 commit SHA"
+        required: true
+        type: string
+      confirmation:
+        description: "Type AHMV-VOICE-SERVICE-PREPROD"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ahmverdun-voice-service-preproduction
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: preproduction
+    timeout-minutes: 25
+
+    env:
+      VOICE_HOST: ${{ secrets.AHMV_VOICE_HOST }}
+      VOICE_PORT: ${{ secrets.AHMV_VOICE_SSH_PORT }}
+      VOICE_USER: ${{ secrets.AHMV_VOICE_SSH_USER }}
+      VOICE_APP_ROOT: ${{ secrets.AHMV_VOICE_APP_ROOT }}
+      VOICE_PREVIEW_URL: ${{ secrets.AHMV_VOICE_PREPRODUCTION_URL }}
+      AHM_PUBLIC_ORIGIN: ${{ secrets.AHMV_PREPRODUCTION_URL }}
+      AHM_VOICE_BRIDGE_TOKEN: ${{ secrets.AHMV_VOICE_BRIDGE_TOKEN }}
+
+    steps:
+      - name: Validate requested Voice service release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_SHA: ${{ inputs.release_sha }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          set -euo pipefail
+          test "$CONFIRMATION" = "AHMV-VOICE-SERVICE-PREPROD" || {
+            echo "Exact confirmation AHMV-VOICE-SERVICE-PREPROD is required."
+            exit 1
+          }
+          [[ "$REQUESTED_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "release_sha must be a full lowercase 40-character SHA"
+            exit 1
+          }
+          SERVICE_HEAD="$(gh api repos/${GITHUB_REPOSITORY}/commits/voice-ai-service-v1 --jq .sha)"
+          test "$REQUESTED_SHA" = "$SERVICE_HEAD" || {
+            echo "Refusing stale/non-service head: requested=$REQUESTED_SHA service_head=$SERVICE_HEAD"
+            exit 1
+          }
+
+          VOICE_CI_COUNT="$(
+            gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/voice-service-ci.yml/runs?head_sha=$REQUESTED_SHA&status=success&per_page=10"               --jq '.workflow_runs | length'
+          )"
+          test "$VOICE_CI_COUNT" -gt 0 || {
+            echo "No successful Voice service CI exists for $REQUESTED_SHA"
+            exit 1
+          }
+
+          APP_CI_COUNT="$(
+            gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs?head_sha=$REQUESTED_SHA&status=success&per_page=10"               --jq '.workflow_runs | length'
+          )"
+          test "$APP_CI_COUNT" -gt 0 || {
+            echo "No successful AHM Verdun CI exists for $REQUESTED_SHA"
+            exit 1
+          }
+
+      - name: Checkout exact Voice service release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.release_sha }}
+
+      - name: Verify service source and locked dependency graph
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run check
+          npm audit --omit=dev --audit-level=high
+
+      - name: Validate preproduction deployment configuration
+        run: |
+          set -euo pipefail
+          for name in VOICE_HOST VOICE_PORT VOICE_USER VOICE_APP_ROOT VOICE_PREVIEW_URL AHM_PUBLIC_ORIGIN AHM_VOICE_BRIDGE_TOKEN; do
+            test -n "${!name:-}" || { echo "Missing required secret-backed value: $name"; exit 1; }
+          done
+          [[ "$VOICE_PORT" =~ ^[0-9]+$ ]] || { echo "SSH port must be numeric"; exit 1; }
+          [[ "$VOICE_APP_ROOT" = /* ]] || { echo "Voice app root must be absolute"; exit 1; }
+          [[ "$VOICE_PREVIEW_URL" =~ ^https://[^/]+$ ]] || { echo "Voice preview URL must be an HTTPS origin"; exit 1; }
+          [[ "$AHM_PUBLIC_ORIGIN" =~ ^https://[^/]+$ ]] || { echo "AHMV preproduction URL must be an HTTPS origin"; exit 1; }
+          test "${#AHM_VOICE_BRIDGE_TOKEN}" -ge 24 || { echo "Voice bridge token is too short"; exit 1; }
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AHMV_VOICE_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.AHMV_VOICE_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Package immutable Voice service release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          tar -C services/ahmv-voice-ai             --exclude=node_modules             -czf "ahmv-voice-service-$RELEASE_SHA.tar.gz" .
+
+      - name: Capture previous Voice service release
+        run: |
+          set -euo pipefail
+          PREVIOUS="$(ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "readlink '$VOICE_APP_ROOT/current' 2>/dev/null || true")"
+          echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+
+      - name: Upload and activate Voice service release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="$VOICE_APP_ROOT/releases/$RELEASE_SHA"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "mkdir -p '$RELEASE_DIR'"
+          scp -P "$VOICE_PORT" "ahmv-voice-service-$RELEASE_SHA.tar.gz"             "$VOICE_USER@$VOICE_HOST:$RELEASE_DIR/release.tar.gz"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST"             "set -euo pipefail; cd '$RELEASE_DIR'; tar -xzf release.tar.gz; rm release.tar.gz; npm ci --omit=dev --ignore-scripts --no-audit --no-fund; npm run check; ln -sfn '$RELEASE_DIR' '$VOICE_APP_ROOT/current'"
+
+      - name: Restart Voice service
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_VOICE_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          test -n "$RESTART_COMMAND" || { echo "Missing AHMV_VOICE_RESTART_COMMAND"; exit 1; }
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "$RESTART_COMMAND"
+
+      - name: Smoke Voice service and website bridge
+        run: |
+          set -euo pipefail
+          sleep 5
+          node services/ahmv-voice-ai/scripts/post-deploy-smoke.mjs "$VOICE_PREVIEW_URL"
+          node services/ahmv-voice-ai/scripts/bridge-smoke.mjs "$AHM_PUBLIC_ORIGIN"
+
+      - name: Roll back failed Voice service activation
+        if: failure() && env.previous_release != ''
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_VOICE_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          echo "Restoring previous Voice service release: $previous_release"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "ln -sfn '$previous_release' '$VOICE_APP_ROOT/current'"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "$RESTART_COMMAND"

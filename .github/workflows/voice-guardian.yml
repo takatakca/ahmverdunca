@@ -1,0 +1,82 @@
+name: AHM Verdun Voice Guardian
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/ahmv-voice-ai/**"
+      - ".github/workflows/voice-guardian.yml"
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ahmv-voice-guardian-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  guardian:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Locked install, syntax and Guardian invariants
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD/services/ahmv-voice-ai:/app" \
+            -w /app \
+            node:22-bookworm-slim \
+            sh -lc 'npm ci --ignore-scripts --no-audit --no-fund && npm run check && npm run guardian'
+
+      - name: Production dependency audit
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD/services/ahmv-voice-ai:/app" \
+            -w /app \
+            node:22-bookworm-slim \
+            sh -lc 'npm audit --omit=dev --audit-level=high'
+
+      - name: Generate CycloneDX SBOM
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD/services/ahmv-voice-ai:/app" \
+            -w /app \
+            node:22-bookworm-slim \
+            sh -lc 'npm sbom --sbom-format=cyclonedx > voice-sbom.cdx.json'
+          test -s services/ahmv-voice-ai/voice-sbom.cdx.json
+          sha256sum services/ahmv-voice-ai/voice-sbom.cdx.json
+
+      - name: Generate release report
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD/services/ahmv-voice-ai:/app" \
+            -w /app \
+            node:22-bookworm-slim \
+            sh -lc 'npm run release:report' | tee voice-release-report.json
+          test -s voice-release-report.json
+          {
+            echo "## AHM Verdun Voice Guardian"
+            echo
+            echo "- Commit: \`${GITHUB_SHA}\`"
+            echo "- Node: 22"
+            echo "- Locked install: PASS"
+            echo "- Security/privacy invariants: PASS"
+            echo "- npm high/critical audit: PASS"
+            echo "- CycloneDX SBOM: generated"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Rebuild production image against current base
+        run: |
+          set -euo pipefail
+          docker build --pull -t ahmv-voice-guardian:${{ github.sha }} services/ahmv-voice-ai
+          docker run --rm --entrypoint node ahmv-voice-guardian:${{ github.sha }} --check src/server.js
