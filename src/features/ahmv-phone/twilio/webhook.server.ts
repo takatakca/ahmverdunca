@@ -57,7 +57,7 @@ export async function handleAhmvTwilio(
       console.error("[AHMV SMS delivery callback]", error);
     }
     log("status-received");
-    return new Response(null, { status: 204, TWILIO_HEADERS });
+    return new Response(null, { status: 204, headers: TWILIO_HEADERS });
   }
 
   if (params["To"] !== (settings["AHMV_PUBLIC_PHONE"] ?? "+15816666246")) return webhookFailure(403);
