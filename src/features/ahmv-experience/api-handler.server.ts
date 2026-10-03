@@ -3,7 +3,7 @@ import {
   ensureAhmvFamilyHub,
   updateAhmvAutopilot,
 } from "./family-hub.server";
-import { readAhmvExperienceSession } from "./session.server";
+import { requireLiveAhmvExperienceSession } from "./entitlement.server";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -56,7 +56,7 @@ export async function handleAhmvExperienceApi(
     return json({ ok: false }, 404);
   }
 
-  const session = readAhmvExperienceSession(request);
+  const session = await requireLiveAhmvExperienceSession(request);
   if (!session) return json({ ok: false, message: "Unauthorized." }, 401);
 
   if (url.pathname === "/api/ahmv/experience/bootstrap" && request.method === "GET") {
@@ -81,6 +81,9 @@ export async function handleAhmvExperienceApi(
   }
 
   if (url.pathname === "/api/ahmv/experience/children" && request.method === "POST") {
+    if (request.headers.get("origin") !== url.origin) {
+      return json({ ok: false, message: "Forbidden." }, 403);
+    }
     let body: unknown;
     try {
       body = await request.json();
@@ -110,6 +113,9 @@ export async function handleAhmvExperienceApi(
   }
 
   if (url.pathname === "/api/ahmv/experience/autopilot" && request.method === "PATCH") {
+    if (request.headers.get("origin") !== url.origin) {
+      return json({ ok: false, message: "Forbidden." }, 403);
+    }
     const declaredLength = Number(request.headers.get("content-length") ?? "0");
     if (Number.isFinite(declaredLength) && declaredLength > 4096) {
       return json({ ok: false, message: "Request too large." }, 413);
