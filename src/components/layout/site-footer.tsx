@@ -1,15 +1,19 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, ShieldCheck, Trophy, Users } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
+import { usePreferredTeam } from "@/lib/team-preference";
+import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
+  const { selectedTeams } = usePreferredTeam();
+  const primaryTeam = selectedTeams[0];
   const showPhone = phonePublic;
 
   return (
@@ -44,32 +48,88 @@ export function SiteFooter() {
       </div>
 
       <div className="relative border-b border-navy-foreground/12">
-        <div className="container-site grid md:grid-cols-[0.72fr_1.28fr]">
-          <div className="border-b border-navy-foreground/12 py-7 md:border-b-0 md:border-r md:py-8 md:pr-10">
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Le raccourci des familles" : "Families' shortcut"}</p>
-            <p className="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-5xl">
-              {lang === "fr" ? "Mon horaire." : "My schedule."}
-            </p>
-          </div>
-          <div className="flex flex-col justify-center gap-5 py-7 md:py-8 md:pl-10 lg:flex-row lg:items-center lg:justify-between">
-            <p className="max-w-xl text-sm leading-relaxed text-navy-foreground/62 md:text-base">
-              {lang === "fr"
-                ? "Pratiques, matchs, arénas et accès officiels : l’information utile avant de partir pour la glace."
-                : "Practices, games, arenas and official access: the information families need before heading to the rink."}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Link
-                to="/horaires"
-                className="inline-flex min-h-12 items-center gap-2 bg-sport px-5 font-display text-base font-bold uppercase tracking-wide text-sport-foreground transition-transform hover:-translate-y-0.5"
-              >
-                {lang === "fr" ? "Voir les horaires" : "View schedules"} <ArrowRight className="size-4" />
-              </Link>
-              <Link
-                to="/equipes"
-                className="inline-flex min-h-12 items-center border border-navy-foreground/22 px-5 font-display text-base font-bold uppercase tracking-wide text-navy-foreground/90 transition-colors hover:bg-navy-foreground/8"
-              >
-                {lang === "fr" ? "Équipes" : "Teams"}
-              </Link>
+        <div className="container-site py-6 md:py-7">
+          <div className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="border border-navy-foreground/12 bg-white/[0.025] p-5 md:p-6">
+              <p className="eyebrow text-sport-foreground">
+                {primaryTeam
+                  ? (lang === "fr" ? "Mon équipe · accès direct" : "My team · direct access")
+                  : (lang === "fr" ? "Le raccourci des familles" : "Families' shortcut")}
+              </p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.88] sm:text-4xl">
+                {primaryTeam ? primaryTeam.name : (lang === "fr" ? "Horaire. Équipe. Aréna." : "Schedule. Team. Arena.")}
+              </p>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-navy-foreground/58">
+                {primaryTeam
+                  ? (lang === "fr"
+                      ? "Votre équipe enregistrée reste accessible jusqu’au dernier écran du site."
+                      : "Your saved team stays accessible all the way to the final screen.")
+                  : (lang === "fr"
+                      ? "Enregistrez une équipe pour transformer le portail en raccourci personnalisé."
+                      : "Save a team to turn the portal into a personalized shortcut.")}
+              </p>
+
+              <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {primaryTeam ? (
+                  <>
+                    <a href={publicTeamHubUrl(primaryTeam)} className="premium-control flex min-h-11 items-center justify-center gap-2 bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
+                      <Users className="size-3.5" /> {lang === "fr" ? "Équipe" : "Team"}
+                    </a>
+                    <a href={legacyTeamScheduleUrl(primaryTeam)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                      <CalendarDays className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Horaire" : "Schedule"}
+                    </a>
+                    <a href={officialTeamResultsUrl(primaryTeam)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                      <Trophy className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Résultats" : "Results"}
+                    </a>
+                    <Link to="/arenas" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                      <MapPin className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Arénas" : "Arenas"}
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/horaires" className="premium-control flex min-h-11 items-center justify-center gap-2 bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
+                      <CalendarDays className="size-3.5" /> {lang === "fr" ? "Horaires" : "Schedules"}
+                    </Link>
+                    <Link to="/equipes" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                      <Users className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Équipes" : "Teams"}
+                    </Link>
+                    <Link to="/arenas" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                      <MapPin className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Arénas" : "Arenas"}
+                    </Link>
+                    <Link to="/inscriptions" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                      {lang === "fr" ? "Inscriptions" : "Registration"}
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="grid gap-px border border-navy-foreground/12 bg-navy-foreground/12 sm:grid-cols-2 lg:grid-cols-1">
+              <a href="/membership" className="group flex min-h-28 items-center justify-between bg-competition p-5 hover:bg-white/[0.04]">
+                <span>
+                  <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">AHMV Member · DEMO</span>
+                  <span className="mt-2 block font-display text-2xl font-extrabold uppercase leading-[0.9] text-white">
+                    {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
+                  </span>
+                </span>
+                <ShieldCheck className="size-5 text-sport-foreground" />
+              </a>
+              <div className="flex min-h-28 items-center justify-between bg-competition p-5">
+                <div>
+                  <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-navy-foreground/38">
+                    {lang === "fr" ? "Réseaux officiels" : "Official social"}
+                  </p>
+                  <div className="mt-3 flex gap-2">
+                    <a href={EXTERNAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="premium-control flex size-10 items-center justify-center border border-white/14 text-white hover:border-sport" aria-label="Facebook AHM Verdun">
+                      <Facebook className="size-4" />
+                    </a>
+                    <a href={EXTERNAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="premium-control flex size-10 items-center justify-center border border-white/14 text-white hover:border-sport" aria-label="Instagram AHM Verdun">
+                      <Instagram className="size-4" />
+                    </a>
+                  </div>
+                </div>
+                <ArrowRight className="size-4 text-sport-foreground" />
+              </div>
             </div>
           </div>
         </div>
