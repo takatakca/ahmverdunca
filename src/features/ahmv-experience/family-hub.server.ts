@@ -189,3 +189,33 @@ export async function updateAhmvAutopilot(
     .eq("family_id", familyResult.data.id);
   assertNoError(result.error, "autopilot update");
 }
+
+
+export async function addAhmvFamilyChild(identityId: string, displayName: string) {
+  const client = db();
+  const familyResult = await client
+    .from("ahmv_families")
+    .select("id")
+    .eq("owner_takatak_identity_id", identityId)
+    .single();
+  assertNoError(familyResult.error, "family lookup");
+  if (!familyResult.data) throw new Error("AHMV family does not exist.");
+
+  const childResult = await client
+    .from("ahmv_family_children")
+    .insert({
+      family_id: familyResult.data.id,
+      display_name: displayName,
+      active: true,
+    })
+    .select("id, display_name")
+    .single();
+  assertNoError(childResult.error, "child creation");
+  if (!childResult.data) throw new Error("AHMV child creation returned no child.");
+
+  return {
+    id: String(childResult.data.id),
+    displayName: String(childResult.data.display_name),
+    teams: [] as Array<{ id: string; label: string | null }>,
+  };
+}
