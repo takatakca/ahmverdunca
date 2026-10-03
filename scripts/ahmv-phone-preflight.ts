@@ -35,6 +35,7 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const remindersEnabled = bool(settings["AHMV_PHONE_REMINDERS_ENABLED"]);
   const calendarEnabled = bool(settings["AHMV_CALENDAR_LINKS_ENABLED"]);
   const departureEnabled = bool(settings["AHMV_SMART_DEPARTURE_ENABLED"]);
+  const membershipSyncEnabled = bool(settings["AHMV_TAKATAK_MEMBERSHIP_SYNC_ENABLED"]);
 
   return [
     {
@@ -74,6 +75,14 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       ok: present(settings["TAKATAK_AHMV_MEMBER_URL"]),
       required: true,
       detail: "TAKATAK member activation URL is configured.",
+    },
+    {
+      id: "membership-sync-token",
+      ok:
+        !membershipSyncEnabled ||
+        present(settings["TAKATAK_AHMV_SERVICE_TOKEN"]),
+      required: membershipSyncEnabled,
+      detail: "TAKATAK membership sync requires the shared server-to-server service token.",
     },
     {
       id: "takatak-entitlement",
