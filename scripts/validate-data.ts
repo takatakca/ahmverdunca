@@ -74,7 +74,7 @@ requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event
 requireUnique("ALERTS.id", ALERTS.map((alert) => alert.id));
 requireUnique("FAQ.id", FAQ.map((item) => item.id));
 requireUnique("FAQ_TOPICS.id", FAQ_TOPICS.map((topic) => topic.id));
-requireUnique("TEAM_SOCIAL_LINKS.teamPlatform", TEAM_SOCIAL_LINKS.map((item) => `${item.teamSlug}:${item.platform}`));
+requireUnique("TEAM_SOCIAL_LINKS.targetPlatform", TEAM_SOCIAL_LINKS.map((item) => `${item.publicTeamId ?? item.teamSlug ?? "missing"}:${item.platform}`));
 requireUnique("NAV.key", [...MAIN_NAV, ...MORE_NAV].map((item) => item.key));
 requireUnique("NAV.to", [...MAIN_NAV, ...MORE_NAV].map((item) => item.to));
 
@@ -285,11 +285,22 @@ for (const faq of FAQ) {
   }
 }
 
+const publicTeamIds = new Set(PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
 for (const social of TEAM_SOCIAL_LINKS) {
-  if (!teamSlugs.has(social.teamSlug)) {
-    errors.push(`Team social link references unknown team "${social.teamSlug}".`);
+  const targetCount = Number(Boolean(social.teamSlug)) + Number(Boolean(social.publicTeamId));
+  if (targetCount !== 1) {
+    errors.push(`Team social link must target exactly one category slug or public team ID for ${social.platform}.`);
   }
-  requireHttps(`TEAM_SOCIAL_LINKS ${social.teamSlug}/${social.platform}`, social.url);
+  if (social.teamSlug && !teamSlugs.has(social.teamSlug)) {
+    errors.push(`Team social link references unknown team category "${social.teamSlug}".`);
+  }
+  if (social.publicTeamId && !publicTeamIds.has(social.publicTeamId)) {
+    errors.push(`Team social link references unknown public team ID "${social.publicTeamId}".`);
+  }
+  requireHttps(
+    `TEAM_SOCIAL_LINKS ${social.publicTeamId ?? social.teamSlug ?? "missing"}/${social.platform}`,
+    social.url,
+  );
 }
 
 for (const alert of ALERTS) {

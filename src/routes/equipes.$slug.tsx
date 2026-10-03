@@ -14,8 +14,8 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
-import { legacyTeamScheduleUrl, teamsForCategory } from "@/data/team-directory";
-import { getTeamSocialLinks } from "@/data/team-social";
+import { legacyTeamScheduleUrl, officialTeamResultsUrl, teamsForCategory } from "@/data/team-directory";
+import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -247,6 +247,35 @@ function TeamPage() {
           </div>
         </section>
 
+        <section className="grid overflow-hidden border border-navy/12 bg-ice lg:grid-cols-[1fr_auto] lg:items-stretch">
+          <div className="p-6 md:p-8">
+            <p className="eyebrow text-sport">{lang === "fr" ? "Communauté d'équipe" : "Team community"}</p>
+            <h2 className="mt-2 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy md:text-4xl">
+              {lang === "fr" ? "Vous avez une mise à jour fiable?" : "Have a reliable team update?"}
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+              {lang === "fr"
+                ? "Parents, entraîneurs et bénévoles peuvent proposer une nouvelle, un document ou un lien d'équipe. Pour l'instant, chaque envoi passe par une révision humaine avant publication."
+                : "Parents, coaches and volunteers can suggest a story, document or team link. For now, every submission is reviewed by a person before publication."}
+            </p>
+          </div>
+          <div className="flex min-w-[250px] flex-col justify-center border-t border-navy/12 p-6 lg:border-l lg:border-t-0 md:p-8">
+            <Button asChild variant="sport" size="lg" className="justify-between">
+              <a
+                href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(`AHMV — mise à jour ${team.code}`)}&body=${encodeURIComponent(lang === "fr" ? "Bonjour, je souhaite proposer une mise à jour pour cette catégorie/équipe AHMV.\n\nÉquipe :\nInformation à publier :\nSource ou lien :\n" : "Hello, I would like to suggest an update for this AHMV category/team.\n\nTeam:\nInformation to publish:\nSource or link:\n")}`}
+              >
+                <span className="flex items-center gap-2"><Mail className="size-4" />{lang === "fr" ? "Proposer une mise à jour" : "Suggest an update"}</span>
+                <ArrowRight className="size-4" />
+              </a>
+            </Button>
+            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? "Canal courriel actuel — aucune publication automatique n'est activée."
+                : "Current email channel — automatic publishing is not enabled."}
+            </p>
+          </div>
+        </section>
+
         {publicTeams.length > 0 && (
           <section aria-labelledby="public-team-directory-title">
             <SectionHeading
@@ -257,21 +286,65 @@ function TeamPage() {
                 : "Names and levels currently shown in AHM Verdun’s public directory. No player roster or personal information is mirrored."}
             />
             <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-              {publicTeams.map((entry) => (
-                <div key={entry.legacyScheduleTeamId} className="interactive-surface bg-background p-5">
-                  <p className="eyebrow text-sport">{entry.level}</p>
-                  <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-none text-navy">{entry.name}</p>
-                  <a
-                    href={legacyTeamScheduleUrl(entry)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-5 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] text-sport hover:underline"
-                  >
-                    {lang === "fr" ? "Horaire et classement publiés" : "Published schedule and standings"}
-                    <ExternalLink className="size-3.5" />
-                  </a>
-                </div>
-              ))}
+              {publicTeams.map((entry) => {
+                const teamSocialLinks = getPublicTeamSocialLinks(entry.legacyScheduleTeamId);
+                return (
+                  <div key={entry.legacyScheduleTeamId} className="interactive-surface flex min-h-56 flex-col bg-background p-5">
+                    <div>
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="eyebrow text-sport">{entry.level}</p>
+                        <span className="font-display text-xs font-bold uppercase tracking-[0.12em] text-navy/30">
+                          #{entry.legacyScheduleTeamId.slice(-4)}
+                        </span>
+                      </div>
+                      <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-none text-navy">{entry.name}</p>
+                    </div>
+
+                    <div className="mt-auto pt-6">
+                      <div className="grid gap-2">
+                        <a
+                          href={legacyTeamScheduleUrl(entry)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="premium-control flex min-h-10 items-center justify-between border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+                        >
+                          {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                          <CalendarDays className="size-3.5" />
+                        </a>
+                        <a
+                          href={officialTeamResultsUrl(entry)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="premium-control flex min-h-10 items-center justify-between border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+                        >
+                          {lang === "fr" ? "Résultats / classement" : "Results / standings"}
+                          <ExternalLink className="size-3.5" />
+                        </a>
+                      </div>
+
+                      {teamSocialLinks.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2 border-t border-navy/10 pt-3">
+                          {teamSocialLinks.map((social) => {
+                            const Icon = social.platform === "facebook" ? Facebook : Instagram;
+                            return (
+                              <a
+                                key={`${social.platform}-${social.url}`}
+                                href={social.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="premium-control inline-flex min-h-9 items-center gap-2 border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+                              >
+                                <Icon className="size-3.5" />
+                                {social.platform}
+                              </a>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}
