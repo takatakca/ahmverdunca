@@ -1,7 +1,7 @@
 import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLink, ShieldAlert } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { BookOpen, CalendarDays, ExternalLink, MapPin, MessageSquareText, ShieldAlert, Users } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { COACH_CATEGORIES, COACH_RESOURCES } from "@/data/coaches";
@@ -9,6 +9,8 @@ import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { CoachMatchDayChecklist } from "@/components/coach-match-day-checklist";
+import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/entraineurs")({
   head: () => ({
@@ -91,7 +93,71 @@ function CoachesPage() {
           </p>
         </div>
 
-        <HouseSponsorSlot placement="coaches-path" count={1} compact className="mb-6" />
+        <section className="mb-6 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3">
+          <Link to="/horaires" className="interactive-surface bg-background p-5 hover:bg-ice">
+            <CalendarDays className="size-5 text-sport" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+              {lang === "fr" ? "Horaires" : "Schedules"}
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              {lang === "fr" ? "Vérifier la semaine et ouvrir les sources officielles." : "Check the week and open official sources."}
+            </p>
+          </Link>
+          <Link to="/arenas" className="interactive-surface bg-background p-5 hover:bg-ice">
+            <MapPin className="size-5 text-sport" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+              {lang === "fr" ? "Arénas" : "Arenas"}
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              {lang === "fr" ? "Adresses et itinéraires avant de partir." : "Addresses and directions before leaving."}
+            </p>
+          </Link>
+          <Link to="/ressources" className="interactive-surface bg-background p-5 hover:bg-ice">
+            <BookOpen className="size-5 text-sport" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+              {lang === "fr" ? "Règles & ressources" : "Rules & resources"}
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              {lang === "fr" ? "Accès aux références hockey et documents publics." : "Access hockey references and public documents."}
+            </p>
+          </Link>
+          <a
+            href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(lang === "fr" ? "AHMV — communication entraîneur" : "AHMV — coach communication")}`}
+            className="interactive-surface bg-background p-5 hover:bg-ice"
+          >
+            <MessageSquareText className="size-5 text-sport" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+              {lang === "fr" ? "Soumettre une communication" : "Submit a communication"}
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              {lang === "fr" ? "Canal courriel actuel avec révision humaine avant publication." : "Current email channel with human review before publishing."}
+            </p>
+          </a>
+          <Link to="/contact" className="interactive-surface bg-background p-5 hover:bg-ice">
+            <Users className="size-5 text-sport" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+              {lang === "fr" ? "Besoin de bénévoles" : "Need volunteers"}
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              {lang === "fr" ? "Contacter l’association pour coordonner un besoin réel." : "Contact the association to coordinate a real need."}
+            </p>
+          </Link>
+          <div className="bg-ice p-5">
+            <ShieldAlert className="size-5 text-sport" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+              {lang === "fr" ? "Collecte d’équipe" : "Team fundraising"}
+            </h2>
+            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? "Aucun bouton de collecte n’est affiché tant qu’une campagne et son bénéficiaire ne sont pas vérifiés."
+                : "No fundraising button is shown until a campaign and its beneficiary are verified."}
+            </p>
+          </div>
+        </section>
+
+        <CoachMatchDayChecklist lang={lang} />
+
+        <HouseSponsorSlot placement="coaches-path" count={1} compact className="my-6" />
 
         <div className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
           {[{ id: "all", label: { fr: "Tout", en: "All" } }, ...COACH_CATEGORIES].map((c) => (
