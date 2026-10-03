@@ -96,11 +96,10 @@ export async function handleTakatakMarketingCampaign(
     console.error("[AHMV TAKATAK marketing campaign]", error);
     const message =
       error instanceof Error ? error.message : "campaign unavailable";
-    if (
-      /already exists|cannot be re-queued|conflict|not configured/i.test(
-        message,
-      )
-    ) {
+    if (/not configured/i.test(message)) {
+      return json({ error: "campaign_configuration_unavailable" }, 503);
+    }
+    if (/already exists|cannot be re-queued|conflict/i.test(message)) {
       return json({ error: "campaign_conflict" }, 409);
     }
     return json({ error: "campaign_unavailable" }, 503);
