@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release_sha:
-        description: "Exact green voice-ai-preprod-v6 commit SHA"
+        description: "Exact green voice-ai-preprod-v8 commit SHA"
         required: true
         type: string
       confirmation:
@@ -51,7 +51,7 @@ jobs:
             echo "release_sha must be a full lowercase 40-character SHA"
             exit 1
           }
-          VOICE_HEAD="$(gh api repos/${GITHUB_REPOSITORY}/commits/voice-ai-preprod-v6 --jq .sha)"
+          VOICE_HEAD="$(gh api repos/${GITHUB_REPOSITORY}/commits/voice-ai-preprod-v8 --jq .sha)"
           test "$REQUESTED_SHA" = "$VOICE_HEAD" || {
             echo "Refusing stale/non-Voice head: requested=$REQUESTED_SHA voice_head=$VOICE_HEAD"
             exit 1
