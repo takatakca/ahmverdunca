@@ -14,6 +14,7 @@ import { formatDate, useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import type { TranslationKey } from "@/lib/translations";
 import { EXTERNAL_LINKS } from "@/lib/site";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
 
 export const Route = createFileRoute("/horaires")({
@@ -122,7 +123,25 @@ function SchedulePage() {
       />
 
       <div className="container-site py-8 md:py-12">
-        <section className="mb-6 overflow-hidden rounded-xl border border-border bg-background shadow-card">
+        <section className="mb-6 grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px]">
+            <img src={OFFICIAL_MEDIA.tournamentM11Primary.url} alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en} loading="eager" decoding="async" className="absolute inset-0 size-full object-cover" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.88))]" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "La semaine hockey en un coup d’œil" : "Your hockey week at a glance"}</p>
+              <p className="mt-2 max-w-2xl font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-5xl">
+                {lang === "fr" ? "Trouvez votre équipe. Trouvez votre glace." : "Find your team. Find your ice."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Priorité aux données officielles" : "Official data first"}</p>
+            <p className="mt-4 text-sm leading-relaxed text-white/65">
+              {lang === "fr" ? "Utilisez la recherche AHMV pour aller vite, puis ouvrez le circuit officiel lorsqu’une confirmation sportive est requise." : "Use AHMV search for speed, then open the official circuit whenever sport confirmation is required."}
+            </p>
+          </div>
+        </section>
+        <section className="mb-6 overflow-hidden border border-navy/12 bg-background">
           <div className="border-b border-border bg-ice px-5 py-4 md:px-6">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Horaires et classements officiels" : "Official schedules and standings"}
@@ -158,7 +177,7 @@ function SchedulePage() {
         <OfficialWeekSchedule initialQuery={officialInitialQuery} />
 
         {showPrototypeCalendar && (
-          <details className="group mt-8 overflow-hidden rounded-xl border border-border bg-background shadow-card">
+          <details className="group mt-8 overflow-hidden border border-navy/12 bg-background">
             <summary className="cursor-pointer list-none px-5 py-5 md:px-6">
               <div className="flex items-center justify-between gap-4">
                 <div>
@@ -223,7 +242,7 @@ function SchedulePage() {
             </div>
           </div>
 
-          <div className="mt-5 rounded-xl border border-border bg-ice p-4 md:p-5">
+          <div className="mt-5 border border-navy/12 bg-ice p-4 md:p-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="eyebrow text-sport">{lang === "fr" ? "Filtrer rapidement" : "Quick filters"}</p>
