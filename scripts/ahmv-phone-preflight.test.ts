@@ -151,3 +151,30 @@ test("calendar links require a dedicated 32-character server secret when enabled
   });
   assert.equal(configured.find((check) => check.id === "calendar-link-secret")?.ok, true);
 });
+
+
+test("smart-departure requires a dedicated signing secret when enabled", () => {
+  const missing = phonePreflight({
+    AHMV_PHONE_ENABLED: "false",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_SMART_DEPARTURE_ENABLED: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+  });
+  assert.equal(missing.find((check) => check.id === "departure-link-secret")?.ok, false);
+
+  const configured = phonePreflight({
+    AHMV_PHONE_ENABLED: "false",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_SMART_DEPARTURE_ENABLED: "true",
+    AHMV_DEPARTURE_LINK_SECRET: "abcdefghijklmnopqrstuvwxyz123456",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+  });
+  assert.equal(configured.find((check) => check.id === "departure-link-secret")?.ok, true);
+  assert.equal(configured.find((check) => check.id === "departure-provider")?.required, false);
+});

@@ -73,6 +73,15 @@ export async function getAhmvPhoneInternalHealth(
         signingSecretConfigured:
           (settings["AHMV_CALENDAR_LINK_SECRET"]?.trim().length ?? 0) >= 32,
       },
+      smartDeparture: {
+        enabled: settings["AHMV_SMART_DEPARTURE_ENABLED"] === "true",
+        signingSecretConfigured:
+          (settings["AHMV_DEPARTURE_LINK_SECRET"]?.trim().length ?? 0) >= 32,
+        routeProviderConfigured: Boolean(
+          settings["TAKATAK_ROUTE_MATRIX_URL"]?.trim() &&
+            settings["TAKATAK_ROUTE_SERVICE_TOKEN"]?.trim(),
+        ),
+      },
     },
     takatak: {
       entitlementConfigured: Boolean(
