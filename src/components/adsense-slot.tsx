@@ -1,6 +1,10 @@
 import { useEffect } from "react";
-import { ADSENSE_CONFIG } from "@/lib/monetization";
+import {
+  ADSENSE_CONFIG,
+  TAKATAK_ADS_CONFIG,
+} from "@/lib/monetization";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { TakatakAdSlot } from "@/components/takatak-ad-slot";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
 
 declare global {
@@ -9,22 +13,41 @@ declare global {
   }
 }
 
-export function AdSenseSlot({ className = "", placement = "generic" }: { className?: string; placement?: string }) {
-  const { isDemoMember } = useDemoMemberMode();
-
+function GoogleAdSenseOrHouse({
+  className,
+  placement,
+}: {
+  className: string;
+  placement: string;
+}) {
   useEffect(() => {
-    if (isDemoMember || !ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) return;
+    if (
+      !ADSENSE_CONFIG.enabled ||
+      !ADSENSE_CONFIG.client ||
+      !ADSENSE_CONFIG.slot
+    ) {
+      return;
+    }
+
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
       // Ad blockers or provider timing can prevent a slot from initializing.
     }
-  }, [isDemoMember]);
+  }, []);
 
-  if (isDemoMember) return null;
-
-  if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) {
-    return <HouseSponsorSlot placement={placement} className={className} />;
+  if (
+    !ADSENSE_CONFIG.enabled ||
+    !ADSENSE_CONFIG.client ||
+    !ADSENSE_CONFIG.slot
+  ) {
+    return (
+      <HouseSponsorSlot
+        placement={placement}
+        className={className}
+        network={false}
+      />
+    );
   }
 
   return (
@@ -38,5 +61,35 @@ export function AdSenseSlot({ className = "", placement = "generic" }: { classNa
         data-full-width-responsive="true"
       />
     </aside>
+  );
+}
+
+export function AdSenseSlot({
+  className = "",
+  placement = "generic",
+}: {
+  className?: string;
+  placement?: string;
+}) {
+  const { isDemoMember } = useDemoMemberMode();
+  if (isDemoMember) return null;
+
+  const fallback = (
+    <GoogleAdSenseOrHouse
+      className={className}
+      placement={placement}
+    />
+  );
+
+  if (!TAKATAK_ADS_CONFIG.enabled) {
+    return fallback;
+  }
+
+  return (
+    <TakatakAdSlot
+      placement={placement}
+      className={className}
+      fallback={fallback}
+    />
   );
 }
