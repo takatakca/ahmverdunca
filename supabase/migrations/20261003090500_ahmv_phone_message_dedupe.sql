@@ -16,8 +16,7 @@ exception
 end $$;
 
 create unique index if not exists idx_ahmv_phone_message_jobs_dedupe
-  on public.ahmv_phone_message_jobs(dedupe_key)
-  where dedupe_key is not null;
+  on public.ahmv_phone_message_jobs(dedupe_key);
 
 create index if not exists idx_ahmv_phone_message_jobs_due
   on public.ahmv_phone_message_jobs(status, not_before, created_at);
