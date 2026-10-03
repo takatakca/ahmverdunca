@@ -40,6 +40,11 @@ export async function handleTwilioSms(
   const response = new twilio.twiml.MessagingResponse();
   const { lang, query } = parseSms(params["Body"] ?? "");
   const t = (fr: string, en: string, es: string) => phoneText(lang, { fr, en, es });
+  const localizedLink = (value: string) => {
+    const link = new URL(value);
+    link.searchParams.set("lang", lang);
+    return link.toString();
+  };
   const caller = normalizePhoneE164(params["From"]);
   const existingContact = caller
     ? await safeFindPhoneContactByNumber(caller)
@@ -249,10 +254,13 @@ export async function handleTwilioSms(
       return xmlResponse(response.toString());
     }
 
-    const departureLink = createSignedDepartureLink(
+    const rawDepartureLink = createSignedDepartureLink(
       answer.event.id,
       settings,
     );
+    const departureLink = rawDepartureLink
+      ? localizedLink(rawDepartureLink)
+      : null;
 
     if (!departureLink) {
       response.message(
@@ -351,10 +359,13 @@ export async function handleTwilioSms(
       return xmlResponse(response.toString());
     }
 
-    const calendarLink = createSignedCalendarLink(
+    const rawCalendarLink = createSignedCalendarLink(
       answer.event.id,
       settings,
     );
+    const calendarLink = rawCalendarLink
+      ? localizedLink(rawCalendarLink)
+      : null;
 
     if (!calendarLink) {
       response.message(
