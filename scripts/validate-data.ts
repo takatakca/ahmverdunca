@@ -15,6 +15,7 @@ import { FAQ, FAQ_TOPICS } from "../src/data/faq";
 import { TEAM_SOCIAL_LINKS } from "../src/data/team-social";
 import { EXTERNAL_LINKS, MAIN_NAV, MORE_NAV, SITE } from "../src/lib/site";
 import { AHMV_SOCIAL_ARCHIVE_REFERENCES, HOCKEY_HERITAGE } from "../src/data/heritage";
+import { TEAM_COMMUNITY_POSTS, TEAM_DOCUMENTS, TEAM_FUNDRAISING_CAMPAIGNS, TEAM_VOLUNTEER_NEEDS } from "../src/data/team-community";
 
 const errors: string[] = [];
 
@@ -80,6 +81,10 @@ requireUnique("FAQ_TOPICS.id", FAQ_TOPICS.map((topic) => topic.id));
 requireUnique("TEAM_SOCIAL_LINKS.targetPlatform", TEAM_SOCIAL_LINKS.map((item) => `${item.publicTeamId ?? item.teamSlug ?? "missing"}:${item.platform}`));
 requireUnique("AHMV_SOCIAL_ARCHIVE_REFERENCES.id", AHMV_SOCIAL_ARCHIVE_REFERENCES.map((item) => item.id));
 requireUnique("AHMV_SOCIAL_ARCHIVE_REFERENCES.url", AHMV_SOCIAL_ARCHIVE_REFERENCES.map((item) => item.url));
+requireUnique("TEAM_COMMUNITY_POSTS.id", TEAM_COMMUNITY_POSTS.map((item) => item.id));
+requireUnique("TEAM_VOLUNTEER_NEEDS.id", TEAM_VOLUNTEER_NEEDS.map((item) => item.id));
+requireUnique("TEAM_FUNDRAISING_CAMPAIGNS.id", TEAM_FUNDRAISING_CAMPAIGNS.map((item) => item.id));
+requireUnique("TEAM_DOCUMENTS.id", TEAM_DOCUMENTS.map((item) => item.id));
 requireUnique("NAV.key", [...MAIN_NAV, ...MORE_NAV].map((item) => item.key));
 requireUnique("NAV.to", [...MAIN_NAV, ...MORE_NAV].map((item) => item.to));
 
@@ -247,6 +252,37 @@ if (PUBLIC_TEAM_DIRECTORY.length !== REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT) {
   errors.push(`Expected ${REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT} mirrored public team entries, found ${PUBLIC_TEAM_DIRECTORY.length}.`);
 }
 const mirroredScheduleIds = new Set(PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
+
+for (const post of TEAM_COMMUNITY_POSTS) {
+  if (!mirroredScheduleIds.has(post.publicTeamId)) {
+    errors.push(`Team community post "${post.id}" references unknown public team ID "${post.publicTeamId}".`);
+  }
+  if (post.sourceUrl) requireHttps(`Team community post "${post.id}" sourceUrl`, post.sourceUrl);
+}
+for (const need of TEAM_VOLUNTEER_NEEDS) {
+  if (!mirroredScheduleIds.has(need.publicTeamId)) {
+    errors.push(`Team volunteer need "${need.id}" references unknown public team ID "${need.publicTeamId}".`);
+  }
+}
+for (const campaign of TEAM_FUNDRAISING_CAMPAIGNS) {
+  if (!mirroredScheduleIds.has(campaign.publicTeamId)) {
+    errors.push(`Team fundraising campaign "${campaign.id}" references unknown public team ID "${campaign.publicTeamId}".`);
+  }
+  if (!campaign.beneficiary.trim() || campaign.goalCents <= 0) {
+    errors.push(`Team fundraising campaign "${campaign.id}" must have a beneficiary and a positive goal.`);
+  }
+  if (campaign.status === "active" && !campaign.paymentVerified) {
+    errors.push(`Active team fundraising campaign "${campaign.id}" must have a verified payment link.`);
+  }
+  requireHttps(`Team fundraising campaign "${campaign.id}" paymentUrl`, campaign.paymentUrl);
+}
+for (const document of TEAM_DOCUMENTS) {
+  if (!mirroredScheduleIds.has(document.publicTeamId)) {
+    errors.push(`Team document "${document.id}" references unknown public team ID "${document.publicTeamId}".`);
+  }
+  requireHttps(`Team document "${document.id}" url`, document.url);
+}
+
 for (const teamId of REQUIRED_LEGACY_TEAM_SCHEDULE_IDS) {
   if (!mirroredScheduleIds.has(teamId)) {
     errors.push(`Legacy public schedule team ID ${teamId} is missing from PUBLIC_TEAM_DIRECTORY.`);
