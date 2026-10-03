@@ -30,7 +30,7 @@ export const ALBUMS: Album[] = [
     teamSlugs: [],
     eventType: { fr: "Événement", en: "Event" },
     cover: "gallery-party",
-    sourceUrl: "https://ahmverdun.com/albums/4",
+    sourceUrl: "https://www.ahmverdun.com/albums/4",
     photosPending: true,
   },
   {
@@ -42,7 +42,7 @@ export const ALBUMS: Album[] = [
     teamSlugs: ["feminin"],
     eventType: { fr: "Porte ouverte", en: "Open house" },
     cover: "gallery-feminine",
-    sourceUrl: "https://ahmverdun.com/albums/3",
+    sourceUrl: "https://www.ahmverdun.com/albums/3",
     photosPending: true,
   },
   {
