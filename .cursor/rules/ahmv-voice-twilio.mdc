@@ -1,0 +1,93 @@
+---
+description: AHM Verdun Voice AI Twilio integration and production-cutover guardrails
+globs: "services/ahmv-voice-ai/**,src/lib/ahmv-voice-bridge.server.ts,src/features/ahmv-phone/**,.github/workflows/**,supabase/migrations/**"
+alwaysApply: true
+---
+
+# AHM Verdun Voice AI — Cursor/Twilio rule
+
+You are working on the production-bound AHM Verdun Voice AI system.
+
+Canonical production endpoints:
+- Website: https://ahmverdun.ca
+- Voice HTTPS origin: https://voice.ahmverdun.ca
+- ConversationRelay WebSocket: wss://voice.ahmverdun.ca/twilio/conversation
+- Voice entry webhook: https://voice.ahmverdun.ca/twilio/voice
+- Public phone target: +1 581-666-6246
+- AHMV Supabase project ref: bqflllsjxmhqsvemhhwv
+
+Primary runtime:
+- services/ahmv-voice-ai
+- Node.js 22+
+- Fastify + WebSocket
+- Twilio ConversationRelay
+- OpenAI Responses API
+- FR / EN / ES
+- OpenAI store:false
+- no raw transcript persistence
+
+## Required operating rules
+
+1. Never invent live hockey facts.
+2. Never route the public phone number to Voice AI until all release gates are green.
+3. Never place Twilio/Auth/OpenAI/Supabase/service tokens in git, chat output, terminal screenshots, logs, or generated documentation.
+4. Use Twilio's SDK/signature helpers; never implement Twilio webhook signature math manually.
+5. The caller must press 1 before ConversationRelay starts.
+6. Do not remove X-Twilio-Signature verification.
+7. Preserve canonical public URL/host/scheme through Nginx so signature validation remains valid.
+8. Keep SMS idempotent; never send duplicate recap SMS for the same call/purpose.
+9. Private/anonymous callers must not receive SMS.
+10. Production remains single-instance until a distributed concurrency lease exists.
+11. Do not store raw call transcripts by default.
+12. Any production-number change requires a rollback snapshot first.
+
+## Cursor/Twilio MCP
+
+Prefer the official Twilio Developer Kit in Cursor:
+- Composer command: /add-plugin twilio-developer-kit
+
+The project also contains .cursor/mcp.json for Twilio's official documentation MCP.
+
+Before assuming Twilio account-write access, inspect the tools actually available:
+- agent mcp list
+- agent mcp list-tools twilio-docs
+
+If the connected Twilio plugin exposes authenticated account actions, use those.
+If it only exposes documentation/search tools, use the Twilio Console or the project's scripts for account changes.
+
+## Release gate
+
+Before public cutover, all of the following must be true:
+
+- service CI green
+- Guardian/security review green
+- npm ci from lockfile passes
+- production dependency audit passes
+- Docker build passes
+- https://voice.ahmverdun.ca/healthz => 200
+- https://voice.ahmverdun.ca/readyz => 200 and ready=true
+- AHMV bridge readiness => 200 and ready=true
+- authoritative schedule source fresh
+- Twilio ConversationRelay AI/ML addendum accepted
+- valid TLS and WSS
+- signed Twilio webhook smoke passes
+- FR staging call passes
+- EN staging call passes
+- ES staging call passes
+- press-1 gate passes
+- interruption/reconnect passes
+- schedule/arena lookup passes
+- SMS consent/opt-out/exactly-once passes
+- rollback has been tested
+
+## Production cutover
+
+Only after the gate is green:
+1. Read and record the current IncomingPhoneNumber voice configuration.
+2. Store the rollback snapshot outside git.
+3. Change only the minimum required Voice configuration.
+4. Perform one controlled FR call, one EN call and one ES call.
+5. Verify health/readiness and exactly-once SMS.
+6. Roll back immediately on any P1 regression.
+
+Treat docs/CURSOR_TWILIO_ACTIVATION.md as the operator runbook.
