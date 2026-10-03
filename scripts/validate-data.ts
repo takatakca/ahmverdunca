@@ -2,7 +2,7 @@ import { ALERTS } from "../src/data/alerts";
 import { ARENAS, arenaDirectionsTargetForVenue } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
 import { CURRENT_LEGACY_NEWS_IDS, DISCOVERED_ARCHIVE_NEWS_IDS, NEWS } from "../src/data/news";
-import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory";
+import { PUBLIC_TEAM_DIRECTORY, publicTeamHubUrl } from "../src/data/team-directory";
 import { REQUIRED_ARENA_COUNT, REQUIRED_COACH_RESOURCE_TITLES, REQUIRED_LEGACY_TEAM_SCHEDULE_IDS, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
 import { LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
@@ -68,6 +68,7 @@ requireUnique("ARENAS.slug", ARENAS.map((arena) => arena.slug));
 requireUnique("NEWS.slug", NEWS.map((article) => article.slug));
 requireUnique("NEWS.legacyId", NEWS.flatMap((article) => article.legacyId === undefined ? [] : [String(article.legacyId)]));
 requireUnique("PUBLIC_TEAM_DIRECTORY.legacyScheduleTeamId", PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
+requireUnique("PUBLIC_TEAM_DIRECTORY.hubUrl", PUBLIC_TEAM_DIRECTORY.map(publicTeamHubUrl));
 requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
 requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
 requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
@@ -250,6 +251,11 @@ for (const title of REQUIRED_COACH_RESOURCE_TITLES) {
   }
 }
 for (const entry of PUBLIC_TEAM_DIRECTORY) {
+  const hubUrl = publicTeamHubUrl(entry);
+  const expectedPrefix = `/equipes/${entry.categorySlug}?teamId=`;
+  if (!hubUrl.startsWith(expectedPrefix) || !hubUrl.includes(encodeURIComponent(entry.legacyScheduleTeamId))) {
+    errors.push(`Public team hub URL is invalid for "${entry.name}" (${entry.legacyScheduleTeamId}): "${hubUrl}".`);
+  }
   if (!teamSlugs.has(entry.categorySlug)) {
     errors.push(`Public team directory entry "${entry.name}" references unknown category "${entry.categorySlug}".`);
   }
