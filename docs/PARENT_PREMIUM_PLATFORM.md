@@ -25,12 +25,19 @@ Initial planned offer: **CAD 10.00/week** for the season, configurable before la
 
 The public site may describe the offer, but checkout and entitlement activation must not become active until TAKATAK Auth and TAKATAK Dashboard are connected and tested.
 
-Initial capabilities:
+TAKATAK plan code: `hockey_member_weekly_10`.
 
-1. Calendar sync after explicit consent.
-2. SMS reminders before games and for meaningful schedule changes.
-3. Smart departure reminders using arena destination and live traffic once a route provider is connected.
-4. Family synchronization so two or more authorized caregivers can share the same team reminders.
+Entitlements for the CAD 10/week member plan:
+
+1. `ad_free` — suppress approved AdSense placements on verified member surfaces.
+2. `ai_assistant` — unlock the full AHMV assistant experience.
+3. `game_reminders` — member reminder entitlement for official team events.
+4. `calendar_sync` — calendar synchronization after explicit consent.
+5. `team_community` — private, moderated team-community entitlement.
+6. `parent_messaging` — private parent communication without exposing contact details publicly.
+7. `parent_rideshare` — opt-in parent rideshare entitlement once the module is launched.
+
+An entitlement in the billing catalog is not permission to claim an unfinished module is live. The AHMV interface must distinguish the paid right from the operational availability of each service.
 
 ## Supporter thank-you credit
 
@@ -44,7 +51,7 @@ Recommended event contract:
 supporter.credit.granted
 identityId
 sourceProject = ahmverdun
-productCode = ahmv-parent-premium
+productCode = hockey_member_weekly_10
 creditType = premium_weeks
 quantity = 4
 reason = supporter_thank_you
@@ -165,13 +172,13 @@ This is the standing product rule for the Parent Premium roadmap.
 
 Do not hard-code future prices until approved.
 
-A likely progression is:
+Approved direction:
 
 - free public AHMV team hub;
-- Parent Premium — reminders, calendar, departure intelligence and family sync;
-- future Family/Community tier — chat, rides, tracking and richer coordination.
+- **AHMV Member — CAD 10/week** (`hockey_member_weekly_10`) — ad-free entitlement, premium assistant, reminders, calendar, community, messaging and rideshare entitlement;
+- **AHMV VIP — CAD 30/week** (`hockey_vip_weekly_30`) — planned only, not for sale until the travel/tournament and advanced family-live capabilities are actually delivered.
 
-TAKATAK Dashboard owns plan names, prices, promotions, trials, credits and entitlements so the AHMV frontend does not become a billing source of truth.
+TAKATAK Dashboard owns plan names, prices, promotions, billing state and entitlements so the AHMV frontend never becomes a billing source of truth.
 
 ## Current implementation state
 
@@ -184,4 +191,8 @@ Environment gates:
 - `VITE_PARENT_PREMIUM_WEEKLY_PRICE_CAD`
 - `VITE_TAKATAK_AUTH_START_URL`
 
-Keep `VITE_PARENT_PREMIUM_LAUNCH_ENABLED=false` until the real TAKATAK Auth start URL, account handoff, Stripe product and entitlement callbacks have passed end-to-end tests.
+Recommended authenticated handoff once the backend is deployed:
+
+`https://takatak.ca/login?next=%2Fdashboard%2Fhockey`
+
+Keep `VITE_PARENT_PREMIUM_LAUNCH_ENABLED=false` until the TAKATAK Hockey Membership migration, Stripe CAD 10/week Price, dedicated webhook, account handoff and entitlement verification have passed end-to-end tests. AHMV must never unlock premium from localStorage, a query parameter or a Stripe success redirect.

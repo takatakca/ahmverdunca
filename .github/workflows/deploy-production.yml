@@ -96,6 +96,7 @@ jobs:
           bun run test:team-feed
           bun run test:assistant
           bun run check:monetization
+          bun run check:parent-premium
           bun run check:data
           bun run check:seo
           bun run check:runtime-policy
