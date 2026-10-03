@@ -3,6 +3,7 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { applyPublicResponsePolicy } from "./lib/response-policy";
+import { handleAhmvTwilio } from "./lib/ahmv-twilio.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -86,6 +87,8 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
+    const phoneResponse = await handleAhmvTwilio(request);
+    if (phoneResponse) return phoneResponse;
     if (url.pathname === "/healthz") {
       return new Response(JSON.stringify({ ok: true, service: "ahmverdun-web" }), {
         status: 200,
