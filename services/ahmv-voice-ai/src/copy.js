@@ -37,6 +37,12 @@ export const ACCESS_DENIED_MEMBERSHIP = {
   es: 'Este servicio telefónico está reservado para miembros activos. Si su número puede recibir mensajes, el enlace de acceso se enviará después de la llamada.'
 };
 
+export const ACCESS_DENIED_BLOCKED = {
+  fr: 'Ce service téléphonique n’est pas disponible pour ce numéro. Consultez ahmverdun.ca pour les informations publiques.',
+  en: 'This phone service is not available for this number. Please use ahmverdun.ca for public information.',
+  es: 'Este servicio telefónico no está disponible para este número. Consulte ahmverdun.ca para información pública.'
+};
+
 export const ACCESS_DENIED_BETA_QUOTA = {
   fr: 'La limite d’utilisation gratuite de ce numéro a été atteinte pour les dernières 24 heures. Consultez ahmverdun.ca pour les horaires et les informations.',
   en: 'The free-use limit for this number has been reached for the last 24 hours. Please use ahmverdun.ca for schedules and information.',
