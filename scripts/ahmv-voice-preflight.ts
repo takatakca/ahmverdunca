@@ -15,6 +15,21 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
+const placeholder = /^(change-me|changeme|replace|replace-me|todo|example|test|xxx)/i;
+for (const name of required) {
+  assert.ok(!placeholder.test(env[name]!.trim()), `${name} still looks like a placeholder`);
+}
+
+const supabaseUrl = new URL(env["SUPABASE_URL"]!);
+assert.equal(supabaseUrl.protocol, "https:", "SUPABASE_URL must use HTTPS");
+
+const publicOrigin = new URL(env["AHMV_WEBHOOK_ORIGIN"] ?? "https://ahmverdun.ca");
+assert.equal(publicOrigin.protocol, "https:", "AHMV public origin must use HTTPS");
+assert.ok(
+  publicOrigin.hostname === "ahmverdun.ca" || publicOrigin.hostname.endsWith(".ahmverdun.ca"),
+  "AHMV public origin must stay on ahmverdun.ca",
+);
+
 const bridgeToken = env["AHMV_VOICE_BRIDGE_TOKEN"]!.trim();
 assert.ok(bridgeToken.length >= 24, "AHMV_VOICE_BRIDGE_TOKEN must be at least 24 characters");
 
@@ -28,6 +43,8 @@ assert.ok(Number.isInteger(retention) && retention >= 7 && retention <= 365, "Vo
 console.log(JSON.stringify({
   ok: true,
   service: "ahmv-voice-bridge",
+  publicOrigin: publicOrigin.origin,
+  supabaseOrigin: supabaseUrl.origin,
   scheduleOrigin: scheduleUrl.origin,
   voiceRetentionDays: retention,
   secretsPresent: true,
