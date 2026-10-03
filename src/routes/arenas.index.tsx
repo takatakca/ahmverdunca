@@ -1,7 +1,7 @@
 import { canonicalLink } from "@/lib/seo";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, ExternalLink, MapPin, Navigation } from "lucide-react";
+import { CalendarDays, ExternalLink, MapPin, Navigation, Search } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { ARENAS, ARENA_ZONES } from "@/data/arenas";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -29,10 +29,28 @@ export const Route = createFileRoute("/arenas/")({
   component: ArenasPage,
 });
 
+function providerDirections(address: string) {
+  const target = encodeURIComponent(address);
+  return {
+    google: mapsDirectionsUrl(address),
+    waze: `https://www.waze.com/ul?q=${target}&navigate=yes`,
+    apple: `https://maps.apple.com/?daddr=${target}`,
+  };
+}
+
 function ArenasPage() {
   const { t, l, lang } = useI18n();
   const [zone, setZone] = useState("all");
-  const list = zone === "all" ? ARENAS : ARENAS.filter((arena) => arena.zone === zone);
+  const [query, setQuery] = useState("");
+  const featuredArena = ARENAS.find((arena) => arena.slug === "auditorium-de-verdun") ?? ARENAS[0];
+  const normalizedQuery = query.trim().toLocaleLowerCase(lang === "fr" ? "fr-CA" : "en-CA");
+  const list = ARENAS.filter((arena) => {
+    const zoneMatches = zone === "all" || arena.zone === zone;
+    const searchMatches = !normalizedQuery || `${arena.name} ${arena.address} ${l(arena.borough)}`
+      .toLocaleLowerCase(lang === "fr" ? "fr-CA" : "en-CA")
+      .includes(normalizedQuery);
+    return zoneMatches && searchMatches;
+  });
 
   return (
     <>
@@ -77,7 +95,21 @@ function ArenasPage() {
                 {lang === "fr" ? "installations répertoriées" : "listed facilities"}
               </p>
             </div>
-            <div className="mt-7 grid gap-px bg-white/12">
+            {featuredArena && (
+              <div className="mt-7 border border-white/12 bg-white/[0.035] p-4">
+                <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                  {lang === "fr" ? "Départ rapide · Verdun" : "Quick start · Verdun"}
+                </p>
+                <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.9]">{featuredArena.name}</p>
+                <p className="mt-2 text-xs leading-relaxed text-white/52">{featuredArena.address}</p>
+                <div className="mt-4 grid grid-cols-3 gap-2">
+                  <a href={providerDirections(featuredArena.address).google} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-white/14 px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Google</a>
+                  <a href={providerDirections(featuredArena.address).waze} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-white/14 px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Waze</a>
+                  <a href={providerDirections(featuredArena.address).apple} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-white/14 px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Apple</a>
+                </div>
+              </div>
+            )}
+            <div className="mt-3 grid gap-px bg-white/12">
               <Link to="/horaires" className="interactive-surface flex items-center justify-between bg-navy p-5 hover:bg-white/[0.06]">
                 <span className="font-display text-xl font-bold uppercase">{lang === "fr" ? "Voir les horaires" : "View schedules"}</span>
                 <CalendarDays className="size-5 text-sport-foreground" />
@@ -110,6 +142,23 @@ function ArenasPage() {
           </Link>
         </div>
 
+        <label className="mb-4 flex min-h-12 items-center gap-3 border border-navy/12 bg-background px-4 focus-within:border-sport">
+          <Search className="size-4 shrink-0 text-sport" aria-hidden />
+          <input
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={lang === "fr" ? "Rechercher un aréna, une ville ou une adresse…" : "Search arena, city or address…"}
+            aria-label={lang === "fr" ? "Rechercher un aréna" : "Search arenas"}
+            className="min-w-0 flex-1 bg-transparent py-3 text-sm text-navy outline-none placeholder:text-muted-foreground"
+          />
+          {query && (
+            <button type="button" onClick={() => setQuery("")} className="text-[8px] font-bold uppercase tracking-[0.12em] text-sport">
+              {lang === "fr" ? "Effacer" : "Clear"}
+            </button>
+          )}
+        </label>
+
         <div className="scrollbar-none -mx-1 mb-6 flex gap-2 overflow-x-auto px-1 pb-1">
           {[{ id: "all", label: { fr: "Tous", en: "All" } }, ...ARENA_ZONES].map((zoneItem) => (
             <button
@@ -129,7 +178,8 @@ function ArenasPage() {
           ))}
         </div>
 
-        <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 md:grid-cols-2 lg:grid-cols-3">
+        {list.length > 0 ? (
+          <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 md:grid-cols-2 lg:grid-cols-3">
           {list.map((arena) => (
             <article key={arena.slug} className="interactive-surface flex flex-col bg-background p-5 hover:bg-ice/55">
               <div className="flex items-start justify-between gap-3">
@@ -150,27 +200,35 @@ function ArenasPage() {
               <p className="mt-1 text-sm text-muted-foreground">{l(arena.borough)}</p>
               <p className="mt-3 text-sm leading-relaxed">{arena.address}</p>
 
-              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+              <div className="mt-auto pt-5">
                 <Link
                   to="/arenas/$slug"
                   params={{ slug: arena.slug }}
-                  className="premium-control tap-target inline-flex items-center justify-center border border-input px-3 text-xs font-semibold uppercase tracking-wide hover:bg-secondary"
+                  className="premium-control mb-2 flex min-h-10 items-center justify-between border border-input px-3 text-[9px] font-semibold uppercase tracking-[0.1em] text-navy hover:bg-secondary"
                 >
-                  {lang === "fr" ? "Détails" : "Details"}
+                  <span>{lang === "fr" ? "Détails de l’aréna" : "Arena details"}</span>
+                  <ExternalLink className="size-3.5 text-sport" />
                 </Link>
-                <a
-                  href={mapsDirectionsUrl(arena.address)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="premium-control tap-target inline-flex items-center justify-center gap-1.5 bg-navy px-3 text-xs font-semibold uppercase tracking-wide text-navy-foreground hover:bg-navy-deep"
-                >
-                  <Navigation className="size-3.5" aria-hidden />
-                  {t("common.directions")}
-                </a>
+                <div className="grid grid-cols-3 gap-2">
+                  <a href={providerDirections(arena.address).google} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center bg-navy px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Google</a>
+                  <a href={providerDirections(arena.address).waze} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-navy/12 px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-navy">Waze</a>
+                  <a href={providerDirections(arena.address).apple} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-navy/12 px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-navy">Apple</a>
+                </div>
               </div>
             </article>
           ))}
-        </div>
+          </div>
+        ) : (
+          <div className="border border-navy/12 bg-ice p-8 text-center">
+            <MapPin className="mx-auto size-6 text-sport" />
+            <p className="mt-4 font-display text-3xl font-extrabold uppercase text-navy">
+              {lang === "fr" ? "Aucun aréna ne correspond" : "No arena matches"}
+            </p>
+            <button type="button" onClick={() => { setQuery(""); setZone("all"); }} className="mt-4 text-[9px] font-bold uppercase tracking-[0.13em] text-sport">
+              {lang === "fr" ? "Réinitialiser la recherche" : "Reset search"}
+            </button>
+          </div>
+        )}
       </div>
     </>
   );
