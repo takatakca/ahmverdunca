@@ -1,0 +1,67 @@
+name: AHM Verdun Voice service CI
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "services/ahmv-voice-ai/**"
+      - ".github/workflows/voice-service-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "services/ahmv-voice-ai/**"
+      - ".github/workflows/voice-service-ci.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  voice-service:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Verify service repository hygiene
+        run: |
+          set -euo pipefail
+          test -f services/ahmv-voice-ai/package-lock.json
+          test -f services/ahmv-voice-ai/src/server.js
+          test -f services/ahmv-voice-ai/.env.example
+          test ! -f services/ahmv-voice-ai/.env
+          ! grep -R --line-number -E '(^|[^A-Za-z0-9_])(sk-proj-|sk-[A-Za-z0-9]{20,}|AC[0-9a-fA-F]{32}[^x])' services/ahmv-voice-ai \
+            --exclude='package-lock.json' \
+            --exclude='.env.example'
+
+      - name: Locked install and source checks on Node 22
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD/services/ahmv-voice-ai:/app" \
+            -w /app \
+            node:22-bookworm-slim \
+            sh -lc 'npm ci --ignore-scripts --no-audit --no-fund && npm run check && npm ls --all'
+
+      - name: Production dependency audit
+        run: |
+          set -euo pipefail
+          docker run --rm \
+            -v "$PWD/services/ahmv-voice-ai:/app" \
+            -w /app \
+            node:22-bookworm-slim \
+            sh -lc 'npm audit --omit=dev --audit-level=high'
+
+      - name: Build production image
+        run: |
+          set -euo pipefail
+          docker build --pull -t ahmv-voice-ai:${{ github.sha }} services/ahmv-voice-ai
+
+      - name: Verify production image source
+        run: |
+          set -euo pipefail
+          docker run --rm --entrypoint node \
+            ahmv-voice-ai:${{ github.sha }} \
+            --check src/server.js
