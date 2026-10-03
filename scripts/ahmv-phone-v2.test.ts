@@ -66,6 +66,9 @@ test("member SMS commands parse in French and English", () => {
   assert.deepEqual(parsePhoneCommand("CALENDRIER M13A"), { kind: "calendar", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("CALENDAR M13A"), { kind: "calendar", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("CAL M13A"), { kind: "calendar", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("DÉPART M13A"), { kind: "departure", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("DEPART M13A"), { kind: "departure", teamQuery: "M13A" });
+  assert.deepEqual(parsePhoneCommand("LEAVE M13A"), { kind: "departure", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("RAPPEL M13A"), { kind: "reminder-on", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("REMIND M13A"), { kind: "reminder-on", teamQuery: "M13A" });
   assert.deepEqual(parsePhoneCommand("RAPPEL OFF M13A"), { kind: "reminder-off", teamQuery: "M13A" });
