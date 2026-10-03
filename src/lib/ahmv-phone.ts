@@ -62,6 +62,9 @@ export function scheduleAnswer(
         lang === "fr"
           ? `Horaire actuel non disponible dans la source intégrée. Consultez ${link}`
           : `Current schedule unavailable in the integrated source. Check ${link}`,
+      group,
+      link,
+      event: undefined,
     };
   }
   const next = snapshot.activities
@@ -81,12 +84,18 @@ export function scheduleAnswer(
         lang === "fr"
           ? `Aucun prochain événement confirmé dans la source intégrée pour ${query.slice(0, 80)}. Horaire possiblement à venir. ${link}`
           : `No upcoming event confirmed in the integrated source for ${query.slice(0, 80)}. Schedule may still be pending. ${link}`,
+      group,
+      link,
+      event: undefined,
     };
   }
   const cancelled = next.status === "cancelled";
   return {
     outcome: cancelled ? "cancelled" : "scheduled",
     text: `${cancelled ? (lang === "fr" ? "ANNULÉ — " : "CANCELLED — ") : ""}${next.group}: ${next.date} ${next.start}, ${next.activity}, ${next.venue}. ${link}`,
+    group,
+    link,
+    event: next,
   };
 }
 
