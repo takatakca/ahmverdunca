@@ -1,3 +1,5 @@
+import { approvedReminderTeamMap } from "../src/features/ahmv-phone/reminders/source.ts";
+
 type Settings = Record<string, string | undefined>;
 
 export interface PhonePreflightCheck {
@@ -30,6 +32,7 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
   const phoneEnabled = bool(settings["AHMV_PHONE_ENABLED"]);
   const publicEnabled = bool(settings["AHMV_PHONE_PUBLIC"]);
   const lifecycleEnabled = bool(settings["AHMV_PHONE_LIFECYCLE_ENABLED"]);
+  const remindersEnabled = bool(settings["AHMV_PHONE_REMINDERS_ENABLED"]);
 
   return [
     {
@@ -49,13 +52,13 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
     {
       id: "twilio-account",
       ok: present(settings["TWILIO_ACCOUNT_SID"]),
-      required: phoneEnabled || publicEnabled || lifecycleEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled,
       detail: "Twilio Account SID is configured server-side.",
     },
     {
       id: "twilio-auth",
       ok: present(settings["TWILIO_AUTH_TOKEN"]),
-      required: phoneEnabled || publicEnabled || lifecycleEnabled,
+      required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled,
       detail: "Twilio Auth Token is configured server-side.",
     },
     {
@@ -85,16 +88,38 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       detail: "Internal demo endpoint has a separate token when enabled.",
     },
     {
-      id: "lifecycle-cron-secret",
-      ok: !lifecycleEnabled || present(settings["LOVABLE_CRON_SECRET"]),
-      required: lifecycleEnabled,
-      detail: "Lifecycle worker requires the protected cron secret.",
+      id: "worker-cron-secret",
+      ok:
+        !(lifecycleEnabled || remindersEnabled) ||
+        present(settings["LOVABLE_CRON_SECRET"]),
+      required: lifecycleEnabled || remindersEnabled,
+      detail: "Phone background workers require the protected cron secret.",
+    },
+    {
+      id: "reminder-team-map",
+      ok:
+        !remindersEnabled ||
+        (() => {
+          try {
+            return Object.keys(approvedReminderTeamMap(settings)).length > 0;
+          } catch {
+            return false;
+          }
+        })(),
+      required: remindersEnabled,
+      detail: "Reminder delivery requires a valid explicit official-group to public-team mapping.",
     },
     {
       id: "safe-lifecycle-gate",
       ok: !lifecycleEnabled || phoneEnabled,
       required: true,
       detail: "Lifecycle dispatch cannot be enabled while the phone integration is disabled.",
+    },
+    {
+      id: "safe-reminder-gate",
+      ok: !remindersEnabled || phoneEnabled,
+      required: true,
+      detail: "Reminder dispatch cannot be enabled while the phone integration is disabled.",
     },
     {
       id: "safe-public-gate",

@@ -67,7 +67,7 @@ test("lifecycle mode requires phone integration and cron secret", () => {
     TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
   });
   assert.equal(checks.find((check) => check.id === "safe-lifecycle-gate")?.ok, false);
-  assert.equal(checks.find((check) => check.id === "lifecycle-cron-secret")?.ok, false);
+  assert.equal(checks.find((check) => check.id === "worker-cron-secret")?.ok, false);
   assert.equal(checks.find((check) => check.id === "twilio-account")?.required, true);
   assert.equal(checks.find((check) => check.id === "twilio-auth")?.required, true);
 });
@@ -86,5 +86,42 @@ test("lifecycle mode passes its safety gates with provider and cron configuratio
     LOVABLE_CRON_SECRET: "cron-secret",
   });
   assert.equal(checks.find((check) => check.id === "safe-lifecycle-gate")?.ok, true);
-  assert.equal(checks.find((check) => check.id === "lifecycle-cron-secret")?.ok, true);
+  assert.equal(checks.find((check) => check.id === "worker-cron-secret")?.ok, true);
+});
+
+
+test("reminder worker requires phone integration cron secret and explicit team mapping", () => {
+  const checks = phonePreflight({
+    AHMV_PHONE_ENABLED: "false",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PHONE_REMINDERS_ENABLED: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    AHMV_REMINDER_TEAM_MAP_JSON: "{}",
+  });
+  assert.equal(checks.find((check) => check.id === "safe-reminder-gate")?.ok, false);
+  assert.equal(checks.find((check) => check.id === "worker-cron-secret")?.ok, false);
+  assert.equal(checks.find((check) => check.id === "reminder-team-map")?.ok, false);
+  assert.equal(checks.find((check) => check.id === "twilio-account")?.required, true);
+});
+
+test("reminder worker safety gates pass with explicit mapping and provider config", () => {
+  const checks = phonePreflight({
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PHONE_REMINDERS_ENABLED: "true",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    AHMV_REMINDER_TEAM_MAP_JSON: '{"Junior":"2025191400035011"}',
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "secret",
+    LOVABLE_CRON_SECRET: "cron-secret",
+  });
+  assert.equal(checks.find((check) => check.id === "safe-reminder-gate")?.ok, true);
+  assert.equal(checks.find((check) => check.id === "worker-cron-secret")?.ok, true);
+  assert.equal(checks.find((check) => check.id === "reminder-team-map")?.ok, true);
 });

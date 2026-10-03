@@ -11,6 +11,7 @@ import { handleAhmvPhoneOpsFunnel } from "./features/ahmv-phone/ops/funnel-handl
 import { handleAhmvPhoneOpsHealth } from "./features/ahmv-phone/ops/health-handler.server";
 import { handleAhmvPhoneRetention } from "./features/ahmv-phone/privacy/handler.server";
 import { handleAhmvPhoneLifecycleCron } from "./features/ahmv-phone/messaging/lifecycle-handler.server";
+import { handleAhmvPhoneReminderCron } from "./features/ahmv-phone/reminders/handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 
 type ServerEntry = {
@@ -109,6 +110,8 @@ export default {
     if (phoneRetentionResponse) return phoneRetentionResponse;
     const phoneLifecycleResponse = await handleAhmvPhoneLifecycleCron(request);
     if (phoneLifecycleResponse) return phoneLifecycleResponse;
+    const phoneReminderResponse = await handleAhmvPhoneReminderCron(request);
+    if (phoneReminderResponse) return phoneReminderResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);

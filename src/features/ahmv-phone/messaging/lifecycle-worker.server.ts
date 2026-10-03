@@ -9,8 +9,15 @@ import {
   type LifecycleConsentBasis,
   type LifecycleMessageKind,
 } from "./lifecycle.ts";
-import { lifecycleMessageText } from "./templates.ts";
+import {
+  claimMessageJob,
+  loadDueMessageJobs,
+  messageBodyFromPayload,
+  queueMessageJob,
+  updateMessageJob,
+} from "./jobs.server.ts";
 import { sendQueuedSms } from "./send.server.ts";
+import { lifecycleMessageText } from "./templates.ts";
 
 type Settings = Record<string, string | undefined>;
 
@@ -24,18 +31,6 @@ type ContactRow = {
   transactional_sms_allowed: boolean;
   marketing_sms_consent: boolean;
   takatak_identity_id: string | null;
-};
-
-type JobRow = {
-  id: string;
-  contact_id: string;
-  purpose: string;
-  payload: unknown;
-  status: string;
-  not_before: string;
-  attempts: number;
-  dedupe_key: string | null;
-  consent_basis: string | null;
 };
 
 function db(): SupabaseClient {
@@ -56,12 +51,6 @@ function contactFromRow(row: ContactRow): AhmvPhoneContact {
   };
 }
 
-function bodyFromPayload(payload: unknown) {
-  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
-  const body = (payload as Record<string, unknown>)["body"];
-  return typeof body === "string" && body.trim() ? body.slice(0, 1500) : null;
-}
-
 function isLifecycleKind(value: string): value is LifecycleMessageKind {
   return [
     "trial_welcome",
@@ -75,12 +64,24 @@ function isConsentBasis(value: string | null): value is LifecycleConsentBasis {
   return value === "requested" || value === "service" || value === "marketing";
 }
 
+async function loadContact(contactId: string) {
+  const result = await db()
+    .from("ahmv_phone_contacts")
+    .select(
+      "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id",
+    )
+    .eq("id", contactId)
+    .maybeSingle();
+
+  if (result.error) throw result.error;
+  return result.data ? contactFromRow(result.data as ContactRow) : null;
+}
+
 export async function queuePhoneLifecycleMessages(
   settings: Settings = process.env,
   now = new Date(),
 ) {
-  const client = db();
-  const contactsResult = await client
+  const contactsResult = await db()
     .from("ahmv_phone_contacts")
     .select(
       "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id",
@@ -98,33 +99,20 @@ export async function queuePhoneLifecycleMessages(
 
   for (const row of (contactsResult.data ?? []) as ContactRow[]) {
     const contact = contactFromRow(row);
-    const plans = planPhoneLifecycleMessages(contact, now);
 
-    for (const plan of plans) {
+    for (const plan of planPhoneLifecycleMessages(contact, now)) {
       planned += 1;
-      const body = lifecycleMessageText(plan.kind, contact.language, memberUrl);
-      const result = await client.from("ahmv_phone_message_jobs").insert({
-        contact_id: contact.id,
+      const result = await queueMessageJob({
+        contactId: contact.id,
         purpose: plan.kind,
-        payload: { body },
-        status: "pending",
-        not_before: plan.dueAt,
-        attempts: 0,
-        dedupe_key: plan.dedupeKey,
-        consent_basis: plan.consentBasis,
+        body: lifecycleMessageText(plan.kind, contact.language, memberUrl),
+        notBefore: plan.dueAt,
+        dedupeKey: plan.dedupeKey,
+        consentBasis: plan.consentBasis,
       });
 
-      if (!result.error) {
-        inserted += 1;
-        continue;
-      }
-
-      if (result.error.code === "23505") {
-        duplicates += 1;
-        continue;
-      }
-
-      throw result.error;
+      if (result === "inserted") inserted += 1;
+      else duplicates += 1;
     }
   }
 
@@ -134,52 +122,6 @@ export async function queuePhoneLifecycleMessages(
     inserted,
     duplicates,
   };
-}
-
-async function claimJob(job: JobRow, now: Date) {
-  const result = await db()
-    .from("ahmv_phone_message_jobs")
-    .update({
-      status: "sending",
-      attempts: job.attempts + 1,
-      updated_at: now.toISOString(),
-    })
-    .eq("id", job.id)
-    .eq("status", "pending")
-    .select(
-      "id,contact_id,purpose,payload,status,not_before,attempts,dedupe_key,consent_basis",
-    )
-    .maybeSingle();
-
-  if (result.error) throw result.error;
-  return result.data as JobRow | null;
-}
-
-async function loadContact(contactId: string) {
-  const result = await db()
-    .from("ahmv_phone_contacts")
-    .select(
-      "id,phone_e164,language,access_tier,trial_expires_at,sms_consent,transactional_sms_allowed,marketing_sms_consent,takatak_identity_id",
-    )
-    .eq("id", contactId)
-    .maybeSingle();
-
-  if (result.error) throw result.error;
-  return result.data ? contactFromRow(result.data as ContactRow) : null;
-}
-
-async function updateJob(
-  jobId: string,
-  values: Record<string, unknown>,
-) {
-  const result = await db()
-    .from("ahmv_phone_message_jobs")
-    .update({
-      ...values,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", jobId);
-  if (result.error) throw result.error;
 }
 
 export async function dispatchDuePhoneLifecycleMessages(
@@ -204,27 +146,19 @@ export async function dispatchDuePhoneLifecycleMessages(
     };
   }
 
-  const client = db();
-  const dueResult = await client
-    .from("ahmv_phone_message_jobs")
-    .select(
-      "id,contact_id,purpose,payload,status,not_before,attempts,dedupe_key,consent_basis",
-    )
-    .eq("status", "pending")
-    .lte("not_before", now.toISOString())
-    .in("purpose", [
+  const dueJobs = await loadDueMessageJobs(
+    [
       "trial_welcome",
       "trial_expiry_3d",
       "trial_expired",
       "membership_offer",
-    ])
-    .order("not_before", { ascending: true })
-    .limit(50);
-
-  if (dueResult.error) throw dueResult.error;
+    ],
+    now,
+    50,
+  );
 
   const summary = {
-    due: dueResult.data?.length ?? 0,
+    due: dueJobs.length,
     claimed: 0,
     accepted: 0,
     cancelled: 0,
@@ -233,13 +167,13 @@ export async function dispatchDuePhoneLifecycleMessages(
     skippedConfiguration: false,
   };
 
-  for (const row of (dueResult.data ?? []) as JobRow[]) {
-    const claimed = await claimJob(row, now);
+  for (const row of dueJobs) {
+    const claimed = await claimMessageJob(row, now);
     if (!claimed) continue;
     summary.claimed += 1;
 
     const contact = await loadContact(claimed.contact_id);
-    const body = bodyFromPayload(claimed.payload);
+    const body = messageBodyFromPayload(claimed.payload);
     const consentBasis = isConsentBasis(claimed.consent_basis)
       ? claimed.consent_basis
       : null;
@@ -251,10 +185,14 @@ export async function dispatchDuePhoneLifecycleMessages(
       !isLifecycleKind(claimed.purpose) ||
       !lifecycleConsentStillValid(contact, consentBasis)
     ) {
-      await updateJob(claimed.id, {
-        status: "cancelled",
-        last_error: "Lifecycle eligibility or consent no longer valid",
-      });
+      await updateMessageJob(
+        claimed.id,
+        {
+          status: "cancelled",
+          last_error: "Lifecycle eligibility or consent no longer valid",
+        },
+        now,
+      );
       summary.cancelled += 1;
       continue;
     }
@@ -274,17 +212,27 @@ export async function dispatchDuePhoneLifecycleMessages(
     const attempts = claimed.attempts;
     if (result.reason === "provider" && attempts < 3) {
       const delayMinutes = lifecycleRetryDelayMinutes(attempts);
-      await updateJob(claimed.id, {
-        status: "pending",
-        not_before: new Date(now.getTime() + delayMinutes * 60_000).toISOString(),
-        last_error: result.error ?? "Provider send failed",
-      });
+      await updateMessageJob(
+        claimed.id,
+        {
+          status: "pending",
+          not_before: new Date(
+            now.getTime() + delayMinutes * 60_000,
+          ).toISOString(),
+          last_error: result.error ?? "Provider send failed",
+        },
+        now,
+      );
       summary.retried += 1;
     } else {
-      await updateJob(claimed.id, {
-        status: "failed",
-        last_error: result.error,
-      });
+      await updateMessageJob(
+        claimed.id,
+        {
+          status: "failed",
+          last_error: result.error,
+        },
+        now,
+      );
       summary.failed += 1;
     }
   }
