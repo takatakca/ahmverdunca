@@ -1,4 +1,4 @@
-# AHM Verdun — GROUPE TAKATAK integration boundary
+# AHM Verdun — TAKATAK integration boundary
 
 This document is the current architectural rule for the AHM Verdun project.
 
@@ -6,7 +6,7 @@ This document is the current architectural rule for the AHM Verdun project.
 
 AHM Verdun keeps the authority for **hockey itself**.
 
-GROUPE TAKATAK can progressively manage the **digital, communication, marketing, sponsor and customer-experience layer** around the association.
+GROUPE TAKATAK is the company/agency grouping the ecosystem. **TAKATAK Dashboard** can progressively manage the digital, communication, marketing, sponsor and customer-experience layer around the association, while **TAKATAK Auth** is the shared identity/authentication layer.
 
 The public website must make hockey information easier to find without pretending TAKATAK owns the official hockey records.
 
@@ -29,7 +29,7 @@ When an established platform such as Spordle, WLLV or an official tournament sys
 
 ## 3. What GROUPE TAKATAK may manage
 
-The TAKATAK workspace for AHM Verdun can progressively cover:
+The AHM Verdun workspace inside TAKATAK Dashboard can progressively cover:
 
 - website content and presentation
 - general public information
@@ -61,7 +61,7 @@ Do not create a second AHM Verdun operational dashboard.
 
 The public AHM Verdun site must not attach its own local authentication middleware or create volunteer/admin roles for hockey operations. Any historical prototype authentication/database scaffolding is non-authoritative and must remain disconnected from the public experience.
 
-TAKATAK staff/client access belongs in the central GROUPE TAKATAK dashboard using the existing TAKATAK access model.
+TAKATAK staff/client access belongs in **TAKATAK Dashboard**, operated by GROUPE TAKATAK, using **TAKATAK Auth** and the existing TAKATAK access model.
 
 Parents do not need a TAKATAK account merely to read schedules, news, arenas or registration information.
 
