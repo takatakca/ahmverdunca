@@ -66,7 +66,9 @@ export async function getAhmvPhoneOpsSummary(
     client
       .from("ahmv_phone_contacts")
       .select("*", { count: "exact", head: true })
-      .eq("marketing_sms_consent", true),
+      .eq("marketing_sms_consent", true)
+      .not("marketing_sms_consented_at", "is", null)
+      .in("marketing_sms_consent_source", ["sms_keyword", "takatak_verified"]),
     client
       .from("ahmv_phone_interactions")
       .select("*", { count: "exact", head: true })
