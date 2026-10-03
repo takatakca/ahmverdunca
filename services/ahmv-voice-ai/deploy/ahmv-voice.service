@@ -9,10 +9,10 @@ StartLimitBurst=5
 Type=simple
 User=ahmvvoice
 Group=ahmvvoice
-WorkingDirectory=/opt/ahmv-voice-ai
+WorkingDirectory=/opt/ahmv-voice-ai/current
 Environment=NODE_ENV=production
 EnvironmentFile=/etc/ahmv-voice-ai.env
-ExecStart=/usr/bin/node /opt/ahmv-voice-ai/src/server.js
+ExecStart=/usr/bin/node /opt/ahmv-voice-ai/current/src/server.js
 Restart=on-failure
 RestartSec=3
 TimeoutStopSec=20
