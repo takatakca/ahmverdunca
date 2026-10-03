@@ -1,4 +1,8 @@
-import { ensureAhmvFamilyHub, updateAhmvAutopilot } from "./family-hub.server";
+import {
+  addAhmvFamilyChild,
+  ensureAhmvFamilyHub,
+  updateAhmvAutopilot,
+} from "./family-hub.server";
 import { readAhmvExperienceSession } from "./session.server";
 
 function json(body: unknown, status = 200) {
@@ -73,6 +77,35 @@ export async function handleAhmvExperienceApi(
     } catch (error) {
       console.error("[AHMV experience bootstrap]", error);
       return json({ ok: false, message: "Family Hub is temporarily unavailable." }, 503);
+    }
+  }
+
+  if (url.pathname === "/api/ahmv/experience/children" && request.method === "POST") {
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return json({ ok: false, message: "Invalid JSON." }, 400);
+    }
+
+    const name =
+      body &&
+      typeof body === "object" &&
+      !Array.isArray(body) &&
+      typeof (body as Record<string, unknown>).displayName === "string"
+        ? ((body as Record<string, unknown>).displayName as string).trim()
+        : "";
+
+    if (name.length < 2 || name.length > 80) {
+      return json({ ok: false, message: "Child name must contain 2 to 80 characters." }, 400);
+    }
+
+    try {
+      const child = await addAhmvFamilyChild(session.identityId, name);
+      return json({ ok: true, child }, 201);
+    } catch (error) {
+      console.error("[AHMV family child]", error);
+      return json({ ok: false, message: "Child could not be added." }, 503);
     }
   }
 
