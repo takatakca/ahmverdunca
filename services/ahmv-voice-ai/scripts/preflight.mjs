@@ -7,6 +7,7 @@ const result = {
   dataMode: config.ahmDataMode, signatureValidation: config.validateTwilioSignatures,
   persistentStoreRequired: config.requirePersistentStore,
   persistentStoreConfigured: configured(config.supabaseUrl) && configured(config.supabaseServiceRoleKey),
+  supabaseProjectRef: config.ahmvSupabaseProjectRef,
   bridgeConfigured: configured(config.ahmBridgeApiUrl) && configured(config.ahmBridgeToken),
   smsEnabled: config.smsEnabled, explicitTtsVoiceConfigured: configured(config.twilioTtsVoice),
   speechModel: config.twilioSpeechModel, reasoningEffort: config.openaiReasoningEffort,
