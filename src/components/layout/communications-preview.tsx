@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Bot, CalendarDays, Coffee, Globe2, Mail, PhoneCall, Sparkles, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Bot, CalendarDays, Coffee, Globe2, PhoneCall, Sparkles, Users, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { Button } from "@/components/ui/button";
 import { LogoSlot } from "./logo-slot";
 import { DEVELOPMENT_SUPPORT } from "@/lib/monetization";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import {
   ASSISTANT_LANGUAGE_OPTIONS,
   assistantUiLanguage,
@@ -22,66 +23,51 @@ function popupCopy(language: AssistantLanguageCode) {
 
   if (ui === "es") {
     return {
-      eyebrow: "Bienvenido a AHMV",
-      title: "Tu hockey. Tus equipos. Todo aquí.",
-      body: "Horarios, resultados, arenas, noticias y mini-sitios de equipos en una experiencia simple para las familias.",
-      chooseTeams: "Elegir mis equipos",
-      schedules: "Ver horarios",
-      assistant: "Preguntar al asistente",
-      newsletter: "Recibir novedades",
-      emailPlaceholder: "tu@correo.ca",
-      signup: "Inscribirme",
-      demo: "Vista previa solamente — ningún correo se guarda ni se transmite.",
-      phoneReady: "Toca para llamar ahora",
-      phoneReserved: "Número reservado · activación final pendiente",
-      fullSite: "Sitio completo: FR / EN · asistencia multilingüe en evolución",
+      eyebrow: "AHMV · Verdun",
+      title: "Tu hockey. Todo aquí.",
+      body: "Equipos, horarios, resultados, arenas y noticias en una experiencia simple.",
+      chooseTeams: "Mis equipos",
+      schedules: "Horarios",
+      assistant: "Asistente",
+      phoneReady: "Llamar AHMV",
+      phoneReserved: "Número reservado",
       language: "Idioma",
-      otherLanguages: "Otros idiomas",
+      otherLanguages: "Más",
       never: "No mostrar de nuevo",
-      support: "Apoyar el desarrollo del sitio",
+      support: "Apoyar el sitio",
     };
   }
 
   if (ui === "en") {
     return {
-      eyebrow: "Welcome to AHMV",
-      title: "Your hockey. Your teams. All here.",
-      body: "Schedules, results, arenas, news and team mini-sites in one simple family experience.",
-      chooseTeams: "Choose my teams",
-      schedules: "View schedules",
-      assistant: "Ask the assistant",
-      newsletter: "Receive updates",
-      emailPlaceholder: "you@email.ca",
-      signup: "Sign me up",
-      demo: "Preview only — no email address is stored or transmitted.",
-      phoneReady: "Tap to call now",
-      phoneReserved: "Reserved number · final activation pending",
-      fullSite: "Full site: FR / EN · multilingual assistance is expanding",
+      eyebrow: "AHMV · Verdun",
+      title: "Your hockey. All here.",
+      body: "Teams, schedules, results, arenas and news in one simple experience.",
+      chooseTeams: "My teams",
+      schedules: "Schedules",
+      assistant: "Assistant",
+      phoneReady: "Call AHMV",
+      phoneReserved: "Reserved number",
       language: "Language",
-      otherLanguages: "Other languages",
+      otherLanguages: "More",
       never: "Don't show again",
-      support: "Support site development",
+      support: "Support the site",
     };
   }
 
   return {
-    eyebrow: "Bienvenue à l’AHMV",
-    title: "Votre hockey. Vos équipes. Tout ici.",
-    body: "Horaires, résultats, arénas, nouvelles et mini-sites d’équipes dans une expérience simple pour les familles.",
-    chooseTeams: "Choisir mes équipes",
-    schedules: "Voir les horaires",
-    assistant: "Demander à l’assistant",
-    newsletter: "Recevoir les nouvelles",
-    emailPlaceholder: "votre@courriel.ca",
-    signup: "M’inscrire",
-    demo: "Aperçu seulement — aucune adresse n’est enregistrée ni transmise.",
-    phoneReady: "Touchez pour appeler maintenant",
-    phoneReserved: "Numéro réservé · activation finale en attente",
-    fullSite: "Site complet : FR / EN · assistance multilingue en expansion",
+    eyebrow: "AHMV · Verdun",
+    title: "Votre hockey. Tout ici.",
+    body: "Équipes, horaires, résultats, arénas et nouvelles dans une expérience simple.",
+    chooseTeams: "Mes équipes",
+    schedules: "Horaires",
+    assistant: "Assistant",
+    phoneReady: "Appeler AHMV",
+    phoneReserved: "Numéro réservé",
     language: "Langue",
-    otherLanguages: "Autres langues",
+    otherLanguages: "Plus",
     never: "Ne plus afficher",
-    support: "Soutenir le développement du site",
+    support: "Soutenir le site",
   };
 }
 
@@ -89,7 +75,6 @@ export function CommunicationsPreview() {
   const { lang, setLang } = useI18n();
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const [open, setOpen] = useState(false);
-  const [subscribed, setSubscribed] = useState(false);
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
   const copy = useMemo(() => popupCopy(assistantLanguage), [assistantLanguage]);
   const supportAvailable =
@@ -120,22 +105,21 @@ export function CommunicationsPreview() {
       if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
       setOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 2200);
+    }, 2600);
 
     return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (!open) return;
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
-
     window.addEventListener("keydown", onKeyDown);
+
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
@@ -147,11 +131,6 @@ export function CommunicationsPreview() {
   const dismissForever = () => {
     window.localStorage.setItem(HIDE_KEY, "1");
     setOpen(false);
-  };
-
-  const submitPreview = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubscribed(true);
   };
 
   const chooseLanguage = (code: AssistantLanguageCode) => {
@@ -167,119 +146,115 @@ export function CommunicationsPreview() {
     });
   };
 
-  const phoneBlock = phonePublic ? (
-    <a
-      href={`tel:${phoneE164}`}
-      className="group block border border-sport/35 bg-sport/10 p-4 transition-colors hover:bg-sport/15"
-    >
-      <div className="flex items-center gap-2">
-        <span className="size-2 animate-pulse rounded-full bg-sport" aria-hidden />
-        <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport">
-          {copy.phoneReady}
-        </p>
-      </div>
-      <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-navy">
-        {phoneDisplay}
-      </p>
-      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{phoneE164}</p>
-    </a>
-  ) : (
-    <div className="border border-navy/12 bg-ice p-4">
-      <div className="flex items-center gap-2">
-        <span className="size-2 animate-pulse rounded-full bg-sport" aria-hidden />
-        <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport">
-          {copy.phoneReserved}
-        </p>
-      </div>
-      <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-navy">
-        {phoneDisplay}
-      </p>
-      <p className="mt-2 font-mono text-[10px] text-muted-foreground">{phoneE164}</p>
-    </div>
-  );
-
   return (
     <div
-      className="fixed inset-0 z-[90] flex items-end justify-center overflow-hidden bg-navy-deep/72 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-center sm:p-5"
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/62 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-center sm:p-5"
       role="presentation"
     >
       <section
         role="dialog"
         aria-modal="true"
         aria-labelledby="communications-preview-title"
-        className="relative grid max-h-[min(92dvh,760px)] w-full max-w-[calc(100vw-1rem)] overflow-hidden border border-white/10 bg-background shadow-[0_32px_90px_-28px_rgba(0,0,0,0.76)] sm:max-w-5xl sm:grid-cols-[0.9fr_1.1fr]"
+        className="relative w-full max-w-[680px] overflow-hidden border border-white/12 bg-background shadow-[0_30px_90px_-34px_rgba(0,0,0,0.78)]"
       >
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="tap-target absolute right-2 top-2 z-40 inline-flex size-11 items-center justify-center border border-white/25 bg-navy-deep/90 text-white shadow-lg backdrop-blur-md transition-transform active:scale-95 sm:right-3 sm:top-3"
-          aria-label={assistantUiLanguage(assistantLanguage) === "fr" ? "Fermer" : assistantUiLanguage(assistantLanguage) === "es" ? "Cerrar" : "Close"}
-        >
-          <X className="size-5" />
-        </button>
-
-        <div className="relative hidden min-h-[610px] overflow-hidden bg-navy-deep p-8 text-navy-foreground sm:block md:p-10">
-          <div className="arena-light" aria-hidden />
-          <div className="light-beam left-[6%]" aria-hidden />
-          <div className="light-beam left-[58%] [animation-delay:2.6s]" aria-hidden />
-          <div className="ice-grain absolute inset-0 opacity-40" aria-hidden />
-          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(6,15,39,0.05)_0%,rgba(6,15,39,0.70)_66%,rgba(6,15,39,0.98)_100%)]" aria-hidden />
-
-          <div className="relative z-10 flex h-full flex-col">
-            <div className="flex items-center gap-4 pr-12">
-              <LogoSlot size="lg" className="size-24 drop-shadow-[0_16px_30px_rgba(0,0,0,0.38)]" />
-              <div>
-                <p className="font-display text-3xl font-extrabold uppercase leading-none">AHM Verdun</p>
-                <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/55">
-                  Leafs · Louves · Verdun
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-auto pt-12">
-              <div className="flex items-center gap-2">
-                <PhoneCall className="size-5 text-sport-foreground" />
-                <p className="eyebrow text-sport-foreground">
-                  {phonePublic ? copy.phoneReady : copy.phoneReserved}
-                </p>
-              </div>
-              {phonePublic ? (
-                <a href={`tel:${phoneE164}`} className="mt-4 block font-display text-[clamp(3rem,6vw,5.6rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.04em] text-white transition-colors hover:text-sport-foreground">
-                  1 (581)<br />666-6AHM
-                </a>
-              ) : (
-                <p className="mt-4 font-display text-[clamp(3rem,6vw,5.6rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.04em] text-white">
-                  1 (581)<br />666-6AHM
-                </p>
-              )}
-              <p className="mt-3 font-mono text-xs tracking-[0.12em] text-white/52">+1 581 666 6246</p>
-
-              <div className="mt-7 border-l-2 border-sport pl-4">
-                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.14em] text-sport-foreground">
-                  <Sparkles className="size-4" /> {copy.assistant}
-                </p>
-                <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/58">
-                  {copy.body}
-                </p>
-              </div>
+        <div className="relative h-[150px] overflow-hidden bg-competition sm:h-[190px]">
+          <img
+            src={OFFICIAL_MEDIA.practiceGoalie.url}
+            alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGoalie.alt.fr : OFFICIAL_MEDIA.practiceGoalie.alt.en}
+            loading="eager"
+            decoding="async"
+            className="absolute inset-0 size-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.94)_0%,rgba(7,16,43,0.62)_54%,rgba(7,16,43,0.20)_100%)]" />
+          <div className="relative flex h-full items-end gap-3 p-5 pr-16 text-white sm:p-6 sm:pr-20">
+            <LogoSlot className="size-14 sm:size-16" />
+            <div>
+              <p className="eyebrow text-sport-foreground">{copy.eyebrow}</p>
+              <h2
+                id="communications-preview-title"
+                className="mt-1 max-w-[11ch] font-display text-3xl font-extrabold uppercase leading-[0.86] tracking-[-0.035em] sm:text-4xl"
+              >
+                {copy.title}
+              </h2>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="premium-control absolute right-3 top-3 flex size-10 items-center justify-center border border-white/20 bg-navy-deep/76 text-white backdrop-blur"
+            aria-label={assistantUiLanguage(assistantLanguage) === "fr" ? "Fermer" : assistantUiLanguage(assistantLanguage) === "es" ? "Cerrar" : "Close"}
+          >
+            <X className="size-4" />
+          </button>
         </div>
 
-        <div className="max-h-[min(92dvh,760px)] overflow-y-auto overscroll-contain p-5 pr-5 pt-14 sm:max-h-none sm:p-8 md:p-10">
-          <div className="flex flex-wrap items-center gap-2 border-b border-navy/10 pb-4">
+        <div className="max-h-[calc(100dvh-11rem)] overflow-y-auto p-5 sm:max-h-[560px] sm:p-6">
+          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground">{copy.body}</p>
+
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            <Button asChild variant="sport" className="h-auto min-h-[70px] flex-col gap-1 px-2 py-3">
+              <Link to="/equipes" onClick={() => setOpen(false)}>
+                <Users className="size-4" />
+                <span className="text-[10px] uppercase tracking-[0.08em]">{copy.chooseTeams}</span>
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="h-auto min-h-[70px] flex-col gap-1 px-2 py-3">
+              <Link to="/horaires" onClick={() => setOpen(false)}>
+                <CalendarDays className="size-4 text-sport" />
+                <span className="text-[10px] uppercase tracking-[0.08em]">{copy.schedules}</span>
+              </Link>
+            </Button>
+            <button
+              type="button"
+              onClick={launchAssistant}
+              className="premium-control flex min-h-[70px] flex-col items-center justify-center gap-1 border border-sport/35 bg-competition px-2 py-3 text-white"
+            >
+              <Bot className="size-4 text-sport-foreground" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.08em]">{copy.assistant}</span>
+            </button>
+          </div>
+
+          <div className="mt-4">
+            {phonePublic ? (
+              <a
+                href={`tel:${phoneE164}`}
+                className="premium-control flex min-h-12 items-center justify-between border border-sport/35 bg-sport/8 px-4 text-navy"
+              >
+                <span className="flex items-center gap-3">
+                  <span className="flex size-8 items-center justify-center bg-sport text-sport-foreground">
+                    <PhoneCall className="size-4" />
+                  </span>
+                  <span>
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-sport">{copy.phoneReady}</span>
+                    <span className="mt-0.5 block font-display text-xl font-extrabold uppercase leading-none">{phoneDisplay}</span>
+                  </span>
+                </span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-sport">1 clic</span>
+              </a>
+            ) : (
+              <div className="flex min-h-12 items-center justify-between border border-navy/10 bg-ice px-4 text-navy">
+                <span className="flex items-center gap-3">
+                  <PhoneCall className="size-4 text-sport" />
+                  <span>
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{copy.phoneReserved}</span>
+                    <span className="mt-0.5 block font-display text-xl font-extrabold uppercase leading-none">{phoneDisplay}</span>
+                  </span>
+                </span>
+              </div>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-navy/10 pt-4">
             <Globe2 className="size-4 text-sport" />
-            <span className="mr-1 text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
-              {copy.language}
-            </span>
+            <span className="mr-1 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{copy.language}</span>
             {ASSISTANT_LANGUAGE_OPTIONS.slice(0, 3).map((option) => (
               <button
                 key={option.code}
                 type="button"
                 onClick={() => chooseLanguage(option.code)}
                 className={assistantLanguage === option.code
-                  ? "premium-control min-h-9 border border-sport bg-sport/10 px-3 text-[10px] font-bold uppercase text-sport"
-                  : "premium-control min-h-9 border border-navy/12 px-3 text-[10px] font-bold uppercase text-navy"}
+                  ? "premium-control min-h-8 border border-sport bg-sport/10 px-3 text-[9px] font-bold uppercase text-sport"
+                  : "premium-control min-h-8 border border-navy/10 px-3 text-[9px] font-bold uppercase text-navy"}
               >
                 {option.code.toUpperCase()}
               </button>
@@ -290,7 +265,7 @@ export function CommunicationsPreview() {
                 const code = event.target.value as AssistantLanguageCode;
                 if (code) chooseLanguage(code);
               }}
-              className="h-9 min-w-32 border border-navy/12 bg-background px-2 text-[10px] font-bold uppercase text-navy outline-none"
+              className="h-8 min-w-24 border border-navy/10 bg-background px-2 text-[9px] font-bold uppercase text-navy outline-none"
               aria-label={copy.otherLanguages}
             >
               <option value="">+ {copy.otherLanguages}</option>
@@ -300,88 +275,15 @@ export function CommunicationsPreview() {
             </select>
           </div>
 
-          <div className="mt-5 sm:hidden">{phoneBlock}</div>
-
-          <p className="eyebrow mt-5 text-sport">{copy.eyebrow}</p>
-          <h2
-            id="communications-preview-title"
-            className="mt-2 max-w-[12ch] font-display text-4xl font-extrabold uppercase leading-[0.84] tracking-[-0.035em] text-navy sm:text-5xl"
-          >
-            {copy.title}
-          </h2>
-          <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            {copy.body}
-          </p>
-          <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.13em] text-muted-foreground">
-            {copy.fullSite}
-          </p>
-
-          <button
-            type="button"
-            onClick={launchAssistant}
-            className="premium-control mt-5 flex min-h-14 w-full items-center justify-between border border-sport/30 bg-competition px-4 text-left text-white hover:bg-navy-deep"
-          >
-            <span className="flex items-center gap-3">
-              <span className="relative flex size-9 items-center justify-center border border-white/12 bg-white/[0.04]">
-                <Bot className="size-4 text-sport-foreground" />
-                <span className="absolute -right-1 -top-1 size-2 animate-pulse rounded-full bg-sport" />
-              </span>
-              <span>
-                <span className="block font-display text-lg font-extrabold uppercase leading-none">{copy.assistant}</span>
-                <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-white/38">Texte · voix · équipes · résultats</span>
-              </span>
-            </span>
-            <Sparkles className="size-5 text-sport-foreground" />
-          </button>
-
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            <Button asChild variant="sport" size="lg" className="justify-between">
-              <Link to="/equipes" onClick={() => setOpen(false)}>
-                {copy.chooseTeams}
-                <ArrowRightIcon />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="justify-between">
-              <Link to="/horaires" onClick={() => setOpen(false)}>
-                <span className="flex items-center gap-2"><CalendarDays className="size-4" />{copy.schedules}</span>
-                <ArrowRightIcon />
-              </Link>
-            </Button>
-          </div>
-
-          <div className="mt-5 border-y border-navy/10 py-5">
-            <p className="eyebrow text-muted-foreground">{copy.newsletter}</p>
-
-            {subscribed ? (
-              <div className="mt-4 border-l-4 border-sport bg-ice p-4">
-                <p className="font-semibold text-navy">✓</p>
-                <p className="mt-1 text-sm text-muted-foreground">{copy.demo}</p>
-              </div>
-            ) : (
-              <form onSubmit={submitPreview} className="mt-4">
-                <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
-                  <input
-                    id="communications-preview-email"
-                    type="email"
-                    required
-                    placeholder={copy.emailPlaceholder}
-                    className="h-12 w-full border border-input bg-background pl-10 pr-3 text-sm outline-none transition-shadow focus:ring-2 focus:ring-sport"
-                  />
-                </div>
-                <Button type="submit" variant="outline" size="lg" className="mt-2 w-full justify-between">
-                  <span>{copy.signup}</span>
-                  <ArrowRightIcon />
-                </Button>
-                <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">{copy.demo}</p>
-              </form>
-            )}
-          </div>
-
-          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <Button variant="ghost" size="sm" onClick={dismissForever} className="justify-start">
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={dismissForever}
+              className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground hover:text-navy"
+            >
               {copy.never}
-            </Button>
+            </button>
+
             {supportAvailable && (
               <button
                 type="button"
@@ -389,26 +291,16 @@ export function CommunicationsPreview() {
                   setOpen(false);
                   window.requestAnimationFrame(() => window.dispatchEvent(new CustomEvent("ahmv:support-open")));
                 }}
-                className="premium-control flex min-h-10 flex-1 items-center justify-between border border-sport/30 bg-sport/5 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy hover:border-sport"
+                className="premium-control inline-flex min-h-9 items-center gap-2 border border-sport/25 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy"
               >
-                <span className="flex items-center gap-2">
-                  <Coffee className="size-4 text-sport" />
-                  {copy.support}
-                </span>
-                <span className="text-sport">{DEVELOPMENT_SUPPORT.beneficiary}</span>
+                <Coffee className="size-3.5 text-sport" />
+                {copy.support}
+                <Sparkles className="size-3 text-sport" />
               </button>
             )}
           </div>
         </div>
       </section>
     </div>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden className="size-4" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M5 12h14M13 6l6 6-6 6" />
-    </svg>
   );
 }
