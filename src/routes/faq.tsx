@@ -74,7 +74,26 @@ function FaqPage() {
         })}
       />
       <div className="container-site py-8 md:py-12">
-        <div className="mb-6 rounded-xl border border-border bg-ice p-5">
+        <section className="mb-7 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-[1fr_auto]">
+          <div className="bg-navy p-6 text-white md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Centre d’aide familles" : "Family help centre"}</p>
+            <p className="mt-3 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">
+              {lang === "fr" ? "Cherchez. Trouvez. Repartez avec la bonne réponse." : "Search. Find. Leave with the right answer."}
+            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65">
+              {lang === "fr"
+                ? "Recherche texte ou vocale, sujets filtrés et accès vers les pages de référence lorsqu’une réponse demande plus de détails."
+                : "Text or voice search, filtered topics and direct access to reference pages when an answer needs more detail."}
+            </p>
+          </div>
+          <div className="flex min-w-48 flex-col justify-center bg-ice p-6 md:p-8">
+            <p className="font-display text-6xl font-extrabold tracking-[-0.05em] text-navy">{String(visibleFaq.length).padStart(2, "0")}</p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-muted-foreground">
+              {lang === "fr" ? "réponses disponibles" : "answers available"}
+            </p>
+          </div>
+        </section>
+        <div className="mb-6 border border-navy/12 bg-ice p-5">
           <p className="eyebrow text-sport">
             {lang === "fr" ? "Réponses rapides" : "Quick answers"}
           </p>
@@ -98,13 +117,13 @@ function FaqPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t("search.placeholder")}
-              className="h-12 w-full rounded-md border border-input bg-background pl-11 pr-11 text-base"
+              className="h-12 w-full border border-navy/15 bg-background pl-11 pr-11 text-base outline-none transition-colors focus:border-sport"
             />
             {q ? (
               <button
                 type="button"
                 onClick={() => setQ("")}
-                className="absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-ice hover:text-foreground"
+                className="premium-control absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center text-muted-foreground hover:bg-ice hover:text-foreground"
                 aria-label={lang === "fr" ? "Effacer la recherche" : "Clear search"}
               >
                 <XCircle className="size-4" aria-hidden />
@@ -130,7 +149,7 @@ function FaqPage() {
               aria-pressed={topic === c.id}
               onClick={() => setTopic(c.id)}
               className={cn(
-                "shrink-0 rounded-full border px-4 py-2 text-xs font-semibold uppercase tracking-wide transition-colors",
+                "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors",
                 topic === c.id ? "border-sport bg-sport text-sport-foreground" : "border-input hover:bg-secondary",
               )}
             >
