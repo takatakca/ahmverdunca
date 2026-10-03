@@ -1,9 +1,21 @@
 -- AHMV communication edge. Hockey records stay authoritative outside this subsystem.
-create type if not exists public.ahmv_phone_access_tier as enum ('guest','trial','premium','blocked');
-create type if not exists public.ahmv_phone_channel as enum ('voice','sms','system');
+do $$
+begin
+  create type public.ahmv_phone_access_tier as enum ('guest','trial','premium','blocked');
+exception
+  when duplicate_object then null;
+end $$;
+
+do $$
+begin
+  create type public.ahmv_phone_channel as enum ('voice','sms','system');
+exception
+  when duplicate_object then null;
+end $$;
+
 create table if not exists public.ahmv_phone_contacts (
   id uuid primary key default gen_random_uuid(),
-  phone_e164 text not null unique check (phone_e164 ~ '^\\+[1-9][0-9]{7,14}$'),
+  phone_e164 text not null unique check (phone_e164 ~ '^\+[1-9][0-9]{7,14}$'),
   language text not null default 'fr' check (language in ('fr','en')),
   access_tier public.ahmv_phone_access_tier not null default 'trial',
   trial_started_at timestamptz not null default now(),
