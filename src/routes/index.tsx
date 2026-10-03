@@ -54,7 +54,7 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const { t, l, lang } = useI18n();
-  const { selectedTeams } = usePreferredTeam();
+  const { preferredTeam, selectedTeams } = usePreferredTeam();
   const primarySelectedTeam = selectedTeams[0];
   const today = montrealDateKey();
   const alerts = ALERTS.filter((alert) => !alert.archived && alert.expiresAt >= today);
