@@ -37,7 +37,7 @@ export function HomeParentCommand() {
             <span className="inline-flex min-h-10 items-center gap-2 border border-sport/25 bg-sport/8 px-3 text-[9px] font-bold uppercase tracking-[0.14em] text-navy">
               <ShieldCheck className="size-4 text-sport" />
               {isDemoMember
-                ? (lang === "fr" ? "AHMV Member · démo" : "AHMV Member · demo")
+                ? (lang === "fr" ? "AHMV Member · aperçu" : "AHMV Member · preview")
                 : (lang === "fr" ? "Mode visiteur" : "Visitor mode")}
             </span>
           ) : (
@@ -100,8 +100,8 @@ export function HomeParentCommand() {
               </p>
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/60">
                 {lang === "fr"
-                  ? "Le choix reste local dans ce navigateur en mode démo. Aucun compte n’est créé."
-                  : "The choice stays local in this browser in demo mode. No account is created."}
+                  ? "Le choix reste local dans ce navigateur. Aucun compte n’est créé."
+                  : "The choice stays local in this browser. No account is created."}
               </p>
             </div>
             <HouseSponsorSlot placement="home-parent-command" count={1} compact />
