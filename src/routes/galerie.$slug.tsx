@@ -2,9 +2,9 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { SportArtwork } from "@/components/sport-artwork";
 import { Button } from "@/components/ui/button";
 import { getAlbum } from "@/data/gallery";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { formatDate, useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/galerie/$slug")({
@@ -44,32 +44,39 @@ function AlbumPage() {
         </Link>
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
           <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
-            <SportArtwork
-              index={al.season.slice(-2)}
-              kicker={`${l(al.eventType)} · ${formatDate(al.date, lang)}`}
-              title={l(al.title)}
-              code="ARCH"
-              aspect="absolute inset-0"
-              className="absolute inset-0"
-            />
-            {al.coverUrl && (
+            {al.coverUrl ? (
               <img
                 src={al.coverUrl}
                 alt={l(al.title)}
                 loading="eager"
                 decoding="async"
-                className="absolute inset-0 z-[1] size-full object-cover"
-                onError={(event) => { event.currentTarget.style.display = "none"; }}
+                className="absolute inset-0 size-full object-cover"
               />
+            ) : (
+              <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-px bg-white/10">
+                {[OFFICIAL_MEDIA.tournamentM11Primary, OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media, index) => (
+                  <img
+                    key={media.url}
+                    src={media.url}
+                    alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    className={`size-full object-cover ${index === 0 ? "row-span-2" : ""}`}
+                  />
+                ))}
+              </div>
             )}
-            <div className="absolute inset-0 z-[2] bg-[linear-gradient(180deg,transparent_55%,rgba(7,16,43,0.7)_100%)]" />
-            <p className="absolute bottom-4 left-4 right-4 z-[3] text-[10px] font-bold uppercase tracking-[0.16em] text-white/85">
-              {al.coverUrl
-                ? (lang === "fr" ? "Aperçu provenant des archives publiques AHMV" : "Preview from AHMV public archives")
-                : (lang === "fr" ? "Archive AHMV" : "AHMV archive")}
-            </p>
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_48%,rgba(7,16,43,0.82)_100%)]" />
+            <div className="absolute inset-x-0 bottom-0 p-5 text-white md:p-7">
+              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/72">
+                {al.coverUrl
+                  ? (lang === "fr" ? "Aperçu provenant des archives publiques AHMV" : "Preview from AHMV public archives")
+                  : (lang === "fr" ? "Montage d’archives AHMV · aperçu générique" : "AHMV archive montage · generic preview")}
+              </p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">{l(al.title)}</p>
+            </div>
           </div>
-          <aside className="broadcast-rail self-start border border-navy/12 bg-background p-6 pl-8">
+          <aside className="broadcast-rail self-start border border-navy/12 bg-background p-6 pl-8 md:p-8 md:pl-10">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
             </p>

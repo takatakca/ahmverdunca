@@ -11,6 +11,7 @@ import {
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { getArena } from "@/data/arenas";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { mapsDirectionsUrl } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 
@@ -82,6 +83,42 @@ function ArenaPage() {
       />
 
       <div className="container-site space-y-10 py-8 md:py-12">
+        <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.3fr_0.7fr]">
+          <div className="relative min-h-[260px] overflow-hidden sm:min-h-[330px]">
+            <img
+              src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
+              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.78))]" />
+            <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Destination hockey" : "Hockey destination"}</p>
+              <p className="mt-2 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">
+                {arena.name}
+              </p>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/72">
+                {lang === "fr"
+                  ? "Photo d’ambiance provenant des archives AHMV. Les détails de l’installation et l’adresse affichés sur cette page restent les données vérifiées de l’aréna."
+                  : "Atmosphere photo from AHMV archives. Facility details and the address on this page remain the verified arena information."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "À retenir" : "At a glance"}</p>
+            <p className="mt-4 font-display text-3xl font-extrabold uppercase leading-[0.9]">{l(arena.borough)}</p>
+            <p className="mt-4 text-sm leading-relaxed text-white/68">{arena.address}</p>
+            <a
+              href={mapsDirectionsUrl(arena.address)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="premium-control mt-6 inline-flex min-h-12 items-center justify-between border border-white/20 px-4 text-xs font-bold uppercase tracking-[0.14em] hover:bg-white/[0.06]"
+            >
+              {t("common.directions")} <Navigation className="size-4 text-sport-foreground" />
+            </a>
+          </div>
+        </section>
         <Link
           to="/arenas"
           className="inline-flex items-center gap-1.5 text-sm font-semibold text-sport hover:underline"
@@ -90,7 +127,7 @@ function ArenaPage() {
         </Link>
 
         <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="card-elevated p-6">
+          <div className="border border-navy/12 bg-background p-6">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Adresse vérifiée" : "Verified address"}
             </p>
@@ -98,13 +135,13 @@ function ArenaPage() {
               <MapPin className="mt-0.5 size-5 shrink-0 text-sport" aria-hidden />
               {arena.address}
             </p>
-            <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-status-confirmed-soft px-3 py-1.5 text-xs font-semibold text-status-confirmed">
+            <div className="mt-5 inline-flex items-center gap-2 border border-status-confirmed/20 bg-status-confirmed-soft px-3 py-1.5 text-xs font-semibold text-status-confirmed">
               <ShieldCheck className="size-4" aria-hidden />
               {lang === "fr" ? "Source officielle recoupée" : "Official source cross-checked"}
             </div>
           </div>
 
-          <div className="competition-panel rounded-xl p-6 text-navy-foreground">
+          <div className="competition-panel border border-navy/12 p-6 text-navy-foreground">
             <CalendarDays className="size-6 text-sport-foreground" aria-hidden />
             <h2 className="heading-card mt-5">
               {lang === "fr" ? "Vous jouez ici?" : "Playing here?"}

@@ -11,15 +11,14 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
-import { PlaceholderImage } from "@/components/placeholder-image";
 import { Button } from "@/components/ui/button";
 import { getTeam } from "@/data/teams";
 import { teamsForCategory } from "@/data/team-directory";
 import { getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { useI18n } from "@/lib/i18n";
-import { img } from "@/lib/images";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { SITE } from "@/lib/site";
 
@@ -66,6 +65,12 @@ function TeamPage() {
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
   const socialLinks = getTeamSocialLinks(slug);
   const publicTeams = teamsForCategory(slug);
+  const archiveImages = [
+    OFFICIAL_MEDIA.tournamentM11Primary,
+    OFFICIAL_MEDIA.tournamentM11Secondary,
+    OFFICIAL_MEDIA.tournamentM11Tertiary,
+    OFFICIAL_MEDIA.volunteerArchive,
+  ];
 
   return (
     <>
@@ -101,9 +106,59 @@ function TeamPage() {
       />
 
       <div className="container-site space-y-14 py-8 md:py-12">
+        <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
+          <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px]">
+            <img
+              src={slug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary.url : OFFICIAL_MEDIA.tournamentM11Secondary.url}
+              alt={lang === "fr" ? "Archive photographique publique AHM Verdun" : "AHM Verdun public photo archive"}
+              loading="eager"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.82))]" />
+            <div className="absolute inset-x-0 bottom-0 p-6 text-white md:p-8">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Vie AHMV" : "AHMV life"}</p>
+              <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] sm:text-5xl">
+                {team.code} · {l(team.ages)}
+              </p>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
+                {lang === "fr"
+                  ? "Une entrée directe vers ce qui compte pour cette catégorie : horaires, équipes publiées, arénas, nouvelles et ressources."
+                  : "A direct route to what matters for this category: schedules, published teams, arenas, news and resources."}
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-col justify-between border-t border-white/12 p-6 text-white lg:border-l lg:border-t-0 md:p-8">
+            <div>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Repères rapides" : "Quick facts"}</p>
+              <div className="mt-5 border-y border-white/12">
+                <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Catégorie" : "Category"}</span>
+                  <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
+                </div>
+                <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
+                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes publiées" : "Published teams"}</span>
+                  <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
+                </div>
+                <div className="flex items-end justify-between gap-4 py-4">
+                  <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Saison" : "Season"}</span>
+                  <span className="font-display text-xl font-extrabold uppercase">2026–2027</span>
+                </div>
+              </div>
+            </div>
+            <a
+              href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-6 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/55 hover:text-white"
+            >
+              {lang === "fr" ? "Archives publiques AHMV" : "AHMV public archives"} <ArrowRight className="size-3.5" />
+            </a>
+          </div>
+        </section>
         <section
           aria-labelledby="team-command-title"
-          className="overflow-hidden rounded-xl border border-border bg-background shadow-card"
+          className="overflow-hidden border border-navy/12 bg-background"
         >
           <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
             <div className="competition-panel p-6 text-navy-foreground md:p-8">
@@ -146,7 +201,7 @@ function TeamPage() {
                 {news.length > 0 && (
                   <a
                     href="#nouvelles-equipe"
-                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
                   >
                     {lang === "fr" ? "Nouvelles" : "News"}
                     <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -155,7 +210,7 @@ function TeamPage() {
                 {albums.length > 0 && (
                   <a
                     href="#photos-equipe"
-                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
                   >
                     {lang === "fr" ? "Photos" : "Photos"}
                     <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -164,7 +219,7 @@ function TeamPage() {
                 {socialLinks.length > 0 && (
                   <a
                     href="#social-equipe"
-                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
                   >
                     {lang === "fr" ? "Réseaux sociaux" : "Social"}
                     <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -172,7 +227,7 @@ function TeamPage() {
                 )}
                 <Link
                   to="/inscriptions"
-                  className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
                 >
                   {lang === "fr" ? "Inscriptions" : "Registration"}
                   <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -180,7 +235,7 @@ function TeamPage() {
                 {slug === "feminin" && (
                   <a
                     href={`mailto:${SITE.girlsHockeyEmail}`}
-                    className="group flex items-center justify-between rounded-lg border border-border px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
                   >
                     {lang === "fr" ? "Questions hockey féminin" : "Girls' hockey questions"}
                     <Mail className="size-4 text-sport" />
@@ -251,24 +306,34 @@ function TeamPage() {
           <section id="nouvelles-equipe">
             <SectionHeading title={t("teams.news")} />
             <div className="grid gap-5 md:grid-cols-3">
-              {news.map((article) => (
-                <Link
-                  key={article.slug}
-                  to="/nouvelles/$slug"
-                  params={{ slug: article.slug }}
-                  className="card-elevated group overflow-hidden"
-                >
-                  <PlaceholderImage src={img(article.image)} alt={l(article.title)} />
-                  <div className="p-5">
-                    <p className="eyebrow text-sport">
-                      {newsDateLabel(article, lang)}
-                    </p>
-                    <h3 className="heading-card mt-2 group-hover:text-sport">
-                      {l(article.title)}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
+              {news.map((article, index) => {
+                const media = archiveImages[index % archiveImages.length]!;
+                return (
+                  <Link
+                    key={article.slug}
+                    to="/nouvelles/$slug"
+                    params={{ slug: article.slug }}
+                    className="interactive-surface group overflow-hidden border border-navy/12 bg-background"
+                  >
+                    <div className="relative aspect-[16/9] overflow-hidden bg-navy">
+                      <img
+                        src={media.url}
+                        alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                      />
+                      <span className="absolute bottom-3 left-3 bg-navy/78 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+                        {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
+                      </span>
+                    </div>
+                    <div className="p-5">
+                      <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
+                      <h3 className="heading-card mt-2 group-hover:text-sport">{l(article.title)}</h3>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
@@ -277,25 +342,36 @@ function TeamPage() {
           <section id="photos-equipe">
             <SectionHeading title={t("teams.albums")} />
             <div className="grid gap-5 sm:grid-cols-3">
-              {albums.map((album) => (
-                <Link
-                  key={album.slug}
-                  to="/galerie/$slug"
-                  params={{ slug: album.slug }}
-                  className="card-elevated group overflow-hidden"
-                >
-                  <PlaceholderImage
-                    src={img(album.cover)}
-                    alt={l(album.title)}
-                    aspect="aspect-[4/3]"
-                  />
-                  <div className="p-4">
-                    <h3 className="heading-card group-hover:text-sport">
-                      {l(album.title)}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
+              {albums.map((album, index) => {
+                const media = archiveImages[index % archiveImages.length]!;
+                const imageUrl = album.coverUrl ?? media.url;
+                return (
+                  <Link
+                    key={album.slug}
+                    to="/galerie/$slug"
+                    params={{ slug: album.slug }}
+                    className="interactive-surface group overflow-hidden border border-navy/12 bg-background"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden bg-navy">
+                      <img
+                        src={imageUrl}
+                        alt={l(album.title)}
+                        loading="lazy"
+                        decoding="async"
+                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                      />
+                      <span className="absolute bottom-3 left-3 bg-navy/78 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+                        {album.coverUrl
+                          ? (lang === "fr" ? "Aperçu de l’album" : "Album preview")
+                          : (lang === "fr" ? "Archive AHMV · aperçu générique" : "AHMV archive · generic preview")}
+                      </span>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="heading-card group-hover:text-sport">{l(album.title)}</h3>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </section>
         )}
