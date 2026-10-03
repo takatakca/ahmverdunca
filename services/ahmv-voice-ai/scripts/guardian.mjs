@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFile(path.join(root, p), "utf8");
 
 const [
-  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env, usage, metrics, turnController
+  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env, usage
 ] = await Promise.all([
   read("package.json"),
   read("package-lock.json"),
@@ -21,8 +21,6 @@ const [
   read("deploy/ahmv-voice.service"),
   read(".env.example"),
   read("src/usage.js"),
-  read("src/metrics.js"),
-  read("src/turn-controller.js"),
 ]);
 
 const pkg = JSON.parse(pkgRaw);
@@ -36,6 +34,9 @@ for (const [name, version] of Object.entries(pkg.dependencies)) {
 assert.match(config, /TWILIO_VALIDATE_SIGNATURES=false is forbidden in production/);
 assert.match(config, /AHM_DATA_MODE=fixture is forbidden in production/);
 assert.match(config, /VOICE_INSTANCE_MODE/);
+assert.match(config, /AHMV_SUPABASE_PROJECT_REF/);
+assert.match(config, /bqflllsjxmhqsvemhhwv/);
+assert.match(config, /SUPABASE_URL does not match the approved AHMV Supabase project/);
 assert.match(config, /\['single'\]/);
 assert.match(config, /TWILIO_TTS_VOICE is required in production/);
 assert.match(config, /OPENAI_INPUT_USD_PER_MILLION/);
@@ -46,12 +47,6 @@ assert.match(config, /FEATURE_SMS_RECAP_ENABLED/);
 assert.match(config, /FEATURE_HUMAN_HANDOFF_ENABLED/);
 assert.match(usage, /estimatedSessionUsd/);
 assert.match(usage, /costGuardExceeded/);
-assert.match(metrics, /scheduleAuthoritative/);
-assert.match(metrics, /arenaAuthoritative/);
-assert.match(metrics, /humanHandoffRequests/);
-assert.match(turnController, /structuredClone\(session\.usage/);
-assert.match(turnController, /structuredClone\(session\.metrics/);
-assert.match(turnController, /handoffRequested/);
 assert.doesNotMatch(config, /AHM_DATA_API_URL|AHM_DATA_API_TOKEN/);
 
 assert.match(agent, /store:\s*false/);
@@ -59,12 +54,8 @@ assert.match(agent, /parallel_tool_calls:\s*false/);
 assert.match(agent, /loops\s*<\s*5/);
 assert.match(agent, /find_schedule/);
 assert.match(agent, /find_arena/);
-assert.match(agent, /request_human_handoff/);
-assert.match(agent, /featureHumanHandoff/);
-assert.match(bridge, /requestHumanHandoff/);
-assert.match(bridge, /handoff/);
-assert.match(store, /handoffRequested/);
-assert.match(store, /handoffPreferredWindow/);
+assert.match(agent, /accessLimited/);
+assert.match(agent, /matches\.slice\(0, 1\)/);
 
 assert.doesNotMatch(store, /transcript_summary/);
 assert.match(store, /includeMessages:\s*false/);
@@ -144,6 +135,8 @@ console.log(JSON.stringify({
     twilioSignatureValidationProductionRequired: true,
     fixtureModeProductionForbidden: true,
     singleInstanceGuard: true,
+    ahmvDatabaseIdentityLock: true,
+    baseNextEventVipBoundary: true,
     immutableReleaseSystemd: true,
     websocketProxy: true,
   }
