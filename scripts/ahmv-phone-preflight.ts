@@ -103,6 +103,17 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       detail: "Webhook origin must be exactly https://ahmverdun.ca.",
     },
     {
+      id: "live-schedule-source",
+      ok:
+        !(publicEnabled || remindersEnabled) ||
+        (
+          validHttpsUrl(settings["TAKATAK_AHMV_SCHEDULE_URL"]) &&
+          present(settings["TAKATAK_AHMV_SERVICE_TOKEN"])
+        ),
+      required: publicEnabled || remindersEnabled,
+      detail: "Public phone/reminders require the authenticated HTTPS authoritative AHMV schedule feed.",
+    },
+    {
       id: "twilio-account",
       ok: present(settings["TWILIO_ACCOUNT_SID"]),
       required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled || campaignsEnabled,
