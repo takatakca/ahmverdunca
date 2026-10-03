@@ -168,7 +168,7 @@ export function handleAhmvCalendarLink(
     '<a class="secondary" href="' +
       htmlEscape(directions.googleMaps) +
       '" rel="noopener noreferrer">' +
-      htmlEscape(t("Itinéraire", "Directions", "Cómo llegar")) +
+      htmlEscape(t("Directions", "Directions", "Cómo llegar")) +
       "</a>",
     "</div>",
     '<p class="foot">' +
