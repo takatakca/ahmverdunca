@@ -172,7 +172,7 @@ function normalizeVenueName(value: string) {
 export function arenaDirectionsTargetForVenue(venue: string) {
   const normalizedVenue = normalizeVenueName(venue);
 
-  if (normalizedVenue.includes("denis savard")) {
+  if (normalizedVenue.includes("denis savard") || normalizedVenue === "a denis") {
     return getArena("auditorium-de-verdun")?.address ?? venue;
   }
 
