@@ -45,7 +45,9 @@ export function cloneConversationSession(session) {
   return {
     ...session,
     messages: structuredClone(Array.isArray(session.messages) ? session.messages : []),
-    smsItems: structuredClone(Array.isArray(session.smsItems) ? session.smsItems : [])
+    smsItems: structuredClone(Array.isArray(session.smsItems) ? session.smsItems : []),
+    usage: structuredClone(session.usage || {}),
+    metrics: structuredClone(session.metrics || {})
   };
 }
 
@@ -55,7 +57,11 @@ export function applyConversationDraft(session, draft) {
   session.smsEnabled = draft.smsEnabled;
   session.smsConsentAt = draft.smsConsentAt;
   session.usage = draft.usage;
+  session.metrics = draft.metrics;
   session.costGuardExceeded = Boolean(draft.costGuardExceeded);
+  session.handoffRequested = Boolean(draft.handoffRequested);
+  session.handoffReason = draft.handoffReason || null;
+  session.handoffPreferredWindow = draft.handoffPreferredWindow || null;
   return session;
 }
 

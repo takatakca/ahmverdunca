@@ -9,6 +9,7 @@ import { handleAhmvPhoneDemo } from "./features/ahmv-phone/demo/handler.server";
 import { handleAhmvPhoneOpsSummary } from "./features/ahmv-phone/ops/handler.server";
 import { handleAhmvPhoneOpsFunnel } from "./features/ahmv-phone/ops/funnel-handler.server";
 import { handleAhmvPhoneOpsHealth } from "./features/ahmv-phone/ops/health-handler.server";
+import { handleAhmvVoiceValueReport } from "./features/ahmv-phone/ops/value-report-handler.server";
 import { handleAhmvPhoneRetention } from "./features/ahmv-phone/privacy/handler.server";
 import { handleAhmvPhoneLifecycleCron } from "./features/ahmv-phone/messaging/lifecycle-handler.server";
 import { handleAhmvPhoneReminderCron } from "./features/ahmv-phone/reminders/handler.server";
@@ -123,6 +124,8 @@ export default {
     if (phoneOpsFunnelResponse) return phoneOpsFunnelResponse;
     const phoneOpsHealthResponse = await handleAhmvPhoneOpsHealth(request);
     if (phoneOpsHealthResponse) return phoneOpsHealthResponse;
+    const voiceValueReportResponse = await handleAhmvVoiceValueReport(request);
+    if (voiceValueReportResponse) return voiceValueReportResponse;
     const phoneRetentionResponse = await handleAhmvPhoneRetention(request);
     if (phoneRetentionResponse) return phoneRetentionResponse;
     const phoneLifecycleResponse = await handleAhmvPhoneLifecycleCron(request);
