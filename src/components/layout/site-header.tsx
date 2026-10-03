@@ -272,7 +272,7 @@ export function SiteHeader() {
           <Button asChild variant="ghost" size="sm" className="hidden border border-sport/30 text-navy-foreground hover:bg-sport/10 md:inline-flex">
             <a href="/membership">
               <Sparkles className="size-4 text-sport-foreground" />
-              {lang === "fr" ? "Member · Démo" : "Member · Demo"}
+              {lang === "fr" ? "Member · Aperçu" : "Member · Preview"}
             </a>
           </Button>
           <button
@@ -460,7 +460,7 @@ export function SiteHeader() {
               <span className="flex items-center gap-2">
                 <Sparkles className="size-4 text-sport-foreground" />
                 <span>
-                  <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member · DEMO</span>
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member · APERÇU</span>
                   <span className="mt-0.5 block font-display text-base font-extrabold uppercase">
                     {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
                   </span>
