@@ -1,4 +1,6 @@
 import { PUBLIC_TEAM_DIRECTORY } from "../../../data/team-directory.ts";
+import type { PhoneLanguage } from "../../../lib/ahmv-phone.ts";
+import { phoneText } from "../i18n.ts";
 
 export type MarketingAudience =
   | { kind: "all_opted_in" }
@@ -127,7 +129,13 @@ export function marketingLegalInfoUrl(
 export function marketingMessageBody(
   body: string,
   infoUrl: string,
+  lang: PhoneLanguage = "fr",
 ) {
-  const suffix = `GROUPE TAKATAK / AHMV • Infos: ${infoUrl} • STOP`;
+  const infoLabel = phoneText(lang, {
+    fr: "Infos",
+    en: "Info",
+    es: "Info",
+  });
+  const suffix = `GROUPE TAKATAK / AHMV • ${infoLabel}: ${infoUrl} • STOP`;
   return `${body.trim()}\n${suffix}`.slice(0, 1500);
 }
