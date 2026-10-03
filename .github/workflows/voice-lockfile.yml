@@ -1,0 +1,92 @@
+name: AHMV Voice dependency lock
+
+on:
+  push:
+    branches:
+      - voice-ai-preprod-v6
+    paths:
+      - services/ahmv-voice-ai/**
+      - .github/workflows/voice-lockfile.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ahmv-voice-lockfile
+  cancel-in-progress: true
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Voice branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: voice-ai-preprod-v6
+          fetch-depth: 0
+
+      - name: Setup Node 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Generate exact lockfile
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          rm -f package-lock.json
+          npm install --package-lock-only --ignore-scripts --audit=false --fund=false
+          test -s package-lock.json
+
+      - name: Verify clean install from generated lockfile
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --audit=false --fund=false
+          npm ls --omit=dev
+
+      - name: Verify standalone Voice runtime
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm run verify
+
+      - name: Audit production dependency vulnerabilities
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm audit --omit=dev --audit-level=high
+
+      - name: Generate CycloneDX SBOM
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm sbom --sbom-format=cyclonedx > sbom.cdx.json
+          test -s sbom.cdx.json
+          node -e "const s=require('./sbom.cdx.json'); if (s.bomFormat !== 'CycloneDX') process.exit(1);"
+
+      - name: Publish verified lockfile artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ahmv-voice-supply-chain-${{ github.sha }}
+          path: |
+            services/ahmv-voice-ai/package-lock.json
+            services/ahmv-voice-ai/sbom.cdx.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit generated lockfile to Voice branch
+        run: |
+          set -euo pipefail
+          git add services/ahmv-voice-ai/package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfile is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "voice-ai: generate verified npm lockfile"
+          git push origin HEAD:voice-ai-preprod-v6
