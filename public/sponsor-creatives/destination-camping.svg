@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="t d">
+<title id="t">Destination Camping — Le Québec dehors</title><desc id="d">Créative sponsor Destination Camping.</desc>
+<defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07102b"/><stop offset=".62" stop-color="#17483d"/><stop offset="1" stop-color="#287d63"/></linearGradient><linearGradient id="f" x1="0" x2="1"><stop stop-color="#ffd34f"/><stop offset="1" stop-color="#ff8b2d"/></linearGradient></defs>
+<rect width="1200" height="520" fill="url(#b)"/>
+<circle cx="1010" cy="115" r="85" fill="#ffd34f" opacity=".9"/>
+<g fill="#07102b" opacity=".62"><path d="M720 440l95-210 95 210z"/><path d="M835 440l120-275 120 275z"/><path d="M1015 440l85-190 85 190z"/></g>
+<path d="M780 438l95-120 95 120z" fill="#f3d58c"/><path d="M875 318l36 120h-72z" fill="#5b3722"/>
+<text x="72" y="145" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="72" font-weight="900">DESTINATION</text>
+<text x="72" y="210" fill="#ffd34f" font-family="Arial,Helvetica,sans-serif" font-size="64" font-weight="900">CAMPING</text>
+<text x="72" y="300" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="42" font-weight="800">LE QUÉBEC, DEHORS.</text>
+<text x="72" y="352" fill="#d1ebe2" font-family="Arial,Helvetica,sans-serif" font-size="24">Escapades • terrains • famille • plein air</text>
+<g transform="translate(72 405)"><rect width="240" height="62" rx="31" fill="url(#f)"/><text x="32" y="40" fill="#07102b" font-family="Arial,Helvetica,sans-serif" font-size="23" font-weight="800">EXPLORER →</text></g>
+</svg>
