@@ -236,7 +236,7 @@ export function SiteHeader() {
           </Button>
           <button
             type="button"
-            className="tap-target inline-flex size-11 shrink-0 items-center justify-center border border-navy-foreground/15 text-navy-foreground hover:bg-navy-foreground/10 lg:hidden"
+            className="premium-control tap-target inline-flex size-11 shrink-0 items-center justify-center border border-navy-foreground/15 text-navy-foreground hover:bg-navy-foreground/10 lg:hidden"
             aria-label={open ? t("nav.close") : t("nav.menu")}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -275,7 +275,7 @@ export function SiteHeader() {
                 <Link
                   key={item.key}
                   to={item.to}
-                  className="relative overflow-hidden border border-navy-foreground/15 bg-navy-foreground/[0.035] px-4 py-5 font-display text-xl font-extrabold uppercase leading-none text-navy-foreground/90"
+                  className="interactive-surface relative overflow-hidden border border-navy-foreground/15 bg-navy-foreground/[0.035] px-4 py-5 font-display text-xl font-extrabold uppercase leading-none text-navy-foreground/90"
                   activeProps={{ className: "border-sport bg-sport/10 text-sport-foreground" }}
                 >
                   {t(`nav.${item.key}` as TranslationKey)}
@@ -311,7 +311,7 @@ export function SiteHeader() {
                 <Link
                   key={item.key}
                   to={item.to}
-                  className="border-b border-navy-foreground/10 py-3 text-base font-medium text-navy-foreground/85"
+                  className="premium-control border-b border-navy-foreground/10 py-3 text-base font-medium text-navy-foreground/85"
                   activeProps={{ className: "text-sport-foreground" }}
                 >
                   {t(`nav.${item.key}` as TranslationKey)}
@@ -338,14 +338,14 @@ export function SiteHeader() {
                     </a>
                   </Button>
                 ) : (
-                  <div className="flex min-h-11 items-center justify-center gap-2 rounded-md border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/75">
+                  <div className="flex min-h-11 items-center justify-center gap-2 border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/75">
                     <PhoneCall className="size-4" />
                     {SITE.phoneDisplay}
                     <span className="text-[10px] uppercase tracking-wider text-sport-foreground">{lang === "fr" ? "à venir" : "coming soon"}</span>
                   </div>
                 )
               )}
-              <div className="flex items-center justify-between rounded-md border border-navy-foreground/15 px-4 py-3">
+              <div className="flex items-center justify-between border border-navy-foreground/15 px-4 py-3">
                 <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
                 <LangSwitch />
               </div>
