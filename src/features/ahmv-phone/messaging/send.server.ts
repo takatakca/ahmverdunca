@@ -1,12 +1,11 @@
 import twilio from "twilio";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "../../../integrations/supabase/client.server";
 import { normalizePhoneE164 } from "../contacts/store.server";
 
 type Settings = Record<string, string | undefined>;
-type LooseDb = { from: (table: string) => any };
-
-function db(): LooseDb {
-  return supabaseAdmin as unknown as LooseDb;
+function db(): SupabaseClient {
+  return supabaseAdmin as unknown as SupabaseClient;
 }
 
 async function createJob(contactId: string | undefined, purpose: string, body: string) {
