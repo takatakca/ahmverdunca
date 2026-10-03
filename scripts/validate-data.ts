@@ -67,7 +67,7 @@ requireUnique("TEAMS.slug", TEAMS.map((team) => team.slug));
 requireUnique("ARENAS.slug", ARENAS.map((arena) => arena.slug));
 requireUnique("NEWS.slug", NEWS.map((article) => article.slug));
 requireUnique("NEWS.legacyId", NEWS.flatMap((article) => article.legacyId === undefined ? [] : [String(article.legacyId)]));
-requireUnique("PUBLIC_TEAM_DIRECTORY.entry", PUBLIC_TEAM_DIRECTORY.map((entry) => `${entry.categorySlug}:${entry.level}:${entry.name}`));
+requireUnique("PUBLIC_TEAM_DIRECTORY.legacyScheduleTeamId", PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
 requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
 requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
 requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
@@ -240,6 +240,9 @@ if (PUBLIC_TEAM_DIRECTORY.length !== REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT) {
 for (const entry of PUBLIC_TEAM_DIRECTORY) {
   if (!teamSlugs.has(entry.categorySlug)) {
     errors.push(`Public team directory entry "${entry.name}" references unknown category "${entry.categorySlug}".`);
+  }
+  if (!/^\d+$/.test(entry.legacyScheduleTeamId)) {
+    errors.push(`Public team directory entry "${entry.name}" has invalid legacy schedule team ID "${entry.legacyScheduleTeamId}".`);
   }
 }
 
