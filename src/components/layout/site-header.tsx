@@ -247,7 +247,7 @@ export function SiteHeader() {
               <kbd className="ml-1 rounded border border-navy-foreground/20 px-1.5 py-0.5 font-sans text-[10px] font-semibold text-navy-foreground/50">
                 /
               </kbd>
-            </Link>
+            </a>
           </Button>
           <Button
             asChild
@@ -271,7 +271,7 @@ export function SiteHeader() {
             </Link>
           </Button>
           <Button asChild variant="ghost" size="sm" className="hidden border border-sport/30 text-navy-foreground hover:bg-sport/10 md:inline-flex">
-            <Link to="/membership">
+            <a href="/membership">
               <Sparkles className="size-4 text-sport-foreground" />
               {lang === "fr" ? "Member · Démo" : "Member · Demo"}
             </Link>
@@ -505,7 +505,7 @@ export function SiteHeader() {
                 </span>
               </span>
               <ChevronDown className="size-4 -rotate-90 text-sport-foreground" />
-            </Link>
+            </a>
 
             <div className="mt-7 grid gap-2">
               <Button asChild variant="sport" size="lg" className="justify-between">
