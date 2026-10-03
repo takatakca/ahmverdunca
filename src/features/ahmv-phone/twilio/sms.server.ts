@@ -8,6 +8,7 @@ import {
 } from "../contacts/store.server.ts";
 import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
 import { createSignedCalendarLink } from "../calendar/link.server.ts";
+import { createSignedDepartureLink } from "../departure/link.server.ts";
 import { parsePhoneCommand } from "../conversation/commands.ts";
 import { canUse } from "../entitlements/access.ts";
 import {
@@ -62,7 +63,7 @@ export async function handleTwilioSms(
     response.message(
       lang === "fr"
         ? "AHMV: envoyez votre équipe pour le prochain événement. Essai 30 jours: AUJOURD'HUI, DEMAIN, SEMAINE, SAUVE ou RAPPEL + équipe. EN pour anglais. GROUPE TAKATAK."
-        : "AHMV: text your team for the next event. 30-day trial: TODAY, TOMORROW, WEEK, SAVE, REMIND or CALENDAR + team. GROUPE TAKATAK.",
+        : "AHMV: text your team for the next event. 30-day trial: TODAY, TOMORROW, WEEK, SAVE, REMIND, CALENDAR or LEAVE + team. GROUPE TAKATAK.",
     );
     await safeRecordPhoneInteraction({
       contactId: contact?.id,
@@ -94,6 +95,101 @@ export async function handleTwilioSms(
       teamCode: command.teamQuery.slice(0, 80),
     });
     log("team-ambiguous");
+    return xmlResponse(response.toString());
+  }
+
+  if (command.kind === "departure") {
+    if (!contact) {
+      response.message(
+        lang === "fr"
+          ? "AHMV: impossible d'associer le départ intelligent à ce numéro pour le moment."
+          : "AHMV: unable to associate smart departure with this number right now.",
+      );
+      return xmlResponse(response.toString());
+    }
+
+    const entitlement = await resolvePhoneEntitlement(
+      contact,
+      "smart_departure",
+      settings,
+    );
+
+    if (!canUse(entitlement, "smart_departure")) {
+      response.message(
+        lang === "fr"
+          ? `AHMV: le départ intelligent est une fonction membre après la période découverte. Activez: ${memberActivationUrl(settings)}`
+          : `AHMV: smart departure is a member feature after the introductory period. Activate: ${memberActivationUrl(settings)}`,
+      );
+      await safeRecordPhoneInteraction({
+        contactId: contact.id,
+        channel: "sms",
+        providerReferenceHash: ref,
+        intent: "smart-departure",
+        outcome: "membership-required",
+        teamCode:
+          resolution.kind === "exact"
+            ? resolution.team.legacyScheduleTeamId
+            : command.teamQuery,
+      });
+      return xmlResponse(response.toString());
+    }
+
+    const answer = nextEventService(
+      command.teamQuery,
+      lang,
+      teamAliases(settings),
+    );
+
+    if (!answer.event || answer.outcome !== "scheduled") {
+      response.message(answer.text);
+      await safeRecordPhoneInteraction({
+        contactId: contact.id,
+        channel: "sms",
+        providerReferenceHash: ref,
+        intent: "smart-departure",
+        outcome: answer.outcome,
+        teamCode: answer.group ?? command.teamQuery,
+      });
+      return xmlResponse(response.toString());
+    }
+
+    const departureLink = createSignedDepartureLink(
+      answer.event.id,
+      settings,
+    );
+
+    if (!departureLink) {
+      response.message(
+        lang === "fr"
+          ? "AHMV: le départ intelligent est temporairement indisponible. Utilisez les directions de l'aréna dans votre prochain événement."
+          : "AHMV: smart departure is temporarily unavailable. Use the arena directions from your next event.",
+      );
+      await safeRecordPhoneInteraction({
+        contactId: contact.id,
+        channel: "sms",
+        providerReferenceHash: ref,
+        intent: "smart-departure",
+        outcome: "configuration-unavailable",
+        teamCode: answer.group ?? command.teamQuery,
+      });
+      return xmlResponse(response.toString());
+    }
+
+    response.message(
+      lang === "fr"
+        ? `AHMV — Départ intelligent pour ${answer.group ?? command.teamQuery}: ${departureLink}. Votre position sera demandée seulement après votre clic.`
+        : `AHMV — Smart departure for ${answer.group ?? command.teamQuery}: ${departureLink}. Your location will only be requested after you tap.`,
+    );
+    await safeRecordPhoneInteraction({
+      contactId: contact.id,
+      channel: "sms",
+      providerReferenceHash: ref,
+      intent: "smart-departure",
+      outcome: "link-created",
+      teamCode: answer.group ?? command.teamQuery,
+      arenaSlug: answer.directions?.arenaSlug,
+    });
+    log("smart-departure-link-created");
     return xmlResponse(response.toString());
   }
 
