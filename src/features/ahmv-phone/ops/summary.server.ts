@@ -5,13 +5,7 @@ function db(): SupabaseClient {
   return supabaseAdmin as unknown as SupabaseClient;
 }
 
-async function countRows(
-  table: string,
-  apply?: (query: any) => any,
-): Promise<number> {
-  let query = db().from(table).select("*", { count: "exact", head: true });
-  if (apply) query = apply(query);
-  const result = await query;
+function readCount(result: { count: number | null; error: unknown }) {
   if (result.error) throw result.error;
   return result.count ?? 0;
 }
@@ -40,64 +34,90 @@ export interface AhmvPhoneOpsSummary {
 export async function getAhmvPhoneOpsSummary(
   now = new Date(),
 ): Promise<AhmvPhoneOpsSummary> {
+  const client = db();
   const nowIso = now.toISOString();
   const since24h = new Date(now.getTime() - 86_400_000).toISOString();
   const since7d = new Date(now.getTime() - 7 * 86_400_000).toISOString();
 
   const [
-    total,
-    activeTrials,
-    premium,
-    marketingOptIn,
-    interactions24h,
-    voice24h,
-    sms24h,
-    interactions7d,
-    sent7d,
-    failed7d,
-    pending,
+    totalResult,
+    activeTrialsResult,
+    premiumResult,
+    marketingOptInResult,
+    interactions24hResult,
+    voice24hResult,
+    sms24hResult,
+    interactions7dResult,
+    sent7dResult,
+    failed7dResult,
+    pendingResult,
   ] = await Promise.all([
-    countRows("ahmv_phone_contacts"),
-    countRows("ahmv_phone_contacts", (q) =>
-      q.eq("access_tier", "trial").gt("trial_expires_at", nowIso),
-    ),
-    countRows("ahmv_phone_contacts", (q) => q.eq("access_tier", "premium")),
-    countRows("ahmv_phone_contacts", (q) => q.eq("marketing_sms_consent", true)),
-    countRows("ahmv_phone_interactions", (q) => q.gte("created_at", since24h)),
-    countRows("ahmv_phone_interactions", (q) =>
-      q.eq("channel", "voice").gte("created_at", since24h),
-    ),
-    countRows("ahmv_phone_interactions", (q) =>
-      q.eq("channel", "sms").gte("created_at", since24h),
-    ),
-    countRows("ahmv_phone_interactions", (q) => q.gte("created_at", since7d)),
-    countRows("ahmv_phone_message_jobs", (q) =>
-      q.eq("status", "sent").gte("created_at", since7d),
-    ),
-    countRows("ahmv_phone_message_jobs", (q) =>
-      q.eq("status", "failed").gte("created_at", since7d),
-    ),
-    countRows("ahmv_phone_message_jobs", (q) => q.eq("status", "pending")),
+    client.from("ahmv_phone_contacts").select("*", { count: "exact", head: true }),
+    client
+      .from("ahmv_phone_contacts")
+      .select("*", { count: "exact", head: true })
+      .eq("access_tier", "trial")
+      .gt("trial_expires_at", nowIso),
+    client
+      .from("ahmv_phone_contacts")
+      .select("*", { count: "exact", head: true })
+      .eq("access_tier", "premium"),
+    client
+      .from("ahmv_phone_contacts")
+      .select("*", { count: "exact", head: true })
+      .eq("marketing_sms_consent", true),
+    client
+      .from("ahmv_phone_interactions")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", since24h),
+    client
+      .from("ahmv_phone_interactions")
+      .select("*", { count: "exact", head: true })
+      .eq("channel", "voice")
+      .gte("created_at", since24h),
+    client
+      .from("ahmv_phone_interactions")
+      .select("*", { count: "exact", head: true })
+      .eq("channel", "sms")
+      .gte("created_at", since24h),
+    client
+      .from("ahmv_phone_interactions")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", since7d),
+    client
+      .from("ahmv_phone_message_jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "sent")
+      .gte("created_at", since7d),
+    client
+      .from("ahmv_phone_message_jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "failed")
+      .gte("created_at", since7d),
+    client
+      .from("ahmv_phone_message_jobs")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "pending"),
   ]);
 
   return {
     generatedAt: nowIso,
     contacts: {
-      total,
-      activeTrials,
-      premium,
-      marketingOptIn,
+      total: readCount(totalResult),
+      activeTrials: readCount(activeTrialsResult),
+      premium: readCount(premiumResult),
+      marketingOptIn: readCount(marketingOptInResult),
     },
     interactions: {
-      last24h: interactions24h,
-      voiceLast24h: voice24h,
-      smsLast24h: sms24h,
-      last7d: interactions7d,
+      last24h: readCount(interactions24hResult),
+      voiceLast24h: readCount(voice24hResult),
+      smsLast24h: readCount(sms24hResult),
+      last7d: readCount(interactions7dResult),
     },
     messages: {
-      sentLast7d: sent7d,
-      failedLast7d: failed7d,
-      pending,
+      sentLast7d: readCount(sent7dResult),
+      failedLast7d: readCount(failed7dResult),
+      pending: readCount(pendingResult),
     },
   };
 }
