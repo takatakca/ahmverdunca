@@ -34,6 +34,9 @@ for (const [name, version] of Object.entries(pkg.dependencies)) {
 assert.match(config, /TWILIO_VALIDATE_SIGNATURES=false is forbidden in production/);
 assert.match(config, /AHM_DATA_MODE=fixture is forbidden in production/);
 assert.match(config, /VOICE_INSTANCE_MODE/);
+assert.match(config, /AHMV_SUPABASE_PROJECT_REF/);
+assert.match(config, /bqflllsjxmhqsvemhhwv/);
+assert.match(config, /SUPABASE_URL does not match the approved AHMV Supabase project/);
 assert.match(config, /\['single'\]/);
 assert.match(config, /TWILIO_TTS_VOICE is required in production/);
 assert.match(config, /OPENAI_INPUT_USD_PER_MILLION/);
@@ -51,6 +54,8 @@ assert.match(agent, /parallel_tool_calls:\s*false/);
 assert.match(agent, /loops\s*<\s*5/);
 assert.match(agent, /find_schedule/);
 assert.match(agent, /find_arena/);
+assert.match(agent, /accessLimited/);
+assert.match(agent, /matches\.slice\(0, 1\)/);
 
 assert.doesNotMatch(store, /transcript_summary/);
 assert.match(store, /includeMessages:\s*false/);
@@ -130,6 +135,8 @@ console.log(JSON.stringify({
     twilioSignatureValidationProductionRequired: true,
     fixtureModeProductionForbidden: true,
     singleInstanceGuard: true,
+    ahmvDatabaseIdentityLock: true,
+    baseNextEventVipBoundary: true,
     immutableReleaseSystemd: true,
     websocketProxy: true,
   }
