@@ -55,6 +55,7 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { t, l, lang } = useI18n();
   const { preferredTeam, selectedTeams } = usePreferredTeam();
+  const primarySelectedTeam = selectedTeams[0];
   const today = montrealDateKey();
   const alerts = ALERTS.filter((alert) => !alert.archived && alert.expiresAt >= today);
   const news = NEWS.slice(0, 3);
@@ -131,10 +132,17 @@ function Home() {
                 </Link>
               </Button>
               <Button asChild variant="outline-light" size="lg" className="min-h-12 px-6">
-                {preferredTeam ? (
+                {primarySelectedTeam ? (
+                  <a href={publicTeamHubUrl(primarySelectedTeam)}>
+                    <Users className="size-4" />
+                    <span className="max-w-[14rem] truncate">
+                      {lang === "fr" ? "Mon équipe" : "My team"} · {primarySelectedTeam.name}
+                    </span>
+                  </a>
+                ) : preferredTeam ? (
                   <Link to="/equipes/$slug" params={{ slug: preferredTeam }}>
                     <Users className="size-4" />
-                    {lang === "fr" ? "Mon équipe" : "My team"}
+                    {lang === "fr" ? "Ma catégorie" : "My category"}
                   </Link>
                 ) : (
                   <Link to="/inscriptions">
