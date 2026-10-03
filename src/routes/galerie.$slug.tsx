@@ -44,7 +44,20 @@ function AlbumPage() {
         </Link>
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
           <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
-            {al.coverUrl ? (
+            {slug === "tournoi-m11-2025" ? (
+              <div className="absolute inset-0 grid grid-cols-[1.2fr_0.8fr] grid-rows-2 gap-px bg-white/10">
+                {[OFFICIAL_MEDIA.tournamentM11Primary, OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media, index) => (
+                  <img
+                    key={media.url}
+                    src={media.url}
+                    alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    className={`size-full object-cover ${index === 0 ? "row-span-2" : ""}`}
+                  />
+                ))}
+              </div>
+            ) : al.coverUrl ? (
               <img
                 src={al.coverUrl}
                 alt={l(al.title)}
