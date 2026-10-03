@@ -77,7 +77,7 @@ function Home() {
         <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
         {!publicLaunch && (
-          <span className="absolute right-4 top-4 z-10 border border-white/15 bg-navy-deep/55 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-navy-foreground/80 backdrop-blur-sm md:right-8 md:top-8">
+          <span className="absolute right-3 top-3 z-10 hidden border border-white/15 bg-navy-deep/55 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.16em] text-navy-foreground/80 backdrop-blur-sm sm:block md:right-8 md:top-8">
             {t("common.demo")}
           </span>
         )}
@@ -85,7 +85,7 @@ function Home() {
           href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="absolute left-4 top-4 z-10 border border-white/15 bg-navy-deep/65 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.14em] text-white/85 backdrop-blur-sm hover:bg-navy-deep md:left-8 md:top-8"
+          className="absolute left-3 top-3 z-10 max-w-[calc(100%-6rem)] truncate border border-white/15 bg-navy-deep/70 px-2.5 py-1 text-[8px] font-semibold uppercase tracking-[0.12em] text-white/80 backdrop-blur-sm hover:bg-navy-deep sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-[9px] md:left-8 md:top-8"
         >
           {lang === "fr" ? "Archive AHMV · Tournoi M11 2025" : "AHMV archive · 2025 U11 Tournament"}
         </a>
@@ -284,7 +284,7 @@ function Home() {
               <Link
                 to="/nouvelles/$slug"
                 params={{ slug: news[0].slug }}
-                className="group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
+                className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
                 <SportArtwork
                   index={String(news[0].legacyId ?? "01").padStart(2, "0")}
