@@ -1,0 +1,18 @@
+export type AhmvPhoneCommand =
+  | { kind: "next"; teamQuery: string }
+  | { kind: "today"; teamQuery: string }
+  | { kind: "tomorrow"; teamQuery: string }
+  | { kind: "week"; teamQuery: string }
+  | { kind: "save"; teamQuery: string };
+
+export function parsePhoneCommand(query: string): AhmvPhoneCommand {
+  const value = query.trim().slice(0, 160);
+  const match = /^(AUJOURD['’]?HUI|TODAY|DEMAIN|TOMORROW|SEMAINE|WEEK|SAUVE|SAVE)\s+(.+)$/i.exec(value);
+  if (!match) return { kind: "next", teamQuery: value };
+  const keyword = match[1]!.toUpperCase().replace("’", "'");
+  const teamQuery = match[2]!.trim();
+  if (keyword === "TODAY" || keyword.startsWith("AUJOURD")) return { kind: "today", teamQuery };
+  if (keyword === "DEMAIN" || keyword === "TOMORROW") return { kind: "tomorrow", teamQuery };
+  if (keyword === "SEMAINE" || keyword === "WEEK") return { kind: "week", teamQuery };
+  return { kind: "save", teamQuery };
+}
