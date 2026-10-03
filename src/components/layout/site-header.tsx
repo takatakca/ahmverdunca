@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookmarkCheck, CalendarDays, ChevronDown, CircleHelp, Images, LogIn, MapPin, Menu, Newspaper, PhoneCall, Search, Sparkles, Trophy, Users, X } from "lucide-react";
+import { BookmarkCheck, CalendarDays, ChevronDown, LogIn, MapPin, Menu, PhoneCall, Search, Sparkles, Trophy, Users, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { TEAMS } from "@/data/teams";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { publicTeamHubUrl } from "@/data/team-directory";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
@@ -308,243 +307,199 @@ export function SiteHeader() {
         >
           <nav
             aria-label={lang === "fr" ? "Navigation mobile" : "Mobile navigation"}
-            className="container-site py-5"
+            className="container-site py-4"
           >
-            <div className="flex items-start justify-between gap-4 border-b border-navy-foreground/12 pb-5">
-              <div>
+            <div className="flex items-center justify-between gap-4 border-b border-navy-foreground/12 pb-4">
+              <div className="min-w-0">
                 <p className="eyebrow text-sport-foreground">
-                  {lang === "fr" ? "Navigation AHMV" : "AHMV navigation"}
+                  {lang === "fr" ? "Centre parent AHMV" : "AHMV parent centre"}
                 </p>
-                <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-white">
-                  {lang === "fr" ? "Tout le hockey. Ici." : "All hockey. Here."}
+                <p className="mt-1 truncate font-display text-2xl font-extrabold uppercase leading-none text-white">
+                  {selectedTeams[0]
+                    ? selectedTeams[0].name
+                    : savedTeam
+                      ? savedTeam.code
+                      : (lang === "fr" ? "Votre hockey. Rapidement." : "Your hockey. Fast.")}
                 </p>
-                <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/45">
+                <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/40">
                   {SITE.season} · Verdun
                 </p>
               </div>
-              <LogoSlot className="size-16 sm:size-20" />
+              <LogoSlot className="size-12" />
             </div>
 
-            <Link
-              to="/galerie/$slug"
-              params={{ slug: "tournoi-m11-2025" }}
-              className="interactive-surface group relative mt-4 block min-h-[170px] overflow-hidden border border-white/12 bg-navy"
-            >
-              <img
-                src={OFFICIAL_MEDIA.practiceSkaters.url}
-                alt={lang === "fr" ? OFFICIAL_MEDIA.practiceSkaters.alt.fr : OFFICIAL_MEDIA.practiceSkaters.alt.en}
-                loading="eager"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.93)_0%,rgba(7,16,43,0.58)_60%,rgba(7,16,43,0.22)_100%)]" />
-              <div className="relative flex min-h-[170px] max-w-[75%] flex-col justify-end p-4">
-                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
-                  {lang === "fr" ? "Verdun en images" : "Verdun in pictures"}
-                </p>
-                <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.86] text-white">
-                  {lang === "fr" ? "Le vrai hockey AHMV" : "Real AHMV hockey"}
-                </p>
-                <span className="mt-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.13em] text-white/70">
-                  <Images className="size-4 text-sport-foreground" />
-                  {lang === "fr" ? "Ouvrir la galerie" : "Open gallery"}
+            {selectedTeams[0] ? (
+              <a
+                href={publicTeamHubUrl(selectedTeams[0])}
+                className="interactive-surface mt-3 flex min-h-16 items-center justify-between gap-3 border border-sport/35 bg-sport/10 px-4 py-3"
+              >
+                <span className="min-w-0">
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                    {lang === "fr" ? "Mon équipe" : "My team"}
+                  </span>
+                  <span className="mt-1 block truncate font-display text-xl font-extrabold uppercase leading-none text-white">
+                    {selectedTeams[0].name}
+                  </span>
+                  <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.12em] text-white/42">
+                    {selectedTeams[0].level}
+                    {selectedTeams.length > 1 ? ` · +${selectedTeams.length - 1}` : ""}
+                  </span>
                 </span>
-              </div>
-            </Link>
-
-            {selectedTeams.length > 0 ? (
-              <div className="mt-4 overflow-hidden border border-sport/35 bg-sport/10">
-                <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-                  <div>
-                    <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/75">
-                      {lang === "fr" ? "Mes équipes" : "My teams"}
-                    </p>
-                    <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none text-white">
-                      {selectedTeams.length} {lang === "fr" ? "sélectionnée(s)" : "selected"}
-                    </p>
-                  </div>
-                  <BookmarkCheck className="size-5 text-sport-foreground" />
-                </div>
-                <div className="grid gap-px bg-white/10">
-                  {selectedTeams.map((entry) => (
-                    <a
-                      key={entry.legacyScheduleTeamId}
-                      href={publicTeamHubUrl(entry)}
-                      className="interactive-surface flex min-h-14 items-center justify-between bg-competition px-4 py-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate font-display text-lg font-extrabold uppercase leading-none text-white">{entry.name}</p>
-                        <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/40">{entry.level}</p>
-                      </div>
-                      <span className="ml-3 shrink-0 font-display text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
-                        {lang === "fr" ? "Ouvrir" : "Open"}
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              </div>
+                <ChevronDown className="size-4 shrink-0 -rotate-90 text-sport-foreground" />
+              </a>
             ) : savedTeam ? (
               <Link
                 to="/equipes/$slug"
                 params={{ slug: savedTeam.slug }}
-                className="interactive-surface mt-4 flex items-center justify-between gap-4 border border-sport/35 bg-sport/10 px-4 py-4"
+                className="interactive-surface mt-3 flex min-h-16 items-center justify-between gap-3 border border-sport/35 bg-sport/10 px-4 py-3"
               >
-                <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/75">
-                    {lang === "fr" ? "Mon équipe enregistrée" : "My saved team"}
-                  </p>
-                  <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-white">{savedTeam.code}</p>
-                </div>
-                <span className="font-display text-sm font-bold uppercase tracking-[0.12em] text-sport-foreground">{lang === "fr" ? "Ouvrir" : "Open"}</span>
+                <span>
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                    {lang === "fr" ? "Ma catégorie" : "My category"}
+                  </span>
+                  <span className="mt-1 block font-display text-xl font-extrabold uppercase text-white">{savedTeam.code}</span>
+                </span>
+                <ChevronDown className="size-4 -rotate-90 text-sport-foreground" />
               </Link>
-            ) : null}
+            ) : (
+              <Link
+                to="/equipes"
+                className="interactive-surface mt-3 flex min-h-16 items-center justify-between gap-3 border border-sport/35 bg-sport/10 px-4 py-3"
+              >
+                <span>
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+                    {lang === "fr" ? "Personnaliser" : "Personalize"}
+                  </span>
+                  <span className="mt-1 block font-display text-xl font-extrabold uppercase text-white">
+                    {lang === "fr" ? "Choisir mon équipe" : "Choose my team"}
+                  </span>
+                </span>
+                <ChevronDown className="size-4 -rotate-90 text-sport-foreground" />
+              </Link>
+            )}
+
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Link
+                to="/horaires"
+                search={preferredTeam ? { team: preferredTeam } : {}}
+                className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+              >
+                <CalendarDays className="size-4 text-sport-foreground" />
+                <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Horaire" : "Schedule"}</span>
+              </Link>
+              {selectedTeams[0] ? (
+                <a
+                  href={officialTeamResultsUrl(selectedTeams[0])}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+                >
+                  <Trophy className="size-4 text-sport-foreground" />
+                  <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Résultats" : "Results"}</span>
+                </a>
+              ) : (
+                <Link
+                  to="/equipes"
+                  className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+                >
+                  <Trophy className="size-4 text-sport-foreground" />
+                  <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Résultats" : "Results"}</span>
+                </Link>
+              )}
+              <Link
+                to="/arenas"
+                className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+              >
+                <MapPin className="size-4 text-sport-foreground" />
+                <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Arénas" : "Arenas"}</span>
+              </Link>
+              <Link
+                to="/equipes"
+                className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+              >
+                <Users className="size-4 text-sport-foreground" />
+                <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Équipes" : "Teams"}</span>
+              </Link>
+            </div>
 
             <Link
               to="/recherche"
-              className="premium-control mt-4 flex min-h-12 items-center justify-between border border-navy-foreground/15 bg-navy-foreground/[0.035] px-4 text-sm font-semibold text-white/85"
+              className="premium-control mt-3 flex min-h-11 items-center justify-between border border-white/12 bg-white/[0.025] px-3 text-sm font-semibold text-white/80"
             >
               <span className="flex items-center gap-2">
                 <Search className="size-4 text-sport-foreground" />
-                {lang === "fr" ? "Rechercher équipe, aréna, nouvelle…" : "Search team, arena, news…"}
+                {lang === "fr" ? "Chercher équipe, aréna, nouvelle…" : "Search team, arena, news…"}
               </span>
-              <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-white/35">
-                {lang === "fr" ? "Chercher" : "Search"}
-              </span>
+              <ChevronDown className="size-3.5 -rotate-90 text-white/35" />
             </Link>
 
-            <a
-              href="/equipes#resultats"
-              className="premium-control mt-2 flex min-h-12 items-center justify-between border border-sport/30 bg-sport/10 px-4 text-sm font-semibold text-white"
-            >
-              <span className="flex items-center gap-2">
-                <Trophy className="size-4 text-sport-foreground" />
-                {lang === "fr" ? "Résultats & classements" : "Results & standings"}
-              </span>
-              <span className="font-display text-xs font-bold uppercase tracking-[0.14em] text-sport-foreground">
-                {lang === "fr" ? "Voir" : "View"}
-              </span>
-            </a>
-
-            <p className="eyebrow mt-6 text-sport-foreground">
-              {lang === "fr" ? "Essentiel pour les familles" : "Family essentials"}
-            </p>
-
-            <div className="mt-3 grid gap-px overflow-hidden border border-navy-foreground/12 bg-navy-foreground/12 sm:grid-cols-2">
+            <div className="mt-4 flex flex-wrap gap-2">
               {[
-                { key: "schedule", to: "/horaires", icon: CalendarDays, number: "01" },
-                { key: "teams", to: "/equipes", icon: Users, number: "02" },
-                { key: "registration", to: "/inscriptions", icon: LogIn, number: "03" },
-                { key: "arenas", to: "/arenas", icon: MapPin, number: "04" },
-              ].map(({ key, to, icon: Icon, number }) => (
+                { key: "news", to: "/nouvelles" },
+                { key: "registration", to: "/inscriptions" },
+                { key: "gallery", to: "/galerie" },
+                { key: "wllv", to: "/wllv" },
+                { key: "faq", to: "/faq" },
+                { key: "contact", to: "/contact" },
+              ].map(({ key, to }) => (
                 <Link
                   key={key}
                   to={to}
-                  className="group flex min-h-[78px] items-center gap-4 bg-competition px-4 py-3 text-navy-foreground/90 transition-colors hover:bg-navy-foreground/[0.055]"
-                  activeProps={{ className: "!bg-sport/10 !text-sport-foreground" }}
+                  className="premium-control inline-flex min-h-9 items-center border border-white/10 px-3 text-[9px] font-bold uppercase tracking-[0.11em] text-white/68 hover:border-sport hover:text-white"
+                  activeProps={{ className: "!border-sport !text-sport-foreground" }}
                 >
-                  <span className="flex size-10 shrink-0 items-center justify-center border border-navy-foreground/14">
-                    <Icon className="size-5 text-sport-foreground" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">{number}</span>
-                    <span className="mt-1 block font-display text-xl font-extrabold uppercase leading-none">
-                      {t(`nav.${key}` as TranslationKey)}
-                    </span>
-                  </span>
-                  <ChevronDown className="size-4 -rotate-90 text-white/25 transition-transform group-hover:translate-x-0.5 group-hover:text-sport-foreground" />
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-7 flex items-center justify-between border-b border-navy-foreground/12 pb-2">
-              <p className="eyebrow text-navy-foreground/50">
-                {lang === "fr" ? "Explorer l'association" : "Explore the association"}
-              </p>
-              <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">
-                AHMV
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-5">
-              {[
-                { key: "news", to: "/nouvelles", icon: Newspaper },
-                { key: "tournaments", to: "/tournois", icon: Trophy },
-                { key: "gallery", to: "/galerie", icon: Images },
-                { key: "wllv", to: "/wllv", icon: Users },
-                { key: "coaches", to: "/entraineurs", icon: Users },
-                { key: "faq", to: "/faq", icon: CircleHelp },
-                { key: "resources", to: "/ressources", icon: CircleHelp },
-                { key: "partners", to: "/partenaires", icon: Users },
-                { key: "contact", to: "/contact", icon: PhoneCall },
-              ].map(({ key, to, icon: Icon }) => (
-                <Link
-                  key={key}
-                  to={to}
-                  className="premium-control flex min-h-12 items-center gap-2 border-b border-navy-foreground/10 py-3 text-sm font-semibold text-navy-foreground/82"
-                  activeProps={{ className: "text-sport-foreground" }}
-                >
-                  <Icon className="size-4 shrink-0 text-navy-foreground/42" />
-                  <span>{t(`nav.${key}` as TranslationKey)}</span>
+                  {t(`nav.${key}` as TranslationKey)}
                 </Link>
               ))}
             </div>
 
             <a
               href="/membership"
-              className="premium-control mt-7 flex min-h-16 items-center justify-between border border-sport/35 bg-sport/10 px-4 text-white"
+              className="premium-control mt-4 flex min-h-12 items-center justify-between border border-sport/30 bg-sport/10 px-3 text-white"
             >
-              <span className="flex items-center gap-3">
-                <span className="flex size-10 items-center justify-center bg-sport text-sport-foreground">
-                  <Sparkles className="size-5" />
-                </span>
+              <span className="flex items-center gap-2">
+                <Sparkles className="size-4 text-sport-foreground" />
                 <span>
-                  <span className="block text-[9px] font-bold uppercase tracking-[0.16em] text-sport-foreground">AHMV Member · DEMO</span>
-                  <span className="mt-1 block font-display text-xl font-extrabold uppercase leading-none">
-                    {lang === "fr" ? "Prêt à activer" : "Ready to switch on"}
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member · DEMO</span>
+                  <span className="mt-0.5 block font-display text-base font-extrabold uppercase">
+                    {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
                   </span>
                 </span>
               </span>
-              <ChevronDown className="size-4 -rotate-90 text-sport-foreground" />
+              <ChevronDown className="size-3.5 -rotate-90 text-sport-foreground" />
             </a>
 
-            <div className="mt-7 grid gap-2">
-              <Button asChild variant="sport" size="lg" className="justify-between">
-                <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
-                  <span className="flex items-center gap-2">
-                    <CalendarDays className="size-4" />
-                    {lang === "fr" ? "Voir mon horaire" : "View my schedule"}
-                  </span>
-                  <ChevronDown className="size-4 -rotate-90" />
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <Link
+                to="/connexion"
+                className="premium-control flex min-h-10 items-center justify-between border border-white/10 px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white/65"
+              >
+                <span className="flex items-center gap-2"><LogIn className="size-3.5" />{t("nav.login")}</span>
+                <ChevronDown className="size-3 -rotate-90" />
+              </Link>
+              {showPhone && phonePublic ? (
+                <a
+                  href={`tel:${phoneE164}`}
+                  className="premium-control flex min-h-10 items-center justify-between border border-white/10 px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white/65"
+                >
+                  <span className="flex items-center gap-2"><PhoneCall className="size-3.5" />{phoneDisplay}</span>
+                  <ChevronDown className="size-3 -rotate-90" />
+                </a>
+              ) : (
+                <Link
+                  to="/partenaires"
+                  className="premium-control flex min-h-10 items-center justify-between border border-white/10 px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white/65"
+                >
+                  <span>{lang === "fr" ? "Partenaires" : "Partners"}</span>
+                  <ChevronDown className="size-3 -rotate-90" />
                 </Link>
-              </Button>
-              <Button asChild variant="outline-light" size="lg" className="justify-between">
-                <Link to="/connexion">
-                  <span className="flex items-center gap-2"><LogIn className="size-4" />{t("nav.login")}</span>
-                  <ChevronDown className="size-4 -rotate-90" />
-                </Link>
-              </Button>
+              )}
             </div>
 
-            {showPhone && (
-              <div className="mt-2">
-                {phonePublic ? (
-                  <Button asChild variant="outline-light" size="lg" className="w-full justify-between">
-                    <a href={`tel:${phoneE164}`}>
-                      <span className="flex items-center gap-2"><PhoneCall className="size-4" />{phoneDisplay}</span>
-                      <ChevronDown className="size-4 -rotate-90" />
-                    </a>
-                  </Button>
-                ) : (
-                  <div className="flex min-h-11 items-center justify-between border border-navy-foreground/20 px-4 text-sm font-semibold text-navy-foreground/75">
-                    <span className="flex items-center gap-2"><PhoneCall className="size-4" />{phoneDisplay}</span>
-                    <span className="text-[9px] uppercase tracking-[0.16em] text-sport-foreground">{lang === "fr" ? "à venir" : "coming soon"}</span>
-                  </div>
-                )}
-              </div>
-            )}
-
-            <div className="mt-2 flex items-center justify-between border border-navy-foreground/15 px-4 py-3">
-              <span className="text-sm text-navy-foreground/70">{t("nav.language")}</span>
+            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
+              <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/38">
+                {lang === "fr" ? "Langue" : "Language"}
+              </span>
               <LangSwitch />
             </div>
           </nav>
