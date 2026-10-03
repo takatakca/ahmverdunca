@@ -2,6 +2,7 @@ import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bell, CalendarDays, Check, ShieldCheck, Sparkles, Trophy, Users } from "lucide-react";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { DemoMemberSwitch } from "@/components/demo-member-switch";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
 import { useI18n } from "@/lib/i18n";
 
@@ -87,6 +88,7 @@ function MembershipDemoPage() {
       </section>
 
       <div className="container-site space-y-10 py-9 md:py-14">
+        <DemoMemberSwitch />
         <section className="grid gap-px overflow-hidden border border-navy/10 bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
           {benefits.map(({ Icon, fr, en }) => (
             <article key={fr} className="bg-background p-5 md:p-6">
