@@ -12,7 +12,7 @@ export interface AhmvPhoneContact {
   smsConsent: boolean;
   transactionalSmsAllowed: boolean;
   marketingSmsConsent: boolean;
-  takatakIdentityId?: string;
+  takatakIdentityId?: string | undefined;
 }
 
 type LooseQuery = any;
@@ -113,14 +113,14 @@ export async function touchPhoneContact(input: {
 }
 
 export async function recordPhoneInteraction(input: {
-  contactId?: string;
+  contactId?: string | undefined;
   channel: AhmvPhoneChannel;
-  providerReferenceHash?: string;
-  intent?: string;
+  providerReferenceHash?: string | undefined;
+  intent?: string | undefined;
   outcome: string;
-  teamCode?: string;
-  arenaSlug?: string;
-  metadata?: Record<string, string | number | boolean | null>;
+  teamCode?: string | undefined;
+  arenaSlug?: string | undefined;
+  metadata?: Record<string, string | number | boolean | null> | undefined;
 }) {
   const result = await db().from("ahmv_phone_interactions").insert({
     contact_id: input.contactId ?? null,
