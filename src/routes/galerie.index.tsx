@@ -66,7 +66,7 @@ function GalleryPage() {
                   aria-pressed={season === "all"}
                   onClick={() => setSeason("all")}
                   className={cn(
-                    "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
+                    "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
                     season === "all" ? "border-navy bg-navy text-navy-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
                   )}
                 >
@@ -98,7 +98,7 @@ function GalleryPage() {
               to="/galerie/$slug"
               params={{ slug: album.slug }}
               className={cn(
-                "group relative overflow-hidden",
+                "interactive-surface group relative overflow-hidden",
                 index === 0 && "sm:row-span-2 lg:col-span-2 lg:row-span-2",
                 index === 1 && "lg:col-span-2",
               )}
