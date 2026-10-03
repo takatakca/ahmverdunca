@@ -43,6 +43,10 @@ export const EXTERNAL_LINKS = {
   m11TournamentSchedule: "https://page.spordle.com/fr/tournoi-provincial-m11-de-verdun/schedule-stats-standings",
   m11TournamentRules: "https://tournoihockeyverdun.ca/reglements-du-tournoi",
   m7FestivalSchedule: "https://page.spordle.com/fr/festival-m7-de-verdun/schedule-stats-standings",
+  legacyTeamNotifications: "https://icescheduling.ca/team-notifications/register",
+  legacyGirlsHockeyFr: "https://verdun.gamedata.ca/storage/documents/01K3YR6PCE54DZ6W1PAENGZ7NZ.pdf",
+  legacyGirlsHockeyEn: "https://verdun.gamedata.ca/storage/documents/01K40A93P35TPAMZZKRNQCY4B6.pdf",
+  legacyEquipmentGuide: "https://verdun.gamedata.ca/storage/documents/01K439WZ8X3WXW7BXR5480FNVK.pdf",
 } as const;
 
 export type NavKey =

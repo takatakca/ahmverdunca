@@ -152,7 +152,7 @@ function SchedulePage() {
                 : "Need the official data right now? Choose your circuit."}
             </p>
           </div>
-          <div className="grid gap-3 p-4 sm:grid-cols-3 md:p-6">
+          <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 md:p-6">
             <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
               <a href={EXTERNAL_LINKS.officialSimpleLetterSchedule} target="_blank" rel="noopener noreferrer">
                 <span>{lang === "fr" ? "Simple lettre" : "Single letter"}</span>
@@ -168,6 +168,12 @@ function SchedulePage() {
             <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
               <a href={EXTERNAL_LINKS.officialGirlsSchedule} target="_blank" rel="noopener noreferrer">
                 <span>{lang === "fr" ? "Hockey féminin" : "Girls' hockey"}</span>
+                <ExternalLink className="size-4" />
+              </a>
+            </Button>
+            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+              <a href={EXTERNAL_LINKS.legacyTeamNotifications} target="_blank" rel="noopener noreferrer">
+                <span>{lang === "fr" ? "Notifications d’équipe" : "Team notifications"}</span>
                 <ExternalLink className="size-4" />
               </a>
             </Button>

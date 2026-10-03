@@ -183,7 +183,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           {!publicLaunch && (
             <div className="flex flex-wrap gap-2">
               {WEEKLY_SCHEDULE_DOCUMENTS.map((document) => (
-                <Button key={document.week} asChild variant={document.week === 5 ? "sport" : "outline"} size="sm">
+                <Button key={document.week} asChild variant={document === WEEKLY_SCHEDULE_DOCUMENTS[WEEKLY_SCHEDULE_DOCUMENTS.length - 1] ? "sport" : "outline"} size="sm">
                   <a href={document.sourceUrl} target="_blank" rel="noopener noreferrer">
                     {lang === "fr" ? `Semaine ${document.week}` : `Week ${document.week}`}
                     <ExternalLink className="size-4" />
