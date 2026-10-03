@@ -48,9 +48,10 @@ function membershipText(lang: PhoneLanguage) {
 }
 
 export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
-  const parsed = input.channel === "sms"
-    ? parseSms(input.lang === "en" ? \`EN \${input.message}\` : input.message)
-    : { lang: input.lang ?? ("fr" as const), query: input.message.trim() };
+  const parsed =
+    input.channel === "sms"
+      ? parseSms(input.lang === "en" ? "EN " + input.message : input.message)
+      : { lang: input.lang ?? ("fr" as const), query: input.message.trim() };
 
   const lang = parsed.lang;
   const access = input.access ?? "trial";
@@ -70,7 +71,12 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
       recognizedIntent: "help",
       ...(input.channel === "voice"
         ? { spokenText: lang === "fr" ? "DÉMO. Dites votre équipe." : "DEMO. Say your team." }
-        : { smsText: lang === "fr" ? "DÉMO AHMV: envoyez M13A ou Junior." : "AHMV DEMO: text M13A or Junior." }),
+        : {
+            smsText:
+              lang === "fr"
+                ? "DÉMO AHMV: envoyez M13A ou Junior."
+                : "AHMV DEMO: text M13A or Junior.",
+          }),
       hangup: input.channel === "voice",
       disclaimer,
     };
@@ -82,9 +88,10 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
     const allowed = canUse(entitlement, "saved_teams");
     const responseText = allowed
       ? lang === "fr"
-        ? \`DÉMO — Équipe principale sauvegardée: \${team}.\`
-        : \`DEMO — Primary team saved: \${team}.\`
+        ? "DÉMO — Équipe principale sauvegardée: " + team + "."
+        : "DEMO — Primary team saved: " + team + "."
       : membershipText(lang);
+
     return {
       demo: true,
       channel: input.channel,
@@ -111,6 +118,7 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
         disclaimer,
       };
     }
+
     const result = scheduleRangeAnswer(
       team,
       command.kind,
@@ -119,6 +127,7 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
       PHONE_DEMO_NOW,
       PHONE_DEMO_ALIASES as unknown as Record<string, string>,
     );
+
     return {
       demo: true,
       channel: input.channel,
@@ -126,8 +135,8 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
       access,
       recognizedIntent: command.kind,
       ...(input.channel === "voice"
-        ? { spokenText: result.text.replace(/https:\\/\\/\\S+/g, "") }
-        : { smsText: \`\${disclaimer}\\n\${result.text}\` }),
+        ? { spokenText: result.text.replace(/https:\/\/\S+/g, "") }
+        : { smsText: disclaimer + "\n" + result.text }),
       hangup: true,
       disclaimer,
     };
@@ -142,9 +151,12 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
   );
   const directions = answer.event ? navigationLinksForVenue(answer.event.venue) : undefined;
   const compact =
-    lang === "fr"
-      ? \`\${disclaimer}\\n\${answer.text}\${directions ? \`\\nItinéraire: \${directions.googleMaps}\` : ""}\`
-      : \`\${disclaimer}\\n\${answer.text}\${directions ? \`\\nDirections: \${directions.googleMaps}\` : ""}\`;
+    disclaimer +
+    "\n" +
+    answer.text +
+    (directions
+      ? "\n" + (lang === "fr" ? "Itinéraire: " : "Directions: ") + directions.googleMaps
+      : "");
 
   return {
     demo: true,
@@ -154,7 +166,7 @@ export function simulatePhoneDemo(input: PhoneDemoInput): PhoneDemoOutput {
     recognizedIntent: "next-event",
     ...(input.channel === "voice"
       ? {
-          spokenText: answer.text.replace(/https:\\/\\/\\S+/g, ""),
+          spokenText: answer.text.replace(/https:\/\/\S+/g, ""),
           ...(input.wantsSms ? { smsText: compact } : {}),
         }
       : { smsText: compact }),
