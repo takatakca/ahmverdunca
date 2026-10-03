@@ -25,7 +25,8 @@
     "check:release-artifact": "bun scripts/validate-release-artifact.ts",
     "check:supabase-key-safety": "bun scripts/validate-supabase-client-key.ts",
     "check:media-policy": "bun scripts/validate-media-policy.ts",
-    "demo:phone": "bun scripts/ahmv-phone-demo.ts"
+    "demo:phone": "bun scripts/ahmv-phone-demo.ts",
+    "check:phone-preflight": "bun scripts/ahmv-phone-preflight.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
