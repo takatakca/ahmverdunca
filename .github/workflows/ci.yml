@@ -81,6 +81,11 @@ jobs:
         run: |
           bunx eslint . --rule 'prettier/prettier: off'
 
+      - name: Production deployment smoke safeguards
+        run: |
+          bash -n scripts/deploy-production-http-smoke.sh
+          bun run test:deploy-smoke
+
       - name: Standalone Voice runtime
         working-directory: services/ahmv-voice-ai
         run: |

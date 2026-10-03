@@ -30,7 +30,8 @@
     "preflight:voice": "bun scripts/ahmv-voice-preflight.ts",
     "smoke:voice": "tsx scripts/ahmv-voice-smoke.ts",
     "smoke:voice-bridge": "tsx scripts/ahmv-voice-bridge-smoke.ts",
-    "doctor:voice-db": "bun scripts/ahmv-voice-db-doctor.ts"
+    "doctor:voice-db": "bun scripts/ahmv-voice-db-doctor.ts",
+    "test:deploy-smoke": "bun test scripts/deploy-production-http-smoke.test.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
