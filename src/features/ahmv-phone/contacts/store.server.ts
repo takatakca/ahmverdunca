@@ -133,6 +133,49 @@ export async function recordPhoneInteraction(input: {
   if (result.error) throw result.error;
 }
 
+export async function savePrimaryTeamPreference(contactId: string, publicTeamId: string) {
+  const client = db();
+  const clear = await client
+    .from("ahmv_phone_team_preferences")
+    .update({ is_primary: false })
+    .eq("contact_id", contactId);
+  if (clear.error) throw clear.error;
+
+  const saved = await client
+    .from("ahmv_phone_team_preferences")
+    .upsert(
+      {
+        contact_id: contactId,
+        public_team_id: publicTeamId,
+        is_primary: true,
+      },
+      { onConflict: "contact_id,public_team_id" },
+    );
+  if (saved.error) throw saved.error;
+}
+
+export async function getPrimaryTeamPreference(contactId: string): Promise<string | null> {
+  const result = await db()
+    .from("ahmv_phone_team_preferences")
+    .select("public_team_id")
+    .eq("contact_id", contactId)
+    .eq("is_primary", true)
+    .maybeSingle();
+  if (result.error) throw result.error;
+  const value = result.data?.["public_team_id"];
+  return typeof value === "string" ? value : null;
+}
+
+export async function safeSavePrimaryTeamPreference(contactId: string, publicTeamId: string) {
+  try {
+    await savePrimaryTeamPreference(contactId, publicTeamId);
+    return true;
+  } catch (error) {
+    console.error("[AHMV phone team preference]", error);
+    return false;
+  }
+}
+
 export async function safeTouchPhoneContact(
   input: Parameters<typeof touchPhoneContact>[0],
 ): Promise<AhmvPhoneContact | null> {
