@@ -48,11 +48,27 @@ jobs:
           npm ci --ignore-scripts --audit=false --fund=false
           npm ls --omit=dev
 
+      - name: Audit production dependency vulnerabilities
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm audit --omit=dev --audit-level=high
+
+      - name: Generate CycloneDX SBOM
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm sbom --sbom-format=cyclonedx > sbom.cdx.json
+          test -s sbom.cdx.json
+          node -e "const s=require('./sbom.cdx.json'); if (s.bomFormat !== 'CycloneDX') process.exit(1);"
+
       - name: Publish verified lockfile artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ahmv-voice-lock-${{ github.sha }}
-          path: services/ahmv-voice-ai/package-lock.json
+          name: ahmv-voice-supply-chain-${{ github.sha }}
+          path: |
+            services/ahmv-voice-ai/package-lock.json
+            services/ahmv-voice-ai/sbom.cdx.json
           if-no-files-found: error
           retention-days: 30
 
