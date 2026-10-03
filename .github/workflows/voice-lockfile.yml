@@ -1,0 +1,62 @@
+name: AHMV Voice dependency lock
+
+on:
+  push:
+    branches:
+      - voice-ai-preprod-v4
+    paths:
+      - services/ahmv-voice-ai/package.json
+      - .github/workflows/voice-lockfile.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ahmv-voice-lockfile
+  cancel-in-progress: true
+
+jobs:
+  lock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Voice branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: voice-ai-preprod-v4
+          fetch-depth: 0
+
+      - name: Setup Node 22
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Generate exact lockfile
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          rm -f package-lock.json
+          npm install --package-lock-only --ignore-scripts --audit=false --fund=false
+          test -s package-lock.json
+
+      - name: Verify clean install from generated lockfile
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --audit=false --fund=false
+          npm ls --omit=dev
+
+      - name: Commit generated lockfile to Voice branch
+        run: |
+          set -euo pipefail
+          git add services/ahmv-voice-ai/package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfile is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "voice-ai: generate verified npm lockfile"
+          git push origin HEAD:voice-ai-preprod-v4
