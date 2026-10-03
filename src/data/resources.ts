@@ -68,4 +68,49 @@ export const RESOURCES: Resource[] = [
     urlVerified: true,
     note: { fr: "L'admissibilité et la disponibilité peuvent changer; consultez la source officielle.", en: "Eligibility and availability can change; consult the official source." },
   },
+  {
+    id: "r11",
+    name: "Hockey féminin — document AHMV (FR)",
+    description: {
+      fr: "Document historique publié dans la section F.A.Q du site AHM Verdun.",
+      en: "Historical document published in the AHM Verdun FAQ section.",
+    },
+    category: "feminine",
+    url: EXTERNAL_LINKS.legacyGirlsHockeyFr,
+    urlVerified: false,
+    note: {
+      fr: "Lien conservé depuis le site précédent; la disponibilité du document doit être revérifiée avant de le présenter comme source active.",
+      en: "Link preserved from the previous site; document availability must be rechecked before presenting it as an active source.",
+    },
+  },
+  {
+    id: "r12",
+    name: "Girls Hockey — AHMV document (EN)",
+    description: {
+      fr: "Version anglaise historique publiée dans la section F.A.Q du site AHM Verdun.",
+      en: "Historical English version published in the AHM Verdun FAQ section.",
+    },
+    category: "feminine",
+    url: EXTERNAL_LINKS.legacyGirlsHockeyEn,
+    urlVerified: false,
+    note: {
+      fr: "Lien conservé depuis le site précédent; la disponibilité du document doit être revérifiée.",
+      en: "Link preserved from the previous site; document availability must be rechecked.",
+    },
+  },
+  {
+    id: "r13",
+    name: "Équipement requis — document AHMV",
+    description: {
+      fr: "Document historique sur l’équipement requis, publié dans la F.A.Q de l’ancien site.",
+      en: "Historical required-equipment document published in the previous site FAQ.",
+    },
+    category: "equipment",
+    url: EXTERNAL_LINKS.legacyEquipmentGuide,
+    urlVerified: false,
+    note: {
+      fr: "Le lien est conservé pour la migration, mais le contenu doit être revalidé avant de servir de directive officielle 2026–2027.",
+      en: "The link is preserved for migration, but its contents must be revalidated before being used as an official 2026–2027 guideline.",
+    },
+  },
 ];
