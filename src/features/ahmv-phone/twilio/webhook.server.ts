@@ -8,10 +8,10 @@ import {
 } from "../../../lib/ahmv-phone.ts";
 import {
   normalizePhoneE164,
-  safeRecordPhoneInteraction,
   safeSavePrimaryTeamPreference,
   safeTouchPhoneContact,
 } from "../contacts/store.server.ts";
+import { safeRecordPhoneInteraction } from "../audit/store.server.ts";
 import {
   sendTransactionalSms,
   updateSmsDeliveryStatus,
