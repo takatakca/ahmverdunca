@@ -231,13 +231,13 @@ export function SiteHeader() {
               {t("nav.more")} <ChevronDown className={cn("size-4 transition-transform", moreOpen && "rotate-180")} />
             </button>
             {moreOpen && (
-              <div className="absolute right-0 top-full w-72 border border-navy/10 border-t-sport bg-background p-2 text-foreground shadow-xl animate-in fade-in slide-in-from-top-1">
+              <div className="absolute right-0 top-full w-72 border border-white/12 border-t-sport bg-navy-deep p-2 text-white shadow-2xl animate-in fade-in slide-in-from-top-1">
                 {MORE_NAV.map((item) => (
                   <Link
                     key={item.key}
                     to={item.to}
-                    className="block border-b border-navy/8 px-3 py-3 text-sm font-semibold last:border-b-0 hover:bg-ice hover:text-sport"
-                    activeProps={{ className: "bg-secondary text-sport" }}
+                    className="block border-b border-white/8 px-3 py-3 text-sm font-semibold text-white/72 last:border-b-0 hover:bg-white/[0.05] hover:text-sport-foreground"
+                    activeProps={{ className: "bg-sport/10 text-sport-foreground" }}
                   >
                     {t(`nav.${item.key}` as TranslationKey)}
                   </Link>
