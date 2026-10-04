@@ -10,7 +10,7 @@ import { ARENAS } from "@/data/arenas";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { EXTERNAL_LINKS } from "@/lib/site";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
@@ -32,6 +32,7 @@ export const Route = createFileRoute("/horaires")({
 
 function SchedulePage() {
   const { t, lang } = useI18n();
+  const weeklyScheduleVisual = uploadedAhmvMediaById(10)!;
   const { preferredTeam, savePreferredTeam, selectedTeams } = usePreferredTeam();
   const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
 
@@ -73,11 +74,11 @@ function SchedulePage() {
         <section className="mb-6 grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
           <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px]">
             <img
-              src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+              src={weeklyScheduleVisual.url}
+              alt={lang === "fr" ? weeklyScheduleVisual.alt.fr : weeklyScheduleVisual.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 size-full bg-white object-contain"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.88))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
