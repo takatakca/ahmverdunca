@@ -67,6 +67,9 @@ jobs:
       - name: Validate Parent Premium contract
         run: bun run check:parent-premium
 
+      - name: Validate newsletter frontend contract
+        run: bun run check:newsletter
+
       - name: Validate content data
         run: bun run check:data
 
