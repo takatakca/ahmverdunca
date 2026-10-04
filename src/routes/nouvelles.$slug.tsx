@@ -10,6 +10,8 @@ import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
   loader: ({ params }) => {
@@ -37,10 +39,29 @@ export const Route = createFileRoute("/nouvelles/$slug")({
 function ArticlePage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
+  const contentRegistry = useContentOverlayRegistry();
   const a = getArticle(slug)!;
+  const overlay = contentRegistry.get("news", `news:${slug}`);
+  const patch = overlay?.patch ?? {};
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const category = NEWS_CATEGORIES.find((c) => c.id === a.category);
-  const body = lang === "en" && a.body.en ? a.body.en : a.body.fr;
+  const baseBody = lang === "en" && a.body.en ? a.body.en : a.body.fr;
+  const body = Array.isArray(patch.body) && patch.body.every((item) => typeof item === "string")
+    ? patch.body as string[]
+    : baseBody;
+  const displayTitle = typeof patch.title === "string" ? patch.title : l(a.title);
+  const displayExcerpt = typeof patch.text === "string" ? patch.text : l(a.excerpt);
+  const displayAuthor = typeof patch.author === "string" ? patch.author : a.author;
+  const displaySourceUrl = typeof patch.url === "string" ? patch.url : a.sourceUrl;
+  const publishedOverride = typeof patch.publishedAt === "string" ? new Date(patch.publishedAt) : null;
+  const displayDate = publishedOverride && Number.isFinite(publishedOverride.getTime())
+    ? new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "America/Toronto",
+      }).format(publishedOverride)
+    : newsDateLabel(a, lang);
   const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
   const teams = a.teamSlugs.map(getTeam).filter(Boolean);
   const storyMedia =
@@ -53,13 +74,41 @@ function ArticlePage() {
           : a.category === "registration"
             ? uploadedAhmvMediaById(39)
             : OFFICIAL_MEDIA.tournamentM11Tertiary;
+  const displayImageUrl = typeof patch.imageUrl === "string" ? patch.imageUrl : storyMedia!.url;
+  const contributionFields = [
+    { key: "title", label: { fr: "Titre", en: "Title" }, kind: "text" as const, current: displayTitle },
+    { key: "text", label: { fr: "Résumé", en: "Summary" }, kind: "textarea" as const, current: displayExcerpt },
+    { key: "body", label: { fr: "Corps du texte", en: "Article body" }, kind: "json" as const, current: body },
+    { key: "imageUrl", label: { fr: "Image principale", en: "Main image" }, kind: "image-url" as const, current: displayImageUrl },
+    { key: "url", label: { fr: "Lien source", en: "Source link" }, kind: "url" as const, current: displaySourceUrl },
+    { key: "author", label: { fr: "Auteur / source", en: "Author / source" }, kind: "text" as const, current: displayAuthor },
+    { key: "publishedAt", label: { fr: "Date publiée", en: "Published date" }, kind: "text" as const, current: typeof patch.publishedAt === "string" ? patch.publishedAt : a.date },
+  ];
 
   return (
     <>
       <PageHeader
-        eyebrow={`${category ? l(category.label) : ""} · ${newsDateLabel(a, lang)}`}
-        title={l(a.title)}
-        description={l(a.excerpt)}
+        eyebrow={`${category ? l(category.label) : ""} · ${displayDate}`}
+        title={displayTitle}
+        description={displayExcerpt}
+        actions={
+          <ContentContributionButton
+            resourceType="news"
+            resourceKey={`news:${slug}`}
+            title={displayTitle}
+            snapshot={{
+              title: displayTitle,
+              text: displayExcerpt,
+              body,
+              imageUrl: displayImageUrl,
+              url: displaySourceUrl,
+              author: displayAuthor,
+              publishedAt: typeof patch.publishedAt === "string" ? patch.publishedAt : a.date,
+            }}
+            fields={contributionFields}
+            appearance="menu"
+          />
+        }
       />
       <div className="container-site py-8 md:py-12">
         <Link to="/nouvelles" className="inline-flex items-center gap-1.5 text-sm font-semibold text-sport hover:underline">
@@ -70,7 +119,7 @@ function ArticlePage() {
           <article className="overflow-hidden border border-white/12 bg-navy-deep text-white">
             <div className="group relative aspect-[16/8] overflow-hidden bg-navy">
               <img
-                src={storyMedia!.url}
+                src={displayImageUrl}
                 alt={lang === "fr" ? storyMedia!.alt.fr : storyMedia!.alt.en}
                 loading="eager"
                 decoding="async"
@@ -94,11 +143,11 @@ function ArticlePage() {
             <div className="mt-0 grid gap-px border-x border-b border-white/12 bg-white/10 sm:grid-cols-3">
               <div className="bg-competition p-4 text-white">
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{lang === "fr" ? "Publication" : "Published"}</p>
-                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{newsDateLabel(a, lang)}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{displayDate}</p>
               </div>
               <div className="bg-competition p-4 text-white">
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{t("article.author")}</p>
-                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{a.author}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{displayAuthor}</p>
               </div>
               <div className="bg-competition p-4 text-white">
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{lang === "fr" ? "Saison" : "Season"}</p>
@@ -133,10 +182,10 @@ function ArticlePage() {
               </div>
             )}
             <div className="flex flex-wrap gap-2 bg-navy-deep px-5 py-6 md:px-7">
-              <ShareButton title={l(a.title)} text={l(a.excerpt)} />
-              {a.sourceUrl && !publicLaunch && (
+              <ShareButton title={displayTitle} text={displayExcerpt} />
+              {displaySourceUrl && !publicLaunch && (
                 <Button asChild variant="outline-light" size="sm">
-                  <a href={a.sourceUrl} target="_blank" rel="noopener noreferrer">
+                  <a href={displaySourceUrl} target="_blank" rel="noopener noreferrer">
                     {lang === "fr" ? "Voir l'article original AHMV" : "View original AHMV article"}
                     <ExternalLink className="size-4" />
                   </a>
