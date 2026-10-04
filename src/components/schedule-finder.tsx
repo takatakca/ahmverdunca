@@ -41,45 +41,45 @@ export function ScheduleFinder() {
   return (
     <section
       id="mon-equipe"
-      className="relative overflow-hidden border-y border-white/10 bg-[linear-gradient(135deg,var(--color-competition)_0%,var(--color-navy-deep)_48%,var(--color-navy)_100%)] py-8 text-white md:py-10"
+      className="relative overflow-hidden border-y border-white/10 bg-[linear-gradient(135deg,var(--color-competition)_0%,var(--color-navy-deep)_48%,var(--color-navy)_100%)] py-6 text-white md:py-9"
       aria-labelledby="schedule-finder-title"
     >
       <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-[linear-gradient(135deg,transparent_0_35%,color-mix(in_oklab,var(--color-sport)_7%,transparent)_35%_36%,transparent_36%_48%,color-mix(in_oklab,var(--color-navy)_6%,transparent)_48%_49%,transparent_49%)] lg:block" />
       <div className="container-site relative">
-        <div className="grid gap-6 xl:grid-cols-[0.62fr_1.38fr] xl:items-center">
+        <div className="grid gap-4 xl:grid-cols-[0.62fr_1.38fr] xl:items-center">
           <div>
             <p className="eyebrow text-sport-foreground">
               {lang === "fr" ? "Accès parent · priorité #1" : "Parent access · priority #1"}
             </p>
             <h2
               id="schedule-finder-title"
-              className="mt-2 max-w-3xl font-display text-3xl font-extrabold uppercase leading-[0.9] tracking-[-0.025em] text-white sm:text-4xl lg:text-5xl"
+              className="mt-1.5 max-w-3xl font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.025em] text-white sm:text-4xl lg:text-5xl"
             >
               {lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}
             </h2>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/62">
+            <p className="mt-3 hidden max-w-xl text-sm leading-relaxed text-white/62 sm:block">
               {lang === "fr"
                 ? "Une seule trajectoire : votre catégorie, votre espace équipe, puis les activités publiées de la semaine."
                 : "One path: your category, your team space, then this week's published activities."}
             </p>
-            <div className="mt-4 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/48">
+            <div className="mt-4 hidden items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/48 md:flex">
               <span className="h-px w-10 bg-sport" />
               {lang === "fr" ? "Simple. Rapide. Sur un seul écran." : "Simple. Fast. One screen."}
             </div>
           </div>
 
           <div className="interactive-surface overflow-hidden border border-white/12 bg-white/[0.055] shadow-[0_24px_60px_-36px_rgba(0,0,0,0.72)] backdrop-blur-sm">
-            <div className="grid lg:grid-cols-3">
-              <div className="relative border-b border-white/10 p-4 sm:p-5 lg:border-b-0 lg:border-r">
-                <span className="font-display text-5xl font-extrabold leading-none text-white/10">01</span>
-                <p className="mt-3 eyebrow text-sport">{lang === "fr" ? "Catégorie" : "Category"}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3">
+              <div className="relative col-span-2 border-b border-white/10 p-3 sm:col-span-1 sm:border-b-0 sm:border-r sm:p-5">
+                <span className="hidden font-display text-4xl font-extrabold leading-none text-white/10 sm:block">01</span>
+                <p className="eyebrow text-sport sm:mt-3">{lang === "fr" ? "Catégorie" : "Category"}</p>
                 <label className="mt-2 block">
                   <span className="sr-only">
                     {lang === "fr" ? "Choisir ma catégorie" : "Choose my category"}
                   </span>
                   <select
                     aria-label={lang === "fr" ? "Choisir ma catégorie" : "Choose my category"}
-                    className="mt-2 h-11 w-full border-0 border-b-2 border-white/30 bg-transparent px-0 font-display text-lg font-bold uppercase text-white outline-none transition-colors focus:border-sport focus:ring-0 [&_option]:text-navy"
+                    className="mt-1.5 h-10 w-full border-0 border-b-2 border-white/30 bg-transparent px-0 font-display text-lg font-bold uppercase text-white outline-none transition-colors focus:border-sport focus:ring-0 [&_option]:text-navy"
                     value={team}
                     onChange={(event) => {
                       const value = event.target.value;
@@ -110,7 +110,7 @@ export function ScheduleFinder() {
                     {lang === "fr" ? "Effacer mon choix" : "Clear my selection"}
                   </Button>
                 )}
-                <p className="mt-3 text-xs leading-relaxed text-white/58">
+                <p className="mt-2 hidden text-xs leading-relaxed text-white/58 sm:block">
                   {selected
                     ? lang === "fr"
                       ? `${selected.code === "F" ? l(selected.name) : selected.code} est mémorisé sur cet appareil.`
@@ -121,10 +121,10 @@ export function ScheduleFinder() {
                 </p>
               </div>
 
-              <div className="relative border-b border-white/10 p-4 sm:p-5 lg:border-b-0 lg:border-r">
-                <span className="font-display text-5xl font-extrabold leading-none text-white/10">02</span>
-                <p className="mt-3 eyebrow text-sport">{lang === "fr" ? "Mon équipe" : "My team"}</p>
-                <p className="mt-2 font-display text-2xl font-extrabold uppercase text-white">
+              <div className="relative border-r border-white/10 p-3 sm:p-5">
+                <span className="hidden font-display text-4xl font-extrabold leading-none text-white/10 sm:block">02</span>
+                <p className="eyebrow text-sport sm:mt-3">{lang === "fr" ? "Mon équipe" : "My team"}</p>
+                <p className="mt-1.5 font-display text-lg font-extrabold uppercase leading-none text-white sm:text-2xl">
                   {selected
                     ? selected.code === "F"
                       ? l(selected.name)
@@ -133,14 +133,14 @@ export function ScheduleFinder() {
                       ? "Espace équipe"
                       : "Team space"}
                 </p>
-                <p className="mt-2 text-xs leading-relaxed text-white/58">
+                <p className="mt-2 hidden text-xs leading-relaxed text-white/58 md:block">
                   {selected
                     ? l(selected.ages)
                     : lang === "fr"
                       ? "Actualités, accès et horaire filtré par catégorie."
                       : "News, access and schedule filtered by category."}
                 </p>
-                <Button asChild variant="outline" className="mt-5 w-full justify-between">
+                <Button asChild variant="outline" className="mt-3 w-full justify-center gap-1 px-2 text-[10px] sm:justify-between sm:text-sm">
                   {selected ? (
                     <Link to="/equipes/$slug" params={{ slug: selected.slug }}>
                       <Users className="size-4" />
@@ -157,20 +157,20 @@ export function ScheduleFinder() {
                 </Button>
               </div>
 
-              <div className="relative bg-sport/12 p-4 text-white sm:p-5">
-                <span className="font-display text-5xl font-extrabold leading-none text-navy-foreground/10">03</span>
-                <p className="mt-3 eyebrow text-sport-foreground">
+              <div className="relative bg-sport/12 p-3 text-white sm:p-5">
+                <span className="hidden font-display text-4xl font-extrabold leading-none text-navy-foreground/10 sm:block">03</span>
+                <p className="eyebrow text-sport-foreground sm:mt-3">
                   {lang === "fr" ? "Cette semaine" : "This week"}
                 </p>
-                <p className="mt-2 font-display text-2xl font-extrabold uppercase">
+                <p className="mt-1.5 font-display text-lg font-extrabold uppercase leading-none sm:text-2xl">
                   {lang === "fr" ? "Prêt pour la glace?" : "Ready for the ice?"}
                 </p>
-                <p className="mt-2 text-xs leading-relaxed text-navy-foreground/65">
+                <p className="mt-2 hidden text-xs leading-relaxed text-navy-foreground/65 md:block">
                   {lang === "fr"
                     ? "Ouvrez directement les activités publiées et les sources officielles."
                     : "Open published activities and official sources directly."}
                 </p>
-                <Button asChild variant="sport" size="lg" className="mt-5 w-full justify-between">
+                <Button asChild variant="sport" className="mt-3 w-full justify-center gap-1 px-2 text-[10px] sm:justify-between sm:text-sm">
                   <Link to="/horaires" search={team ? { team } : {}}>
                     <CalendarDays className="size-5" />
                     {team
@@ -189,7 +189,7 @@ export function ScheduleFinder() {
         </div>
 
         {selected && nextActivity && (
-          <div className="interactive-surface mt-7 border-l-4 border-sport bg-navy-deep px-5 py-5 text-navy-foreground shadow-[0_18px_48px_-30px_rgba(6,17,46,0.8)] md:flex md:items-center md:justify-between md:gap-6 md:px-7">
+          <div className="interactive-surface mt-4 border-l-4 border-sport bg-navy-deep px-4 py-4 text-navy-foreground shadow-[0_18px_48px_-30px_rgba(6,17,46,0.8)] md:flex md:items-center md:justify-between md:gap-6 md:px-7">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="eyebrow text-sport-foreground">
@@ -231,12 +231,12 @@ export function ScheduleFinder() {
         )}
 
         {!selected && (
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-white/58">
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] text-white/58 sm:text-xs">
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle2 className="size-3.5 text-status-confirmed" aria-hidden />
               {lang === "fr" ? "Choix mémorisé localement" : "Saved locally"}
             </span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="hidden items-center gap-1.5 sm:inline-flex">
               <ShieldCheck className="size-3.5 text-white" aria-hidden />
               {lang === "fr" ? "Aucune donnée personnelle hockey enregistrée" : "No hockey personal data stored"}
             </span>
