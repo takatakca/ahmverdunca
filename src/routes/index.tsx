@@ -177,13 +177,13 @@ function Home() {
       </section>
 
       {/* Current / important strip */}
-      <section className="border-b border-navy/10 bg-ice">
+      <section className="border-b border-white/10 bg-navy text-white">
         <div className="container-site flex flex-col gap-3 py-3.5 sm:py-4 md:flex-row md:items-center md:justify-between">
           <div className="flex min-w-0 items-center gap-3">
             <span className="shrink-0 bg-sport px-2.5 py-1 font-display text-xs font-bold uppercase tracking-[0.12em] text-sport-foreground">
               {lang === "fr" ? "Cette semaine" : "This week"}
             </span>
-            <p className="truncate text-sm font-semibold text-navy">
+            <p className="truncate text-sm font-semibold text-white/82">
               {alerts[0]
                 ? l(alerts[0].title)
                 : lang === "fr"
@@ -191,10 +191,10 @@ function Home() {
                   : "Schedules, teams and AHMV information in one place."}
             </p>
           </div>
-          <div className="scrollbar-none flex shrink-0 gap-4 overflow-x-auto text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            <Link to="/horaires" className="hover:text-sport">{lang === "fr" ? "Horaires" : "Schedules"}</Link>
-            <Link to="/equipes" className="hover:text-sport">{lang === "fr" ? "Équipes" : "Teams"}</Link>
-            <Link to="/nouvelles" className="hover:text-sport">{lang === "fr" ? "Nouvelles" : "News"}</Link>
+          <div className="scrollbar-none flex shrink-0 gap-4 overflow-x-auto text-xs font-semibold uppercase tracking-[0.12em] text-white/58">
+            <Link to="/horaires" className="hover:text-sport-foreground">{lang === "fr" ? "Horaires" : "Schedules"}</Link>
+            <Link to="/equipes" className="hover:text-sport-foreground">{lang === "fr" ? "Équipes" : "Teams"}</Link>
+            <Link to="/nouvelles" className="hover:text-sport-foreground">{lang === "fr" ? "Nouvelles" : "News"}</Link>
           </div>
         </div>
       </section>
