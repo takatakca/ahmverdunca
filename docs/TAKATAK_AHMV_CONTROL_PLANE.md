@@ -144,3 +144,19 @@ The portability bundle deliberately excludes:
 - audit actor IDs.
 
 This preserves the AHMV content/configuration state needed for a future consolidation, licensing or transfer without turning TAKATAK commercial internals into an application dependency.
+
+
+## Revision moderation
+
+Website and SEO publication uses revision-level moderation.
+
+- draft authors/operators can request review;
+- admin/owner roles can approve or reject;
+- approval belongs to one exact record revision;
+- a newer draft requires a new review;
+- self-approval is rejected by default;
+- an owner may explicitly override four-eyes review only with a recorded reason;
+- archived records cannot be reviewed for publication;
+- publish commands are rejected until the exact revision has an approved review.
+
+The moderation queue is server-only and does not expose or mount dashboard UI by itself.
