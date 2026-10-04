@@ -10,6 +10,8 @@ import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
 
 function normalizeSearch(value: string) {
   return value
@@ -34,8 +36,16 @@ export const Route = createFileRoute("/faq")({
 
 function FaqPage() {
   const { t, l, lang } = useI18n();
+  const contentRegistry = useContentOverlayRegistry();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
-  const visibleFaq = publicLaunch ? FAQ.filter((item) => item.validated) : FAQ;
+  const faqItems = FAQ.map((item) =>
+    contentRegistry.apply(
+      "faq",
+      `faq:${item.id}`,
+      item as unknown as Record<string, unknown>,
+    ) as unknown as typeof item,
+  );
+  const visibleFaq = publicLaunch ? faqItems.filter((item) => item.validated) : faqItems;
   const visibleTopics = FAQ_TOPICS.filter((topicItem) =>
     visibleFaq.some((item) => item.topic === topicItem.id),
   );
@@ -216,11 +226,24 @@ function FaqPage() {
                       : "This procedure still needs confirmation from the association."}
                   </p>
                 )}
-                {f.sourcePath && (
-                  <Link to={f.sourcePath} className="mt-3 inline-block text-sm font-semibold text-sport hover:underline">
-                    {t("common.seeAll")}
-                  </Link>
-                )}
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  {f.sourcePath && (
+                    <Link to={f.sourcePath} className="inline-block text-sm font-semibold text-sport hover:underline">
+                      {t("common.seeAll")}
+                    </Link>
+                  )}
+                  <ContentContributionButton
+                    resourceType="faq"
+                    resourceKey={`faq:${f.id}`}
+                    title={l(f.question)}
+                    snapshot={f as unknown as Record<string, unknown>}
+                    fields={[
+                      { key: `question.${lang}`, label: { fr: "Question", en: "Question" }, kind: "text", current: f.question[lang] },
+                      { key: `answer.${lang}`, label: { fr: "Réponse", en: "Answer" }, kind: "textarea", current: f.answer[lang] },
+                    ]}
+                    appearance="pencil"
+                  />
+                </div>
               </AccordionContent>
             </AccordionItem>
           ))}
