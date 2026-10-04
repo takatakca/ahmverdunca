@@ -99,7 +99,10 @@ The release must have a real reviewed lockfile before production:
 
 ```bash
 npm ci
-npm run verify
+npm run check
+npm run guardian
+npm audit --omit=dev --audit-level=high
+npm run release:report
 npm run preflight
 ```
 

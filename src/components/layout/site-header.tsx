@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { AlertStatus } from "./alert-status";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { CalendarDays, ChevronDown, LogIn, MapPin, Menu, PhoneCall, Search, Sparkles, Trophy, Users, X } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
@@ -307,10 +309,10 @@ export function SiteHeader() {
       </div>
 
       {/* Mobile menu */}
-      {open && (
+      {open && createPortal(
         <div
           id="mobile-menu"
-          className="technical-grid fixed inset-x-0 z-[110] overflow-y-auto overscroll-contain bg-competition pb-[env(safe-area-inset-bottom)] lg:hidden animate-in fade-in slide-in-from-top-2"
+          className="technical-grid fixed inset-x-0 z-[110] overflow-y-auto overscroll-contain bg-competition shadow-[0_24px_80px_rgba(0,0,0,0.5)] pb-[env(safe-area-inset-bottom)] lg:hidden animate-in fade-in slide-in-from-top-2"
           style={{
             top: mobileMenuTop,
             bottom: "calc(3.5rem + env(safe-area-inset-bottom))",
@@ -321,6 +323,7 @@ export function SiteHeader() {
             aria-label={lang === "fr" ? "Navigation mobile" : "Mobile navigation"}
             className="container-site py-4"
           >
+            <div className="mb-4 overflow-hidden rounded-xl"><AlertStatus language={lang} /></div>
             <div className="flex items-center justify-between gap-4 border-b border-navy-foreground/12 pb-4">
               <div className="min-w-0">
                 <p className="eyebrow text-sport-foreground">
@@ -337,7 +340,7 @@ export function SiteHeader() {
                   {SITE.season} · Verdun
                 </p>
               </div>
-              <LogoSlot className="size-12" />
+              <LogoSlot className="size-16" />
             </div>
 
             {selectedTeams[0] ? (
@@ -535,7 +538,8 @@ export function SiteHeader() {
               <LangSwitch />
             </div>
           </nav>
-        </div>
+        </div>,
+        document.body,
       )}
     </header>
   );
