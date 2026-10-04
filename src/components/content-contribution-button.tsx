@@ -11,6 +11,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 
+const CONTRIBUTIONS_VISIBLE =
+  import.meta.env["VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE"] === "true";
+
 export type ContributionFieldKind =
   | "text"
   | "textarea"
@@ -112,7 +115,7 @@ export function ContentContributionButton({
     setValue(currentToInput(selected));
   }, [selected]);
 
-  if (!selected || fields.length === 0) return null;
+  if (!CONTRIBUTIONS_VISIBLE || !selected || fields.length === 0) return null;
 
   async function submit() {
     const activeField = selected;
