@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Bot, CalendarDays, Coffee, Globe2, PhoneCall, Sparkles, Users, X } from "lucide-react";
+import { ArrowRight, Bot, CalendarDays, Coffee, Globe2, PhoneCall, Sparkles, Users, X } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
@@ -80,6 +80,7 @@ export function CommunicationsPreview() {
   const { selectedTeams } = usePreferredTeam();
   const primaryTeam = selectedTeams[0];
   const [open, setOpen] = useState(false);
+  const [teaserOpen, setTeaserOpen] = useState(false);
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
   const copy = useMemo(() => popupCopy(assistantLanguage), [assistantLanguage]);
   const supportAvailable =
@@ -91,7 +92,10 @@ export function CommunicationsPreview() {
   }, [lang]);
 
   useEffect(() => {
-    const closeForNavigation = () => setOpen(false);
+    const closeForNavigation = () => {
+      setOpen(false);
+      setTeaserOpen(false);
+    };
     window.addEventListener("ahmv:navigation-open", closeForNavigation);
     window.addEventListener("ahmv:assistant-open", closeForNavigation);
 
@@ -108,9 +112,9 @@ export function CommunicationsPreview() {
     const timer = window.setTimeout(() => {
       if (document.body.style.overflow === "hidden") return;
       if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
-      setOpen(true);
+      setTeaserOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 2600);
+    }, 9000);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -131,7 +135,14 @@ export function CommunicationsPreview() {
     };
   }, [open]);
 
-  if (!open) return null;
+  const dismissTeaser = () => setTeaserOpen(false);
+
+  const openPreview = () => {
+    setTeaserOpen(false);
+    setOpen(true);
+  };
+
+  if (!open && !teaserOpen) return null;
 
   const dismissForever = () => {
     window.localStorage.setItem(HIDE_KEY, "1");
@@ -150,6 +161,52 @@ export function CommunicationsPreview() {
       window.dispatchEvent(new CustomEvent("ahmv:assistant-open"));
     });
   };
+
+  if (!open && teaserOpen) {
+    return (
+      <aside
+        className="rise fixed bottom-20 right-3 z-40 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden border border-white/12 bg-competition text-white shadow-[0_24px_72px_-34px_rgba(0,0,0,0.95)] lg:bottom-6 lg:right-6"
+        aria-label={copy.title}
+      >
+        <div className="relative h-20 overflow-hidden">
+          <img
+            src={OFFICIAL_MEDIA.practiceGoalie.url}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 size-full object-cover opacity-72"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.97),rgba(7,16,43,0.58))]" />
+          <div className="relative flex h-full items-center gap-3 px-3 pr-10">
+            <LogoSlot className="size-10 shrink-0" />
+            <div className="min-w-0">
+              <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">{copy.eyebrow}</p>
+              <p className="mt-1 truncate font-display text-xl font-extrabold uppercase leading-none">{copy.title}</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={dismissTeaser}
+            className="absolute right-2 top-2 flex size-8 items-center justify-center border border-white/15 bg-navy-deep/55 text-white/68 backdrop-blur"
+            aria-label={assistantUiLanguage(assistantLanguage) === "fr" ? "Fermer" : assistantUiLanguage(assistantLanguage) === "es" ? "Cerrar" : "Close"}
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
+        <button
+          type="button"
+          onClick={openPreview}
+          className="group flex w-full items-center justify-between gap-3 px-3 py-3 text-left"
+        >
+          <span className="text-xs leading-relaxed text-white/62">{copy.body}</span>
+          <span className="flex size-9 shrink-0 items-center justify-center bg-sport text-sport-foreground transition-transform group-hover:translate-x-0.5">
+            <ArrowRight className="size-4" />
+          </span>
+        </button>
+      </aside>
+    );
+  }
 
   return (
     <div
