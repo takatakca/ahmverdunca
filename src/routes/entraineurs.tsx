@@ -82,11 +82,11 @@ function CoachesPage() {
             </a>
           </div>
         </section>
-        <div className="broadcast-rail mb-7 border border-navy/12 bg-ice p-5 pl-7">
-          <p className="eyebrow text-sport">
+        <div className="broadcast-rail mb-7 border border-white/12 bg-navy-deep p-5 pl-7 text-white">
+          <p className="eyebrow text-sport-foreground">
             {lang === "fr" ? "Ressources externes" : "External resources"}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-white/55">
             {lang === "fr"
               ? "Les liens ci-dessous ouvrent les services actuellement référencés par l'AHM Verdun. La fiche médicale n'est jamais remplie ni conservée sur ce site."
               : "The links below open services currently referenced by AHM Verdun. The medical form is never completed or stored on this site."}
@@ -94,60 +94,60 @@ function CoachesPage() {
         </div>
 
         <section className="mb-6 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3">
-          <Link to="/horaires" className="interactive-surface bg-background p-5 hover:bg-ice">
-            <CalendarDays className="size-5 text-sport" aria-hidden />
-            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+          <Link to="/horaires" className="interactive-surface bg-competition p-5 text-white hover:bg-white/[0.04]">
+            <CalendarDays className="size-5 text-sport-foreground" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Horaires" : "Schedules"}
             </h2>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-white/55">
               {lang === "fr" ? "Vérifier la semaine et ouvrir les sources officielles." : "Check the week and open official sources."}
             </p>
           </Link>
-          <Link to="/arenas" className="interactive-surface bg-background p-5 hover:bg-ice">
-            <MapPin className="size-5 text-sport" aria-hidden />
-            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+          <Link to="/arenas" className="interactive-surface bg-competition p-5 text-white hover:bg-white/[0.04]">
+            <MapPin className="size-5 text-sport-foreground" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Arénas" : "Arenas"}
             </h2>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-white/55">
               {lang === "fr" ? "Adresses et itinéraires avant de partir." : "Addresses and directions before leaving."}
             </p>
           </Link>
-          <Link to="/ressources" className="interactive-surface bg-background p-5 hover:bg-ice">
-            <BookOpen className="size-5 text-sport" aria-hidden />
-            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+          <Link to="/ressources" className="interactive-surface bg-competition p-5 text-white hover:bg-white/[0.04]">
+            <BookOpen className="size-5 text-sport-foreground" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Règles & ressources" : "Rules & resources"}
             </h2>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-white/55">
               {lang === "fr" ? "Accès aux références hockey et documents publics." : "Access hockey references and public documents."}
             </p>
           </Link>
           <a
             href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(lang === "fr" ? "AHMV — communication entraîneur" : "AHMV — coach communication")}`}
-            className="interactive-surface bg-background p-5 hover:bg-ice"
+            className="interactive-surface bg-competition p-5 text-white hover:bg-white/[0.04]"
           >
-            <MessageSquareText className="size-5 text-sport" aria-hidden />
-            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+            <MessageSquareText className="size-5 text-sport-foreground" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Soumettre une communication" : "Submit a communication"}
             </h2>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-white/55">
               {lang === "fr" ? "Canal courriel actuel avec révision humaine avant publication." : "Current email channel with human review before publishing."}
             </p>
           </a>
-          <Link to="/contact" className="interactive-surface bg-background p-5 hover:bg-ice">
-            <Users className="size-5 text-sport" aria-hidden />
-            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+          <Link to="/contact" className="interactive-surface bg-competition p-5 text-white hover:bg-white/[0.04]">
+            <Users className="size-5 text-sport-foreground" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Besoin de bénévoles" : "Need volunteers"}
             </h2>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-white/55">
               {lang === "fr" ? "Contacter l’association pour coordonner un besoin réel." : "Contact the association to coordinate a real need."}
             </p>
           </Link>
-          <div className="bg-ice p-5">
-            <ShieldAlert className="size-5 text-sport" aria-hidden />
-            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+          <div className="bg-competition p-5 text-white">
+            <ShieldAlert className="size-5 text-sport-foreground" aria-hidden />
+            <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Collecte d’équipe" : "Team fundraising"}
             </h2>
-            <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-xs leading-relaxed text-white/55">
               {lang === "fr"
                 ? "Aucun bouton de collecte n’est affiché tant qu’une campagne et son bénéficiaire ne sont pas vérifiés."
                 : "No fundraising button is shown until a campaign and its beneficiary are verified."}
@@ -178,9 +178,9 @@ function CoachesPage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           {list.map((r) => (
-            <div key={r.id} className="interactive-surface border border-navy/12 bg-background p-5 hover:border-sport/40">
+            <div key={r.id} className="interactive-surface border border-white/12 bg-competition p-5 text-white hover:border-sport/50">
               <div className="flex items-start justify-between gap-3">
-                <h2 className="heading-card">{l(r.title)}</h2>
+                <h2 className="heading-card text-white">{l(r.title)}</h2>
                 {r.sensitive && (
                   <span className="inline-flex shrink-0 items-center gap-1 bg-status-cancelled-soft px-2 py-1 text-[11px] font-semibold uppercase tracking-wide text-status-cancelled">
                     <ShieldAlert className="size-3" aria-hidden />
@@ -188,11 +188,11 @@ function CoachesPage() {
                   </span>
                 )}
               </div>
-              <p className="mt-2 text-sm text-muted-foreground">{l(r.description)}</p>
-              <p className="mt-3 text-xs text-muted-foreground">
+              <p className="mt-2 text-sm text-white/55">{l(r.description)}</p>
+              <p className="mt-3 text-xs text-white/42">
                 {lang === "fr" ? "Lien vérifié" : "Link verified"} {formatShortDate(r.verifiedAt, lang)}
               </p>
-              <Button asChild variant="outline" size="sm" className="mt-4">
+              <Button asChild variant="outline-light" size="sm" className="mt-4">
                 <a href={r.url} target="_blank" rel="noopener noreferrer">
                   {lang === "fr" ? "Ouvrir la ressource" : "Open resource"} <ExternalLink className="size-4" />
                 </a>
