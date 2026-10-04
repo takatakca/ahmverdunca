@@ -15,3 +15,9 @@ export const ADSENSE_CONFIG = {
   client: import.meta.env["VITE_ADSENSE_CLIENT"] || "",
   slot: import.meta.env["VITE_ADSENSE_SLOT"] || "",
 } as const;
+
+export const TAKATAK_ADS_CONFIG = {
+  enabled: import.meta.env["VITE_TAKATAK_ADS_ENABLED"] === "true",
+  origin: (import.meta.env["VITE_TAKATAK_ADS_ORIGIN"] || "https://takatak.ca").replace(/\/$/, ""),
+  publisherCode: import.meta.env["VITE_TAKATAK_ADS_PUBLISHER"] || "ahmv",
+} as const;
