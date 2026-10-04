@@ -21,6 +21,7 @@ import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { newsVisualForCategory } from "@/data/news-visuals";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { ARENAS } from "@/data/arenas";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
@@ -45,19 +46,7 @@ const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
 const HOME_TOURNAMENT_MEDIA = uploadedAhmvMediaById(26)!;
 
 function homeNewsMedia(category: (typeof NEWS)[number]["category"]) {
-  const mediaIdByCategory: Partial<Record<(typeof NEWS)[number]["category"], number>> = {
-    feminine: 50,
-    cancellations: 10,
-    teams: 2,
-    games: 52,
-    tournaments: 26,
-    camps: 40,
-    registration: 39,
-    association: 17,
-    releases: 25,
-  };
-  const id = mediaIdByCategory[category] ?? 1;
-  return uploadedAhmvMediaById(id) ?? HOME_HERO_MEDIA;
+  return newsVisualForCategory(category) ?? HOME_HERO_MEDIA;
 }
 
 export const Route = createFileRoute("/")({
