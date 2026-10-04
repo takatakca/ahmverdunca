@@ -25,6 +25,7 @@ export type TakatakAhmvControlJob = {
   resourceType: string;
   resourceId: string;
   expectedRevision: number | null;
+  payload: unknown;
   payloadFingerprint: string;
   status: ControlJobStatus;
   attempts: number;
