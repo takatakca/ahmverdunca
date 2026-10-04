@@ -6,7 +6,7 @@ import { PUBLIC_TEAM_DIRECTORY, officialTeamResultsUrl, publicTeamHubUrl } from 
 import { TAKATAK_TEAM_PORTAL_CONTRACT, teamPortalServices } from "../src/data/team-portal";
 import { REQUIRED_ARENA_COUNT, REQUIRED_COACH_RESOURCE_TITLES, REQUIRED_LEGACY_TEAM_SCHEDULE_IDS, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
-import { LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
+import { HAS_NEWER_PUBLISHED_SCHEDULE, LATEST_PUBLISHED_SCHEDULE_DOCUMENT, LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
 import { COACH_RESOURCES } from "../src/data/coaches";
 import { RESOURCES } from "../src/data/resources";
@@ -127,6 +127,24 @@ for (const document of WEEKLY_SCHEDULE_DOCUMENTS) {
   if (!validDate(document.start) || !validDate(document.end) || !validDate(document.publishedAt)) {
     errors.push(`Weekly schedule document week ${document.week} has an invalid date.`);
   }
+}
+
+for (let index = 1; index < WEEKLY_SCHEDULE_DOCUMENTS.length; index += 1) {
+  const previous = WEEKLY_SCHEDULE_DOCUMENTS[index - 1];
+  const current = WEEKLY_SCHEDULE_DOCUMENTS[index];
+  if (previous.start < current.start) {
+    errors.push("WEEKLY_SCHEDULE_DOCUMENTS must be ordered newest first.");
+    break;
+  }
+}
+if (LATEST_PUBLISHED_SCHEDULE_DOCUMENT !== WEEKLY_SCHEDULE_DOCUMENTS[0]) {
+  errors.push("LATEST_PUBLISHED_SCHEDULE_DOCUMENT must reference the first weekly schedule document.");
+}
+if (
+  HAS_NEWER_PUBLISHED_SCHEDULE !==
+  Boolean(LATEST_PUBLISHED_SCHEDULE_DOCUMENT && LATEST_PUBLISHED_SCHEDULE_DOCUMENT.start > OFFICIAL_WEEK_META.end)
+) {
+  errors.push("HAS_NEWER_PUBLISHED_SCHEDULE is inconsistent with the latest published document.");
 }
 for (const document of LEGACY_SCHEDULE_DOCUMENTS) {
   requireHttps(`LEGACY_SCHEDULE_DOCUMENTS "${document.title}"`, document.sourceUrl);
