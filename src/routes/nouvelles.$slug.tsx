@@ -1,4 +1,4 @@
-import { canonicalLink } from "@/lib/seo";
+import { canonicalLink, canonicalUrl } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -10,6 +10,7 @@ import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { SITE } from "@/lib/site";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
   loader: ({ params }) => {
@@ -41,7 +42,18 @@ function ArticlePage() {
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const category = NEWS_CATEGORIES.find((c) => c.id === a.category);
   const body = lang === "en" && a.body.en ? a.body.en : a.body.fr;
-  const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
+  const related = NEWS
+    .filter((article) => article.slug !== a.slug)
+    .map((article, index) => ({
+      article,
+      index,
+      relevance:
+        (article.category === a.category ? 3 : 0) +
+        article.teamSlugs.filter((teamSlug) => a.teamSlugs.includes(teamSlug)).length * 2,
+    }))
+    .sort((left, right) => right.relevance - left.relevance || left.index - right.index)
+    .slice(0, 2)
+    .map(({ article }) => article);
   const teams = a.teamSlugs.map(getTeam).filter(Boolean);
   const storyMedia =
     a.slug === "30e-tournoi-atome-m11-verdun-2027"
@@ -54,8 +66,32 @@ function ArticlePage() {
             ? uploadedAhmvMediaById(39)
             : OFFICIAL_MEDIA.tournamentM11Tertiary;
 
+  const articleUrl = canonicalUrl(`/nouvelles/${a.slug}`);
+  const newsJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: a.title.fr,
+    description: a.excerpt.fr,
+    url: articleUrl,
+    mainEntityOfPage: articleUrl,
+    inLanguage: "fr-CA",
+    ...(a.date ? { datePublished: a.date } : {}),
+    ...(storyMedia?.url ? { image: [storyMedia.url] } : {}),
+    ...(category ? { articleSection: category.label.fr } : {}),
+    author: {
+      "@type": "Organization",
+      name: a.author,
+    },
+    publisher: {
+      "@type": "SportsOrganization",
+      name: SITE.name.fr,
+      url: SITE.domain,
+    },
+  }).replace(/</g, "\\u003c");
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: newsJsonLd }} />
       <PageHeader
         eyebrow={`${category ? l(category.label) : ""} · ${newsDateLabel(a, lang)}`}
         title={l(a.title)}
