@@ -149,10 +149,10 @@ function WllvPage() {
         </section>
 
 
-        <section className="overflow-hidden border border-navy/12 bg-background">
-          <div className="bg-ice p-5 md:p-6">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}</p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy md:text-4xl">
+        <section className="overflow-hidden border border-white/12 bg-navy-deep text-white">
+          <div className="bg-competition p-5 text-white md:p-6">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}</p>
+            <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white md:text-4xl">
               {lang === "fr" ? "Parcours Chacals" : "Chacals pathway"}
             </h2>
           </div>
@@ -163,10 +163,10 @@ function WllvPage() {
                 href={EXTERNAL_LINKS.wllvSchedules}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="interactive-surface flex min-h-24 w-[42vw] max-w-40 shrink-0 snap-center flex-col justify-between bg-background p-4 hover:bg-ice sm:w-auto sm:max-w-none"
+                className="interactive-surface flex min-h-24 w-[42vw] max-w-40 shrink-0 snap-center flex-col justify-between bg-competition p-4 text-white hover:bg-white/[0.04] sm:w-auto sm:max-w-none"
               >
-                <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">WLLV</span>
-                <span className="font-display text-3xl font-extrabold uppercase text-navy">{category}</span>
+                <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-white/42">WLLV</span>
+                <span className="font-display text-3xl font-extrabold uppercase text-white">{category}</span>
               </a>
             ))}
           </div>
@@ -177,16 +177,16 @@ function WllvPage() {
             href={EXTERNAL_LINKS.wllv}
             target="_blank"
             rel="noopener noreferrer"
-            className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
+            className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/50"
           >
             <div className="flex items-center justify-between">
-              <ShieldCheck className="size-6 text-sport" aria-hidden />
-              <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              <ShieldCheck className="size-6 text-sport-foreground" aria-hidden />
+              <ExternalLink className="size-4 text-white/35" aria-hidden />
             </div>
-            <h2 className="heading-card mt-6 group-hover:text-sport">
+            <h2 className="heading-card mt-6 text-white group-hover:text-sport-foreground">
               {lang === "fr" ? "Site officiel WLLV" : "Official WLLV site"}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-white/55">
               {lang === "fr"
                 ? "Structure, camps, équipes et informations administratives du double lettre."
                 : "Structure, camps, teams and administrative information for double-letter hockey."}
@@ -197,16 +197,16 @@ function WllvPage() {
             href={EXTERNAL_LINKS.wllvSchedules}
             target="_blank"
             rel="noopener noreferrer"
-            className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
+            className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/50"
           >
             <div className="flex items-center justify-between">
-              <CalendarDays className="size-6 text-sport" aria-hidden />
-              <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+              <CalendarDays className="size-6 text-sport-foreground" aria-hidden />
+              <ExternalLink className="size-4 text-white/35" aria-hidden />
             </div>
-            <h2 className="heading-card mt-6 group-hover:text-sport">
+            <h2 className="heading-card mt-6 text-white group-hover:text-sport-foreground">
               {lang === "fr" ? "Horaires & classements AA/BB" : "AA/BB schedules & standings"}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-white/55">
               {lang === "fr"
                 ? "Accès direct aux données sportives officielles."
                 : "Direct access to official sport data."}
@@ -239,9 +239,9 @@ function WllvPage() {
                 enText: "Do not duplicate or modify WLLV operations.",
               },
             ].map((item) => (
-              <div key={item.fr} className="interactive-surface border border-navy/12 bg-ice p-5">
-                <h3 className="heading-card">{lang === "fr" ? item.fr : item.en}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">
+              <div key={item.fr} className="interactive-surface border border-white/12 bg-navy-deep p-5 text-white">
+                <h3 className="heading-card text-white">{lang === "fr" ? item.fr : item.en}</h3>
+                <p className="mt-2 text-sm text-white/55">
                   {lang === "fr" ? item.frText : item.enText}
                 </p>
               </div>
