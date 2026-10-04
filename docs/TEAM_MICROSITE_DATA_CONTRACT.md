@@ -2,11 +2,19 @@
 
 This document describes the public-data shape the AHM Verdun website is already prepared to consume. It is an integration contract for the website, not a private roster or membership database.
 
-## Public endpoint expected by the website
+## Public endpoint implemented by the website
 
 `GET /api/ahmv/team-games?teamId={PUBLIC_TEAM_ID}`
 
-The endpoint is optional until the Scoresheets/GameData/WLLV connector is ready. When unavailable, the website automatically falls back to the official public schedule/results links and never fabricates a game time or score.
+The AHMV server now implements this endpoint as a sanitized, fail-closed proxy. It stays disabled until the approved public Scoresheets/GameData/WLLV normalization service is available through GROUPE TAKATAK. When disabled, disconnected or unavailable, the website automatically falls back to the official public schedule/results links and never fabricates a game time or score.
+
+The server-only activation gates are:
+
+- `TAKATAK_TEAM_GAMES_ENABLED=true`
+- `TAKATAK_TEAM_GAMES_ORIGIN=https://...`
+- `TAKATAK_TEAM_GAMES_TOKEN=...`
+
+The normalized upstream contract is `GET /api/integrations/ahmv/team-games?teamId={PUBLIC_TEAM_ID}` on the configured HTTPS origin. Authentication stays server-side and the public AHMV response is reduced to the approved fields documented below.
 
 ## Response
 

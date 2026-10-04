@@ -20,6 +20,7 @@ import { handleTakatakMarketingCampaign } from "./features/ahmv-phone/marketing/
 import { handleTakatakMarketingConsentSync } from "./features/ahmv-phone/marketing/consent-handler.server";
 import { handleAhmvMarketingCampaignCron } from "./features/ahmv-phone/marketing/cron-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
+import { handleTakatakTeamGames } from "./lib/takatak-team-games.server";
 import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
 
 type ServerEntry = {
@@ -138,6 +139,8 @@ export default {
     if (voiceBridgeResponse) return voiceBridgeResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
+    const teamGamesResponse = await handleTakatakTeamGames(request);
+    if (teamGamesResponse) return teamGamesResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);
     if (teamFeedResponse) return teamFeedResponse;
     if (url.pathname === "/healthz") {
