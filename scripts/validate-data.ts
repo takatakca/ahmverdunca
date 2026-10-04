@@ -173,6 +173,13 @@ for (const arena of ARENAS) {
   } else {
     requireHttps(`Arena "${arena.slug}" website`, arena.website);
   }
+  if (arena.officialPhotoPage) requireHttps(`Arena "${arena.slug}" officialPhotoPage`, arena.officialPhotoPage);
+  if (arena.phone && !/^\d{3}-\d{3}-\d{4}$/.test(arena.phone)) {
+    errors.push(`Arena "${arena.slug}" has invalid public phone "${arena.phone}".`);
+  }
+  if (arena.sourceVerifiedAt && !validDate(arena.sourceVerifiedAt)) {
+    errors.push(`Arena "${arena.slug}" has invalid sourceVerifiedAt "${arena.sourceVerifiedAt}".`);
+  }
 }
 
 for (const resource of COACH_RESOURCES) {
