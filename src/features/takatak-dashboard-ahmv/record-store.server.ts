@@ -16,6 +16,8 @@ function mapRecord(row: Record<string, unknown>): ControlRecord<unknown> {
     organizationId: String(row["organization_id"]),
     status: row["status"] as ControlRecordStatus,
     revision: Number(row["revision"]),
+    publishedRevision: row["published_revision"] === null || row["published_revision"] === undefined ? null : Number(row["published_revision"]),
+    lastPublishedAt: row["last_published_at"] ? String(row["last_published_at"]) : null,
     payload: row["payload"],
     createdAt: String(row["created_at"]),
     updatedAt: String(row["updated_at"]),
@@ -170,4 +172,45 @@ export function restoreControlRecord(
   input: Omit<Parameters<typeof transitionRecord>[0], "targetStatus">,
 ) {
   return transitionRecord({ ...input, targetStatus: "draft" });
+}
+
+
+export async function markControlRevisionPublished(input: {
+  organizationId: string;
+  actorId: string;
+  service: TakatakAhmvService;
+  resourceType: string;
+  resourceId: string;
+  publishedRevision: number;
+  now?: Date | undefined;
+}) {
+  const existing = await getControlRecord(input);
+  if (!existing) throw new Error("control_record_not_found");
+  if (
+    !Number.isInteger(input.publishedRevision) ||
+    input.publishedRevision < 1 ||
+    input.publishedRevision > existing.revision
+  ) {
+    throw new Error("invalid_published_revision");
+  }
+
+  const now = (input.now ?? new Date()).toISOString();
+  const nextStatus =
+    existing.revision === input.publishedRevision ? "active" : existing.status;
+
+  const updated = await db()
+    .from("ahmv_takatak_control_records")
+    .update({
+      published_revision: input.publishedRevision,
+      last_published_at: now,
+      status: nextStatus,
+      updated_by: input.actorId,
+      updated_at: now,
+    })
+    .eq("id", existing.id)
+    .select("*")
+    .single();
+
+  if (updated.error) throw updated.error;
+  return mapRecord(updated.data);
 }
