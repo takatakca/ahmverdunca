@@ -122,13 +122,13 @@ function TeamsPage() {
         <HouseSponsorSlot placement="teams-directory" compact className="mb-8" />
 
         {savedCategory && selectedTeams.length === 0 ? (
-          <section className="mb-8 flex flex-col gap-4 border border-sport/30 bg-sport/[0.045] p-5 sm:flex-row sm:items-center sm:justify-between">
+          <section className="mb-8 flex flex-col gap-4 border border-sport/30 bg-navy-deep p-5 text-white sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="eyebrow text-sport">{lang === "fr" ? "Catégorie mémorisée" : "Saved category"}</p>
-              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-navy">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Catégorie mémorisée" : "Saved category"}</p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-white">
                 {l(savedCategory.name)}
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-white/55">
                 {lang === "fr"
                   ? "Cette préférence est facultative. Retirez-la pour revenir à la vue de toutes les équipes."
                   : "This preference is optional. Remove it to return to the all-teams view."}
@@ -137,7 +137,7 @@ function TeamsPage() {
             <button
               type="button"
               onClick={clearAllTeamPreferences}
-              className="premium-control inline-flex min-h-11 shrink-0 items-center justify-center gap-2 border border-navy/12 bg-background px-4 text-[10px] font-bold uppercase tracking-[0.13em] text-navy hover:border-sport hover:text-sport"
+              className="premium-control inline-flex min-h-11 shrink-0 items-center justify-center gap-2 border border-white/14 bg-white/[0.03] px-4 text-[10px] font-bold uppercase tracking-[0.13em] text-white/72 hover:border-sport hover:text-white"
             >
               <X className="size-4" aria-hidden />
               {lang === "fr" ? "Retirer ma catégorie" : "Remove my category"}
@@ -146,7 +146,7 @@ function TeamsPage() {
         ) : null}
 
         {selectedTeams.length > 0 ? (
-          <section className="mb-8 overflow-hidden border border-sport/30 bg-background">
+          <section className="mb-8 overflow-hidden border border-sport/30 bg-navy-deep text-white">
             <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
               <div className="p-6 md:p-8">
                 <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail parent" : "Parent portal"}</p>
@@ -171,23 +171,23 @@ function TeamsPage() {
             </div>
             <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
               {selectedTeams.map((entry) => (
-                <article key={entry.legacyScheduleTeamId} className="relative flex min-h-52 flex-col bg-background p-5">
+                <article key={entry.legacyScheduleTeamId} className="relative flex min-h-52 flex-col bg-competition p-5 text-white">
                   <button
                     type="button"
                     onClick={() => removeSelectedTeam(entry.legacyScheduleTeamId)}
                     aria-label={lang === "fr" ? `Retirer ${entry.name} de mes équipes` : `Remove ${entry.name} from my teams`}
-                    className="absolute right-3 top-3 inline-flex size-9 items-center justify-center border border-navy/10 bg-background text-muted-foreground transition hover:border-sport hover:text-sport"
+                    className="absolute right-3 top-3 inline-flex size-9 items-center justify-center border border-white/10 bg-white/[0.03] text-white/45 transition hover:border-sport hover:text-white"
                   >
                     <X className="size-4" aria-hidden />
                   </button>
                   <div className="flex items-start justify-between gap-3 pr-10">
                     <div>
-                      <p className="eyebrow text-sport">{entry.level}</p>
-                      <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.88] text-navy">{entry.name}</h3>
+                      <p className="eyebrow text-sport-foreground">{entry.level}</p>
+                      <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.88] text-white">{entry.name}</h3>
                     </div>
                     <BookmarkCheck className="size-5 shrink-0 text-sport" aria-hidden />
                   </div>
-                  <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                  <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.15em] text-white/38">
                     #{entry.legacyScheduleTeamId.slice(-4)}
                   </p>
                   <div className="mt-auto grid grid-cols-2 gap-2 pt-6">
@@ -201,7 +201,7 @@ function TeamsPage() {
                       href={officialTeamResultsUrl(entry)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="premium-control flex min-h-11 items-center justify-between border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy hover:border-sport"
+                      className="premium-control flex min-h-11 items-center justify-between border border-white/12 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white/72 hover:border-sport hover:text-white"
                     >
                       {lang === "fr" ? "Résultats" : "Results"} <Trophy className="size-3.5 text-sport" />
                     </a>
@@ -211,13 +211,13 @@ function TeamsPage() {
             </div>
           </section>
         ) : (
-          <section className="mb-8 flex flex-col gap-5 border border-navy/12 bg-ice p-6 md:flex-row md:items-center md:justify-between md:p-8">
+          <section className="mb-8 flex flex-col gap-5 border border-white/12 bg-competition p-6 text-white md:flex-row md:items-center md:justify-between md:p-8">
             <div>
-              <p className="eyebrow text-sport">{lang === "fr" ? "Personnaliser le portail" : "Personalize the portal"}</p>
-              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Personnaliser le portail" : "Personalize the portal"}</p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white">
                 {lang === "fr" ? "Choisissez les équipes de vos enfants." : "Choose your children’s teams."}
               </p>
-              <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+              <p className="mt-3 max-w-2xl text-sm text-white/55">
                 {lang === "fr"
                   ? "Ajoutez une ou plusieurs équipes. Le portail pourra ensuite mettre leurs résultats, nouvelles et contenus en premier."
                   : "Add one or more teams. The portal can then put their results, news and content first."}
