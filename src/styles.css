@@ -708,3 +708,43 @@
     transition: none !important;
   }
 }
+
+
+/* ---------- Tactile flip cards: front-page creative reveal ---------- */
+.ahmv-flip-card {
+  perspective: 1100px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ahmv-flip-card__inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 560ms cubic-bezier(.2,.8,.2,1);
+}
+
+.ahmv-flip-card__inner.is-flipped {
+  transform: rotateY(180deg);
+}
+
+.ahmv-flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.ahmv-flip-back {
+  transform: rotateY(180deg);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .ahmv-flip-card:hover .ahmv-flip-card__inner:not(.is-flipped) {
+    transform: rotateY(4deg) translateY(-2px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ahmv-flip-card__inner {
+    transition: none;
+  }
+}
