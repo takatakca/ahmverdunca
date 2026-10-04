@@ -28,6 +28,10 @@ import { parseControlProvenance } from "../src/features/takatak-dashboard-ahmv/p
 import { hasUnpublishedChanges, publishedRevisionForRecord } from "../src/features/takatak-dashboard-ahmv/published.ts";
 import { buildPortableControlBundle } from "../src/features/takatak-dashboard-ahmv/portability.ts";
 import {
+  normalizePublicationSchedule,
+  publicationWindowVisible,
+} from "../src/features/takatak-dashboard-ahmv/schedule-policy.ts";
+import {
   assertCanRequestControlReview,
   assertCanResolveControlReview,
   requiresControlReview,
@@ -608,5 +612,57 @@ test("owner self-review requires an explicit meaningful override reason", () => 
       requestedBy: "owner_1",
       ownerOverrideReason: "Emergency owner review override",
     }),
+  );
+});
+
+
+test("scheduled publication requires explicit timezone and future time", () => {
+  const now = new Date("2026-10-04T16:00:00-04:00");
+
+  assert.throws(
+    () =>
+      normalizePublicationSchedule({
+        publishAt: "2026-10-05T10:00:00",
+        now,
+      }),
+    /timezone_required/,
+  );
+
+  assert.throws(
+    () =>
+      normalizePublicationSchedule({
+        publishAt: "2026-10-04T15:59:00-04:00",
+        now,
+      }),
+    /must_be_future/,
+  );
+
+  const window = normalizePublicationSchedule({
+    publishAt: "2026-10-05T10:00:00-04:00",
+    expiresAt: "2026-10-06T10:00:00-04:00",
+    now,
+  });
+
+  assert.equal(window.publishAt, "2026-10-05T14:00:00.000Z");
+  assert.equal(window.expiresAt, "2026-10-06T14:00:00.000Z");
+});
+
+test("publication windows expire locally without a TAKATAK round trip", () => {
+  const window = {
+    publishAt: "2026-10-05T14:00:00.000Z",
+    expiresAt: "2026-10-06T14:00:00.000Z",
+  };
+
+  assert.equal(
+    publicationWindowVisible(window, new Date("2026-10-05T13:59:59.000Z")),
+    false,
+  );
+  assert.equal(
+    publicationWindowVisible(window, new Date("2026-10-05T14:00:00.000Z")),
+    true,
+  );
+  assert.equal(
+    publicationWindowVisible(window, new Date("2026-10-06T14:00:00.000Z")),
+    false,
   );
 });
