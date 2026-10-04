@@ -7,7 +7,7 @@ export function DemoMemberSwitch({ className = "" }: { className?: string }) {
   const { mode, setMode } = useDemoMemberMode();
 
   return (
-    <section className={`overflow-hidden border border-sport/30 bg-background ${className}`} aria-label={lang === "fr" ? "Aperçu des modes visiteur et membre" : "Visitor and member mode preview"}>
+    <section className={`overflow-hidden border border-sport/30 bg-navy-deep text-white ${className}`} aria-label={lang === "fr" ? "Aperçu des modes visiteur et membre" : "Visitor and member mode preview"}>
       <div className="flex flex-col gap-4 bg-competition p-5 text-white sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
@@ -28,21 +28,21 @@ export function DemoMemberSwitch({ className = "" }: { className?: string }) {
         </span>
       </div>
 
-      <div className="grid gap-px bg-navy/10 sm:grid-cols-2">
+      <div className="grid gap-px bg-white/10 sm:grid-cols-2">
         <button
           type="button"
           onClick={() => setMode("visitor")}
-          className={`group flex min-h-28 items-center gap-4 p-5 text-left transition-colors ${mode === "visitor" ? "bg-sport/8" : "bg-background hover:bg-ice"}`}
+          className={`group flex min-h-28 items-center gap-4 p-5 text-left transition-colors ${mode === "visitor" ? "bg-sport/10" : "bg-competition hover:bg-white/[0.04]"}`}
           aria-pressed={mode === "visitor"}
         >
-          <span className={`flex size-11 shrink-0 items-center justify-center border ${mode === "visitor" ? "border-sport bg-sport text-sport-foreground" : "border-navy/12 bg-ice text-navy"}`}>
+          <span className={`flex size-11 shrink-0 items-center justify-center border ${mode === "visitor" ? "border-sport bg-sport text-sport-foreground" : "border-white/12 bg-white/[0.04] text-white/52"}`}>
             <Eye className="size-5" />
           </span>
           <span>
-            <span className="block font-display text-2xl font-extrabold uppercase leading-none text-navy">
+            <span className="block font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Visiteur" : "Visitor"}
             </span>
-            <span className="mt-2 block text-xs leading-relaxed text-muted-foreground">
+            <span className="mt-2 block text-xs leading-relaxed text-white/52">
               {lang === "fr" ? "Commandites maison ou AdSense visibles." : "House sponsors or AdSense visible."}
             </span>
           </span>
@@ -51,17 +51,17 @@ export function DemoMemberSwitch({ className = "" }: { className?: string }) {
         <button
           type="button"
           onClick={() => setMode("member")}
-          className={`group flex min-h-28 items-center gap-4 p-5 text-left transition-colors ${mode === "member" ? "bg-sport/8" : "bg-background hover:bg-ice"}`}
+          className={`group flex min-h-28 items-center gap-4 p-5 text-left transition-colors ${mode === "member" ? "bg-sport/10" : "bg-competition hover:bg-white/[0.04]"}`}
           aria-pressed={mode === "member"}
         >
-          <span className={`flex size-11 shrink-0 items-center justify-center border ${mode === "member" ? "border-sport bg-sport text-sport-foreground" : "border-navy/12 bg-ice text-navy"}`}>
+          <span className={`flex size-11 shrink-0 items-center justify-center border ${mode === "member" ? "border-sport bg-sport text-sport-foreground" : "border-white/12 bg-white/[0.04] text-white/52"}`}>
             <ShieldCheck className="size-5" />
           </span>
           <span>
-            <span className="block font-display text-2xl font-extrabold uppercase leading-none text-navy">
+            <span className="block font-display text-2xl font-extrabold uppercase leading-none text-white">
               AHMV Member
             </span>
-            <span className="mt-2 block text-xs leading-relaxed text-muted-foreground">
+            <span className="mt-2 block text-xs leading-relaxed text-white/52">
               {lang === "fr" ? "Les espaces promotionnels disparaissent dans cet aperçu." : "Promotional placements disappear in this preview."}
             </span>
           </span>
