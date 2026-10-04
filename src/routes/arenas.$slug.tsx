@@ -21,6 +21,8 @@ import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { ArenaMemberTools } from "@/components/arena-member-tools";
 import { NewsletterInterest } from "@/components/newsletter-interest";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlay } from "@/lib/community-content";
 
 export const Route = createFileRoute("/arenas/$slug")({
   loader: ({ params }) => {
@@ -67,8 +69,29 @@ function directionProviders(address: string) {
 function ArenaPage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
-  const arena = getArena(slug)!;
+  const baseArena = getArena(slug)!;
+  const arena = useContentOverlay(
+    "arena",
+    `arena:${baseArena.slug}`,
+    baseArena as unknown as Record<string, unknown>,
+  ) as unknown as typeof baseArena;
   const directions = directionProviders(arena.address);
+
+  const contributionFields = [
+    { key: "address", label: { fr: "Adresse", en: "Address" }, kind: "text" as const, current: arena.address },
+    { key: "phone", label: { fr: "Téléphone", en: "Phone" }, kind: "text" as const, current: arena.phone },
+    { key: "website", label: { fr: "Site officiel", en: "Official website" }, kind: "url" as const, current: arena.website },
+    { key: "officialPhotoPage", label: { fr: "Page officielle de photos", en: "Official photo page" }, kind: "url" as const, current: arena.officialPhotoPage },
+    { key: "photoUrl", label: { fr: "Photo principale", en: "Main photo" }, kind: "image-url" as const, current: arena.photoUrl },
+    { key: `description.${lang}`, label: { fr: "Description", en: "Description" }, kind: "textarea" as const, current: arena.description?.[lang] },
+    { key: `directionsNotes.${lang}`, label: { fr: "Conseil d’accès / porte", en: "Access / entrance tip" }, kind: "textarea" as const, current: arena.directionsNotes?.[lang] },
+    { key: "parking", label: { fr: "Stationnement", en: "Parking" }, kind: "json" as const, current: arena.parking },
+    { key: "accessibility", label: { fr: "Accessibilité", en: "Accessibility" }, kind: "json" as const, current: arena.accessibility },
+    { key: "amenities", label: { fr: "Services et commodités", en: "Amenities" }, kind: "json" as const, current: arena.amenities },
+    { key: "activities", label: { fr: "Activités offertes", en: "Activities" }, kind: "json" as const, current: arena.activities },
+    { key: "publicStatus", label: { fr: "Statut / fermeture", en: "Status / closure" }, kind: "json" as const, current: arena.publicStatus },
+    { key: "sourceVerifiedAt", label: { fr: "Date de vérification", en: "Verification date" }, kind: "date" as const, current: arena.sourceVerifiedAt },
+  ];
 
   const parkingLabel = arena.parking
     ? arena.parking.type === "free"
@@ -88,6 +111,14 @@ function ArenaPage() {
         description={arena.description ? l(arena.description) : arena.facilities ? l(arena.facilities) : arena.address}
         actions={
           <>
+            <ContentContributionButton
+              resourceType="arena"
+              resourceKey={`arena:${arena.slug}`}
+              title={arena.name}
+              snapshot={arena as unknown as Record<string, unknown>}
+              fields={contributionFields}
+              appearance="menu"
+            />
             <Button asChild variant="sport">
               <a href={directions.google} target="_blank" rel="noopener noreferrer">
                 <Navigation className="size-4" />
@@ -116,8 +147,8 @@ function ArenaPage() {
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.3fr_0.7fr]">
           <div className="relative min-h-[280px] overflow-hidden sm:min-h-[350px]">
             <img
-              src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
-              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+              src={arena.photoUrl ?? OFFICIAL_MEDIA.tournamentM11Secondary.url}
+              alt={arena.photoAlt?.[lang] ?? (lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en)}
               loading="eager"
               decoding="async"
               className="absolute inset-0 size-full object-cover"
@@ -157,6 +188,11 @@ function ArenaPage() {
                 {arena.phone}{arena.phoneExtension ? ` · poste ${arena.phoneExtension}` : ""}
               </a>
             )}
+            {arena.directionsNotes?.[lang] ? (
+              <p className="mt-4 border-l-2 border-sport pl-3 text-xs leading-relaxed text-white/62">
+                {arena.directionsNotes[lang]}
+              </p>
+            ) : null}
             <div className="mt-6 grid grid-cols-3 gap-2">
               <a href={directions.google} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center border border-white/20 px-2 text-[8px] font-bold uppercase tracking-[0.09em] text-white hover:border-sport">Google</a>
               <a href={directions.waze} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center border border-white/20 px-2 text-[8px] font-bold uppercase tracking-[0.09em] text-white hover:border-sport">Waze</a>
