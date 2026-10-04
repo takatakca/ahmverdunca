@@ -12,17 +12,17 @@ export function HomeParentCommand() {
   const team = selectedTeams[0];
 
   return (
-    <section className="border-y border-navy/10 bg-ice">
-      <div className="container-site py-5 md:py-6">
+    <section className="relative overflow-hidden border-y border-white/10 bg-competition text-white">
+      <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />\n      <div className="container-site relative py-5 md:py-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="eyebrow text-sport">{lang === "fr" ? "Centre parent" : "Parent centre"}</p>
-            <h2 className="mt-1 font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.03em] text-navy md:text-4xl">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Centre parent" : "Parent centre"}</p>
+            <h2 className="mt-1 font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.03em] text-white md:text-4xl">
               {team
                 ? (lang === "fr" ? "Tout pour mon équipe." : "Everything for my team.")
                 : (lang === "fr" ? "Tout commence par votre équipe." : "Everything starts with your team.")}
             </h2>
-            <p className="mt-2 max-w-2xl text-xs leading-relaxed text-muted-foreground sm:text-sm">
+            <p className="mt-2 max-w-2xl text-xs leading-relaxed text-white/58 sm:text-sm">
               {team
                 ? (lang === "fr"
                     ? "Une seule rangée pour ouvrir le mini-site, l’horaire officiel, les résultats et les arénas."
@@ -34,7 +34,7 @@ export function HomeParentCommand() {
           </div>
 
           {team ? (
-            <span className="inline-flex min-h-10 items-center gap-2 border border-sport/25 bg-sport/8 px-3 text-[9px] font-bold uppercase tracking-[0.14em] text-navy">
+            <span className="inline-flex min-h-10 items-center gap-2 border border-sport/40 bg-sport/12 px-3 text-[9px] font-bold uppercase tracking-[0.14em] text-white">
               <ShieldCheck className="size-4 text-sport" />
               {isDemoMember
                 ? (lang === "fr" ? "AHMV Member · aperçu" : "AHMV Member · preview")
@@ -53,7 +53,7 @@ export function HomeParentCommand() {
 
         {team ? (
           <>
-            <div className="mt-4 grid gap-px overflow-hidden border border-navy/10 bg-navy/10 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-4 grid gap-px overflow-hidden border border-white/12 bg-white/12 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { href: publicTeamHubUrl(team), icon: Users, fr: "Mini-site", en: "Mini-site", hintFr: "Équipe & contenu", hintEn: "Team & content" },
                 { href: legacyTeamScheduleUrl(team), icon: CalendarDays, fr: "Horaire", en: "Schedule", hintFr: "Source officielle", hintEn: "Official source", external: true },
@@ -65,15 +65,15 @@ export function HomeParentCommand() {
                   href={href}
                   target={external ? "_blank" : undefined}
                   rel={external ? "noopener noreferrer" : undefined}
-                  className="group flex min-h-28 flex-col justify-between bg-background p-4 transition-colors hover:bg-ice"
+                  className="interactive-surface group flex min-h-24 flex-col justify-between bg-white/[0.045] p-4 transition-colors hover:bg-white/[0.085]"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <Icon className="size-5 text-sport" />
                     <ChevronRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
                   </div>
                   <div>
-                    <p className="font-display text-2xl font-extrabold uppercase leading-none text-navy">{lang === "fr" ? fr : en}</p>
-                    <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                    <p className="font-display text-2xl font-extrabold uppercase leading-none text-white">{lang === "fr" ? fr : en}</p>
+                    <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.12em] text-white/45">
                       {lang === "fr" ? hintFr : hintEn}
                     </p>
                   </div>
@@ -81,10 +81,10 @@ export function HomeParentCommand() {
               ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between gap-4 border border-navy/10 bg-ice px-4 py-3">
+            <div className="mt-3 flex items-center justify-between gap-4 border border-white/12 bg-white/[0.04] px-4 py-3">
               <div className="min-w-0">
-                <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{lang === "fr" ? "Équipe active" : "Active team"}</p>
-                <p className="mt-1 truncate font-display text-xl font-extrabold uppercase text-navy">{team.name} · {team.level}</p>
+                <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-white/42">{lang === "fr" ? "Équipe active" : "Active team"}</p>
+                <p className="mt-1 truncate font-display text-xl font-extrabold uppercase text-white">{team.name} · {team.level}</p>
               </div>
               <a href="/equipes" className="shrink-0 text-[9px] font-bold uppercase tracking-[0.13em] text-sport">
                 {lang === "fr" ? "Changer" : "Change"}
@@ -92,7 +92,7 @@ export function HomeParentCommand() {
             </div>
           </>
         ) : (
-          <div className="mt-4 grid overflow-hidden border border-navy/10 lg:grid-cols-[1fr_0.8fr]">
+          <div className="mt-4 grid overflow-hidden border border-white/12 lg:grid-cols-[1fr_0.8fr]">
             <div className="competition-panel p-5 text-white md:p-6">
               <Users className="size-6 text-sport-foreground" />
               <p className="mt-4 font-display text-3xl font-extrabold uppercase leading-[0.88]">
