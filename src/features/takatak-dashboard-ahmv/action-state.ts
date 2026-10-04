@@ -1,3 +1,5 @@
+import type { ControlProvenance } from "./provenance";
+
 export const CONTROL_RECORD_STATUSES = [
   "draft",
   "queued",
@@ -42,6 +44,7 @@ export type ControlRecord<T> = {
   publishedRevision: number | null;
   lastPublishedAt: string | null;
   payload: T;
+  provenance: ControlProvenance;
   createdAt: string;
   updatedAt: string;
   archivedAt: string | null;
