@@ -25,6 +25,7 @@ import {
 import { createTakatakUsageEvent } from "../src/features/takatak-dashboard-ahmv/usage-metering.ts";
 import { retryDelaySeconds, safeWorkerErrorCode } from "../src/features/takatak-dashboard-ahmv/job-policy.ts";
 import { parseControlProvenance } from "../src/features/takatak-dashboard-ahmv/provenance.ts";
+import { hasUnpublishedChanges, publishedRevisionForRecord } from "../src/features/takatak-dashboard-ahmv/published.ts";
 
 function request(headers: Record<string, string> = {}) {
   return new Request("https://ahmverdun.ca/internal/takatak/ahmv", { headers });
@@ -441,5 +442,36 @@ test("website drafts keep verification metadata separate from editable payload",
   assert.equal(
     (command.payload as { addressVerified?: boolean }).addressVerified,
     true,
+  );
+});
+
+
+test("published snapshots stay pinned while a newer draft exists", () => {
+  const record = {
+    id: "record_1",
+    tenant: "ahmverdun" as const,
+    organizationId: "org_123",
+    service: "website",
+    resourceType: "news_post",
+    resourceId: "news_1",
+    status: "draft" as const,
+    revision: 4,
+    publishedRevision: 3,
+    lastPublishedAt: "2026-10-04T20:00:00.000Z",
+    payload: { title: "new draft" },
+    provenance: parseControlProvenance({
+      sourceKind: "association",
+      verificationStatus: "unverified",
+    }),
+    createdAt: "2026-10-04T18:00:00.000Z",
+    updatedAt: "2026-10-04T21:00:00.000Z",
+    archivedAt: null,
+  };
+
+  assert.equal(publishedRevisionForRecord(record), 3);
+  assert.equal(hasUnpublishedChanges(record), true);
+  assert.equal(
+    publishedRevisionForRecord({ ...record, status: "archived" }),
+    null,
   );
 });
