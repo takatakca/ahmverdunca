@@ -19,7 +19,8 @@ import { ALERTS } from "@/data/alerts";
 import { CURRENT_TEAMS } from "@/data/teams";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
-import { OFFICIAL_MEDIA } from "@/data/official-media";\nimport { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { ARENAS } from "@/data/arenas";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
@@ -39,7 +40,9 @@ import { cn } from "@/lib/utils";
 import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase";
 import { RevenueActionPanel } from "@/components/revenue-action-panel";
 
-const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;\n\nexport const Route = createFileRoute("/")({
+const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
+
+export const Route = createFileRoute("/")({
   head: () => ({
     links: canonicalLink("/"),
     meta: [
