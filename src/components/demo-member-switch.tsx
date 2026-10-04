@@ -1,10 +1,12 @@
 import { Eye, ShieldCheck, Sparkles } from "lucide-react";
-import { useDemoMemberMode } from "@/lib/demo-member-mode";
+import { DEMO_MEMBER_PREVIEW_ENABLED, useDemoMemberMode } from "@/lib/demo-member-mode";
 import { useI18n } from "@/lib/i18n";
 
 export function DemoMemberSwitch({ className = "" }: { className?: string }) {
   const { lang } = useI18n();
   const { mode, setMode } = useDemoMemberMode();
+
+  if (!DEMO_MEMBER_PREVIEW_ENABLED) return null;
 
   return (
     <section className={`overflow-hidden border border-sport/30 bg-navy-deep text-white ${className}`} aria-label={lang === "fr" ? "Aperçu des modes visiteur et membre" : "Visitor and member mode preview"}>
