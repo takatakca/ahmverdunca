@@ -109,12 +109,16 @@ export function CommunicationsPreview() {
     if (window.localStorage.getItem(HIDE_KEY) === "1") return;
     if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
 
+    // Mobile already has a persistent quick-navigation dock and assistant entry.
+    // Avoid stacking a promotional teaser over the parent's highest-use actions.
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+
     const timer = window.setTimeout(() => {
       if (document.body.style.overflow === "hidden") return;
       if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
       setTeaserOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 9000);
+    }, 14000);
 
     return () => window.clearTimeout(timer);
   }, []);
