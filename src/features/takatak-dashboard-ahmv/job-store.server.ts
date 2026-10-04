@@ -112,3 +112,32 @@ export async function cancelControlJob(jobId: string, now = new Date()) {
   if (!row) throw new Error("control_job_cancel_returned_no_result");
   return row;
 }
+
+
+export async function listControlJobs(input: {
+  organizationId: string;
+  service?: string | undefined;
+  status?: string | undefined;
+  resourceType?: string | undefined;
+  limit?: number | undefined;
+}) {
+  let query = db()
+    .from("ahmv_takatak_control_jobs")
+    .select(
+      "id,organization_id,actor_id,request_id,idempotency_key,service,action,resource_type,resource_id,expected_revision,status,attempts,max_attempts,available_at,started_at,completed_at,last_error_code,external_reference,created_at,updated_at",
+    )
+    .eq("tenant", "ahmverdun")
+    .eq("organization_id", input.organizationId);
+
+  if (input.service) query = query.eq("service", input.service);
+  if (input.status) query = query.eq("status", input.status);
+  if (input.resourceType) query = query.eq("resource_type", input.resourceType);
+
+  const limit = Math.max(1, Math.min(100, input.limit ?? 25));
+  const result = await query
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (result.error) throw result.error;
+  return result.data ?? [];
+}
