@@ -30,6 +30,7 @@ export function MediaLuxuryViewer({
   const [zoomed, setZoomed] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const thumbnailRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const current = items[index];
 
   useEffect(() => {
@@ -66,6 +67,27 @@ export function MediaLuxuryViewer({
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [items.length, onOpenChange, open]);
+
+  useEffect(() => {
+    if (!open || items.length < 2) return;
+    const previous = items[(index - 1 + items.length) % items.length];
+    const next = items[(index + 1) % items.length];
+
+    [previous, next].forEach((item) => {
+      if (!item) return;
+      const preload = new Image();
+      preload.src = item.url;
+    });
+  }, [index, items, open]);
+
+  useEffect(() => {
+    if (!open) return;
+    thumbnailRefs.current[index]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [index, open]);
 
   const countLabel = useMemo(
     () =>
@@ -177,8 +199,8 @@ export function MediaLuxuryViewer({
           type="button"
           onClick={() => setZoomed((value) => !value)}
           className={cn(
-            "relative flex h-full max-h-full w-full max-w-[1500px] items-center justify-center overflow-hidden outline-none",
-            zoomed ? "cursor-zoom-out" : "cursor-zoom-in",
+            "relative flex h-full max-h-full w-full max-w-[1500px] items-center justify-center outline-none",
+            zoomed ? "cursor-zoom-out overflow-visible" : "cursor-zoom-in overflow-hidden",
           )}
           aria-label={
             zoomed
@@ -191,11 +213,12 @@ export function MediaLuxuryViewer({
           }
         >
           <img
+            key={current.url}
             src={current.url}
             alt={lang === "fr" ? current.alt.fr : current.alt.en}
             decoding="async"
             className={cn(
-              "max-h-full max-w-full select-none object-contain shadow-[0_30px_100px_-35px_rgba(0,0,0,0.9)] transition-transform duration-300 ease-out",
+              "max-h-full max-w-full select-none object-contain shadow-[0_30px_100px_-35px_rgba(0,0,0,0.9)] transition-transform duration-300 ease-out motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300",
               zoomed && "scale-[1.8]",
             )}
             draggable={false}
@@ -203,24 +226,35 @@ export function MediaLuxuryViewer({
         </button>
       </div>
 
-      <button
-        type="button"
-        onClick={goPrevious}
-        className="premium-control absolute left-2 top-1/2 z-30 hidden size-12 -translate-y-1/2 items-center justify-center border border-white/16 bg-navy-deep/74 text-white backdrop-blur hover:border-sport sm:flex"
-        aria-label={lang === "fr" ? "Image précédente" : "Previous image"}
-      >
-        <ChevronLeft className="size-6" />
-      </button>
-      <button
-        type="button"
-        onClick={goNext}
-        className="premium-control absolute right-2 top-1/2 z-30 hidden size-12 -translate-y-1/2 items-center justify-center border border-white/16 bg-navy-deep/74 text-white backdrop-blur hover:border-sport sm:flex"
-        aria-label={lang === "fr" ? "Image suivante" : "Next image"}
-      >
-        <ChevronRight className="size-6" />
-      </button>
+      {items.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={goPrevious}
+            className="premium-control absolute left-2 top-1/2 z-30 hidden size-12 -translate-y-1/2 items-center justify-center border border-white/16 bg-navy-deep/74 text-white backdrop-blur hover:border-sport sm:flex"
+            aria-label={lang === "fr" ? "Image précédente" : "Previous image"}
+          >
+            <ChevronLeft className="size-6" />
+          </button>
+          <button
+            type="button"
+            onClick={goNext}
+            className="premium-control absolute right-2 top-1/2 z-30 hidden size-12 -translate-y-1/2 items-center justify-center border border-white/16 bg-navy-deep/74 text-white backdrop-blur hover:border-sport sm:flex"
+            aria-label={lang === "fr" ? "Image suivante" : "Next image"}
+          >
+            <ChevronRight className="size-6" />
+          </button>
+        </>
+      )}
 
       <div className="absolute inset-x-0 bottom-0 z-30 border-t border-white/10 bg-navy-deep/90 pb-[max(0.65rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur-xl">
+        <div className="absolute inset-x-0 top-0 h-px bg-white/8">
+          <span
+            className="block h-full bg-sport transition-[width] duration-300"
+            style={{ width: `${((index + 1) / items.length) * 100}%` }}
+            aria-hidden
+          />
+        </div>
         <div className="mb-2 flex items-center justify-between gap-3 px-3 sm:px-5">
           <div className="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/52">
             <Images className="size-3.5 text-sport-foreground" />
@@ -231,6 +265,7 @@ export function MediaLuxuryViewer({
                 : "Swipe horizontally · tap the image to zoom"}
             </span>
           </div>
+          {items.length > 1 && (
           <div className="flex gap-1 sm:hidden">
             <button
               type="button"
@@ -249,12 +284,16 @@ export function MediaLuxuryViewer({
               <ChevronRight className="size-4" />
             </button>
           </div>
+          )}
         </div>
 
         <div className="scrollbar-none flex snap-x snap-mandatory gap-1.5 overflow-x-auto px-3 sm:px-5">
           {items.map((item, itemIndex) => (
             <button
               key={`${item.url}-${itemIndex}`}
+              ref={(node) => {
+                thumbnailRefs.current[itemIndex] = node;
+              }}
               type="button"
               onClick={() => {
                 setIndex(itemIndex);
