@@ -32,7 +32,6 @@ function assistantCopy(language: AssistantLanguageCode) {
       quickResults: "Resultados",
       quickMyTeams: "Mis equipos",
       phoneReady: "Llamar AHMV",
-      phoneReserved: "Número reservado",
       close: "Cerrar asistente",
       language: "Idioma",
       saved: "Equipo añadido a «Mis equipos».",
@@ -50,7 +49,6 @@ function assistantCopy(language: AssistantLanguageCode) {
       quickResults: "Results",
       quickMyTeams: "My teams",
       phoneReady: "Call AHMV",
-      phoneReserved: "Reserved number",
       close: "Close assistant",
       language: "Language",
       saved: "Team added to “My teams”.",
@@ -67,7 +65,6 @@ function assistantCopy(language: AssistantLanguageCode) {
     quickResults: "Résultats",
     quickMyTeams: "Mes équipes",
     phoneReady: "Appeler AHMV",
-    phoneReserved: "Numéro réservé",
     close: "Fermer l’assistant",
     language: "Langue",
     saved: "Équipe ajoutée à « Mes équipes ».",
@@ -400,12 +397,7 @@ export function AhmvAssistant() {
                     <span className="flex items-center gap-2"><PhoneCall className="size-4 text-sport-foreground" />{copy.phoneReady}</span>
                     <span className="font-mono text-[10px] text-white/58">{phoneDisplay}</span>
                   </a>
-                ) : (
-                  <div className="flex min-h-11 items-center justify-between border border-navy/12 px-4 text-xs font-semibold text-muted-foreground">
-                    <span className="flex items-center gap-2"><PhoneCall className="size-4 text-sport" />{copy.phoneReserved}</span>
-                    <span className="font-mono text-[10px]">{phoneDisplay}</span>
-                  </div>
-                )}
+                ) : null}
                 <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
                   {assistantUiLanguage(assistantLanguage) === "fr"
                     ? "Le guide n’invente jamais un horaire ou un résultat officiel. Les liens hockey demeurent la source d’autorité."
