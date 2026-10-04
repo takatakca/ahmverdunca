@@ -4,6 +4,7 @@ import { HOUSE_SPONSORS, houseSponsorsForPlacement } from "@/data/house-sponsors
 import { RUNWAY_AD_CREATIVES, type RunwayAdPlacement } from "@/data/runway-ad-creatives";
 import { useI18n } from "@/lib/i18n";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
+import { TakatakAdSlot } from "@/components/takatak-ad-slot";
 
 const ROTATION_MS = 6500;
 
@@ -26,7 +27,7 @@ const GROUP_LABELS = {
   local: { fr: "Entreprise locale", en: "Local business" },
 } as const;
 
-export function HouseSponsorSlot({
+function HouseSponsorInventory({
   placement,
   className = "",
   count = 2,
@@ -232,5 +233,45 @@ export function HouseSponsorSlot({
         </span>
       </div>
     </aside>
+  );
+}
+
+
+type HouseSponsorSlotProps = {
+  placement: string;
+  className?: string;
+  count?: number;
+  compact?: boolean;
+  network?: boolean;
+};
+
+export function HouseSponsorSlot({
+  placement,
+  className = "",
+  count = 2,
+  compact = false,
+  network = true,
+}: HouseSponsorSlotProps) {
+  const { isDemoMember } = useDemoMemberMode();
+  if (isDemoMember) return null;
+
+  const fallback = (
+    <HouseSponsorInventory
+      placement={placement}
+      className={className}
+      count={count}
+      compact={compact}
+    />
+  );
+
+  if (!network) return fallback;
+
+  return (
+    <TakatakAdSlot
+      placement={placement}
+      className={className}
+      compact={compact}
+      fallback={fallback}
+    />
   );
 }
