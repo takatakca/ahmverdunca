@@ -1,6 +1,17 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { _test } from '../src/ahm-data.js';
+
+// ahm-data.js imports the production config module. Supply only inert development
+// placeholders required to load that module; no network calls are made by this test.
+process.env.PUBLIC_BASE_URL ||= 'https://voice.test.ahmverdun.ca';
+process.env.PUBLIC_WSS_URL ||= 'wss://voice.test.ahmverdun.ca';
+process.env.TWILIO_ACCOUNT_SID ||= 'AC_TEST_ONLY';
+process.env.TWILIO_AUTH_TOKEN ||= 'test-only-token';
+process.env.OPENAI_API_KEY ||= 'test-only-openai-key';
+process.env.AHM_DATA_MODE ||= 'fixture';
+process.env.SMS_ENABLED ||= 'false';
+
+const { _test } = await import('../src/ahm-data.js');
 
 const normalized = _test.normalizeKnowledge({
   id: 'faq:f1',
