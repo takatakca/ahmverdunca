@@ -47,6 +47,7 @@ export async function executeTakatakAhmvControlCommand(
       resourceType: command.resourceType,
       resourceId: command.resourceId,
       payload: command.payload,
+      provenance: command.provenance,
       expectedRevision: command.expectedRevision,
     });
     await appendControlAudit(
