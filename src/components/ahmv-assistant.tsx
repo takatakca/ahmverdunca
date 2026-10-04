@@ -15,6 +15,9 @@ import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { usePreferredTeam } from "@/lib/team-preference";
 
+const ASSISTANT_NUDGE_ENABLED =
+  import.meta.env["VITE_ASSISTANT_NUDGE_ENABLED"] === "true";
+
 function assistantCopy(language: AssistantLanguageCode) {
   const ui = assistantUiLanguage(language);
   if (ui === "es") {
@@ -87,6 +90,8 @@ export function AhmvAssistant() {
   }, [lang]);
 
   useEffect(() => {
+    if (!ASSISTANT_NUDGE_ENABLED) return;
+
     let alreadySeen = false;
     try {
       alreadySeen = window.sessionStorage.getItem("ahmv-assistant-nudge-seen") === "1";
@@ -203,7 +208,7 @@ export function AhmvAssistant() {
 
   return (
     <>
-      {showNudge && !open && (
+      {ASSISTANT_NUDGE_ENABLED && showNudge && !open && (
         <aside
           data-ahmv-attention-surface="assistant-nudge"
           className="rise fixed bottom-36 left-3 z-40 w-[min(19rem,calc(100vw-1.5rem))] border border-sport/45 bg-competition/97 p-3 text-white shadow-[0_22px_65px_-28px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-20 lg:left-4"
