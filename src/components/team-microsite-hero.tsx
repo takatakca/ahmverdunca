@@ -2,6 +2,7 @@ import { CalendarDays, ChevronRight, Clock3, ExternalLink, MapPin, Trophy } from
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-directory";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { teamVisualForCategory } from "@/data/team-visuals";
 import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
 
 type Lang = "fr" | "en";
@@ -136,7 +137,7 @@ export function TeamMicrositeHero({
   categoryCode: string;
   lang: Lang;
 }) {
-  const heroMedia = team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary : OFFICIAL_MEDIA.practiceGroup;
+  const heroMedia = teamVisualForCategory(team.categorySlug) ?? (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary : OFFICIAL_MEDIA.practiceGroup);
 
   const categoryToken = team.categorySlug === "feminin"
     ? "M12"
@@ -236,8 +237,8 @@ export function TeamMicrositeHero({
 
             <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.15em] text-white/35">
               {lang === "fr"
-                ? "Photo AHMV réelle · aucune heure de partie n’est inventée. Les informations sportives exactes restent reliées aux sources officielles."
-                : "Real AHMV photo · no game time is fabricated. Exact sport information remains linked to official sources."}
+                ? "Photo AHMV de la catégorie · elle sert de contexte visuel et ne prétend pas représenter l’alignement exact. Aucune heure de partie n’est inventée."
+                : "AHMV category photo · used as visual context and not presented as the exact roster. No game time is fabricated."}
             </p>
           </div>
         </div>

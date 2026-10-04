@@ -1,11 +1,14 @@
 import { cn } from "@/lib/utils";
 
+export const AHMV_LOGO_URL =
+  "https://utuvzrqvivqyziibobvu.supabase.co/storage/v1/object/public/ahmv-media-public/branding/ahmv-logo-premium-2026.png";
+
 /**
- * Official AHM Verdun crest.
+ * Approved AHM Verdun crest used across the production experience.
  *
- * Keep the original transparent artwork intact. Do not place the crest on an
- * artificial white disc: the association mark must read as the actual crest,
- * not as an app-icon treatment.
+ * The transparent artwork is served from the association media storage so the
+ * same approved mark can be reused by the header, hero, footer and social
+ * surfaces without duplicating binary assets in the app bundle.
  */
 export function LogoSlot({ className, size = "sm" }: { className?: string; size?: "sm" | "lg" }) {
   return (
@@ -17,12 +20,12 @@ export function LogoSlot({ className, size = "sm" }: { className?: string; size?
       )}
     >
       <img
-        src="/branding/ahmv-logo-gallery-2026.png"
+        src={AHMV_LOGO_URL}
         alt="Association du hockey mineur de Verdun"
-        width={96}
-        height={96}
+        width={1024}
+        height={1024}
         decoding="async"
-        className="size-full object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.38)]"
+        className="size-full object-contain drop-shadow-[0_12px_28px_rgba(0,0,0,0.52)]"
       />
     </span>
   );

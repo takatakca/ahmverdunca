@@ -7,7 +7,7 @@ import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LogoSlot } from "./logo-slot";
+import { AHMV_LOGO_URL, LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { TEAMS } from "@/data/teams";
 import { officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
@@ -116,7 +116,13 @@ export function SiteHeader() {
   };
 
   return (
-    <header ref={headerRef} className={cn("sticky top-0 isolate border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)]", open ? "z-[300]" : "z-[200]")}>
+    <header ref={headerRef} className={cn("sticky top-0 isolate overflow-hidden border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)]", open ? "z-[300]" : "z-[200]")}>
+      <img
+        src={AHMV_LOGO_URL}
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute -right-10 top-1/2 w-72 -translate-y-1/2 select-none object-contain opacity-[0.055] saturate-150 sm:w-80 lg:right-6 lg:w-[24rem]"
+      />
       <div className="border-b border-white/10 bg-navy-deep">
         <div className="container-site">
           <AlertStatus language={lang} compact />

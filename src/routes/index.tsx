@@ -21,6 +21,7 @@ import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { teamVisualForCategory } from "@/data/team-visuals";
 import { ARENAS } from "@/data/arenas";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
@@ -31,7 +32,7 @@ import { AhmvRealHockeyWall } from "@/components/home/ahmv-real-hockey-wall";
 import { AhmvCommunityFeed } from "@/components/home/ahmv-community-feed";
 import { HomeParentCommand } from "@/components/home/home-parent-command";
 import { HomeCreativeRail } from "@/components/home/home-creative-rail";
-import { LogoSlot } from "@/components/layout/logo-slot";
+import { AHMV_LOGO_URL, LogoSlot } from "@/components/layout/logo-slot";
 import { AdSenseSlot } from "@/components/adsense-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { publicTeamHubUrl } from "@/data/team-directory";
@@ -41,6 +42,22 @@ import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase"
 import { RevenueActionPanel } from "@/components/revenue-action-panel";
 
 const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
+
+function homeNewsMedia(category: (typeof NEWS)[number]["category"]) {
+  const mediaIdByCategory: Partial<Record<(typeof NEWS)[number]["category"], number>> = {
+    feminine: 50,
+    cancellations: 10,
+    teams: 2,
+    games: 52,
+    tournaments: 26,
+    camps: 40,
+    registration: 39,
+    association: 17,
+    releases: 25,
+  };
+  const id = mediaIdByCategory[category] ?? 1;
+  return uploadedAhmvMediaById(id) ?? HOME_HERO_MEDIA;
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -87,6 +104,12 @@ function Home() {
         <div className="absolute left-1/2 top-1/2 size-[min(58vw,44rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sport/24" aria-hidden />
         <div className="absolute left-1/2 top-1/2 size-[min(24vw,18rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-navy-foreground/10" aria-hidden />
         <div className="giant-watermark pointer-events-none absolute -right-[5vw] top-[18%] select-none" aria-hidden>Verdun</div>
+        <img
+          src={AHMV_LOGO_URL}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute right-[2vw] top-[10%] hidden w-[min(42vw,34rem)] select-none object-contain opacity-[0.085] drop-shadow-[0_24px_70px_rgba(0,0,0,0.34)] lg:block"
+        />
         <div className="arena-light opacity-45" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
@@ -256,34 +279,51 @@ function Home() {
           </div>
 
           <div className="scrollbar-none mt-7 flex snap-x gap-px overflow-x-auto border-y border-navy-foreground/15">
-            {CURRENT_TEAMS.map((team, index) => (
-              <Link
-                key={team.slug}
-                to="/equipes/$slug"
-                params={{ slug: team.slug }}
-                className={cn(
-                  "interactive-surface group relative min-h-44 min-w-[148px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-3 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[178px]",
-                  preferredTeam === team.slug && "bg-sport/15",
-                )}
-              >
-                <span className="font-display text-4xl font-extrabold text-navy-foreground/8">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <div className="absolute inset-x-4 bottom-4">
-                  {preferredTeam === team.slug && (
-                    <span className="mb-3 inline-block bg-sport px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
-                      {lang === "fr" ? "Mon équipe" : "My team"}
-                    </span>
+            {CURRENT_TEAMS.map((team, index) => {
+              const media = teamVisualForCategory(team.slug);
+              return (
+                <Link
+                  key={team.slug}
+                  to="/equipes/$slug"
+                  params={{ slug: team.slug }}
+                  className={cn(
+                    "interactive-surface group relative min-h-[208px] min-w-[160px] snap-start overflow-hidden border-r border-navy-foreground/15 bg-navy-foreground/[0.025] transition-colors sm:min-w-[188px]",
+                    preferredTeam === team.slug && "ring-2 ring-inset ring-sport",
                   )}
-                  <p className="font-display text-3xl font-extrabold uppercase leading-none sm:text-4xl">{team.code}</p>
-                  <p className="mt-2 text-sm font-semibold text-navy-foreground/65">{l(team.ages)}</p>
-                  <div className="mt-3 flex items-center justify-between border-t border-navy-foreground/15 pt-3 text-xs font-semibold uppercase tracking-[0.12em] text-navy-foreground/55">
-                    <span>{team.code === "F" ? l(team.name) : lang === "fr" ? "Voir la catégorie" : "View category"}</span>
-                    <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                >
+                  {media && (
+                    <img
+                      src={media.url}
+                      alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 size-full object-cover opacity-72 transition-[transform,opacity] duration-500 group-hover:scale-[1.035] group-hover:opacity-88"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.12)_0%,rgba(7,16,43,0.52)_52%,rgba(7,16,43,0.98)_100%)]" />
+                  <span className="absolute left-3 top-3 border border-white/15 bg-navy-deep/68 px-2 py-1 font-display text-[10px] font-extrabold uppercase tracking-[0.12em] text-white backdrop-blur">
+                    {team.code}
+                  </span>
+                  <span className="absolute right-3 top-3 font-display text-2xl font-extrabold text-white/24">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+
+                  <div className="absolute inset-x-3 bottom-3">
+                    {preferredTeam === team.slug && (
+                      <span className="mb-2 inline-block bg-sport px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
+                        {lang === "fr" ? "Mon équipe" : "My team"}
+                      </span>
+                    )}
+                    <p className="font-display text-3xl font-extrabold uppercase leading-none text-white sm:text-4xl">{team.code}</p>
+                    <p className="mt-1.5 text-xs font-semibold text-white/68">{l(team.ages)}</p>
+                    <div className="mt-3 flex items-center justify-between border-t border-white/15 pt-2.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white/65">
+                      <span>{team.code === "F" ? l(team.name) : lang === "fr" ? "Photo AHMV · catégorie" : "AHMV photo · category"}</span>
+                      <ArrowRight className="size-3.5 text-sport-foreground transition-transform group-hover:translate-x-1" />
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -311,8 +351,8 @@ function Home() {
                 className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
                 <img
-                  src={OFFICIAL_MEDIA.practicePlayers.url}
-                  alt={lang === "fr" ? OFFICIAL_MEDIA.practicePlayers.alt.fr : OFFICIAL_MEDIA.practicePlayers.alt.en}
+                  src={homeNewsMedia(news[0].category).url}
+                  alt={lang === "fr" ? homeNewsMedia(news[0].category).alt.fr : homeNewsMedia(news[0].category).alt.en}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -340,26 +380,44 @@ function Home() {
                 </div>
               </Link>
 
-              <div className="grid divide-y divide-navy/10">
-                {news.slice(1).map((article, index) => (
-                  <Link
-                    key={article.slug}
-                    to="/nouvelles/$slug"
-                    params={{ slug: article.slug }}
-                    className="interactive-surface group flex min-h-52 flex-col justify-between bg-ice p-6 transition-colors hover:bg-background md:p-7"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
-                      <span className="font-display text-4xl font-extrabold text-navy/8">0{index + 2}</span>
-                    </div>
-                    <div>
-                      <h3 className="font-display text-3xl font-extrabold uppercase leading-[0.92] text-navy group-hover:text-sport">
-                        {l(article.title)}
-                      </h3>
-                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{l(article.excerpt)}</p>
-                    </div>
-                  </Link>
-                ))}
+              <div className="grid divide-y divide-white/10 bg-navy-deep">
+                {news.slice(1).map((article, index) => {
+                  const media = homeNewsMedia(article.category);
+                  return (
+                    <Link
+                      key={article.slug}
+                      to="/nouvelles/$slug"
+                      params={{ slug: article.slug }}
+                      className="interactive-surface group grid min-h-56 overflow-hidden bg-competition sm:grid-cols-[0.78fr_1.22fr] lg:grid-cols-1 xl:grid-cols-[0.78fr_1.22fr]"
+                    >
+                      <div className="relative min-h-40 overflow-hidden bg-navy sm:min-h-full lg:min-h-40 xl:min-h-full">
+                        <img
+                          src={media.url}
+                          alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 size-full object-cover opacity-80 transition-[transform,opacity] duration-500 group-hover:scale-[1.035] group-hover:opacity-95"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_38%,rgba(7,16,43,0.78)_100%)]" />
+                        <span className="absolute left-3 top-3 border border-white/15 bg-navy-deep/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/78 backdrop-blur">
+                          {lang === "fr" ? "Photo AHMV" : "AHMV photo"}
+                        </span>
+                      </div>
+                      <div className="flex min-w-0 flex-col justify-between p-5 md:p-6">
+                        <div className="flex items-start justify-between gap-4">
+                          <p className="eyebrow text-sport-foreground">{newsDateLabel(article, lang)}</p>
+                          <span className="font-display text-3xl font-extrabold text-white/10">0{index + 2}</span>
+                        </div>
+                        <div className="mt-5">
+                          <h3 className="font-display text-2xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
+                            {l(article.title)}
+                          </h3>
+                          <p className="mt-3 line-clamp-3 text-sm text-white/56">{l(article.excerpt)}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

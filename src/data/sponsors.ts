@@ -3,6 +3,8 @@ export interface Sponsor {
   website?: string;
   websiteVerified: boolean;
   logoApproved: boolean;
+  logoUrl?: string;
+  logoSource?: string;
 }
 
 export const SPONSORS: Sponsor[] = [

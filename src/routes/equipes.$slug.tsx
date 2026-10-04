@@ -29,6 +29,7 @@ import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { teamVisualForCategory } from "@/data/team-visuals";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { SITE } from "@/lib/site";
@@ -73,6 +74,7 @@ function TeamPage() {
   const { t, l, lang } = useI18n();
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
   const team = getTeam(slug)!;
+  const categoryVisual = teamVisualForCategory(slug) ?? OFFICIAL_MEDIA.practiceCoach;
   const isPreferred = preferredTeam === slug;
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
@@ -172,8 +174,8 @@ function TeamPage() {
           <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
             <div className="relative min-h-[240px] overflow-hidden sm:min-h-[320px]">
               <img
-                src={slug === "m11" ? OFFICIAL_MEDIA.practiceSkaters.url : OFFICIAL_MEDIA.practiceCoach.url}
-                alt={lang === "fr" ? "Photo réelle AHM Verdun — entraînement sur glace" : "Real AHM Verdun photo — on-ice practice"}
+                src={categoryVisual.url}
+                alt={lang === "fr" ? categoryVisual.alt.fr : categoryVisual.alt.en}
                 loading="eager"
                 decoding="async"
                 className="absolute inset-0 size-full object-cover"
@@ -395,8 +397,17 @@ function TeamPage() {
                     className="interactive-surface scoreboard-panel scroll-mt-28 flex min-h-[270px] flex-col overflow-hidden p-0 text-white"
                   >
                     <div className="relative flex min-h-40 flex-1 flex-col justify-between overflow-hidden p-5">
+                      <img
+                        src={categoryVisual.url}
+                        alt=""
+                        aria-hidden
+                        loading="lazy"
+                        decoding="async"
+                        className="pointer-events-none absolute inset-0 size-full object-cover opacity-[0.16] grayscale-[0.15]"
+                      />
+                      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.55),rgba(7,16,43,0.94))]" aria-hidden />
                       <span
-                        className="pointer-events-none absolute -right-1 -top-5 font-display text-[7.5rem] font-extrabold leading-none tracking-[-0.08em] text-white/[0.035]"
+                        className="pointer-events-none absolute -right-1 -top-5 font-display text-[7.5rem] font-extrabold leading-none tracking-[-0.08em] text-white/[0.05]"
                         aria-hidden
                       >
                         {String(index + 1).padStart(2, "0")}
