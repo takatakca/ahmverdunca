@@ -6,15 +6,15 @@ This document describes the public-data shape the AHM Verdun website is already 
 
 `GET /api/ahmv/team-games?teamId={PUBLIC_TEAM_ID}`
 
-The AHMV server now implements this endpoint as a sanitized, fail-closed proxy. It stays disabled until the approved public Scoresheets/GameData/WLLV normalization service is available through GROUPE TAKATAK. When disabled, disconnected or unavailable, the website automatically falls back to the official public schedule/results links and never fabricates a game time or score.
+The AHMV server implements this endpoint as a sanitized, fail-closed proxy to GROUPE TAKATAK. It reuses the existing server-only `TAKATAK_AHMV_SERVICE_TOKEN` already shared by the AHMV schedule/Voice boundary instead of introducing a second credential. If that credential is missing, the central source is unavailable, or the exact team has not been mapped by the authoritative hockey feed, the website automatically falls back to the official public schedule/results links and never fabricates a game time or score.
 
-The server-only activation gates are:
+Configuration:
 
-- `TAKATAK_TEAM_GAMES_ENABLED=true`
-- `TAKATAK_TEAM_GAMES_ORIGIN=https://...`
-- `TAKATAK_TEAM_GAMES_TOKEN=...`
+- `TAKATAK_AHMV_SERVICE_TOKEN=...` — existing shared server credential
+- `TAKATAK_TEAM_GAMES_ORIGIN=https://takatak.ca` — optional origin override; defaults to TAKATAK
+- `TAKATAK_TEAM_GAMES_ENABLED=false` — optional emergency kill switch; absent/true allows the guarded connector to run
 
-The normalized upstream contract is `GET /api/integrations/ahmv/team-games?teamId={PUBLIC_TEAM_ID}` on the configured HTTPS origin. Authentication stays server-side and the public AHMV response is reduced to the approved fields documented below.
+The normalized upstream contract is `GET /api/integrations/ahmv/team-games?teamId={PUBLIC_TEAM_ID}` on the configured HTTPS origin. Authentication and the exact-team scope header stay server-side and the public AHMV response is reduced to the approved fields documented below.
 
 ## Response
 
