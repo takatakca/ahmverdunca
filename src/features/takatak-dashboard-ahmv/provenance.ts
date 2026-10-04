@@ -25,8 +25,15 @@ export type ControlProvenance = {
   verifiedAt: string | null;
 };
 
+type ControlProvenanceInput = {
+  sourceKind?: ControlSourceKind | undefined;
+  verificationStatus?: ControlVerificationStatus | undefined;
+  sourceRef?: string | null | undefined;
+  verifiedAt?: string | null | undefined;
+};
+
 export function normalizeControlProvenance(
-  value: Partial<ControlProvenance> | null | undefined,
+  value: ControlProvenanceInput | null | undefined,
 ): ControlProvenance {
   const sourceKind = CONTROL_SOURCE_KINDS.includes(
     value?.sourceKind as ControlSourceKind,
