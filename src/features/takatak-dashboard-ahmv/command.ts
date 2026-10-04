@@ -81,8 +81,10 @@ export function parseTakatakAhmvCommand(input: unknown): TakatakAhmvCommand {
     payload: normalizedPayload,
   });
 
+  const { provenance: _rawProvenance, ...parsedWithoutProvenance } = parsed;
+
   return {
-    ...parsed,
+    ...parsedWithoutProvenance,
     payload: normalizedPayload,
     ...(normalizedProvenance ? { provenance: normalizedProvenance } : {}),
     idempotencyKey,
