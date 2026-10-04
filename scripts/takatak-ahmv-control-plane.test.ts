@@ -23,6 +23,7 @@ import {
   buildConnectorExecutionRequest,
 } from "../src/features/takatak-dashboard-ahmv/connectors.ts";
 import { createTakatakUsageEvent } from "../src/features/takatak-dashboard-ahmv/usage-metering.ts";
+import { retryDelaySeconds, safeWorkerErrorCode } from "../src/features/takatak-dashboard-ahmv/job-policy.ts";
 
 function request(headers: Record<string, string> = {}) {
   return new Request("https://ahmverdun.ca/internal/takatak/ahmv", { headers });
@@ -199,6 +200,7 @@ test("failed jobs retry only while attempts remain", () => {
     resourceType: "page",
     resourceId: "home",
     expectedRevision: 2,
+    payload: { title: "Accueil" },
     payloadFingerprint: "abc",
     status: "failed" as const,
     attempts: 1,
@@ -297,5 +299,16 @@ test("AHMV emits usage facts but never becomes billing authority", () => {
         quantity: 0,
       }),
     /invalid_usage_quantity/,
+  );
+});
+
+
+test("worker retry policy backs off and sanitizes errors", () => {
+  assert.equal(retryDelaySeconds(1), 30);
+  assert.equal(retryDelaySeconds(2), 60);
+  assert.equal(retryDelaySeconds(10), 900);
+  assert.equal(
+    safeWorkerErrorCode(new Error("Provider 503: Temporary Failure!")),
+    "provider_503:_temporary_failure_",
   );
 });
