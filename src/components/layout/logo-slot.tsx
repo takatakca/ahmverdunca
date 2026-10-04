@@ -17,7 +17,7 @@ export function LogoSlot({ className, size = "sm" }: { className?: string; size?
       )}
     >
       <img
-        src="/favicon.png"
+        src="/branding/ahmv-logo-gallery-2026.png"
         alt="Association du hockey mineur de Verdun"
         width={96}
         height={96}
