@@ -10,6 +10,7 @@ import { commandFingerprint, normalizeIdempotencyKey } from "./idempotency";
 import { assertSafeControlPayload } from "./payload-security";
 import { parseWebsiteControlPayload } from "./website-content";
 import { parseSeoControlPayload } from "./seo-content";
+import { parseControlProvenance, type ControlProvenance } from "./provenance";
 
 const safeId = z
   .string()
@@ -29,6 +30,7 @@ const schema = z.object({
   resourceType: safeId,
   resourceId: safeId,
   expectedRevision: z.number().int().positive().optional(),
+  provenance: z.unknown().optional(),
   payload: z.unknown().default({}),
 });
 
@@ -43,6 +45,7 @@ export type TakatakAhmvCommand = {
   resourceType: string;
   resourceId: string;
   expectedRevision?: number | undefined;
+  provenance?: ControlProvenance | undefined;
   payload: unknown;
   fingerprint: string;
 };
@@ -52,6 +55,11 @@ export function parseTakatakAhmvCommand(input: unknown): TakatakAhmvCommand {
   const idempotencyKey = normalizeIdempotencyKey(parsed.idempotencyKey);
   if (!idempotencyKey) throw new Error("invalid_idempotency_key");
   assertSafeControlPayload(parsed.payload);
+
+  const normalizedProvenance =
+    parsed.provenance === undefined
+      ? undefined
+      : parseControlProvenance(parsed.provenance);
 
   const normalizedPayload =
     parsed.action === "save_draft" && parsed.service === "website"
@@ -69,12 +77,14 @@ export function parseTakatakAhmvCommand(input: unknown): TakatakAhmvCommand {
     resourceType: parsed.resourceType,
     resourceId: parsed.resourceId,
     expectedRevision: parsed.expectedRevision ?? null,
+    provenance: normalizedProvenance ?? null,
     payload: normalizedPayload,
   });
 
   return {
     ...parsed,
     payload: normalizedPayload,
+    ...(normalizedProvenance ? { provenance: normalizedProvenance } : {}),
     idempotencyKey,
     fingerprint,
   };
