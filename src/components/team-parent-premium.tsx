@@ -98,7 +98,7 @@ export function TeamParentPremium({ team, lang }: Props) {
     <section
       id="parent-premium"
       aria-labelledby="parent-premium-title"
-      className="overflow-hidden border border-navy/12 bg-background"
+      className="overflow-hidden border border-white/12 bg-navy-deep text-white"
     >
       <div className="grid lg:grid-cols-[0.78fr_1.22fr]">
         <div className="competition-panel p-6 text-navy-foreground md:p-8">
@@ -160,18 +160,18 @@ export function TeamParentPremium({ team, lang }: Props) {
           )}
         </div>
 
-        <div className="p-6 md:p-8">
-          <p className="eyebrow text-sport">{lang === "fr" ? "Droits du forfait AHMV Member" : "AHMV Member entitlements"}</p>
-          <div className="mt-5 grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2">
+        <div className="bg-navy-deep p-6 md:p-8">
+          <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Droits du forfait AHMV Member" : "AHMV Member entitlements"}</p>
+          <div className="mt-5 grid gap-px overflow-hidden border border-white/10 bg-white/10 sm:grid-cols-2">
             {CAPABILITIES.map((item) => {
               const Icon = item.icon;
               return (
-                <article key={item.fr} className="bg-background p-5">
-                  <Icon className="size-5 text-sport" aria-hidden />
-                  <h3 className="mt-4 font-display text-xl font-extrabold uppercase text-navy">
+                <article key={item.fr} className="bg-competition p-5 text-white">
+                  <Icon className="size-5 text-sport-foreground" aria-hidden />
+                  <h3 className="mt-4 font-display text-xl font-extrabold uppercase text-white">
                     {lang === "fr" ? item.fr : item.en}
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-sm leading-relaxed text-white/52">
                     {lang === "fr" ? item.frBody : item.enBody}
                   </p>
                 </article>
@@ -180,7 +180,7 @@ export function TeamParentPremium({ team, lang }: Props) {
           </div>
 
           <div className="mt-7">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/42">
               {lang === "fr" ? "Prochaine phase · non vendue aujourd'hui" : "Next phase · not sold today"}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -189,9 +189,9 @@ export function TeamParentPremium({ team, lang }: Props) {
                 return (
                   <span
                     key={item.fr}
-                    className="inline-flex min-h-9 items-center gap-2 border border-navy/12 bg-ice px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-navy"
+                    className="inline-flex min-h-9 items-center gap-2 border border-white/12 bg-white/[0.04] px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white/70"
                   >
-                    <Icon className="size-3.5 text-sport" aria-hidden />
+                    <Icon className="size-3.5 text-sport-foreground" aria-hidden />
                     {lang === "fr" ? item.fr : item.en}
                   </span>
                 );
@@ -199,7 +199,7 @@ export function TeamParentPremium({ team, lang }: Props) {
             </div>
           </div>
 
-          <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-6 text-xs leading-relaxed text-white/45">
             {lang === "fr"
               ? "Aucune donnée médicale, aucun dossier de joueur et aucun jeton Google ne doit être stocké dans le navigateur AHMV. Les autorisations et services premium passent par TAKATAK Auth et TAKATAK Dashboard."
               : "No medical data, player record or Google token should be stored in the AHMV browser. Premium authorization and services flow through TAKATAK Auth and TAKATAK Dashboard."}
