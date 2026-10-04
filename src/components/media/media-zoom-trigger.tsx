@@ -32,11 +32,18 @@ export function MediaZoomTrigger({
 
   return (
     <>
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setOpen(true)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            setOpen(true);
+          }
+        }}
         className={cn(
-          "group relative block overflow-hidden text-left outline-none focus-visible:ring-2 focus-visible:ring-sport focus-visible:ring-offset-2 focus-visible:ring-offset-navy-deep",
+          "group relative block cursor-zoom-in overflow-hidden text-left outline-none focus-visible:ring-2 focus-visible:ring-sport focus-visible:ring-offset-2 focus-visible:ring-offset-navy-deep",
           className,
         )}
         aria-label={
@@ -53,7 +60,7 @@ export function MediaZoomTrigger({
             {lang === "fr" ? "Agrandir" : "Zoom"}
           </span>
         )}
-      </button>
+      </div>
 
       <MediaLuxuryViewer
         items={items}
