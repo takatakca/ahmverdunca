@@ -27,6 +27,11 @@ import { retryDelaySeconds, safeWorkerErrorCode } from "../src/features/takatak-
 import { parseControlProvenance } from "../src/features/takatak-dashboard-ahmv/provenance.ts";
 import { hasUnpublishedChanges, publishedRevisionForRecord } from "../src/features/takatak-dashboard-ahmv/published.ts";
 import { buildPortableControlBundle } from "../src/features/takatak-dashboard-ahmv/portability.ts";
+import {
+  assertCanRequestControlReview,
+  assertCanResolveControlReview,
+  requiresControlReview,
+} from "../src/features/takatak-dashboard-ahmv/review-policy.ts";
 
 function request(headers: Record<string, string> = {}) {
   return new Request("https://ahmverdun.ca/internal/takatak/ahmv", { headers });
@@ -531,4 +536,77 @@ test("portable AHMV export excludes TAKATAK commercial and operator internals", 
   assert.equal("providerSecret" in bundle, false);
   assert.equal("actorId" in (bundle.versions[0] ?? {}), false);
   assert.equal(bundle.records[0]?.recordKey, "website:news_post:news_1");
+});
+
+
+test("website and SEO publishing require revision review", () => {
+  assert.equal(requiresControlReview("website"), true);
+  assert.equal(requiresControlReview("seo"), true);
+  assert.equal(requiresControlReview("sms"), false);
+  assert.equal(requiresControlReview("voice"), false);
+});
+
+test("review policy separates author and approver by default", () => {
+  const manager = {
+    actorId: "author_1",
+    organizationId: "org_123",
+    role: "manager" as const,
+    enabledServices: ["website"] as const,
+  };
+  assert.doesNotThrow(() =>
+    assertCanRequestControlReview(manager, "website"),
+  );
+
+  const admin = {
+    actorId: "reviewer_1",
+    organizationId: "org_123",
+    role: "admin" as const,
+    enabledServices: ["website"] as const,
+  };
+  assert.doesNotThrow(() =>
+    assertCanResolveControlReview({
+      principal: admin,
+      service: "website",
+      requestedBy: "author_1",
+    }),
+  );
+
+  assert.throws(
+    () =>
+      assertCanResolveControlReview({
+        principal: { ...admin, actorId: "author_1" },
+        service: "website",
+        requestedBy: "author_1",
+      }),
+    /self_approval_forbidden/,
+  );
+});
+
+test("owner self-review requires an explicit meaningful override reason", () => {
+  const owner = {
+    actorId: "owner_1",
+    organizationId: "org_123",
+    role: "owner" as const,
+    enabledServices: ["website"] as const,
+  };
+
+  assert.throws(
+    () =>
+      assertCanResolveControlReview({
+        principal: owner,
+        service: "website",
+        requestedBy: "owner_1",
+        ownerOverrideReason: "short",
+      }),
+    /self_approval_forbidden/,
+  );
+
+  assert.doesNotThrow(() =>
+    assertCanResolveControlReview({
+      principal: owner,
+      service: "website",
+      requestedBy: "owner_1",
+      ownerOverrideReason: "Emergency owner review override",
+    }),
+  );
 });
