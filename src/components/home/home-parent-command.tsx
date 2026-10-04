@@ -4,6 +4,7 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { PARENT_PREMIUM } from "@/lib/parent-premium";
 
 export function HomeParentCommand() {
   const { lang } = useI18n();
@@ -34,14 +35,14 @@ export function HomeParentCommand() {
             </p>
           </div>
 
-          {team ? (
+          {team && PARENT_PREMIUM.visible ? (
             <span className="inline-flex min-h-10 items-center gap-2 border border-sport/40 bg-sport/12 px-3 text-[9px] font-bold uppercase tracking-[0.14em] text-white">
               <ShieldCheck className="size-4 text-sport" />
               {isDemoMember
                 ? (lang === "fr" ? "AHMV Member · aperçu" : "AHMV Member · preview")
-                : (lang === "fr" ? "Mode visiteur" : "Visitor mode")}
+                : "AHMV Member"}
             </span>
-          ) : (
+          ) : !team ? (
             <a
               href="/equipes"
               className="premium-control inline-flex min-h-11 items-center gap-2 bg-sport px-4 text-[9px] font-bold uppercase tracking-[0.13em] text-sport-foreground"
@@ -49,7 +50,7 @@ export function HomeParentCommand() {
               <Users className="size-4" />
               {lang === "fr" ? "Choisir mon équipe" : "Choose my team"}
             </a>
-          )}
+          ) : null}
         </div>
 
         {team ? (
