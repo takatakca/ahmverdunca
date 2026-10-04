@@ -30,7 +30,7 @@ export function MobileQuickNav() {
   return (
     <nav
       aria-label={lang === "fr" ? "Accès rapide" : "Quick navigation"}
-      className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-navy/12 bg-background/98 pb-[env(safe-area-inset-bottom)] shadow-[0_-18px_40px_-28px_rgba(7,16,43,0.68)] backdrop-blur-xl lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-white/10 bg-navy-deep/96 pb-[env(safe-area-inset-bottom)] text-white shadow-[0_-18px_44px_-24px_rgba(0,0,0,0.88)] backdrop-blur-xl lg:hidden"
     >
       {links.map(({ id, label, to, icon: Icon, primary }) => {
         const active = isActive(to);
@@ -42,15 +42,15 @@ export function MobileQuickNav() {
             className={
               primary
                 ? "relative flex min-h-16 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 px-1 text-center"
-                : `relative flex min-h-16 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 px-1 text-center text-[10px] font-semibold transition-[color,transform] duration-150 active:scale-[.95] ${active ? "text-sport" : "text-muted-foreground"}`
+                : `relative flex min-h-16 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 px-1 text-center text-[9px] font-bold uppercase tracking-[0.06em] transition-[color,transform] duration-150 active:scale-[.95] ${active ? "text-sport-foreground" : "text-white/52"}`
             }
           >
             {primary ? (
               <>
-                <span className={`absolute -top-4 flex size-12 items-center justify-center border-4 border-background bg-sport text-sport-foreground shadow-[0_12px_28px_-12px_rgba(7,16,43,0.6)] transition-transform active:scale-[.94] ${active ? "scale-[1.04]" : ""}`}>
+                <span className={`absolute -top-4 flex size-12 items-center justify-center border-4 border-navy-deep bg-sport text-sport-foreground shadow-[0_14px_30px_-12px_rgba(0,0,0,0.82)] transition-transform active:scale-[.94] ${active ? "scale-[1.04]" : ""}`}>
                   <Icon className="size-5" aria-hidden />
                 </span>
-                <span className="mt-7 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] text-sport">
+                <span className="mt-7 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] text-sport-foreground">
                   {label}
                 </span>
               </>
