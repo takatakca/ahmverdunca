@@ -38,7 +38,7 @@ export const REQUIRED_COACH_RESOURCE_TITLES = [
 
 // 12 facilities from the legacy arena directory + Saint-Charles, now referenced by the current official weekly schedule.
 export const REQUIRED_ARENA_COUNT = 13;
-export const REQUIRED_PUBLIC_ALBUM_COUNT = 4;
+export const REQUIRED_PUBLIC_ALBUM_COUNT = 5;
 export const REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT = 24;
 
 export const LEGACY_CONTENT_AUDIT = {
