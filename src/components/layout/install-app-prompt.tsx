@@ -13,6 +13,7 @@ export function InstallAppPrompt() {
   const { lang } = useI18n();
   const [event, setEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [dismissed, setDismissed] = useState(true);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setDismissed(window.localStorage.getItem(DISMISS_KEY) === "1");
@@ -26,23 +27,49 @@ export function InstallAppPrompt() {
     return () => window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
   }, []);
 
-  if (!event || dismissed) return null;
+  useEffect(() => {
+    if (!event || dismissed) return;
+
+    const timer = window.setTimeout(() => {
+      if (document.body.style.overflow === "hidden") return;
+      if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
+      if (document.querySelector("[data-ahmv-attention-surface]")) return;
+      setReady(true);
+    }, 24000);
+
+    return () => window.clearTimeout(timer);
+  }, [dismissed, event]);
+
+  useEffect(() => {
+    const suppress = () => setReady(false);
+    window.addEventListener("ahmv:navigation-open", suppress);
+    window.addEventListener("ahmv:assistant-open", suppress);
+    return () => {
+      window.removeEventListener("ahmv:navigation-open", suppress);
+      window.removeEventListener("ahmv:assistant-open", suppress);
+    };
+  }, []);
+
+
+  if (!event || dismissed || !ready) return null;
 
   const install = async () => {
     await event.prompt();
     const choice = await event.userChoice;
     if (choice.outcome === "accepted") {
+      setReady(false);
       setEvent(null);
     }
   };
 
   const dismiss = () => {
     window.localStorage.setItem(DISMISS_KEY, "1");
+    setReady(false);
     setDismissed(true);
   };
 
   return (
-    <aside className="fixed inset-x-3 bottom-20 z-40 mx-auto max-w-xl border border-sport/35 bg-competition p-4 text-white shadow-[0_24px_70px_-34px_rgba(7,16,43,0.9)] lg:bottom-6 lg:left-6 lg:right-auto lg:m-0 lg:w-[380px]">
+    <aside data-ahmv-attention-surface="install-app" className="fixed inset-x-3 bottom-20 z-40 mx-auto max-w-xl border border-sport/35 bg-competition p-4 text-white shadow-[0_24px_70px_-34px_rgba(7,16,43,0.9)] lg:bottom-6 lg:left-6 lg:right-auto lg:m-0 lg:w-[380px]">
       <div className="flex items-start gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center bg-sport text-sport-foreground">
           <Download className="size-5" />
