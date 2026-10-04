@@ -48,7 +48,7 @@ function PrivacyPage() {
           },
           {
             title: "Publicité et soutien au développement",
-            body: "Les espaces publicitaires et les contributions volontaires au développement numérique restent désactivés tant qu’ils ne sont pas configurés et approuvés. Lorsqu’ils sont activés, le bénéficiaire doit être affiché clairement et les technologies publicitaires doivent respecter les exigences de consentement applicables.",
+            body: "Des espaces promotionnels locaux peuvent être affichés dans le portail lorsqu’un inventaire autorisé est disponible. Ils sont présentés séparément du contenu officiel. Toute technologie publicitaire tierce nécessitant un consentement doit respecter les exigences applicables avant son activation.",
           },
           {
             title: "Liens externes",
@@ -74,7 +74,7 @@ function PrivacyPage() {
           },
           {
             title: "Advertising and development support",
-            body: "Advertising placements and voluntary digital-development contributions remain disabled until configured and approved. When enabled, the beneficiary must be clearly disclosed and advertising technologies must follow applicable consent requirements.",
+            body: "Local promotional placements may appear in the portal when authorized inventory is available. They are presented separately from official content. Any third-party advertising technology that requires consent must meet applicable consent requirements before activation.",
           },
           {
             title: "External links",
@@ -94,11 +94,11 @@ function PrivacyPage() {
         }
       />
 
-      <div className="container-site max-w-4xl py-8 md:py-12">
-        <div className="mb-8 rounded-xl border border-border bg-ice p-5">
+      <div className="container-site max-w-4xl py-8 text-white md:py-12">
+        <div className="mb-8 border border-white/12 bg-competition p-5">
           <div className="flex items-start gap-3">
-            <ShieldCheck className="mt-0.5 size-5 shrink-0 text-sport" aria-hidden />
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <ShieldCheck className="mt-0.5 size-5 shrink-0 text-sport-foreground" aria-hidden />
+            <p className="text-sm leading-relaxed text-white/58">
               {lang === "fr"
                 ? "Cette page décrit l'approche de conception actuelle et ne remplace pas une politique de confidentialité officiellement adoptée."
                 : "This page describes the current design approach and does not replace an officially adopted privacy policy."}
@@ -108,9 +108,9 @@ function PrivacyPage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           {sections.map((section) => (
-            <section key={section.title} className="card-elevated p-6">
-              <h2 className="heading-card">{section.title}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{section.body}</p>
+            <section key={section.title} className="interactive-surface border border-white/12 bg-navy-deep p-6 text-white">
+              <h2 className="heading-card text-white">{section.title}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/55">{section.body}</p>
             </section>
           ))}
         </div>
