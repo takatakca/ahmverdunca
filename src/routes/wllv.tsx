@@ -7,6 +7,7 @@ import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { MediaZoomTrigger } from "@/components/media/media-zoom-trigger";
 
 export const Route = createFileRoute("/wllv")({
   head: () => ({
@@ -32,6 +33,7 @@ function WllvPage() {
   const { t, lang } = useI18n();
   const wllvCampPoster = uploadedAhmvMediaById(40)!;
   const wllvCampSchedule = uploadedAhmvMediaById(34)!;
+  const wllvMedia = [wllvCampPoster, wllvCampSchedule];
 
   return (
     <>
@@ -55,13 +57,20 @@ function WllvPage() {
       <div className="container-site space-y-10 py-8 md:py-12">
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.25fr_0.75fr]">
           <div className="relative min-h-[390px] overflow-hidden p-7 md:min-h-[460px] md:p-10 lg:p-12">
-            <img
-              src={wllvCampPoster.url}
-              alt={lang === "fr" ? wllvCampPoster.alt.fr : wllvCampPoster.alt.en}
-              loading="eager"
-              decoding="async"
-              className="absolute inset-0 size-full bg-navy-deep object-contain"
-            />
+            <MediaZoomTrigger
+              items={wllvMedia}
+              initialIndex={0}
+              lang={lang}
+              className="absolute inset-0"
+            >
+              <img
+                src={wllvCampPoster.url}
+                alt={lang === "fr" ? wllvCampPoster.alt.fr : wllvCampPoster.alt.en}
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 size-full bg-navy-deep object-contain transition-transform duration-700 group-hover:scale-[1.012]"
+              />
+            </MediaZoomTrigger>
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.96)_0%,rgba(7,16,43,0.76)_58%,rgba(7,16,43,0.34)_100%)]" />
             <div className="relative flex h-full flex-col justify-end">
             <p className="eyebrow text-sport-foreground">AA / BB · WLLV</p>
@@ -77,7 +86,7 @@ function WllvPage() {
                 : "AHM Verdun acts as a gateway. AA/BB teams, camps, operations and data remain under WLLV and its official systems."}
             </p>
             <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.14em] text-white/34">
-              {lang === "fr" ? "Photo réelle AHMV · ambiance hockey Verdun, non présentée comme une photo d’équipe WLLV." : "Real AHMV photo · Verdun hockey atmosphere, not presented as a WLLV team photo."}
+              {lang === "fr" ? "Affiche de camp WLLV conservée dans la médiathèque AHMV. Les opérations AA/BB demeurent sous l’autorité du WLLV." : "WLLV camp artwork preserved in the AHMV media library. AA/BB operations remain under WLLV authority."}
             </p>
             </div>
           </div>
@@ -103,35 +112,40 @@ function WllvPage() {
         </section>
         <HouseSponsorSlot placement="wllv-gateway" count={1} compact />
 
-        <section className="grid gap-4 border border-navy/12 bg-ice p-4 sm:grid-cols-[0.85fr_1.15fr] sm:p-6">
-          <a
-            href={wllvCampPoster.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="interactive-surface relative min-h-[280px] overflow-hidden bg-navy sm:min-h-[360px]"
-          >
-            <img
-              src={wllvCampPoster.url}
-              alt={lang === "fr" ? wllvCampPoster.alt.fr : wllvCampPoster.alt.en}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 size-full object-contain"
-            />
-          </a>
-          <a
-            href={wllvCampSchedule.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="interactive-surface relative min-h-[280px] overflow-hidden bg-background sm:min-h-[360px]"
-          >
-            <img
-              src={wllvCampSchedule.url}
-              alt={lang === "fr" ? wllvCampSchedule.alt.fr : wllvCampSchedule.alt.en}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 size-full object-contain"
-            />
-          </a>
+        <section className="border border-white/12 bg-navy-deep p-4 text-white sm:p-6">
+          <div className="mb-4 flex items-end justify-between gap-4">
+            <div>
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Camp WLLV · médias officiels" : "WLLV camp · official media"}
+              </p>
+              <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-none">
+                {lang === "fr" ? "Affiche + horaire" : "Poster + schedule"}
+              </p>
+            </div>
+            <p className="hidden text-[9px] font-bold uppercase tracking-[0.14em] text-white/45 sm:block">
+              {lang === "fr" ? "Touchez pour agrandir" : "Tap to enlarge"}
+            </p>
+          </div>
+
+          <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-[0.85fr_1.15fr] sm:overflow-visible sm:px-0">
+            {wllvMedia.map((media, index) => (
+              <MediaZoomTrigger
+                key={media.url}
+                items={wllvMedia}
+                initialIndex={index}
+                lang={lang}
+                className="interactive-surface relative min-h-[300px] w-[84vw] max-w-[24rem] shrink-0 snap-center overflow-hidden border border-white/10 bg-navy sm:min-h-[380px] sm:w-auto sm:max-w-none"
+              >
+                <img
+                  src={media.url}
+                  alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-contain transition-transform duration-500 group-hover:scale-[1.018]"
+                />
+              </MediaZoomTrigger>
+            ))}
+          </div>
         </section>
 
 
