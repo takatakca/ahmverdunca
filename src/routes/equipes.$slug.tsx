@@ -34,6 +34,8 @@ import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { SITE } from "@/lib/site";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlay } from "@/lib/community-content";
 
 export const Route = createFileRoute("/equipes/$slug")({
   loader: ({ params }) => {
@@ -74,8 +76,14 @@ function TeamPage() {
   const teamId = new URL(currentHref, SITE.domain).searchParams.get("teamId") ?? undefined;
   const { t, l, lang } = useI18n();
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
-  const team = getTeam(slug)!;
+  const baseTeam = getTeam(slug)!;
+  const team = useContentOverlay(
+    "team",
+    `team:category:${slug}`,
+    baseTeam as unknown as Record<string, unknown>,
+  ) as unknown as typeof baseTeam & { heroImageUrl?: string };
   const categoryVisual = teamVisualForCategory(slug) ?? OFFICIAL_MEDIA.practiceCoach;
+  const categoryHeroUrl = team.heroImageUrl ?? categoryVisual.url;
   const feminineMedia = slug === "feminin"
     ? [16, 35, 46, 50]
         .map((id) => uploadedAhmvMediaById(id))
@@ -94,21 +102,25 @@ function TeamPage() {
   const visiblePublicTeams = exactTeam
     ? publicTeams.filter((entry) => entry.legacyScheduleTeamId !== exactTeam.legacyScheduleTeamId)
     : publicTeams;
-  const updateSubject = exactTeam
-    ? `AHMV — mise à jour ${exactTeam.name} · ${exactTeam.level} · ${exactTeam.legacyScheduleTeamId}`
-    : `AHMV — mise à jour ${team.code}`;
-  const updateBody = lang === "fr"
-    ? exactTeam
-      ? `Bonjour, je souhaite proposer une mise à jour pour cette équipe AHMV.\n\nÉquipe : ${exactTeam.name}\nNiveau : ${exactTeam.level}\nRéférence publique : ${exactTeam.legacyScheduleTeamId}\nInformation à publier :\nSource ou lien :\n`
-      : "Bonjour, je souhaite proposer une mise à jour pour cette catégorie/équipe AHMV.\n\nÉquipe :\nInformation à publier :\nSource ou lien :\n"
-    : exactTeam
-      ? `Hello, I would like to suggest an update for this AHMV team.\n\nTeam: ${exactTeam.name}\nLevel: ${exactTeam.level}\nPublic reference: ${exactTeam.legacyScheduleTeamId}\nInformation to publish:\nSource or link:\n`
-      : "Hello, I would like to suggest an update for this AHMV category/team.\n\nTeam:\nInformation to publish:\nSource or link:\n";
   const archiveImages = [
     OFFICIAL_MEDIA.tournamentM11Primary,
     OFFICIAL_MEDIA.tournamentM11Secondary,
     OFFICIAL_MEDIA.tournamentM11Tertiary,
     OFFICIAL_MEDIA.volunteerArchive,
+  ];
+  const contributionResourceKey = exactTeam
+    ? `team:${exactTeam.legacyScheduleTeamId}`
+    : `team:category:${slug}`;
+  const contributionFields = [
+    { key: `description.${lang}`, label: { fr: "Description publique", en: "Public description" }, kind: "textarea" as const, current: team.description[lang] },
+    { key: "heroImageUrl", label: { fr: "Photo / visuel", en: "Photo / visual" }, kind: "image-url" as const, current: categoryHeroUrl },
+    ...(exactTeam
+      ? [
+          { key: "scheduleUrl", label: { fr: "Lien d’horaire officiel", en: "Official schedule link" }, kind: "url" as const, current: legacyTeamScheduleUrl(exactTeam) },
+          { key: "resultsUrl", label: { fr: "Lien résultats officiels", en: "Official results link" }, kind: "url" as const, current: officialTeamResultsUrl(exactTeam) },
+        ] as const
+      : []),
+    { key: "socialLinks", label: { fr: "Liens sociaux", en: "Social links" }, kind: "json" as const, current: socialLinks },
   ];
 
   return (
@@ -120,6 +132,18 @@ function TeamPage() {
           description={l(team.description)}
           actions={
             <>
+              <ContentContributionButton
+                resourceType="team"
+                resourceKey={contributionResourceKey}
+                title={l(team.name)}
+                snapshot={{
+                  description: team.description,
+                  heroImageUrl: categoryHeroUrl,
+                  socialLinks,
+                }}
+                fields={contributionFields}
+                appearance="menu"
+              />
               <Button asChild variant="sport">
                 <Link to="/horaires" search={{ team: slug }}>
                   <CalendarDays className="size-4" />
@@ -180,7 +204,7 @@ function TeamPage() {
           <section className="grid overflow-hidden border border-navy/12 bg-navy lg:grid-cols-[1.4fr_0.6fr]">
             <div className="relative min-h-[240px] overflow-hidden sm:min-h-[320px]">
               <img
-                src={categoryVisual.url}
+                src={categoryHeroUrl}
                 alt={lang === "fr" ? categoryVisual.alt.fr : categoryVisual.alt.en}
                 loading="eager"
                 decoding="async"
@@ -421,19 +445,32 @@ function TeamPage() {
             </p>
           </div>
           <div className="flex min-w-[250px] flex-col justify-center border-t border-white/12 bg-navy-deep p-6 lg:border-l lg:border-t-0 md:p-8">
-            <Button asChild variant="sport" size="lg" className="justify-between">
-              <a
-                href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(updateSubject)}&body=${encodeURIComponent(updateBody)}`}
-              >
-                <span className="flex items-center gap-2"><Mail className="size-4" />{lang === "fr" ? "Proposer une mise à jour" : "Suggest an update"}</span>
-                <ArrowRight className="size-4" />
-              </a>
-            </Button>
-            <p className="mt-3 text-[11px] leading-relaxed text-white/45">
-              {lang === "fr"
-                ? "Canal courriel actuel — aucune publication automatique n'est activée."
-                : "Current email channel — automatic publishing is not enabled."}
-            </p>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.13em] text-white/70">
+                  {lang === "fr" ? "Modifier l’information publique" : "Correct public information"}
+                </p>
+                <p className="mt-1 text-[11px] leading-relaxed text-white/45">
+                  {lang === "fr"
+                    ? "TAKATAK reçoit, vérifie et soumet chaque correction à la modération."
+                    : "TAKATAK receives, checks and sends every correction to moderation."}
+                </p>
+              </div>
+              <ContentContributionButton
+                resourceType="team"
+                resourceKey={contributionResourceKey}
+                title={exactTeam ? `${exactTeam.name} · ${exactTeam.level}` : l(team.name)}
+                snapshot={{
+                  description: team.description,
+                  heroImageUrl: categoryHeroUrl,
+                  scheduleUrl: exactTeam ? legacyTeamScheduleUrl(exactTeam) : undefined,
+                  resultsUrl: exactTeam ? officialTeamResultsUrl(exactTeam) : undefined,
+                  socialLinks,
+                }}
+                fields={contributionFields}
+                appearance="menu"
+              />
+            </div>
           </div>
         </section>
 
