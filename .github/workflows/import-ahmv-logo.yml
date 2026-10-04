@@ -1,4 +1,4 @@
-name: Import AHMV gallery logo asset
+name: Finalize AHMV gallery logo asset
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  import:
+  finalize:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -22,22 +22,28 @@ jobs:
           ref: website-production-logo-gallery-2026
           fetch-depth: 0
 
-      - name: Import exact Gallery branding asset
+      - name: Convert exact Gallery logo to PNG
         run: |
           set -euo pipefail
-          mkdir -p public/branding
-          curl --fail --location --silent --show-error --retry 3 --retry-delay 2 \
-            "https://utuvzrqvivqyziibobvu.supabase.co/storage/v1/object/public/ahmv-media-public/imports/2026-10-04/public/ahmv-media-008.jpg" \
-            -o public/branding/ahmv-logo-gallery-2026.jpg
-          test -s public/branding/ahmv-logo-gallery-2026.jpg
-          file public/branding/ahmv-logo-gallery-2026.jpg
+          python -m pip install --disable-pip-version-check pillow
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          src = Path("public/branding/ahmv-logo-gallery-2026.jpg")
+          image = Image.open(src).convert("RGB")
+          image.save("public/branding/ahmv-logo-gallery-2026.png", "PNG", optimize=True)
+          image.save("public/favicon.png", "PNG", optimize=True)
+          print(image.size)
+          PY
+          file public/branding/ahmv-logo-gallery-2026.png
+          file public/favicon.png
 
-      - name: Commit exact logo asset
+      - name: Commit finalized logo assets
         run: |
           set -euo pipefail
           git config user.name "AHMV Media Import Bot"
           git config user.email "actions@users.noreply.github.com"
-          git add public/branding/ahmv-logo-gallery-2026.jpg
+          git add public/branding/ahmv-logo-gallery-2026.png public/favicon.png
           git diff --cached --quiet && exit 0
-          git commit -m "chore(brand): import Gallery logo asset"
+          git commit -m "chore(brand): finalize Gallery logo assets"
           git push origin HEAD:website-production-logo-gallery-2026
