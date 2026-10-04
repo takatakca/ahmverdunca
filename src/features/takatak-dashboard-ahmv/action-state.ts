@@ -36,6 +36,8 @@ export type ControlRecord<T> = {
   organizationId: string;
   status: ControlRecordStatus;
   revision: number;
+  publishedRevision: number | null;
+  lastPublishedAt: string | null;
   payload: T;
   createdAt: string;
   updatedAt: string;
