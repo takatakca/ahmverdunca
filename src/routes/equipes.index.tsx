@@ -5,6 +5,7 @@ import { ArrowRight, Bookmark, BookmarkCheck, CalendarDays, ExternalLink, Images
 import { PageHeader } from "@/components/page-header";
 import { CURRENT_TEAMS } from "@/data/teams";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { teamVisualForCategory } from "@/data/team-visuals";
 import { officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -393,24 +394,42 @@ function TeamsPage() {
           {categoriesToRender.map((team, index) => {
             const saved = preferredTeam === team.slug;
             const publicTeams = teamsForCategory(team.slug);
+            const media = teamVisualForCategory(team.slug);
             return (
               <article
                 key={team.slug}
                 className={cn(
-                  "interactive-surface group grid border-b border-navy/12 md:grid-cols-[5rem_8rem_minmax(0,1fr)_13rem] md:items-stretch",
+                  "interactive-surface group grid border-b border-navy/12 md:grid-cols-[8rem_8rem_minmax(0,1fr)_13rem] md:items-stretch",
                   saved && "bg-sport/[0.045]",
                 )}
               >
-                <div className="flex items-center py-5 md:border-r md:border-navy/10 md:py-7">
-                  <span className="font-display text-4xl font-extrabold tracking-[-0.06em] text-navy/12">
+                <Link
+                  to="/equipes/$slug"
+                  params={{ slug: team.slug }}
+                  className="relative min-h-28 overflow-hidden bg-navy md:min-h-full md:border-r md:border-navy/10"
+                >
+                  {media && (
+                    <img
+                      src={media.url}
+                      alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 size-full object-cover opacity-78 transition-[transform,opacity] duration-500 group-hover:scale-[1.04] group-hover:opacity-95"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.12),rgba(7,16,43,0.8))]" />
+                  <span className="absolute bottom-3 left-3 font-display text-3xl font-extrabold tracking-[-0.06em] text-white/55">
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                </div>
+                  <span className="absolute right-3 top-3 border border-white/15 bg-navy-deep/70 px-2 py-1 text-[7px] font-bold uppercase tracking-[0.14em] text-white/72 backdrop-blur">
+                    {lang === "fr" ? "Photo AHMV" : "AHMV photo"}
+                  </span>
+                </Link>
 
                 <Link
                   to="/equipes/$slug"
                   params={{ slug: team.slug }}
-                  className="flex items-center md:border-r md:border-navy/10 md:px-5"
+                  className="flex items-center px-4 py-4 md:border-r md:border-navy/10 md:px-5"
                 >
                   <span className="font-display text-5xl font-extrabold uppercase leading-none tracking-[-0.04em] text-navy transition-colors group-hover:text-sport">
                     {team.code}
