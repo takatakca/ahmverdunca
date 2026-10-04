@@ -156,12 +156,12 @@ function ArenaPage() {
         </Link>
 
         <section className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="border border-navy/12 bg-background p-6">
-            <p className="eyebrow text-sport">
+          <div className="border border-white/12 bg-navy-deep p-6 text-white">
+            <p className="eyebrow text-sport-foreground">
               {lang === "fr" ? "Adresse vérifiée" : "Verified address"}
             </p>
             <p className="mt-4 flex items-start gap-2 text-base">
-              <MapPin className="mt-0.5 size-5 shrink-0 text-sport" aria-hidden />
+              <MapPin className="mt-0.5 size-5 shrink-0 text-sport-foreground" aria-hidden />
               {arena.address}
             </p>
             <div className="mt-5 inline-flex items-center gap-2 border border-status-confirmed/20 bg-status-confirmed-soft px-3 py-1.5 text-xs font-semibold text-status-confirmed">
@@ -201,7 +201,7 @@ function ArenaPage() {
                   : "For opening hours, amenities and closure notices, consult the facility's official page directly."
               }
             />
-            <Button asChild variant="outline">
+            <Button asChild variant="outline-light">
               <a href={arena.website} target="_blank" rel="noopener noreferrer">
                 {lang === "fr" ? "Ouvrir la fiche officielle" : "Open official listing"}
                 <ExternalLink className="size-4" />
