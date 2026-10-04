@@ -538,9 +538,7 @@ function TeamPage() {
                       </a>
                       <div className="grid grid-cols-2 gap-2">
                         <a
-                          href={legacyTeamScheduleUrl(entry)}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          href={publicTeamScheduleUrl(entry)}
                           className="premium-control flex min-h-11 items-center justify-between border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white hover:border-sport hover:bg-white/[0.05]"
                         >
                           <span>{lang === "fr" ? "Horaire" : "Schedule"}</span>
