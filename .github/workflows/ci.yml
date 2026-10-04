@@ -55,6 +55,9 @@ jobs:
       - name: GROUPE TAKATAK team games security tests
         run: bun run test:team-games
 
+      - name: Official weekly PDF normalization tests
+        run: bun run test:schedule-normalizer
+
       - name: AHMV assistant routing tests
         run: bun run test:assistant
 
@@ -63,6 +66,9 @@ jobs:
 
       - name: Validate Parent Premium contract
         run: bun run check:parent-premium
+
+      - name: Validate newsletter frontend contract
+        run: bun run check:newsletter
 
       - name: Validate content data
         run: bun run check:data

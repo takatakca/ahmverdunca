@@ -7,6 +7,7 @@ import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
+import { NewsletterInterest } from "@/components/newsletter-interest";
 
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
@@ -132,6 +133,16 @@ export function SiteFooter() {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="relative border-b border-navy-foreground/12">
+        <div className="container-site py-6 md:py-8">
+          <NewsletterInterest
+            lang={lang}
+            source="ahmv-footer"
+            {...(primaryTeam ? { teamId: primaryTeam.legacyScheduleTeamId } : {})}
+          />
         </div>
       </div>
 

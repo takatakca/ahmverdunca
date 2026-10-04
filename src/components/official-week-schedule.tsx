@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { ExternalLink, MapPin, Search, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
@@ -14,7 +15,7 @@ import {
   type OfficialWeekActivity,
 } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
-import { arenaDirectionsTargetForVenue } from "@/data/arenas";
+import { arenaDirectionsTargetForVenue, getArenaForVenue } from "@/data/arenas";
 import { mapsDirectionsUrl } from "@/lib/site";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
@@ -41,6 +42,12 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   const nowTime = montrealTimeKey();
   const upcoming =
     item.date > today || (item.date === today && item.end > nowTime);
+  const arena = getArenaForVenue(item.venue);
+  const directionTarget = arenaDirectionsTargetForVenue(item.venue);
+  const encodedTarget = encodeURIComponent(directionTarget);
+  const googleUrl = mapsDirectionsUrl(directionTarget);
+  const wazeUrl = `https://www.waze.com/ul?q=${encodedTarget}&navigate=yes`;
+  const appleUrl = `https://maps.apple.com/?daddr=${encodedTarget}`;
 
   return (
     <article
@@ -78,21 +85,42 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
         </p>
       </div>
 
-      <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-1">
-        <Button asChild variant="outline-light" size="sm" className="w-full sm:w-auto">
-          <a href={mapsDirectionsUrl(arenaDirectionsTargetForVenue(item.venue))} target="_blank" rel="noopener noreferrer">
-            {lang === "fr" ? "Itinéraire" : "Directions"}
-          </a>
-        </Button>
+      <div className="w-full sm:w-auto">
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {arena ? (
+            <Button asChild variant="sport" size="sm" className="w-full">
+              <Link to="/arenas/$slug" params={{ slug: arena.slug }}>
+                {lang === "fr" ? "Fiche" : "Arena"}
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild variant="outline-light" size="sm" className="w-full">
+              <a href={googleUrl} target="_blank" rel="noopener noreferrer">
+                {lang === "fr" ? "Itinéraire" : "Directions"}
+              </a>
+            </Button>
+          )}
+          <Button asChild variant="outline-light" size="sm" className="w-full">
+            <a href={googleUrl} target="_blank" rel="noopener noreferrer">Google</a>
+          </Button>
+          <Button asChild variant="outline-light" size="sm" className="w-full">
+            <a href={wazeUrl} target="_blank" rel="noopener noreferrer">Waze</a>
+          </Button>
+          <Button asChild variant="outline-light" size="sm" className="w-full">
+            <a href={appleUrl} target="_blank" rel="noopener noreferrer">Apple</a>
+          </Button>
+        </div>
         {!cancelled && upcoming && (
-          <AddToCalendarButton
-            id={item.id}
-            date={item.date}
-            start={item.start}
-            end={item.end}
-            title={`AHMV — ${item.group} · ${item.activity}`}
-            location={item.venue}
-          />
+          <div className="mt-2">
+            <AddToCalendarButton
+              id={item.id}
+              date={item.date}
+              start={item.start}
+              end={item.end}
+              title={`AHMV — ${item.group} · ${item.activity}`}
+              location={directionTarget}
+            />
+          </div>
         )}
       </div>
     </article>
