@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, ExternalLink, Images } from "lucide-react";
+import { ArrowLeft, ExternalLink, Images, ZoomIn } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { MediaLuxuryViewer } from "@/components/media/media-luxury-viewer";
 import { getAlbum } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -42,6 +43,8 @@ function AlbumPage() {
   const photos = al.photos ?? [];
   const previewPhotos = photos.slice(0, 6);
   const [category, setCategory] = useState("all");
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
 
   const categories = useMemo(
     () =>
@@ -83,22 +86,31 @@ function AlbumPage() {
                 )}
               >
                 {previewPhotos.map((media, index) => (
-                  <a
+                  <button
                     key={media.url}
-                    href={media.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="relative overflow-hidden"
-                    aria-label={lang === "fr" ? media.alt.fr : media.alt.en}
+                    type="button"
+                    onClick={() => {
+                      setViewerIndex(index);
+                      setViewerOpen(true);
+                    }}
+                    className="group relative overflow-hidden text-left"
+                    aria-label={
+                      lang === "fr"
+                        ? `Ouvrir ${media.label?.fr ?? media.alt.fr}`
+                        : `Open ${media.label?.en ?? media.alt.en}`
+                    }
                   >
                     <img
                       src={media.url}
                       alt={lang === "fr" ? media.alt.fr : media.alt.en}
                       loading={index < 2 ? "eager" : "lazy"}
                       decoding="async"
-                      className="size-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+                      className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                     />
-                  </a>
+                    <span className="absolute right-2 top-2 inline-flex size-8 items-center justify-center border border-white/20 bg-navy-deep/70 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                      <ZoomIn className="size-4" />
+                    </span>
+                  </button>
                 ))}
               </div>
             ) : al.coverUrl ? (
@@ -250,38 +262,100 @@ function AlbumPage() {
               )}
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {visiblePhotos.map((media, index) => (
-                <a
-                  key={media.url}
-                  href={media.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="interactive-surface group overflow-hidden border border-navy/10 bg-background"
-                >
-                  <figure>
-                    <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
-                      <img
-                        src={media.url}
-                        alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                        loading={index < 4 ? "eager" : "lazy"}
-                        decoding="async"
-                        className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
-                      />
-                      {media.categoryLabel && (
-                        <span className="absolute left-2 top-2 bg-navy/82 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
-                          {l(media.categoryLabel)}
+            <div className="mt-6 sm:hidden">
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                  {lang === "fr" ? "Glissez pour parcourir" : "Swipe to browse"}
+                </p>
+                <span className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-sport">
+                  <ZoomIn className="size-3.5" />
+                  {lang === "fr" ? "Touchez pour zoomer" : "Tap to zoom"}
+                </span>
+              </div>
+              <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3">
+                {visiblePhotos.map((media, index) => {
+                  const fullIndex = photos.findIndex((photo) => photo.url === media.url);
+                  return (
+                    <button
+                      key={media.url}
+                      type="button"
+                      onClick={() => {
+                        setViewerIndex(Math.max(fullIndex, 0));
+                        setViewerOpen(true);
+                      }}
+                      className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center overflow-hidden border border-navy/10 bg-background text-left"
+                    >
+                      <figure>
+                        <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
+                          <img
+                            src={media.url}
+                            alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                            loading={index < 3 ? "eager" : "lazy"}
+                            decoding="async"
+                            className="size-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
+                          />
+                          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.76)_100%)]" />
+                          {media.categoryLabel && (
+                            <span className="absolute left-3 top-3 bg-navy/82 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
+                              {l(media.categoryLabel)}
+                            </span>
+                          )}
+                          <span className="absolute bottom-3 right-3 inline-flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur">
+                            <ZoomIn className="size-4" />
+                          </span>
+                        </div>
+                        <figcaption className="min-h-16 p-3">
+                          <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-navy">
+                            {media.label ? l(media.label) : lang === "fr" ? "Média AHMV" : "AHMV media"}
+                          </p>
+                        </figcaption>
+                      </figure>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-6 hidden grid-cols-2 gap-2 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {visiblePhotos.map((media, index) => {
+                const fullIndex = photos.findIndex((photo) => photo.url === media.url);
+                return (
+                  <button
+                    key={media.url}
+                    type="button"
+                    onClick={() => {
+                      setViewerIndex(Math.max(fullIndex, 0));
+                      setViewerOpen(true);
+                    }}
+                    className="interactive-surface group overflow-hidden border border-navy/10 bg-background text-left"
+                  >
+                    <figure>
+                      <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
+                        <img
+                          src={media.url}
+                          alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                          loading={index < 4 ? "eager" : "lazy"}
+                          decoding="async"
+                          className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                        />
+                        {media.categoryLabel && (
+                          <span className="absolute left-2 top-2 bg-navy/82 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
+                            {l(media.categoryLabel)}
+                          </span>
+                        )}
+                        <span className="absolute right-2 top-2 inline-flex size-8 items-center justify-center border border-white/20 bg-navy-deep/70 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+                          <ZoomIn className="size-4" />
                         </span>
-                      )}
-                    </div>
-                    <figcaption className="min-h-16 p-3">
-                      <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-navy">
-                        {media.label ? l(media.label) : lang === "fr" ? "Média AHMV" : "AHMV media"}
-                      </p>
-                    </figcaption>
-                  </figure>
-                </a>
-              ))}
+                      </div>
+                      <figcaption className="min-h-16 p-3">
+                        <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-navy">
+                          {media.label ? l(media.label) : lang === "fr" ? "Média AHMV" : "AHMV media"}
+                        </p>
+                      </figcaption>
+                    </figure>
+                  </button>
+                );
+              })}
             </div>
           </section>
         )}
@@ -299,6 +373,14 @@ function AlbumPage() {
 
         <HouseSponsorSlot placement={`album-${al.slug}`} count={1} compact className="mt-6" />
       </div>
+
+      <MediaLuxuryViewer
+        items={photos}
+        open={viewerOpen}
+        initialIndex={viewerIndex}
+        lang={lang}
+        onOpenChange={setViewerOpen}
+      />
     </>
   );
 }
