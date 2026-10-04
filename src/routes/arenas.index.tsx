@@ -187,7 +187,7 @@ function ArenasPage() {
                 {arena.website && <ExternalLink className="size-4 text-white/35" aria-hidden />}
               </div>
 
-              <h2 className="heading-card mt-5">
+              <h2 className="heading-card mt-5 text-white">
                 <Link
                   to="/arenas/$slug"
                   params={{ slug: arena.slug }}
