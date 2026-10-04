@@ -154,3 +154,24 @@ test("Voice human callback requests are structured, authenticated and privacy-sa
   assert.match(funnel, /intent === "human_handoff"/);
   assert.match(funnel, /outcome === "requested"/);
 });
+
+
+test("Voice shared knowledge route is private, source-linked and uses the common validated knowledge engine", async () => {
+  const [bridge, knowledge, voiceData, voiceAgent, prompt] = await Promise.all([
+    source("src/lib/ahmv-voice-bridge.server.ts"),
+    source("src/lib/ahmv-knowledge.ts"),
+    source("services/ahmv-voice-ai/src/ahm-data.js"),
+    source("services/ahmv-voice-ai/src/agent.js"),
+    source("services/ahmv-voice-ai/src/prompt.js"),
+  ]);
+
+  assert.match(bridge, /\$\{ROOT\}\/knowledge/);
+  assert.match(bridge, /searchAhmvKnowledge/);
+  assert.match(bridge, /new URL\(hit\.sourcePath, "https:\/\/ahmverdun\.ca"\)/);
+  assert.match(knowledge, /filter\(\(item\) => item\.validated\)/);
+  assert.match(knowledge, /ARENAS\.map/);
+  assert.match(voiceData, /findKnowledge/);
+  assert.match(voiceAgent, /name: 'find_knowledge'/);
+  assert.match(prompt, /call find_knowledge/);
+  assert.doesNotMatch(knowledge, /service_role|SUPABASE_SERVICE_ROLE_KEY|AHMV_VOICE_BRIDGE_TOKEN/);
+});
