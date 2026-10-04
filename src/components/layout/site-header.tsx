@@ -117,7 +117,7 @@ export function SiteHeader() {
 
   return (
     <header ref={headerRef} className={cn("sticky top-0 isolate border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)]", open ? "z-[300]" : "z-[200]")}>
-      {/* Top utility bar (desktop) */}
+      <div className="border-b border-white/10 bg-navy-deep">\n        <div className="container-site">\n          <AlertStatus language={lang} compact />\n        </div>\n      </div>\n\n      {/* Top utility bar (desktop) */
       <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
           <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
