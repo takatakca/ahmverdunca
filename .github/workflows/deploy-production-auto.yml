@@ -652,6 +652,34 @@ jobs:
 
           echo "Production homepage and exact release CSS/JS asset verification passed."
 
+      - name: Verify core public routes
+        run: |
+          set -euo pipefail
+
+          ROUTES=(
+            "/equipes"
+            "/horaires"
+            "/inscriptions"
+            "/tournois"
+            "/nouvelles"
+            "/galerie"
+            "/galerie/mediatheque-ahmv-2026-2027"
+            "/galerie/hockey-feminin-2026-2027"
+            "/galerie/entrainements-2026-2027"
+          )
+
+          for route in "${ROUTES[@]}"; do
+            echo "Checking $route"
+            scripts/deploy-production-http-smoke.sh status "$route"
+            BODY="$(scripts/deploy-production-http-smoke.sh body "$route")"
+            test -n "$BODY" || {
+              echo "ERROR: $route returned an empty body."
+              exit 1
+            }
+          done
+
+          echo "Core public route verification passed."
+
       - name: Verify search remains noindex
         run: |
           set -euo pipefail
