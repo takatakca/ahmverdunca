@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
+  WEEKLY_SCHEDULE_DOCUMENTS,
 } from "@/data/official-week";
 import { TEAMS } from "@/data/teams";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -35,6 +36,10 @@ export function OfficialWeekPreview() {
     year: "numeric",
   });
 
+  const latestDocument = WEEKLY_SCHEDULE_DOCUMENTS[0];
+  const upcomingOfficialDocument =
+    latestDocument && latestDocument.start > OFFICIAL_WEEK_META.end ? latestDocument : null;
+
   const savedTeam = TEAMS.find((item) => item.slug === preferredTeam);
   const savedTerms = officialScheduleTermsForTeam(savedTeam).map((term) => term.toUpperCase());
 
@@ -55,8 +60,38 @@ export function OfficialWeekPreview() {
   const isPersonalized = personalized.length > 0 && savedTeam;
 
   return (
-    <section className="competition-panel relative overflow-hidden py-12 text-navy-foreground md:py-18">\n      <div className="technical-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden />
+    <section className="competition-panel relative overflow-hidden py-10 text-navy-foreground md:py-14">
+      <div className="technical-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden />
       <div className="container-site relative">
+        {upcomingOfficialDocument ? (
+          <a
+            href={upcomingOfficialDocument.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="interactive-surface mb-6 flex flex-col gap-4 border border-sport/45 bg-sport/10 p-4 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div>
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Prochaine semaine publiée" : "Next published week"}
+              </p>
+              <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none text-white">
+                {lang === "fr"
+                  ? `Semaine ${upcomingOfficialDocument.week} · 5 au 11 octobre`
+                  : `Week ${upcomingOfficialDocument.week} · October 5–11`}
+              </p>
+              <p className="mt-2 text-xs text-white/58">
+                {lang === "fr"
+                  ? "PDF officiel AHMV publié le 2 octobre 2026. Touchez pour ouvrir l’horaire complet."
+                  : "Official AHMV PDF published October 2, 2026. Tap to open the full schedule."}
+              </p>
+            </div>
+            <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
+              {lang === "fr" ? "Ouvrir le PDF" : "Open PDF"}
+              <ExternalLink className="size-3.5" />
+            </span>
+          </a>
+        ) : null}
+
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow text-sport-foreground">
@@ -117,7 +152,7 @@ export function OfficialWeekPreview() {
                 <article
                   key={item.id}
                   className={cn(
-                    "interactive-surface border border-navy-foreground/15 bg-background p-5 text-foreground",
+                    "interactive-surface border border-white/12 bg-navy-deep p-5 text-white",
                     cancelled && "border-status-cancelled/50 bg-status-cancelled-soft",
                   )}
                 >
@@ -136,7 +171,7 @@ export function OfficialWeekPreview() {
                       </p>
                       <p
                         className={cn(
-                          "mt-1 font-display text-2xl font-extrabold tabular-nums text-navy",
+                          "mt-1 font-display text-2xl font-extrabold tabular-nums text-white",
                           cancelled && "text-status-cancelled line-through decoration-2",
                         )}
                       >
@@ -152,9 +187,9 @@ export function OfficialWeekPreview() {
                   </div>
 
                   <h3 className="mt-4 font-display text-xl font-bold uppercase">{item.group}</h3>
-                  <p className="mt-1 text-sm font-semibold text-sport">{item.activity}</p>
+                  <p className="mt-1 text-sm font-semibold text-sport-foreground">{item.activity}</p>
                   <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="flex min-w-0 items-center gap-1.5 text-sm text-muted-foreground">
+                    <p className="flex min-w-0 items-center gap-1.5 text-sm text-white/52">
                       <MapPin className="size-3.5 shrink-0" aria-hidden />
                       <span className="truncate">{item.venue}</span>
                     </p>
@@ -162,7 +197,7 @@ export function OfficialWeekPreview() {
                       href={mapsDirectionsUrl(arenaDirectionsTargetForVenue(item.venue))}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport hover:underline"
+                      className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport-foreground hover:underline"
                     >
                       {lang === "fr" ? "Itinéraire" : "Directions"} <ExternalLink className="size-3" />
                     </a>
