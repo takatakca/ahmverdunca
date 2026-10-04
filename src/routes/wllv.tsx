@@ -5,7 +5,7 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
 export const Route = createFileRoute("/wllv")({
@@ -30,6 +30,8 @@ export const Route = createFileRoute("/wllv")({
 
 function WllvPage() {
   const { t, lang } = useI18n();
+  const wllvCampPoster = uploadedAhmvMediaById(40)!;
+  const wllvCampSchedule = uploadedAhmvMediaById(34)!;
 
   return (
     <>
@@ -54,11 +56,11 @@ function WllvPage() {
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.25fr_0.75fr]">
           <div className="relative min-h-[390px] overflow-hidden p-7 md:min-h-[460px] md:p-10 lg:p-12">
             <img
-              src={OFFICIAL_MEDIA.practiceSkaters.url}
-              alt={lang === "fr" ? OFFICIAL_MEDIA.practiceSkaters.alt.fr : OFFICIAL_MEDIA.practiceSkaters.alt.en}
+              src={wllvCampPoster.url}
+              alt={lang === "fr" ? wllvCampPoster.alt.fr : wllvCampPoster.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 size-full bg-navy-deep object-contain"
             />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.96)_0%,rgba(7,16,43,0.76)_58%,rgba(7,16,43,0.34)_100%)]" />
             <div className="relative flex h-full flex-col justify-end">
@@ -100,6 +102,38 @@ function WllvPage() {
           </div>
         </section>
         <HouseSponsorSlot placement="wllv-gateway" count={1} compact />
+
+        <section className="grid gap-4 border border-navy/12 bg-ice p-4 sm:grid-cols-[0.85fr_1.15fr] sm:p-6">
+          <a
+            href={wllvCampPoster.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="interactive-surface relative min-h-[280px] overflow-hidden bg-navy sm:min-h-[360px]"
+          >
+            <img
+              src={wllvCampPoster.url}
+              alt={lang === "fr" ? wllvCampPoster.alt.fr : wllvCampPoster.alt.en}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-contain"
+            />
+          </a>
+          <a
+            href={wllvCampSchedule.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="interactive-surface relative min-h-[280px] overflow-hidden bg-background sm:min-h-[360px]"
+          >
+            <img
+              src={wllvCampSchedule.url}
+              alt={lang === "fr" ? wllvCampSchedule.alt.fr : wllvCampSchedule.alt.en}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-contain"
+            />
+          </a>
+        </section>
+
 
         <section className="overflow-hidden border border-navy/12 bg-background">
           <div className="bg-ice p-5 md:p-6">
