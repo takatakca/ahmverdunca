@@ -250,17 +250,17 @@ export function ContentContributionButton({
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
                 {lang === "fr" ? "Nouvelle valeur proposée" : "Proposed new value"}
               </span>
-              {activeField.kind === "textarea" || activeField.kind === "json" || activeField.kind === "string-list" ? (
+              {selected.kind === "textarea" || selected.kind === "json" || selected.kind === "string-list" ? (
                 <textarea
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
-                  rows={activeField.kind === "json" ? 8 : 5}
+                  rows={selected.kind === "json" ? 8 : 5}
                   className="mt-2 w-full border border-white/15 bg-competition p-3 font-mono text-sm text-white outline-none focus:border-sport"
                   placeholder={selected.placeholder?.[lang]}
                 />
               ) : (
                 <input
-                  type={activeField.kind === "url" || activeField.kind === "image-url" ? "url" : activeField.kind === "number" ? "number" : activeField.kind}
+                  type={selected.kind === "url" || selected.kind === "image-url" ? "url" : selected.kind === "number" ? "number" : selected.kind}
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
                   className="mt-2 h-11 w-full border border-white/15 bg-competition px-3 text-sm text-white outline-none focus:border-sport"
