@@ -32,12 +32,6 @@ export const WEEKLY_SCHEDULE_DOCUMENTS = [
   },
 ] as const;
 
-export const LATEST_PUBLISHED_SCHEDULE_DOCUMENT = WEEKLY_SCHEDULE_DOCUMENTS[0];
-
-export const HAS_NEWER_PUBLISHED_SCHEDULE =
-  Boolean(LATEST_PUBLISHED_SCHEDULE_DOCUMENT) &&
-  LATEST_PUBLISHED_SCHEDULE_DOCUMENT.start > OFFICIAL_WEEK_META.end;
-
 export const LEGACY_SCHEDULE_DOCUMENTS = [
   {
     title: "20 AVRIL AU 26 AVRIL.xlsx",
@@ -55,6 +49,12 @@ export const OFFICIAL_WEEK_META = {
   sourceUrl: "https://ahmverdun.com/storage/rTTG5UC6QPhZRxneJEW2szpFCJoJJnNEm7FCysuX.pdf",
   sourceKind: "AHMV weekly PDF",
 } as const;
+
+export const LATEST_PUBLISHED_SCHEDULE_DOCUMENT = WEEKLY_SCHEDULE_DOCUMENTS[0];
+
+export const HAS_NEWER_PUBLISHED_SCHEDULE =
+  Boolean(LATEST_PUBLISHED_SCHEDULE_DOCUMENT) &&
+  LATEST_PUBLISHED_SCHEDULE_DOCUMENT.start > OFFICIAL_WEEK_META.end;
 
 /**
  * Exact public-facing transcription of the latest AHMV weekly PDF that has been
