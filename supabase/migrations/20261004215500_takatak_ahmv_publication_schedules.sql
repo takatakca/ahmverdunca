@@ -52,6 +52,8 @@ returns table (
   organization_id text,
   service text,
   control_record_id uuid,
+  resource_type text,
+  resource_id text,
   revision bigint,
   publish_at timestamptz,
   expires_at timestamptz,
@@ -85,12 +87,16 @@ as $$
     c.organization_id,
     c.service,
     c.control_record_id,
+    r.resource_type,
+    r.resource_id,
     c.revision,
     c.publish_at,
     c.expires_at,
     c.requested_by
-  from claimed c;
-$$;
+  from claimed c
+  join public.ahmv_takatak_control_records r
+    on r.id = c.control_record_id;
+$;
 
 create or replace function public.ahmv_finish_takatak_publication_schedule(
   p_schedule_id uuid,
