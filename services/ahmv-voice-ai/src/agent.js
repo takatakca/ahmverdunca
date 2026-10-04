@@ -7,6 +7,7 @@ import { persistSessionSnapshot, saveSession } from './store.js';
 import { throwIfAborted } from './turn-controller.js';
 import { assertCompletedResponse } from './openai-contract.js';
 import { recordOpenAiUsage } from './usage.js';
+import { scheduleCapability } from './access-policy.js';
 import { recordArenaLookup, recordHumanHandoff, recordScheduleLookup } from './metrics.js';
 
 const openai = new OpenAI({
@@ -33,9 +34,10 @@ const tools = [
       properties: {
         team: { type: ['string', 'null'], description: 'Team/group name if known.' },
         category: { type: ['string', 'null'], description: 'Category such as M11, M13, Junior, etc.' },
-        date: { type: ['string', 'null'], description: 'Exact local date YYYY-MM-DD if the caller specified a day; otherwise null.' }
+        date: { type: ['string', 'null'], description: 'Exact local date YYYY-MM-DD if the caller specified a day; otherwise null.' },
+        scope: { type: 'string', enum: ['next', 'day', 'week'], description: 'Use next for one upcoming event, day for one date, week for a broader schedule.' }
       },
-      required: ['team', 'category', 'date'],
+      required: ['team', 'category', 'date', 'scope'],
       additionalProperties: false
     }
   },
@@ -189,9 +191,49 @@ async function runTool(session, call, { signal, persist = true } = {}) {
         result = { ok: false, code: 'FEATURE_DISABLED', feature: 'schedule_lookup' };
         break;
       }
-      result = await findSchedule(args);
-      recordScheduleLookup(session, result);
-      rememberScheduleResults(session, result);
+      {
+        const requestedScope = ['next', 'day', 'week'].includes(args.scope)
+          ? args.scope
+          : args.date
+            ? 'day'
+            : 'next';
+        const capability = scheduleCapability(session.access);
+        const fullSchedule = capability.weeklySchedule;
+        const lookup = fullSchedule
+          ? { team: args.team, category: args.category, date: args.date }
+          : { team: args.team, category: args.category, date: null };
+
+        result = await findSchedule(lookup);
+
+        if (result?.ok && !fullSchedule) {
+          result = {
+            ...result,
+            matches: Array.isArray(result.matches)
+              ? result.matches.slice(0, 1)
+              : [],
+            accessLimited: requestedScope !== 'next' || Boolean(args.date),
+            allowedCapability: 'next_event',
+            membershipUrl: session.membershipUrl || config.membershipUrl
+          };
+        }
+
+        recordScheduleLookup(session, result);
+        rememberScheduleResults(session, result);
+
+        if (
+          result?.accessLimited &&
+          session.membershipUrl &&
+          !session.smsItems.some(
+            (item) => item?.type === 'link' && item?.url === session.membershipUrl
+          )
+        ) {
+          addSmsItem(session, {
+            type: 'link',
+            label: 'GROUPE TAKATAK — accès membre',
+            url: session.membershipUrl
+          });
+        }
+      }
       break;
     case 'find_arena':
       if (!config.featureArenaLookup) {
