@@ -51,7 +51,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 begin
   insert into public.ahmv_takatak_control_record_versions (
     control_record_id,
@@ -73,7 +73,7 @@ begin
 
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists trg_ahmv_takatak_control_record_version
   on public.ahmv_takatak_control_records;
