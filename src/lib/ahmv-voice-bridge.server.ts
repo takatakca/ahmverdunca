@@ -13,6 +13,7 @@ import { memberActivationUrl, resolvePhoneEntitlement } from "../features/ahmv-p
 import { safeRecordPhoneInteraction } from "../features/ahmv-phone/audit/store.server";
 import { sendTransactionalSms } from "../features/ahmv-phone/messaging/send.server";
 import { fetchLiveSchedule, liveEventToVoiceMatch, liveScheduleIsReady } from "../features/ahmv-phone/schedules/live.server";
+import { searchAhmvKnowledge } from "./ahmv-knowledge";
 
 type Settings = Record<string, string | undefined>;
 type VoiceLanguage = "fr" | "en" | "es";
@@ -232,6 +233,33 @@ function arena(request: Request) {
   }));
   return json({ ok: true, status: matches.length ? "verified" : "no_match", matches });
 }
+function knowledge(request: Request) {
+  const url = new URL(request.url);
+  const query = limited(url.searchParams.get("q"), 300);
+  const languageRaw = limited(url.searchParams.get("lang"), 8).toLowerCase();
+  const language: VoiceLanguage = ["fr", "en", "es"].includes(languageRaw)
+    ? languageRaw as VoiceLanguage
+    : "fr";
+  if (!query) return json({ ok: false, code: "QUERY_REQUIRED" }, 400);
+
+  const hits = searchAhmvKnowledge(query, { limit: 5 }).map((hit) => ({
+    id: hit.id,
+    kind: hit.kind,
+    title: language === "en" ? hit.title.en : hit.title.fr,
+    answer: language === "en" ? hit.answer.en : hit.answer.fr,
+    ...(language === "es" ? { answerFr: hit.answer.fr, answerEn: hit.answer.en, translationRequired: true } : {}),
+    sourceUrl: new URL(hit.sourcePath, "https://ahmverdun.ca").toString(),
+    score: hit.score,
+  }));
+
+  return json({
+    ok: true,
+    status: hits.length ? "verified" : "no_match",
+    language,
+    hits,
+  });
+}
+
 async function bootstrap(request: Request, settings: Settings) {
   const body = await readJson(request);
   if (!body) return json({ ok: false, code: "INVALID_JSON" }, 400);
@@ -473,14 +501,14 @@ export async function handleAhmvVoiceBridge(
 ): Promise<Response | null> {
   const url = new URL(request.url);
   const routes = new Set([
-    `${ROOT}/schedule`, `${ROOT}/arena`, `${ROOT}/bootstrap`,
+    `${ROOT}/schedule`, `${ROOT}/arena`, `${ROOT}/knowledge`, `${ROOT}/bootstrap`,
     `${ROOT}/language`, `${ROOT}/sms`, `${ROOT}/interaction`,
     `${ROOT}/handoff`, `${ROOT}/readiness`,
   ]);
   if (!routes.has(url.pathname)) return null;
   if (!authorized(request, settings)) return json({ ok: false, code: "UNAUTHORIZED" }, 401);
 
-  const readOnly = [`${ROOT}/schedule`, `${ROOT}/arena`, `${ROOT}/readiness`];
+  const readOnly = [`${ROOT}/schedule`, `${ROOT}/arena`, `${ROOT}/knowledge`, `${ROOT}/readiness`];
   if (readOnly.includes(url.pathname) && !["GET", "HEAD"].includes(request.method)) {
     return new Response(JSON.stringify({ ok: false, code: "METHOD_NOT_ALLOWED" }), {
       status: 405, headers: { ...HEADERS, Allow: "GET, HEAD" },
@@ -495,6 +523,7 @@ export async function handleAhmvVoiceBridge(
   let response: Response;
   if (url.pathname === `${ROOT}/schedule`) response = await schedule(request, settings);
   else if (url.pathname === `${ROOT}/arena`) response = arena(request);
+  else if (url.pathname === `${ROOT}/knowledge`) response = knowledge(request);
   else if (url.pathname === `${ROOT}/bootstrap`) response = await bootstrap(request, settings);
   else if (url.pathname === `${ROOT}/language`) response = await voiceLanguage(request, settings);
   else if (url.pathname === `${ROOT}/sms`) response = await voiceSms(request, settings);
