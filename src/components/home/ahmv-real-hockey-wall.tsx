@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, BookOpen, Images, Users } from "lucide-react";
+import { ArrowRight, BookOpen, ChevronRight, Images, Users } from "lucide-react";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
 
@@ -104,43 +104,50 @@ export function AhmvRealHockeyWall() {
           </div>
         </div>
 
-        <div className="grid min-h-[510px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:min-h-[600px] lg:min-h-[650px]">
-          {MEDIA.map((media, index) => (
-            <a
-              key={media.url}
-              href={media.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`group relative overflow-hidden bg-navy ${index === 0 ? "row-span-2" : ""} ${index === 3 ? "hidden sm:block" : ""}`}
-            >
-              <img
-                src={media.url}
-                alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                loading={index === 0 ? "eager" : "lazy"}
-                decoding="async"
-                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.80)_100%)]" />
-              <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/62">
-                  {l(media.categoryLabel)} · {lang === "fr" ? "Photo réelle AHMV" : "Real AHMV photo"}
-                </p>
-                <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
-                  {l(media.label)} <ArrowRight className="size-3.5" />
-                </span>
-              </div>
-            </a>
-          ))}
+        <div className="relative min-w-0 bg-white/10">
+          <div className="absolute right-3 top-3 z-10 inline-flex items-center gap-1 border border-white/15 bg-navy-deep/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/72 backdrop-blur sm:hidden">
+            {lang === "fr" ? "Glissez" : "Swipe"} <ChevronRight className="size-3 text-sport-foreground" aria-hidden />
+          </div>
+
+          <div className="scrollbar-none flex min-h-[370px] snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain scroll-px-3 sm:grid sm:min-h-[600px] sm:grid-cols-2 sm:grid-rows-2 sm:overflow-visible lg:min-h-[650px]">
+            {MEDIA.map((media, index) => (
+              <a
+                key={media.url}
+                href={media.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group relative min-w-[84vw] snap-start overflow-hidden bg-navy sm:min-w-0 ${index === 0 ? "sm:row-span-2" : ""}`}
+              >
+                <img
+                  src={media.url}
+                  alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.80)_100%)]" />
+                <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                  <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/62">
+                    {l(media.categoryLabel)} · {lang === "fr" ? "Photo réelle AHMV" : "Real AHMV photo"}
+                  </p>
+                  <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
+                    {l(media.label)} <ArrowRight className="size-3.5" />
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="relative border-t border-white/10">
-        <div className="container-site grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="container-site">
+          <div className="scrollbar-none flex snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain bg-white/10 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4">
           {actions.map(({ to, number, icon: Icon, fr, en, frBody, enBody }) => (
             <Link
               key={number}
               to={to}
-              className="interactive-surface group flex min-h-[150px] flex-col bg-competition p-5 hover:bg-white/[0.045]"
+              className="interactive-surface group flex min-h-[138px] min-w-[76vw] snap-start flex-col bg-competition p-5 hover:bg-white/[0.045] sm:min-w-0"
             >
               <div className="flex items-center justify-between">
                 <span className="font-display text-xs font-extrabold uppercase tracking-[0.16em] text-sport-foreground">{number}</span>
@@ -153,6 +160,7 @@ export function AhmvRealHockeyWall() {
               <ArrowRight className="mt-auto size-4 translate-y-2 text-sport-foreground transition-transform group-hover:translate-x-1 group-hover:translate-y-2" />
             </Link>
           ))}
+          </div>
         </div>
       </div>
     </section>
