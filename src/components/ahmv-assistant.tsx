@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { Bot, CalendarDays, PhoneCall, Send, Sparkles, Trophy, Users, X } from "lucide-react";
+import { Bot, CalendarDays, Mic, PhoneCall, Send, Sparkles, Trophy, Users, X } from "lucide-react";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { Button } from "@/components/ui/button";
 import { buildAssistantReply, type AssistantReply } from "@/lib/ahmv-assistant";
@@ -38,7 +38,7 @@ function assistantCopy(language: AssistantLanguageCode) {
   if (ui === "en") {
     return {
       title: "AHMV Assistant",
-      subtitle: "Smart guide · validated public data",
+      subtitle: "Smart guide · text or voice · validated public data",
       greeting: "Hi. I can find your team, schedule, results, arena or registration. I can also add a team to “My teams”.",
       placeholder: "Ex. Louves results, M11 Coyotes…",
       ask: "Ask",
@@ -148,7 +148,7 @@ export function AhmvAssistant() {
       <button
         type="button"
         onClick={openAssistant}
-        className="premium-control fixed bottom-20 left-3 z-40 flex min-h-12 items-center gap-2 border border-sport/40 bg-competition/96 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_18px_50px_-26px_rgba(0,0,0,0.9)] backdrop-blur lg:bottom-4 lg:left-4"
+        className="premium-control fixed bottom-20 left-3 z-40 flex min-h-12 items-center gap-2 border border-sport/55 bg-competition/96 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_18px_50px_-22px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-4 lg:left-4"
         aria-label={copy.title}
       >
         <span className="relative flex size-8 items-center justify-center border border-white/12 bg-white/[0.04]">
@@ -156,6 +156,10 @@ export function AhmvAssistant() {
           <span className="absolute -right-1 -top-1 size-2 animate-pulse rounded-full bg-sport" aria-hidden />
         </span>
         <span className="hidden sm:inline">{copy.title}</span>
+        <span className="inline-flex items-center gap-1 border-l border-white/12 pl-2 text-[8px] font-bold uppercase tracking-[0.12em] text-white/65">
+          <Mic className="size-3.5 text-sport-foreground" aria-hidden />
+          <span className="hidden md:inline">{assistantUiLanguage(assistantLanguage) === "fr" ? "Parler" : assistantUiLanguage(assistantLanguage) === "es" ? "Hablar" : "Talk"}</span>
+        </span>
         <Sparkles className="size-3.5 text-sport-foreground" aria-hidden />
       </button>
 
@@ -259,7 +263,12 @@ export function AhmvAssistant() {
                 </button>
               </div>
 
-              <form onSubmit={submit} className="mt-4">
+              <div className="mt-4 flex items-center gap-2 border-l-2 border-sport bg-sport/5 px-3 py-2 text-[10px] font-semibold text-navy">
+                <Mic className="size-4 shrink-0 text-sport" aria-hidden />
+                <span>{assistantUiLanguage(assistantLanguage) === "fr" ? "Vous pouvez parler directement au micro pour trouver une équipe, un horaire, un résultat ou une aréna." : assistantUiLanguage(assistantLanguage) === "es" ? "Puedes hablar directamente al micrófono para encontrar un equipo, horario, resultado o arena." : "You can speak directly into the microphone to find a team, schedule, result or arena."}</span>
+              </div>
+
+              <form onSubmit={submit} className="mt-3">
                 <label htmlFor="ahmv-assistant-input" className="sr-only">{copy.ask}</label>
                 <div className="grid grid-cols-[1fr_auto_auto] gap-2">
                   <input
