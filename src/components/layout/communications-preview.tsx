@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { Button } from "@/components/ui/button";
+import { AlertStatus } from "./alert-status";
 import { LogoSlot } from "./logo-slot";
 import { DEVELOPMENT_SUPPORT } from "@/lib/monetization";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -159,9 +160,20 @@ export function CommunicationsPreview() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="communications-preview-title"
-        className="relative w-full max-w-[520px] overflow-hidden border border-white/12 bg-background shadow-[0_28px_80px_-36px_rgba(0,0,0,0.8)]"
+        className="relative flex max-h-[calc(100dvh-1rem)] w-full max-w-[520px] flex-col overflow-hidden rounded-2xl border border-white/12 bg-background shadow-[0_28px_80px_-36px_rgba(0,0,0,0.8)]"
       >
-        <div className="relative h-[106px] overflow-hidden bg-competition sm:h-[128px]">
+        <div className="flex shrink-0 items-start bg-competition pt-2 text-white">
+          <div className="min-w-0 flex-1"><AlertStatus language={assistantUiLanguage(assistantLanguage)} /></div>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="premium-control mr-2 flex size-10 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white hover:bg-white/20"
+            aria-label={assistantUiLanguage(assistantLanguage) === "fr" ? "Fermer" : assistantUiLanguage(assistantLanguage) === "es" ? "Cerrar" : "Close"}
+          >
+            <X className="size-4" />
+          </button>
+        </div>
+        <div className="relative shrink-0 h-[106px] overflow-hidden bg-competition sm:h-[128px]">
           <img
             src={OFFICIAL_MEDIA.practiceGoalie.url}
             alt={lang === "fr" ? OFFICIAL_MEDIA.practiceGoalie.alt.fr : OFFICIAL_MEDIA.practiceGoalie.alt.en}
@@ -182,17 +194,10 @@ export function CommunicationsPreview() {
               </h2>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            className="premium-control absolute right-2.5 top-2.5 flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur"
-            aria-label={assistantUiLanguage(assistantLanguage) === "fr" ? "Fermer" : assistantUiLanguage(assistantLanguage) === "es" ? "Cerrar" : "Close"}
-          >
-            <X className="size-4" />
-          </button>
+
         </div>
 
-        <div className="max-h-[calc(100dvh-8rem)] overflow-y-auto p-4 sm:max-h-[470px] sm:p-5">
+        <div className="min-h-0 overflow-y-auto p-4 sm:max-h-[470px] sm:p-5">
           <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">{copy.body}</p>
 
           <div className="mt-5 grid grid-cols-3 gap-2">
