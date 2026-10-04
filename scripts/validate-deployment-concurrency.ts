@@ -12,6 +12,6 @@ assert.match(pre, /concurrency:\s*\n\s*group: ahmverdun-preproduction\s*\n\s*can
 assert.match(auto, /AHMV_SSH_MAX_ATTEMPTS=3 ahmv-ssh/);
 assert.match(auto, /AHMV_SFTP_MAX_ATTEMPTS=2 scripts\/deploy-production-sftp\.sh test/);
 assert.doesNotMatch(auto, /AHMV_SSH_MAX_ATTEMPTS=8 ahmv-ssh/);
-assert.doesNotMatch(auto, /group: ahmverdun-production-auto/);
+assert.equal((auto.match(/group: ahmverdun-production-auto/g) ?? []).length, 1);
 
 console.log("AHM Verdun deployment concurrency contract passed.");
