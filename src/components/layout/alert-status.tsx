@@ -26,7 +26,11 @@ export function AlertStatus({ language = "fr", compact = false }: { language?: s
         {active.length ? <Bell className="size-4 shrink-0 text-amber-300" aria-hidden /> : <CircleCheck className="size-4 shrink-0 text-emerald-300" aria-hidden />}
         <span>{language === "es" ? "Alertas AHMV" : lang === "fr" ? "Alertes AHMV" : "AHMV alerts"}</span>
       </div>
-      {active.length === 0 ? <p className={compact ? "text-[11px] text-white/75" : "mt-1 text-xs text-white/75"}>{empty}</p> : compact ? (\n        <p className="min-w-0 truncate text-[11px] font-semibold text-amber-100">\n          {active[0]?.title[lang]}{active.length > 1 ? ` · +${active.length - 1}` : ""}\n        </p>\n      ) : (
+      {active.length === 0 ? <p className={compact ? "text-[11px] text-white/75" : "mt-1 text-xs text-white/75"}>{empty}</p> : compact ? (
+        <p className="min-w-0 truncate text-[11px] font-semibold text-amber-100">
+          {active[0]?.title[lang]}{active.length > 1 ? ` · +${active.length - 1}` : ""}
+        </p>
+      ) : (
         <ul className="mt-2 space-y-3">
           {active.map((alert) => (
             <li key={alert.id} className="border-l-2 border-amber-300 pl-3">
