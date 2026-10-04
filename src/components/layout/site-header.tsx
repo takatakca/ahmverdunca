@@ -321,10 +321,9 @@ export function SiteHeader() {
         >
           <nav
             aria-label={lang === "fr" ? "Navigation mobile" : "Mobile navigation"}
-            className="container-site py-4"
+            className="container-site py-3"
           >
-            <div className="mb-4 overflow-hidden rounded-xl"><AlertStatus language={lang} /></div>
-            <div className="flex items-center justify-between gap-4 border-b border-navy-foreground/12 pb-4">
+            <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/12 pb-3">
               <div className="min-w-0">
                 <p className="eyebrow text-sport-foreground">
                   {lang === "fr" ? "Centre parent AHMV" : "AHMV parent centre"}
@@ -340,14 +339,14 @@ export function SiteHeader() {
                   {SITE.season} · Verdun
                 </p>
               </div>
-              <LogoSlot className="size-16" />
+              <LogoSlot className="size-14" />
             </div>
 
             {selectedTeams[0] ? (
               <div className="mt-3 grid grid-cols-[1fr_auto] overflow-hidden border border-sport/35 bg-sport/10">
                 <a
                   href={publicTeamHubUrl(selectedTeams[0])}
-                  className="interactive-surface flex min-h-16 items-center justify-between gap-3 px-4 py-3"
+                  className="interactive-surface flex min-h-12 items-center justify-between gap-3 px-3 py-2.5"
                 >
                   <span className="min-w-0">
                     <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
@@ -377,7 +376,7 @@ export function SiteHeader() {
                 <Link
                   to="/equipes/$slug"
                   params={{ slug: savedTeam.slug }}
-                  className="interactive-surface flex min-h-16 items-center justify-between gap-3 px-4 py-3"
+                  className="interactive-surface flex min-h-12 items-center justify-between gap-3 px-3 py-2.5"
                 >
                   <span>
                     <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
@@ -399,7 +398,7 @@ export function SiteHeader() {
             ) : (
               <Link
                 to="/equipes"
-                className="interactive-surface mt-3 flex min-h-16 items-center justify-between gap-3 border border-sport/35 bg-sport/10 px-4 py-3"
+                className="interactive-surface mt-2.5 flex min-h-12 items-center justify-between gap-3 border border-sport/35 bg-sport/10 px-3 py-2.5"
               >
                 <span>
                   <span className="block text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
@@ -413,11 +412,11 @@ export function SiteHeader() {
               </Link>
             )}
 
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-2.5 grid grid-cols-4 gap-px overflow-hidden border border-white/12 bg-white/12">
               <Link
                 to="/horaires"
                 search={preferredTeam ? { team: preferredTeam } : {}}
-                className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+                className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
               >
                 <CalendarDays className="size-4 text-sport-foreground" />
                 <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Horaire" : "Schedule"}</span>
@@ -427,7 +426,7 @@ export function SiteHeader() {
                   href={officialTeamResultsUrl(selectedTeams[0])}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+                  className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
                 >
                   <Trophy className="size-4 text-sport-foreground" />
                   <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Résultats" : "Results"}</span>
@@ -435,7 +434,7 @@ export function SiteHeader() {
               ) : (
                 <Link
                   to="/equipes"
-                  className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+                  className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
                 >
                   <Trophy className="size-4 text-sport-foreground" />
                   <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Résultats" : "Results"}</span>
@@ -443,14 +442,14 @@ export function SiteHeader() {
               )}
               <Link
                 to="/arenas"
-                className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+                className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
               >
                 <MapPin className="size-4 text-sport-foreground" />
                 <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Arénas" : "Arenas"}</span>
               </Link>
               <Link
                 to="/equipes"
-                className="premium-control flex min-h-[68px] flex-col justify-between border border-white/12 bg-white/[0.035] p-3 text-white"
+                className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
               >
                 <Users className="size-4 text-sport-foreground" />
                 <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Équipes" : "Teams"}</span>
@@ -459,7 +458,7 @@ export function SiteHeader() {
 
             <Link
               to="/recherche"
-              className="premium-control mt-3 flex min-h-11 items-center justify-between border border-white/12 bg-white/[0.025] px-3 text-sm font-semibold text-white/80"
+              className="premium-control mt-2.5 flex min-h-10 items-center justify-between border border-white/12 bg-white/[0.025] px-3 text-xs font-semibold text-white/80"
             >
               <span className="flex items-center gap-2">
                 <Search className="size-4 text-sport-foreground" />
@@ -468,7 +467,7 @@ export function SiteHeader() {
               <ChevronDown className="size-3.5 -rotate-90 text-white/35" />
             </Link>
 
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-3 grid grid-cols-3 gap-1.5">
               {[
                 { key: "news", to: "/nouvelles" },
                 { key: "registration", to: "/inscriptions" },
@@ -480,7 +479,7 @@ export function SiteHeader() {
                 <Link
                   key={key}
                   to={to}
-                  className="premium-control inline-flex min-h-9 items-center border border-white/10 px-3 text-[9px] font-bold uppercase tracking-[0.11em] text-white/68 hover:border-sport hover:text-white"
+                  className="premium-control inline-flex min-h-9 items-center justify-center border border-white/10 px-2 text-center text-[8px] font-bold uppercase tracking-[0.09em] text-white/68 hover:border-sport hover:text-white"
                   activeProps={{ className: "!border-sport !text-sport-foreground" }}
                 >
                   {t(`nav.${key}` as TranslationKey)}
@@ -490,13 +489,13 @@ export function SiteHeader() {
 
             <a
               href="/membership"
-              className="premium-control mt-4 flex min-h-12 items-center justify-between border border-sport/30 bg-sport/10 px-3 text-white"
+              className="premium-control mt-3 flex min-h-10 items-center justify-between border border-sport/30 bg-sport/10 px-3 text-white"
             >
               <span className="flex items-center gap-2">
                 <Sparkles className="size-4 text-sport-foreground" />
                 <span>
                   <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member · APERÇU</span>
-                  <span className="mt-0.5 block font-display text-base font-extrabold uppercase">
+                  <span className="mt-0.5 block font-display text-sm font-extrabold uppercase">
                     {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
                   </span>
                 </span>
@@ -504,10 +503,10 @@ export function SiteHeader() {
               <ChevronDown className="size-3.5 -rotate-90 text-sport-foreground" />
             </a>
 
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
               <Link
                 to="/connexion"
-                className="premium-control flex min-h-10 items-center justify-between border border-white/10 px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white/65"
+                className="premium-control flex min-h-9 items-center justify-between border border-white/10 px-3 text-[9px] font-bold uppercase tracking-[0.09em] text-white/65"
               >
                 <span className="flex items-center gap-2"><LogIn className="size-3.5" />{t("nav.login")}</span>
                 <ChevronDown className="size-3 -rotate-90" />
@@ -515,7 +514,7 @@ export function SiteHeader() {
               {showPhone && phonePublic ? (
                 <a
                   href={`tel:${phoneE164}`}
-                  className="premium-control flex min-h-10 items-center justify-between border border-white/10 px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white/65"
+                  className="premium-control flex min-h-9 items-center justify-between border border-white/10 px-3 text-[9px] font-bold uppercase tracking-[0.09em] text-white/65"
                 >
                   <span className="flex items-center gap-2"><PhoneCall className="size-3.5" />{phoneDisplay}</span>
                   <ChevronDown className="size-3 -rotate-90" />
@@ -523,7 +522,7 @@ export function SiteHeader() {
               ) : (
                 <Link
                   to="/partenaires"
-                  className="premium-control flex min-h-10 items-center justify-between border border-white/10 px-3 text-[10px] font-bold uppercase tracking-[0.1em] text-white/65"
+                  className="premium-control flex min-h-9 items-center justify-between border border-white/10 px-3 text-[9px] font-bold uppercase tracking-[0.09em] text-white/65"
                 >
                   <span>{lang === "fr" ? "Partenaires" : "Partners"}</span>
                   <ChevronDown className="size-3 -rotate-90" />
@@ -531,7 +530,7 @@ export function SiteHeader() {
               )}
             </div>
 
-            <div className="mt-3 flex items-center justify-between border-t border-white/10 pt-3">
+            <div className="mt-2 flex items-center justify-between border-t border-white/10 pt-2.5">
               <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/38">
                 {lang === "fr" ? "Langue" : "Language"}
               </span>
