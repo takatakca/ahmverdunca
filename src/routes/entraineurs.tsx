@@ -142,7 +142,7 @@ function CoachesPage() {
               {lang === "fr" ? "Contacter l’association pour coordonner un besoin réel." : "Contact the association to coordinate a real need."}
             </p>
           </Link>
-          <div className="bg-ice p-5">
+          <div className="bg-competition p-5 text-white">
             <ShieldAlert className="size-5 text-sport-foreground" aria-hidden />
             <h2 className="mt-4 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "Collecte d’équipe" : "Team fundraising"}
