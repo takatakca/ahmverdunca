@@ -349,8 +349,10 @@ export function NewsCentre() {
   const resetFilters = () => setFilters(DEFAULT_FILTERS);
 
   return (
-    <section className="container-site py-8 md:py-11">
-      <div className="overflow-hidden border border-navy/12 bg-background">
+    <section className="relative overflow-hidden bg-navy-deep py-8 text-white md:py-11">
+      <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
+      <div className="container-site relative">
+        <div className="overflow-hidden border border-white/12 bg-competition">
         <div className="bg-competition px-5 py-6 text-white md:px-7">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -393,10 +395,10 @@ export function NewsCentre() {
         </div>
 
         {filterOpen ? (
-          <div className="border-b border-navy/10 bg-ice p-5 md:p-6">
+          <div className="border-b border-white/10 bg-navy p-5 md:p-6">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
               <label className="block">
-                <span className="eyebrow text-navy">{lang === "fr" ? "Association" : "Association"}</span>
+                <span className="eyebrow text-white/60">{lang === "fr" ? "Association" : "Association"}</span>
                 <select
                   value={filters.association}
                   onChange={(event) =>
@@ -417,7 +419,7 @@ export function NewsCentre() {
               </label>
 
               <label className="block">
-                <span className="eyebrow text-navy">{lang === "fr" ? "Équipe" : "Team"}</span>
+                <span className="eyebrow text-white/60">{lang === "fr" ? "Équipe" : "Team"}</span>
                 <select
                   value={filters.team}
                   onChange={(event) => setFilters((current) => ({ ...current, team: event.target.value }))}
@@ -444,7 +446,7 @@ export function NewsCentre() {
               </label>
 
               <label className="block">
-                <span className="eyebrow text-navy">{lang === "fr" ? "Source" : "Source"}</span>
+                <span className="eyebrow text-white/60">{lang === "fr" ? "Source" : "Source"}</span>
                 <select
                   value={filters.network}
                   onChange={(event) =>
@@ -465,7 +467,7 @@ export function NewsCentre() {
               </label>
 
               <label className="block">
-                <span className="eyebrow text-navy">{lang === "fr" ? "Statut" : "Status"}</span>
+                <span className="eyebrow text-white/60">{lang === "fr" ? "Statut" : "Status"}</span>
                 <select
                   value={filters.kind}
                   onChange={(event) =>
@@ -483,7 +485,7 @@ export function NewsCentre() {
               </label>
 
               <label className="block">
-                <span className="eyebrow text-navy">{lang === "fr" ? "Période" : "Period"}</span>
+                <span className="eyebrow text-white/60">{lang === "fr" ? "Période" : "Period"}</span>
                 <select
                   value={filters.timeRange}
                   onChange={(event) =>
@@ -503,7 +505,7 @@ export function NewsCentre() {
               </label>
 
               <label className="block">
-                <span className="eyebrow text-navy">{lang === "fr" ? "Ordre" : "Order"}</span>
+                <span className="eyebrow text-white/60">{lang === "fr" ? "Ordre" : "Order"}</span>
                 <select
                   value={filters.sort}
                   onChange={(event) =>
@@ -544,18 +546,18 @@ export function NewsCentre() {
           </div>
         ) : null}
 
-        <div className="flex flex-col gap-3 border-b border-navy/10 bg-background px-5 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6">
-          <p className="text-sm font-semibold text-navy">
+        <div className="flex flex-col gap-3 border-b border-white/10 bg-navy-deep px-5 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6">
+          <p className="text-sm font-semibold text-white">
             {visibleItems.length} {lang === "fr" ? "nouvelle(s) affichée(s)" : "news item(s) shown"}
           </p>
-          <div className="flex flex-wrap gap-2 text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+          <div className="flex flex-wrap gap-2 text-[9px] font-bold uppercase tracking-[0.12em] text-white/48">
             <span className="inline-flex items-center gap-1.5"><ShieldCheck className="size-3.5 text-sport" /> {lang === "fr" ? "Officiel vérifié" : "Verified official"}</span>
             <span className="inline-flex items-center gap-1.5"><Users className="size-3.5 text-sport" /> {lang === "fr" ? "Communauté identifiée" : "Tagged community"}</span>
           </div>
         </div>
 
         {visibleItems.length > 0 ? (
-          <div className="divide-y divide-navy/10">
+          <div className="divide-y divide-white/10">
             {visibleItems.map((item) => {
               const Icon = sourceIcon(item.network);
               const inner = (
@@ -599,12 +601,12 @@ export function NewsCentre() {
                     </div>
                   </div>
 
-                  <div className="flex min-w-0 flex-col p-5 md:p-6">
+                  <div className="flex min-w-0 flex-col bg-competition p-5 md:p-6">
                     <p className="eyebrow text-sport">{item.dateLabel}</p>
-                    <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.92] text-navy transition-colors group-hover:text-sport md:text-3xl">
+                    <h3 className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white transition-colors group-hover:text-sport-foreground md:text-3xl">
                       {item.title}
                     </h3>
-                    <p className="mt-3 line-clamp-4 max-w-3xl text-sm leading-6 text-muted-foreground">
+                    <p className="mt-3 line-clamp-4 max-w-3xl text-sm leading-6 text-white/58">
                       {item.text}
                     </p>
                     {item.teamSlugs.length > 0 ? (
@@ -612,7 +614,7 @@ export function NewsCentre() {
                         {item.teamSlugs.map((slug) => {
                           const team = CURRENT_TEAMS.find((candidate) => candidate.slug === slug);
                           return team ? (
-                            <span key={slug} className="border border-navy/10 bg-ice px-2 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-navy">
+                            <span key={slug} className="border border-white/12 bg-white/[0.04] px-2 py-1 text-[9px] font-bold uppercase tracking-[0.12em] text-white/72">
                               {l(team.name)}
                             </span>
                           ) : null;
@@ -638,7 +640,7 @@ export function NewsCentre() {
                   key={item.id}
                   to="/nouvelles/$slug"
                   params={{ slug: item.internalSlug }}
-                  className="group grid bg-background transition-colors hover:bg-ice/50 sm:grid-cols-[16rem_minmax(0,1fr)]"
+                  className="group grid bg-competition transition-colors hover:bg-white/[0.03] sm:grid-cols-[16rem_minmax(0,1fr)]"
                 >
                   {inner}
                 </Link>
@@ -648,14 +650,14 @@ export function NewsCentre() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group grid bg-background transition-colors hover:bg-ice/50 sm:grid-cols-[16rem_minmax(0,1fr)]"
+                  className="group grid bg-competition transition-colors hover:bg-white/[0.03] sm:grid-cols-[16rem_minmax(0,1fr)]"
                 >
                   {inner}
                 </a>
               ) : (
                 <article
                   key={item.id}
-                  className="group grid bg-background sm:grid-cols-[16rem_minmax(0,1fr)]"
+                  className="group grid bg-competition sm:grid-cols-[16rem_minmax(0,1fr)]"
                 >
                   {inner}
                 </article>
@@ -664,19 +666,20 @@ export function NewsCentre() {
           </div>
         ) : (
           <div className="px-5 py-14 text-center md:px-6">
-            <p className="font-display text-3xl font-extrabold uppercase text-navy">
+            <p className="font-display text-3xl font-extrabold uppercase text-white">
               {lang === "fr" ? "Aucun résultat avec ces filtres." : "No results for these filters."}
             </p>
             <button
               type="button"
               onClick={resetFilters}
-              className="mt-5 inline-flex min-h-11 items-center gap-2 border border-navy/12 px-4 text-xs font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+              className="mt-5 inline-flex min-h-11 items-center gap-2 border border-white/18 px-4 text-xs font-bold uppercase tracking-[0.12em] text-white hover:border-sport hover:text-sport-foreground"
             >
               <RotateCcw className="size-4" />
               {lang === "fr" ? "Voir toutes les nouvelles" : "Show all news"}
             </button>
           </div>
         )}
+        </div>
       </div>
     </section>
   );

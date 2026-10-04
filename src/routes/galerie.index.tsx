@@ -53,7 +53,9 @@ function GalleryPage() {
         }
       />
 
-      <div className="container-site py-9 md:py-14">
+      <div className="relative overflow-hidden bg-navy-deep py-9 text-white md:py-14">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
+        <div className="container-site relative">
         <HouseSponsorSlot placement="gallery" compact className="mb-8" />
         <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
           <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
@@ -82,8 +84,8 @@ function GalleryPage() {
             ))}
           </div>
         </section>
-        <section className="grid gap-0 overflow-hidden border border-navy/12 lg:grid-cols-[0.7fr_1.3fr]">
-          <div className="bg-navy p-6 text-navy-foreground md:p-8">
+        <section className="grid gap-px overflow-hidden border border-white/12 bg-white/10 lg:grid-cols-[0.7fr_1.3fr]">
+          <div className="bg-competition p-6 text-white md:p-8">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Archives AHMV vérifiées" : "Verified AHMV archives"}</p>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/70">
               {lang === "fr"
@@ -91,11 +93,11 @@ function GalleryPage() {
                 : "The new media library directly hosts media supplied to AHMV and also preserves links to previously published historical archives. Collections can be browsed by season and type."}
             </p>
           </div>
-          <div className="rink-surface p-6 md:p-8">
+          <div className="bg-navy p-6 text-white md:p-8">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="eyebrow text-sport">{lang === "fr" ? "Filtre d’archive" : "Archive filter"}</p>
-                <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-navy">
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Filtre d’archive" : "Archive filter"}</p>
+                <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-white">
                   {albums.length} {lang === "fr" ? "albums" : "albums"}
                 </p>
               </div>
@@ -107,7 +109,7 @@ function GalleryPage() {
                     onClick={() => setSeason("all")}
                     className={cn(
                       "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
-                      season === "all" ? "border-navy bg-navy text-navy-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                      season === "all" ? "border-sport bg-sport text-sport-foreground" : "border-white/15 bg-white/[0.04] text-white hover:border-sport",
                     )}
                   >
                     {lang === "fr" ? "Toutes saisons" : "All seasons"}
@@ -120,7 +122,7 @@ function GalleryPage() {
                       onClick={() => setSeason(value)}
                       className={cn(
                         "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.16em]",
-                        season === value ? "border-navy bg-navy text-navy-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                        season === value ? "border-sport bg-sport text-sport-foreground" : "border-white/15 bg-white/[0.04] text-white hover:border-sport",
                       )}
                     >
                       {value}
@@ -134,7 +136,7 @@ function GalleryPage() {
                     onClick={() => setEventType("all")}
                     className={cn(
                       "premium-control shrink-0 border px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em]",
-                      eventType === "all" ? "border-sport bg-sport text-sport-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                      eventType === "all" ? "border-sport bg-sport text-sport-foreground" : "border-white/15 bg-white/[0.04] text-white hover:border-sport",
                     )}
                   >
                     {lang === "fr" ? "Tous types" : "All types"}
@@ -147,7 +149,7 @@ function GalleryPage() {
                       onClick={() => setEventType(value.fr)}
                       className={cn(
                         "premium-control shrink-0 border px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em]",
-                        eventType === value.fr ? "border-sport bg-sport text-sport-foreground" : "border-navy/15 bg-background/80 text-navy hover:border-sport",
+                        eventType === value.fr ? "border-sport bg-sport text-sport-foreground" : "border-white/15 bg-white/[0.04] text-white hover:border-sport",
                       )}
                     >
                       {l(value)}
@@ -202,9 +204,9 @@ function GalleryPage() {
             ))}
           </div>
         ) : (
-          <div className="mt-7 border border-navy/12 bg-ice p-8 text-center">
+          <div className="mt-7 border border-white/12 bg-competition p-8 text-center">
             <Images className="mx-auto size-6 text-sport" aria-hidden />
-            <p className="mt-3 font-display text-2xl font-extrabold uppercase text-navy">
+            <p className="mt-3 font-display text-2xl font-extrabold uppercase text-white">
               {lang === "fr" ? "Aucune archive pour ces filtres" : "No archives for these filters"}
             </p>
             <button
@@ -213,16 +215,17 @@ function GalleryPage() {
                 setSeason("all");
                 setEventType("all");
               }}
-              className="mt-4 min-h-11 border border-navy/15 bg-background px-4 text-[9px] font-bold uppercase tracking-[0.14em] text-navy hover:border-sport"
+              className="mt-4 min-h-11 border border-white/18 bg-white/[0.04] px-4 text-[9px] font-bold uppercase tracking-[0.14em] text-white hover:border-sport"
             >
               {lang === "fr" ? "Réinitialiser les filtres" : "Reset filters"}
             </button>
           </div>
         )}
 
-        <div className="mt-8 flex items-center gap-3 border-t border-navy/12 pt-5 text-xs text-muted-foreground">
+        <div className="mt-8 flex items-center gap-3 border-t border-white/12 pt-5 text-xs text-white/48">
           <CalendarDays className="size-4 text-sport" />
           <span>{lang === "fr" ? "Archives organisées par saison et type d’événement." : "Archives organized by season and event type."}</span>
+        </div>
         </div>
       </div>
     </>
