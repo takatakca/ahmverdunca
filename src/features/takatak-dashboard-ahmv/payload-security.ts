@@ -1,5 +1,22 @@
-const FORBIDDEN_KEY =
-  /(^|_)(authorization|cookie|password|passwd|secret|api_?key|private_?key|access_?token|refresh_?token|auth_?token|twilio_?auth|stripe_?secret)($|_)/i;
+const FORBIDDEN_KEY_PARTS = [
+  "authorization",
+  "cookie",
+  "password",
+  "passwd",
+  "secret",
+  "apikey",
+  "privatekey",
+  "accesstoken",
+  "refreshtoken",
+  "authtoken",
+  "twilioauth",
+  "stripesecret",
+] as const;
+
+function isForbiddenKey(key: string) {
+  const normalized = key.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return FORBIDDEN_KEY_PARTS.some((part) => normalized.includes(part));
+}
 
 const MAX_DEPTH = 8;
 const MAX_JSON_BYTES = 64 * 1024;
@@ -33,7 +50,7 @@ function inspect(value: unknown, depth: number): void {
   }
 
   for (const [key, child] of entries) {
-    if (FORBIDDEN_KEY.test(key)) {
+    if (isForbiddenKey(key)) {
       throw new Error(`control_payload_forbidden_key:${key}`);
     }
     inspect(child, depth + 1);
