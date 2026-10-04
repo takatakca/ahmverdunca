@@ -11,7 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
-import { officialTeamResultsUrl, legacyTeamScheduleUrl } from "@/data/team-directory";
+import { officialTeamResultsUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { teamPortalServices, type TeamPortalModule } from "@/data/team-portal";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -193,10 +193,10 @@ export function TeamPortfolio({
         {services.map((service) => {
           const Icon = icons[service.module];
           const label = labels[service.module][lang];
-          const isOfficial = service.module === "schedule" || service.module === "results";
+          const isExternalOfficial = service.module === "results";
           const href =
             service.module === "schedule"
-              ? legacyTeamScheduleUrl(team)
+              ? publicTeamScheduleUrl(team)
               : service.module === "results"
                 ? officialTeamResultsUrl(team)
                 : service.module === "news"
@@ -235,8 +235,8 @@ export function TeamPortfolio({
             <a
               key={service.module}
               href={href}
-              target={isOfficial ? "_blank" : undefined}
-              rel={isOfficial ? "noopener noreferrer" : undefined}
+              target={isExternalOfficial ? "_blank" : undefined}
+              rel={isExternalOfficial ? "noopener noreferrer" : undefined}
               className="interactive-surface min-h-48 bg-competition p-5 text-white hover:bg-white/[0.04]"
             >
               {card}
