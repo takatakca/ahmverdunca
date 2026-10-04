@@ -14,6 +14,8 @@ export interface Album {
   coverUrl?: string;
   /** Number of photos in the official album — unknown until media are provided. */
   photoCount?: number;
+  /** Verified public images rendered directly in this album. */
+  photos?: readonly { url: string; sourceUrl: string; alt: { fr: string; en: string } }[];
   /** Public legacy AHMV album retained as the complete archive source. */
   sourceUrl?: string;
   /** Full local migration is still incomplete even when a verified cover is available. */
@@ -56,7 +58,16 @@ export const ALBUMS: Album[] = [
     cover: "gallery-tournament",
     coverUrl: OFFICIAL_MEDIA.tournamentM11Secondary.url,
     sourceUrl: OFFICIAL_MEDIA.tournamentM11Secondary.sourceUrl,
-    photosPending: true,
+    photos: [
+      OFFICIAL_MEDIA.tournamentM11Primary,
+      OFFICIAL_MEDIA.tournamentM11Champions,
+      OFFICIAL_MEDIA.tournamentM11Finalist,
+      OFFICIAL_MEDIA.tournamentM11Secondary,
+      OFFICIAL_MEDIA.tournamentM11ChampionB,
+      OFFICIAL_MEDIA.tournamentM11Tertiary,
+    ],
+    photoCount: 6,
+    photosPending: false,
   },
   {
     slug: "journee-benevoles-2024",
@@ -69,6 +80,29 @@ export const ALBUMS: Album[] = [
     coverUrl: OFFICIAL_MEDIA.volunteerArchive.url,
     sourceUrl: OFFICIAL_MEDIA.volunteerArchive.sourceUrl,
     photosPending: true,
+  },
+  {
+    slug: "entrainements-ahmv-2026",
+    title: { fr: "Entraînements AHMV — automne 2026", en: "AHMV practices — Fall 2026" },
+    description: {
+      fr: "Photos réelles de séances sur glace de l’Association du hockey mineur de Verdun : jeunes joueurs, gardien, entraîneurs et groupe de pratique.",
+      en: "Real on-ice photos from Verdun Minor Hockey Association practices: young players, goalie, coaches and practice group.",
+    },
+    date: "2026-10-03",
+    season: "2026-2027",
+    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "feminin"],
+    eventType: { fr: "Entraînement", en: "Practice" },
+    coverUrl: OFFICIAL_MEDIA.practiceGroup.url,
+    sourceUrl: OFFICIAL_MEDIA.practiceGroup.sourceUrl,
+    photos: [
+      OFFICIAL_MEDIA.practiceGroup,
+      OFFICIAL_MEDIA.practiceSkaters,
+      OFFICIAL_MEDIA.practiceGoalie,
+      OFFICIAL_MEDIA.practicePlayers,
+      OFFICIAL_MEDIA.practiceCoach,
+    ],
+    photoCount: 5,
+    photosPending: false,
   },
 ];
 

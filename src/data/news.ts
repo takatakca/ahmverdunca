@@ -1216,6 +1216,97 @@ export const NEWS: NewsArticle[] = [
   "sourceUrl": "https://www.ahmverdun.com/news/3",
   "contentPending": false
 }
+,
+{
+  "slug": "30e-tournoi-atome-m11-verdun-2027",
+  "title": {
+    "fr": "30e édition du Tournoi Atome de Verdun — M11",
+    "en": "30th Verdun Atom Tournament — U11"
+  },
+  "excerpt": {
+    "fr": "La 30e édition du Tournoi Atome de Verdun est annoncée du 18 au 31 janvier 2027 à l’Auditorium de Verdun.",
+    "en": "The 30th Verdun Atom Tournament is announced for January 18–31, 2027 at the Verdun Auditorium."
+  },
+  "body": {
+    "fr": [
+      "L’Association du hockey mineur de Verdun prépare la 30e édition de son Tournoi Atome M11, un rendez-vous historique du hockey mineur verdunois.",
+      "L’événement est annoncé du 18 au 31 janvier 2027 à l’Auditorium de Verdun. Les informations sportives, inscriptions et mises à jour officielles demeurent accessibles par les liens du tournoi.",
+      "Cette édition s’inscrit dans une volonté de mettre en valeur l’histoire du hockey à Verdun et de rassembler les familles, bénévoles, partenaires et anciennes générations autour du hockey mineur."
+    ],
+    "en": [
+      "Verdun Minor Hockey Association is preparing the 30th edition of its U11 Atom Tournament, a historic Verdun minor-hockey event.",
+      "The event is announced for January 18–31, 2027 at the Verdun Auditorium. Official sport information, registration and updates remain available through the tournament links.",
+      "This edition is part of an effort to celebrate Verdun hockey history and bring together families, volunteers, partners and past generations."
+    ]
+  },
+  "publishedLabel": { "fr": "Saison 2026-2027", "en": "2026-2027 season" },
+  "author": "AHM Verdun Communication",
+  "category": "tournaments",
+  "teamSlugs": ["m11"],
+  "season": "2026-2027",
+  "contentPending": false
+},
+{
+  "slug": "hockey-feminin-m9f-m12f-m15f-2026-2027",
+  "title": {
+    "fr": "Hockey féminin — joueuses de tout niveau bienvenues",
+    "en": "Girls hockey — players of all levels welcome"
+  },
+  "excerpt": {
+    "fr": "L’AHMV présente ses catégories M9F, M12F et M15F et invite les jeunes joueuses à découvrir le hockey féminin à Verdun.",
+    "en": "AHMV presents its U9F, U12F and U15F categories and invites young players to discover girls hockey in Verdun."
+  },
+  "body": {
+    "fr": [
+      "Le programme féminin de l’AHM Verdun accueille des joueuses de tous les niveaux dans les catégories M9F, M12F et M15F pour la saison 2026-2027.",
+      "L’association indique que de l’équipement peut être prêté et met l’accent sur une première expérience simple et accueillante pour les nouvelles joueuses.",
+      "Une journée portes ouvertes a été annoncée le 13 septembre 2026. Cette date est maintenant conservée comme archive; les inscriptions de saison demeurent accessibles par les canaux officiels."
+    ],
+    "en": [
+      "AHM Verdun’s girls program welcomes players of all levels in U9F, U12F and U15F for the 2026-2027 season.",
+      "The association indicates that equipment may be available to borrow and emphasizes an easy, welcoming first experience for new players.",
+      "An open house was announced for September 13, 2026. That date is now preserved as an archive; season registration remains available through official channels."
+    ]
+  },
+  "publishedLabel": { "fr": "Septembre 2026 — archive", "en": "September 2026 — archive" },
+  "author": "AHM Verdun Communication",
+  "category": "feminine",
+  "teamSlugs": ["feminin"],
+  "season": "2026-2027",
+  "contentPending": false
+},
+{
+  "slug": "relance-ahmv-enjeu-couts-glace-2026",
+  "title": {
+    "fr": "Relance de l’AHMV et enjeu des coûts de glace",
+    "en": "AHMV relaunch and the challenge of ice-time costs"
+  },
+  "excerpt": {
+    "fr": "L’AHMV présente ses projets 2026-2027 tout en attirant l’attention sur un modèle de facturation des installations qu’elle juge difficilement soutenable.",
+    "en": "AHMV presents its 2026-2027 projects while drawing attention to a facility-cost model it considers difficult to sustain."
+  },
+  "body": {
+    "fr": [
+      "Avec près de 300 joueurs et joueuses, l’AHMV amorce la saison 2026-2027 avec plusieurs projets visant à redonner au hockey mineur une place forte dans la vie sportive de Verdun.",
+      "Parmi les projets présentés figurent la nouvelle structure de catégories, la 30e édition du Tournoi Atome M11 et le développement de collaborations de formation et d’accompagnement.",
+      "L’association affirme toutefois que les coûts de location des patinoires représentent un enjeu majeur. Les montants cités dans le communiqué sont ceux avancés par l’AHMV et sont présentés comme tels.",
+      "L’AHMV souhaite ouvrir une discussion collective sur la place accordée au sport amateur, aux organismes bénévoles et aux infrastructures sportives à Verdun."
+    ],
+    "en": [
+      "With nearly 300 players, AHMV begins the 2026-2027 season with several projects intended to strengthen minor hockey’s role in Verdun.",
+      "Projects presented include the new category structure, the 30th U11 Atom Tournament and development of training and support partnerships.",
+      "The association also says rink-rental costs are a major challenge. Any amounts cited in the release are AHMV’s published figures and are presented as such.",
+      "AHMV wants a broader community discussion about amateur sport, volunteer organizations and sport infrastructure in Verdun."
+    ]
+  },
+  "publishedLabel": { "fr": "Automne 2026", "en": "Fall 2026" },
+  "author": "AHM Verdun Communication",
+  "category": "releases",
+  "teamSlugs": [],
+  "season": "2026-2027",
+  "contentPending": false
+}
+
 ];
 
 export const CURRENT_LEGACY_NEWS_IDS = [39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 14] as const;
