@@ -1,4 +1,4 @@
-import { FAQ } from "@/data/faq";
+import { searchAhmvKnowledge } from "@/lib/ahmv-knowledge";
 import {
   PUBLIC_TEAM_DIRECTORY,
   getPublicTeamById,
@@ -183,16 +183,7 @@ function teamActions(team: PublicTeamDirectoryEntry, language: AssistantLanguage
 }
 
 function bestValidatedFaq(query: string) {
-  const tokens = normalize(query).split(" ").filter((token) => token.length >= 3);
-  let best: { score: number; item: (typeof FAQ)[number] } | undefined;
-
-  for (const item of FAQ.filter((entry) => entry.validated)) {
-    const haystack = normalize(`${item.question.fr} ${item.question.en} ${item.answer.fr} ${item.answer.en}`);
-    const score = tokens.reduce((total, token) => total + (haystack.includes(token) ? 1 : 0), 0);
-    if (score >= 2 && (!best || score > best.score)) best = { score, item };
-  }
-
-  return best?.item;
+  return searchAhmvKnowledge(query, { kinds: ["faq"], limit: 1 })[0];
 }
 
 export function buildAssistantReply(
@@ -268,7 +259,7 @@ export function buildAssistantReply(
     const answerLanguage = assistantUiLanguage(language) === "fr" ? "fr" : "en";
     return {
       text: `${c.faq} ${faq.answer[answerLanguage]}`,
-      actions: faq.sourcePath ? [{ label: c.source, href: faq.sourcePath, kind: "faq" }] : [],
+      actions: [{ label: c.source, href: faq.sourcePath, kind: "faq" }],
       matchedTeamIds: [],
     };
   }

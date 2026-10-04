@@ -62,6 +62,21 @@ function normalizeArena(raw = {}) {
   };
 }
 
+function normalizeKnowledge(raw = {}) {
+  const kind = ['faq', 'arena'].includes(String(raw.kind)) ? String(raw.kind) : null;
+  return {
+    id: clean(raw.id, 160),
+    kind,
+    title: clean(raw.title, 300),
+    answer: clean(raw.answer, 1800),
+    answerFr: clean(raw.answerFr, 1800),
+    answerEn: clean(raw.answerEn, 1800),
+    translationRequired: raw.translationRequired === true,
+    sourceUrl: safeHttpsUrl(raw.sourceUrl || raw.source_url),
+    score: Number.isFinite(Number(raw.score)) ? Number(raw.score) : null
+  };
+}
+
 async function api(pathname, params = {}) {
   if (!config.ahmBridgeApiUrl) {
     return { ok: false, code: 'LIVE_DATA_NOT_CONFIGURED', message: 'Live AHM schedule data is not connected yet.' };
@@ -200,4 +215,27 @@ export async function findArena({ arena }) {
   };
 }
 
-export const _test = { safeHttpsUrl, normalizeEvent, normalizeArena };
+export async function findKnowledge({ query, language = 'fr' }) {
+  const cleanQuery = clean(query, 300);
+  if (!cleanQuery) return { ok: false, code: 'QUERY_REQUIRED' };
+  if (config.ahmDataMode === 'fixture') {
+    return { ok: true, status: 'no_match', hits: [], source: 'fixture' };
+  }
+
+  const result = await api('knowledge', { q: cleanQuery, lang: clean(language, 8) || 'fr' });
+  if (!result.ok) return result;
+  const hits = (Array.isArray(result.data?.hits) ? result.data.hits : [])
+    .slice(0, 5)
+    .map(normalizeKnowledge)
+    .filter((hit) => hit.id && hit.kind && hit.answer && hit.sourceUrl);
+
+  return {
+    ok: true,
+    status: clean(result.data?.status, 80) || (hits.length ? 'verified' : 'no_match'),
+    hits,
+    source: result.source
+  };
+}
+
+
+export const _test = { safeHttpsUrl, normalizeEvent, normalizeArena, normalizeKnowledge };
