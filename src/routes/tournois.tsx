@@ -9,6 +9,7 @@ import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { MediaZoomTrigger } from "@/components/media/media-zoom-trigger";
 
 const TOURNAMENT_POSTER = uploadedAhmvMediaById(26)!;
 
@@ -36,6 +37,12 @@ export const Route = createFileRoute("/tournois")({
 function TournamentsPage() {
   const { lang } = useI18n();
   const tournamentPoster = TOURNAMENT_POSTER;
+  const tournamentMedia = [
+    tournamentPoster,
+    OFFICIAL_MEDIA.tournamentM11Secondary,
+    OFFICIAL_MEDIA.tournamentM11Tertiary,
+    OFFICIAL_MEDIA.tournamentM11Primary,
+  ];
 
   return (
     <>
@@ -51,13 +58,18 @@ function TournamentsPage() {
 
       <div className="container-site space-y-12 py-8 md:py-12">
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.25fr_0.75fr]">
-          <div className="relative min-h-[420px] overflow-hidden sm:min-h-[520px]">
+          <MediaZoomTrigger
+            items={tournamentMedia}
+            initialIndex={0}
+            lang={lang}
+            className="relative min-h-[420px] overflow-hidden sm:min-h-[520px]"
+          >
             <img
               src={tournamentPoster.url}
               alt={lang === "fr" ? tournamentPoster.alt.fr : tournamentPoster.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full bg-navy-deep object-contain"
+              className="absolute inset-0 size-full bg-navy-deep object-contain transition-transform duration-700 group-hover:scale-[1.012]"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.92))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 lg:p-10">
@@ -71,7 +83,7 @@ function TournamentsPage() {
                   : "January 18–31, 2027 at the Verdun Auditorium. Registration is announced as open until November 15, 2026 on the tournament's official site."}
               </p>
             </div>
-          </div>
+          </MediaZoomTrigger>
           <div className="flex flex-col justify-between border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8 lg:p-10">
             <div>
               <Trophy className="size-9 text-sport-foreground" aria-hidden />
@@ -102,22 +114,22 @@ function TournamentsPage() {
         <HouseSponsorSlot placement="tournaments-path" count={1} compact />
 
         <section className="grid h-44 grid-cols-2 gap-2 overflow-hidden sm:h-56 md:grid-cols-3">
-          {[OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary, OFFICIAL_MEDIA.tournamentM11Primary].map((media) => (
-            <a
+          {tournamentMedia.slice(1).map((media, index) => (
+            <MediaZoomTrigger
               key={media.url}
-              href={media.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="interactive-surface group relative overflow-hidden bg-navy last:hidden md:last:block"
+              items={tournamentMedia}
+              initialIndex={index + 1}
+              lang={lang}
+              className="interactive-surface relative overflow-hidden bg-navy last:hidden md:last:block"
             >
               <img
                 src={media.url}
                 alt={lang === "fr" ? media.alt.fr : media.alt.en}
                 loading="lazy"
                 decoding="async"
-                className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
               />
-            </a>
+            </MediaZoomTrigger>
           ))}
         </section>
 

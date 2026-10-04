@@ -9,6 +9,7 @@ import { teamVisualForCategory } from "@/data/team-visuals";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { MediaZoomTrigger } from "@/components/media/media-zoom-trigger";
 
 const REGISTRATION_POSTER = uploadedAhmvMediaById(39)!;
 
@@ -59,13 +60,17 @@ function RegistrationPage() {
 
       <div className="container-site space-y-12 py-8 md:py-12">
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="relative min-h-[300px] overflow-hidden sm:min-h-[380px]">
+          <MediaZoomTrigger
+            items={[registrationPoster]}
+            lang={lang}
+            className="relative min-h-[300px] overflow-hidden sm:min-h-[380px]"
+          >
             <img
               src={registrationPoster.url}
               alt={lang === "fr" ? registrationPoster.alt.fr : registrationPoster.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full bg-navy-deep object-contain"
+              className="absolute inset-0 size-full bg-navy-deep object-contain transition-transform duration-700 group-hover:scale-[1.015]"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.84))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
@@ -79,7 +84,7 @@ function RegistrationPage() {
                   : "AHM Verdun helps you identify the category and useful information; official registration then continues in Spordle."}
               </p>
             </div>
-          </div>
+          </MediaZoomTrigger>
           <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Accès officiel" : "Official access"}</p>
             <p className="mt-4 font-display text-4xl font-extrabold uppercase leading-[0.9]">{lang === "fr" ? "Prêt à inscrire?" : "Ready to register?"}</p>

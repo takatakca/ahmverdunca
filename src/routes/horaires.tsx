@@ -14,6 +14,7 @@ import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { MediaZoomTrigger } from "@/components/media/media-zoom-trigger";
 
 const WEEKLY_SCHEDULE_VISUAL = uploadedAhmvMediaById(10)!;
 
@@ -75,13 +76,17 @@ function SchedulePage() {
 
       <div className="container-site py-8 md:py-12">
         <section className="mb-6 grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="relative min-h-[280px] overflow-hidden sm:min-h-[340px]">
+          <MediaZoomTrigger
+            items={[weeklyScheduleVisual]}
+            lang={lang}
+            className="relative min-h-[280px] overflow-hidden sm:min-h-[340px]"
+          >
             <img
               src={weeklyScheduleVisual.url}
               alt={lang === "fr" ? weeklyScheduleVisual.alt.fr : weeklyScheduleVisual.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full bg-white object-contain"
+              className="absolute inset-0 size-full bg-white object-contain transition-transform duration-700 group-hover:scale-[1.012]"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.88))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
@@ -92,7 +97,7 @@ function SchedulePage() {
                 {lang === "fr" ? "Trouvez votre équipe. Trouvez votre glace." : "Find your team. Find your ice."}
               </p>
             </div>
-          </div>
+          </MediaZoomTrigger>
 
           <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
             <p className="eyebrow text-sport-foreground">
