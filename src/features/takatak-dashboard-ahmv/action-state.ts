@@ -34,6 +34,9 @@ export type ControlRecord<T> = {
   id: string;
   tenant: "ahmverdun";
   organizationId: string;
+  service: string;
+  resourceType: string;
+  resourceId: string;
   status: ControlRecordStatus;
   revision: number;
   publishedRevision: number | null;
