@@ -112,9 +112,10 @@ export function CommunicationsPreview() {
     const timer = window.setTimeout(() => {
       if (document.body.style.overflow === "hidden") return;
       if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
+      if (document.querySelector("[data-ahmv-attention-surface]")) return;
       setTeaserOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 9000);
+    }, 12000);
 
     return () => window.clearTimeout(timer);
   }, []);
@@ -165,6 +166,7 @@ export function CommunicationsPreview() {
   if (!open && teaserOpen) {
     return (
       <aside
+        data-ahmv-attention-surface="communications"
         className="rise fixed bottom-20 right-3 z-40 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden border border-white/12 bg-competition text-white shadow-[0_24px_72px_-34px_rgba(0,0,0,0.95)] lg:bottom-6 lg:right-6"
         aria-label={copy.title}
       >
@@ -210,6 +212,7 @@ export function CommunicationsPreview() {
 
   return (
     <div
+      data-ahmv-attention-surface="communications-dialog"
       className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/48 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-[2px] sm:items-center sm:p-4"
       role="presentation"
     >

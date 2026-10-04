@@ -102,6 +102,22 @@ export function AhmvAssistant() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!showNudge) return;
+
+    const timer = window.setTimeout(() => {
+      setShowNudge(false);
+      try {
+        window.sessionStorage.setItem("ahmv-assistant-nudge-seen", "1");
+      } catch {
+        // Session storage is optional.
+      }
+    }, 5800);
+
+    return () => window.clearTimeout(timer);
+  }, [showNudge]);
+
+
 
   useEffect(() => {
     const openAssistant = () => {
@@ -189,6 +205,7 @@ export function AhmvAssistant() {
     <>
       {showNudge && !open && (
         <aside
+          data-ahmv-attention-surface="assistant-nudge"
           className="rise fixed bottom-36 left-3 z-40 w-[min(19rem,calc(100vw-1.5rem))] border border-sport/45 bg-competition/97 p-3 text-white shadow-[0_22px_65px_-28px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-20 lg:left-4"
           aria-label={nudgeCopy.title}
         >
