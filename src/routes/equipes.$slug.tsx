@@ -30,6 +30,7 @@ import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { teamVisualForCategory } from "@/data/team-visuals";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { SITE } from "@/lib/site";
@@ -75,6 +76,11 @@ function TeamPage() {
   const { preferredTeam, savePreferredTeam } = usePreferredTeam();
   const team = getTeam(slug)!;
   const categoryVisual = teamVisualForCategory(slug) ?? OFFICIAL_MEDIA.practiceCoach;
+  const feminineMedia = slug === "feminin"
+    ? [16, 35, 46, 50]
+        .map((id) => uploadedAhmvMediaById(id))
+        .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    : [];
   const isPreferred = preferredTeam === slug;
   const news = NEWS.filter((article) => article.teamSlugs.includes(slug));
   const albums = ALBUMS.filter((album) => album.teamSlugs.includes(slug));
@@ -219,6 +225,63 @@ function TeamPage() {
               >
                 {lang === "fr" ? "Archives publiques AHMV" : "AHMV public archives"} <ArrowRight className="size-3.5" />
               </a>
+            </div>
+          </section>
+        )}
+
+        {!exactTeam && slug === "feminin" && feminineMedia.length > 0 && (
+          <section className="overflow-hidden border border-navy/12 bg-navy-deep text-white">
+            <div className="grid gap-px bg-white/10 lg:grid-cols-[0.78fr_1.22fr]">
+              <div className="flex flex-col justify-center bg-competition p-6 md:p-8">
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Louves · hockey féminin" : "Louves · girls hockey"}
+                </p>
+                <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] md:text-5xl">
+                  {lang === "fr" ? "Une place pour jouer, apprendre et grandir." : "A place to play, learn and grow."}
+                </h2>
+                <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/68 md:text-base">
+                  {lang === "fr"
+                    ? "Retrouvez les visuels, équipes, portes ouvertes et moments du programme féminin AHMV dans une collection dédiée."
+                    : "Explore the AHMV girls hockey program through dedicated team, open-house and season media."}
+                </p>
+                <div className="mt-6 flex flex-wrap gap-2">
+                  <Button asChild variant="sport">
+                    <Link to="/galerie/$slug" params={{ slug: "hockey-feminin-2026-2027" }}>
+                      {lang === "fr" ? "Voir l’album féminin" : "View girls hockey album"} <ArrowRight className="size-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline-light">
+                    <a href={`mailto:${SITE.girlsHockeyEmail}`}>
+                      <Mail className="size-4" />
+                      {lang === "fr" ? "Écrire à l’équipe" : "Email the program"}
+                    </a>
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid min-h-[360px] grid-cols-2 grid-rows-2 gap-px bg-white/10">
+                {feminineMedia.map((media, index) => (
+                  <a
+                    key={media.id}
+                    href={media.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="interactive-surface group relative overflow-hidden bg-navy"
+                  >
+                    <img
+                      src={media.url}
+                      alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                      loading={index < 2 ? "eager" : "lazy"}
+                      decoding="async"
+                      className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_42%,rgba(7,16,43,0.84)_100%)]" />
+                    <span className="absolute inset-x-3 bottom-3 text-[9px] font-bold uppercase tracking-[0.12em] text-white/82">
+                      {lang === "fr" ? media.label.fr : media.label.en}
+                    </span>
+                  </a>
+                ))}
+              </div>
             </div>
           </section>
         )}

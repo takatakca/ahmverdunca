@@ -2,6 +2,7 @@ import { ExternalLink, Facebook, ShieldCheck, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { useI18n } from "@/lib/i18n";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 
 const COMMUNITY_FEED_URL =
   "https://takatak.ca/api/public/ahmv/community-feed";
@@ -111,6 +112,9 @@ function FeedCard({
 
 export function AhmvCommunityFeed() {
   const { lang } = useI18n();
+  const fallbackMedia = [17, 18, 21, 23]
+    .map((id) => uploadedAhmvMediaById(id))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
   const [items, setItems] = useState<CommunityFeedItem[]>([]);
   const [connected, setConnected] = useState<boolean | null>(null);
 
@@ -146,29 +150,55 @@ export function AhmvCommunityFeed() {
     return (
       <section className="relative overflow-hidden border-y border-white/10 bg-competition py-8 text-white md:py-10">
         <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
-        <div className="container-site relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Communauté AHMV" : "AHMV Community"}
-            </p>
-            <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-white md:text-4xl">
-              {lang === "fr" ? "Sur la glace" : "From the rink"}
-            </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/58">
-              {lang === "fr"
-                ? "Les publications Facebook de la communauté apparaîtront ici automatiquement lorsqu’elles seront disponibles."
-                : "Facebook community posts will appear here automatically when they become available."}
-            </p>
+        <div className="container-site relative">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Communauté AHMV" : "AHMV Community"}
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-none text-white md:text-4xl">
+                {lang === "fr" ? "Verdun, ensemble." : "Verdun, together."}
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-white/58">
+                {lang === "fr"
+                  ? "Le fil Facebook est momentanément indisponible, mais les moments communautaires AHMV restent accessibles directement ici."
+                  : "The Facebook feed is temporarily unavailable, but AHMV community moments remain available directly here."}
+              </p>
+            </div>
+            <a
+              href={FACEBOOK_PAGE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="premium-control inline-flex min-h-11 items-center justify-center gap-2 bg-sport px-5 text-sm font-bold uppercase tracking-[0.1em] text-sport-foreground"
+            >
+              <Facebook className="size-4" aria-hidden />
+              Facebook AHM Verdun
+            </a>
           </div>
-          <a
-            href={FACEBOOK_PAGE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="premium-control inline-flex min-h-11 items-center justify-center gap-2 bg-sport px-5 text-sm font-bold uppercase tracking-[0.1em] text-sport-foreground"
-          >
-            <Facebook className="size-4" aria-hidden />
-            Facebook AHM Verdun
-          </a>
+
+          <div className="mt-6 grid grid-cols-2 gap-2 lg:grid-cols-4">
+            {fallbackMedia.map((media) => (
+              <a
+                key={media.id}
+                href={media.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="interactive-surface group relative aspect-[4/3] overflow-hidden border border-white/12 bg-navy-deep"
+              >
+                <img
+                  src={media.url}
+                  alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.86)_100%)]" />
+                <span className="absolute inset-x-3 bottom-3 text-[9px] font-bold uppercase tracking-[0.12em] text-white/82">
+                  {lang === "fr" ? media.label.fr : media.label.en}
+                </span>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
     );

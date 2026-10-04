@@ -136,8 +136,8 @@ export const TEAMS: Team[] = [
     name: { fr: "Hockey féminin", en: "Girls' hockey" },
     ages: { fr: "Voir l'inscription officielle", en: "See official registration" },
     description: {
-      fr: "Accès au programme féminin, aux horaires et aux liens officiels.",
-      en: "Access to the girls' program, schedules and official links.",
+      fr: "Programme féminin 2026–2027 : M9F, M12F et M15F annoncés dans les visuels AHMV, avec horaires, médias et liens officiels regroupés ici.",
+      en: "2026–2027 girls program: U9F, U12F and U15F announced in AHMV materials, with schedules, media and official links gathered here.",
     },
     feminine: true,
   },
