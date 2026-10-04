@@ -42,7 +42,8 @@ export function HouseSponsorSlot({
     if (paused || sequence.length <= visibleCount || typeof window === "undefined") return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (reduceMotion.matches) return;
+    const mobileViewport = window.matchMedia("(max-width: 767px)");
+    if (reduceMotion.matches || mobileViewport.matches) return;
 
     const timer = window.setInterval(
       () => setRotation((current) => (current + visibleCount) % sequence.length),
@@ -77,6 +78,9 @@ export function HouseSponsorSlot({
           <Megaphone className="size-3.5 text-sport-foreground" aria-hidden />
           <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/56">
             {lang === "fr" ? "Découvertes locales" : "Local discoveries"}
+            <span className="ml-2 text-sport-foreground sm:hidden">
+              · {lang === "fr" ? "Glissez" : "Swipe"}
+            </span>
           </p>
         </div>
 
@@ -107,12 +111,19 @@ export function HouseSponsorSlot({
       </div>
 
       <div
-        className={compact ? "grid gap-px bg-white/10 sm:grid-cols-2" : "grid gap-px bg-white/10 md:grid-cols-2"}
+        className={
+          compact
+            ? "scrollbar-none flex snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain bg-white/10 sm:grid sm:grid-cols-2 sm:overflow-visible"
+            : "scrollbar-none flex snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain bg-white/10 md:grid md:grid-cols-2 md:overflow-visible"
+        }
         aria-live="off"
       >
         {sponsors.map((sponsor) => {
+          const itemClass = compact
+            ? "min-w-[82vw] snap-start sm:min-w-0"
+            : "min-w-[82vw] snap-start md:min-w-0";
           const card = (
-            <div className={`interactive-surface group relative flex min-h-[150px] flex-col justify-between overflow-hidden bg-competition ${compact ? "p-4" : "p-5 md:p-6"}`}>
+            <div className={`interactive-surface group relative flex min-h-[150px] h-full flex-col justify-between overflow-hidden bg-competition ${compact ? "p-4" : "p-5 md:p-6"}`}>
               <div className="pointer-events-none absolute -right-8 -top-10 font-display text-[7rem] font-extrabold uppercase leading-none text-white/[0.025]" aria-hidden>
                 {sponsor.short}
               </div>
@@ -145,11 +156,11 @@ export function HouseSponsorSlot({
           );
 
           return sponsor.href ? (
-            <a key={sponsor.id} href={sponsor.href} target="_blank" rel="noopener noreferrer" className="block">
+            <a key={sponsor.id} href={sponsor.href} target="_blank" rel="noopener noreferrer" className={`block ${itemClass}`}>
               {card}
             </a>
           ) : (
-            <div key={sponsor.id}>{card}</div>
+            <div key={sponsor.id} className={itemClass}>{card}</div>
           );
         })}
       </div>
