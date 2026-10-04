@@ -169,9 +169,9 @@ function TeamsPage() {
                 </button>
               </div>
             </div>
-            <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto bg-navy/10 px-4 py-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-hidden sm:p-0 lg:grid-cols-3">
               {selectedTeams.map((entry) => (
-                <article key={entry.legacyScheduleTeamId} className="relative flex min-h-52 flex-col bg-competition p-5 text-white">
+                <article key={entry.legacyScheduleTeamId} className="relative flex min-h-44 w-[82vw] max-w-[22rem] shrink-0 snap-center flex-col border border-white/10 bg-competition p-4 text-white sm:min-h-52 sm:w-auto sm:max-w-none sm:border-0 sm:p-5">
                   <button
                     type="button"
                     onClick={() => removeSelectedTeam(entry.legacyScheduleTeamId)}
@@ -238,9 +238,9 @@ function TeamsPage() {
             </p>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/65">{t("teams.divisionsNote")}</p>
           </div>
-          <div className="rink-surface p-6 md:p-8">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Confidentialité" : "Privacy"}</p>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">{t("teams.privacyNote")}</p>
+          <div className="bg-competition p-6 text-white md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Confidentialité" : "Privacy"}</p>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55">{t("teams.privacyNote")}</p>
           </div>
         </div>
 
