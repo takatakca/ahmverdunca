@@ -5,7 +5,7 @@ import { ArrowRight, CalendarDays, Images } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { SportArtwork } from "@/components/sport-artwork";
 import { ALBUMS } from "@/data/gallery";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
@@ -48,8 +48,8 @@ function GalleryPage() {
         title={lang === "fr" ? "Photos et vidéos" : "Photos & videos"}
         description={
           lang === "fr"
-            ? "Les archives publiques AHMV sont regroupées par saison. Les aperçus vérifiés disponibles sur l’ancien site sont maintenant restaurés ici; les albums complets restent accessibles à leur source officielle."
-            : "Public AHMV archives are grouped by season. Verified previews available on the previous site are now restored here, while full albums remain accessible from their official source."
+            ? "La médiathèque AHMV réunit maintenant les photos, affiches, horaires et documents de l’association avec les archives publiques, organisés par saison et catégorie."
+            : "The AHMV media library now brings together association photos, posters, schedules and documents with the public archives, organized by season and category."
         }
       />
 
@@ -57,12 +57,7 @@ function GalleryPage() {
         <HouseSponsorSlot placement="gallery" compact className="mb-8" />
         <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
           <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
-            {[
-              OFFICIAL_MEDIA.practiceGroup,
-              OFFICIAL_MEDIA.practiceSkaters,
-              OFFICIAL_MEDIA.practiceGoalie,
-              OFFICIAL_MEDIA.practicePlayers,
-            ].map((media, index) => (
+            {UPLOADED_AHMV_MEDIA.filter((_, index) => [0, 3, 34, 49].includes(index)).map((media, index) => (
               <a
                 key={media.url}
                 href={media.sourceUrl}
@@ -92,8 +87,8 @@ function GalleryPage() {
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Archives AHMV vérifiées" : "Verified AHMV archives"}</p>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/70">
               {lang === "fr"
-                ? "Nous réutilisons uniquement des aperçus déjà publiés publiquement par l’AHM Verdun. Lorsqu’un aperçu local n’est pas encore restauré, la fiche renvoie vers l’album AHMV d’origine."
-                : "We reuse only previews already published publicly by AHM Verdun. When a local preview has not yet been restored, the album page links back to the original AHMV archive."}
+                ? "La nouvelle médiathèque héberge directement les médias remis à l’AHMV et conserve aussi les liens vers les archives historiques déjà publiées. Les collections sont consultables par saison et type."
+                : "The new media library directly hosts media supplied to AHMV and also preserves links to previously published historical archives. Collections can be browsed by season and type."}
             </p>
           </div>
           <div className="rink-surface p-6 md:p-8">
