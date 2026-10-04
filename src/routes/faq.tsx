@@ -88,9 +88,9 @@ function FaqPage() {
                 : "Text or voice search, filtered topics and direct access to reference pages when an answer needs more detail."}
             </p>
           </div>
-          <div className="flex min-w-48 flex-col justify-center bg-ice p-6 md:p-8">
-            <p className="font-display text-6xl font-extrabold tracking-[-0.05em] text-navy">{String(visibleFaq.length).padStart(2, "0")}</p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-muted-foreground">
+          <div className="flex min-w-48 flex-col justify-center bg-competition p-6 text-white md:p-8">
+            <p className="font-display text-6xl font-extrabold tracking-[-0.05em] text-white">{String(visibleFaq.length).padStart(2, "0")}</p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-white/42">
               {lang === "fr" ? "réponses disponibles" : "answers available"}
             </p>
           </div>
@@ -131,11 +131,11 @@ function FaqPage() {
 
         <HouseSponsorSlot placement="faq-help" count={1} compact className="mb-6" />
 
-        <div className="mb-6 border border-navy/12 bg-ice p-5">
-          <p className="eyebrow text-sport">
+        <div className="mb-6 border border-white/12 bg-navy-deep p-5 text-white">
+          <p className="eyebrow text-sport-foreground">
             {lang === "fr" ? "Réponses rapides" : "Quick answers"}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-white/55">
             {lang === "fr"
               ? publicLaunch
                 ? "Les réponses affichées ici s'appuient uniquement sur des informations actuellement validées."
@@ -149,19 +149,19 @@ function FaqPage() {
         <div className="grid gap-2 sm:grid-cols-[minmax(0,1fr)_auto]">
           <label className="relative block">
             <span className="sr-only">{t("common.search")}</span>
-            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-white/38" aria-hidden />
             <input
               type="search"
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder={t("search.placeholder")}
-              className="h-12 w-full border border-navy/15 bg-background pl-11 pr-11 text-base outline-none transition-colors focus:border-sport"
+              className="h-12 w-full border border-white/14 bg-navy-deep pl-11 pr-11 text-base text-white placeholder:text-white/34 outline-none transition-colors focus:border-sport"
             />
             {q ? (
               <button
                 type="button"
                 onClick={() => setQ("")}
-                className="premium-control absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center text-muted-foreground hover:bg-ice hover:text-foreground"
+                className="premium-control absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center text-white/42 hover:bg-white/[0.06] hover:text-white"
                 aria-label={lang === "fr" ? "Effacer la recherche" : "Clear search"}
               >
                 <XCircle className="size-4" aria-hidden />
