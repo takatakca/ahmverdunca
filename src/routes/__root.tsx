@@ -18,17 +18,17 @@ import { AdSenseScriptController } from "../components/adsense-script-controller
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-[60vh] items-center justify-center bg-background px-4">
+    <div className="technical-grid flex min-h-[60vh] items-center justify-center bg-navy-deep px-4 text-white">
       <div className="max-w-md text-center">
-        <p className="heading-hero text-navy">404</p>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page introuvable / Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="heading-hero text-sport-foreground">404</p>
+        <h2 className="mt-4 font-display text-3xl font-extrabold uppercase text-white">Page introuvable / Page not found</h2>
+        <p className="mt-2 text-sm text-white/55">
           Cette page n'existe pas ou a été déplacée. / This page doesn't exist or has been moved.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-navy-deep"
+            className="premium-control inline-flex min-h-11 items-center justify-center bg-sport px-4 text-xs font-bold uppercase tracking-[0.1em] text-sport-foreground transition-colors hover:brightness-105"
           >
             Accueil / Home
           </Link>
@@ -46,22 +46,22 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="technical-grid flex min-h-screen items-center justify-center bg-navy-deep px-4 text-white">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+        <h1 className="font-display text-3xl font-extrabold uppercase tracking-[-0.02em] text-white">
           Cette page n'a pas pu être chargée / This page couldn't be loaded
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-sm text-white/55">
           Une erreur est survenue. Réessayez ou revenez à l'accueil. / Something went wrong. Try again or return home.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => { router.invalidate(); reset(); }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-navy-deep"
+            className="premium-control inline-flex min-h-11 items-center justify-center bg-sport px-4 text-xs font-bold uppercase tracking-[0.1em] text-sport-foreground transition-colors hover:brightness-105"
           >
             Réessayer / Retry
           </button>
-          <a href="/" className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-secondary">
+          <a href="/" className="premium-control inline-flex min-h-11 items-center justify-center border border-white/16 px-4 text-xs font-bold uppercase tracking-[0.1em] text-white transition-colors hover:border-sport hover:text-sport-foreground">
             Accueil / Home
           </a>
         </div>
