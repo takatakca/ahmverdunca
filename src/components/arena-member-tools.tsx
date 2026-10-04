@@ -11,6 +11,8 @@ import type { Arena } from "@/data/arenas";
 import { PARENT_PREMIUM, parentPremiumContextUrl } from "@/lib/parent-premium";
 
 export function ArenaMemberTools({ arena, lang }: { arena: Arena; lang: "fr" | "en" }) {
+  if (!PARENT_PREMIUM.visible) return null;
+
   const signupUrl = parentPremiumContextUrl("ahmv-arena", { arena: arena.slug });
   const launchReady = Boolean(signupUrl) && PARENT_PREMIUM.visible && PARENT_PREMIUM.launchEnabled;
 
