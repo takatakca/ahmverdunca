@@ -128,3 +128,19 @@ TAKATAK_AHMV_CONTROL_PLANE_ENABLED=true
 ```
 
 That flag alone is not authorization. Server identity, subscription/entitlement, organization/service scope and action permission must still be validated before a route is ever activated.
+
+
+## Portability
+
+The standalone AHMV application can export its managed desired-state records and revision history as a versioned bundle.
+
+The portability bundle deliberately excludes:
+
+- TAKATAK billing and subscriptions;
+- provider/connector credentials;
+- provider secrets;
+- execution jobs;
+- idempotency keys;
+- audit actor IDs.
+
+This preserves the AHMV content/configuration state needed for a future consolidation, licensing or transfer without turning TAKATAK commercial internals into an application dependency.
