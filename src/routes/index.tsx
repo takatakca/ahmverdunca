@@ -29,6 +29,7 @@ import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { AhmvRealHockeyWall } from "@/components/home/ahmv-real-hockey-wall";
 import { AhmvCommunityFeed } from "@/components/home/ahmv-community-feed";
 import { HomeParentCommand } from "@/components/home/home-parent-command";
+import { HomeCreativeRail } from "@/components/home/home-creative-rail";
 import { LogoSlot } from "@/components/layout/logo-slot";
 import { AdSenseSlot } from "@/components/adsense-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -225,6 +226,8 @@ function Home() {
 
       <ScheduleFinder />
 
+      <HomeCreativeRail />
+
       <OfficialWeekPreview />
 
       <HomeParentCommand />
@@ -283,7 +286,7 @@ function Home() {
       </section>
 
       {/* Newsroom */}
-      <section className="bg-background py-10 md:py-14">
+      <section className="bg-ice py-8 md:py-10">
         <div className="container-site">
           <div className="flex flex-col gap-4 border-b-2 border-navy pb-5 md:flex-row md:items-end md:justify-between">
             <div>
