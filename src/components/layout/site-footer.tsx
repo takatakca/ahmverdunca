@@ -8,6 +8,7 @@ import { LangSwitch } from "./lang-switch";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { NewsletterInterest } from "@/components/newsletter-interest";
+import { PARENT_PREMIUM } from "@/lib/parent-premium";
 
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
@@ -105,16 +106,18 @@ export function SiteFooter() {
               </div>
             </div>
 
-            <div className="grid gap-px border border-navy-foreground/12 bg-navy-foreground/12 sm:grid-cols-2 lg:grid-cols-1">
-              <a href="/membership" className="group flex min-h-28 items-center justify-between bg-competition p-5 hover:bg-white/[0.04]">
-                <span>
-                  <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">AHMV Member · APERÇU</span>
-                  <span className="mt-2 block font-display text-2xl font-extrabold uppercase leading-[0.9] text-white">
-                    {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
+            <div className={PARENT_PREMIUM.visible ? "grid gap-px border border-navy-foreground/12 bg-navy-foreground/12 sm:grid-cols-2 lg:grid-cols-1" : "grid gap-px border border-navy-foreground/12 bg-navy-foreground/12"}>
+              {PARENT_PREMIUM.visible ? (
+                <a href="/membership" className="group flex min-h-28 items-center justify-between bg-competition p-5 hover:bg-white/[0.04]">
+                  <span>
+                    <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">AHMV Member</span>
+                    <span className="mt-2 block font-display text-2xl font-extrabold uppercase leading-[0.9] text-white">
+                      {lang === "fr" ? "Services pour les parents" : "Parent services"}
+                    </span>
                   </span>
-                </span>
-                <ShieldCheck className="size-5 text-sport-foreground" />
-              </a>
+                  <ShieldCheck className="size-5 text-sport-foreground" />
+                </a>
+              ) : null}
               <div className="flex min-h-28 items-center justify-between bg-competition p-5">
                 <div>
                   <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-navy-foreground/38">
