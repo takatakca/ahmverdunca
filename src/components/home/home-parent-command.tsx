@@ -1,7 +1,7 @@
 import { CalendarDays, ChevronRight, MapPin, ShieldCheck, Trophy, Users } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
-import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
+import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
@@ -58,7 +58,7 @@ export function HomeParentCommand() {
             <div className="scrollbar-none -mx-4 mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-hidden sm:border sm:border-white/12 sm:bg-white/12 sm:px-0 sm:pb-0 lg:grid-cols-4">
               {[
                 { href: publicTeamHubUrl(team), icon: Users, fr: "Mini-site", en: "Mini-site", hintFr: "Équipe & contenu", hintEn: "Team & content" },
-                { href: legacyTeamScheduleUrl(team), icon: CalendarDays, fr: "Horaire", en: "Schedule", hintFr: "Source officielle", hintEn: "Official source", external: true },
+                { href: publicTeamScheduleUrl(team), icon: CalendarDays, fr: "Horaire", en: "Schedule", hintFr: "Dans le mini-site", hintEn: "Inside the mini-site" },
                 { href: officialTeamResultsUrl(team), icon: Trophy, fr: "Résultats", en: "Results", hintFr: "Scores & classement", hintEn: "Scores & standings", external: true },
                 { href: "/arenas", icon: MapPin, fr: "Arénas", en: "Arenas", hintFr: "Adresses & itinéraires", hintEn: "Addresses & directions" },
               ].map(({ href, icon: Icon, fr, en, hintFr, hintEn, external }) => (
