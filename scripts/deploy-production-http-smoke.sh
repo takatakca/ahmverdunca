@@ -113,8 +113,17 @@ retry_smoke() {
   return "$status"
 }
 
-if [ "${AHMV_DEPLOY_TRANSPORT:-}" = "ssh" ]; then
-  echo "Smoke target: production origin over SSH" >&2
+# Production validation must exercise the same public HTTPS route families
+# that parents use. The cPanel loopback vhost does not route TanStack/Nitro
+# application paths consistently and has historically returned a false 404 for
+# /healthz even while the public site was healthy. Keep the authenticated
+# origin probe available only as an explicit diagnostic override.
+if [ "${AHMV_HTTP_SMOKE_TARGET:-public}" = "origin" ]; then
+  if [ "${AHMV_DEPLOY_TRANSPORT:-}" != "ssh" ]; then
+    echo "ERROR: origin smoke requires SSH deployment transport." >&2
+    exit 2
+  fi
+  echo "Smoke target: production origin over SSH (diagnostic override)" >&2
   retry_smoke origin
 else
   echo "Smoke target: public HTTPS endpoint" >&2
