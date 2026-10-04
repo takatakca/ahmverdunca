@@ -82,8 +82,8 @@ export function AhmvRealHockeyWall() {
           </h2>
           <p className="mt-6 max-w-xl text-sm leading-relaxed text-white/68 md:text-base">
             {lang === "fr"
-              ? "Le site met maintenant les vraies équipes, les vrais jeunes, les entraîneurs, les bénévoles et les moments AHMV au premier plan. Pas de faux hockey : les images viennent des archives publiques de l'association."
-              : "The site now puts real teams, players, coaches, volunteers and AHMV moments first. No fake hockey: these images come from the association's public archive."}
+              ? "Le site met maintenant les vraies équipes, les jeunes, les entraîneurs, les bénévoles et les moments AHMV au premier plan. Les images proviennent de la médiathèque AHMV et des archives validées de l’association."
+              : "The site now puts real teams, players, coaches, volunteers and AHMV moments first. Images come from the AHMV media library and the association’s validated archives."}
           </p>
 
           <div className="mt-7 flex flex-wrap gap-2">
