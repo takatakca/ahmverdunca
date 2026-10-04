@@ -1,0 +1,43 @@
+name: Import AHMV gallery logo asset
+
+on:
+  push:
+    branches:
+      - website-production-logo-gallery-2026
+    paths:
+      - .github/workflows/import-ahmv-logo.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: website-production-logo-gallery-2026
+          fetch-depth: 0
+
+      - name: Import exact Gallery branding asset
+        run: |
+          set -euo pipefail
+          mkdir -p public/branding
+          curl --fail --location --silent --show-error --retry 3 --retry-delay 2 \
+            "https://utuvzrqvivqyziibobvu.supabase.co/storage/v1/object/public/ahmv-media-public/imports/2026-10-04/public/ahmv-media-008.jpg" \
+            -o public/branding/ahmv-logo-gallery-2026.jpg
+          test -s public/branding/ahmv-logo-gallery-2026.jpg
+          file public/branding/ahmv-logo-gallery-2026.jpg
+
+      - name: Commit exact logo asset
+        run: |
+          set -euo pipefail
+          git config user.name "AHMV Media Import Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add public/branding/ahmv-logo-gallery-2026.jpg
+          git diff --cached --quiet && exit 0
+          git commit -m "chore(brand): import Gallery logo asset"
+          git push origin HEAD:website-production-logo-gallery-2026
