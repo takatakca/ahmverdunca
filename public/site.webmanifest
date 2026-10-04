@@ -10,9 +10,16 @@
   "theme_color": "#111a33",
   "icons": [
     {
+      "src": "/branding/ahmv-logo-gallery-2026.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "/favicon.png",
       "sizes": "any",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
@@ -46,5 +53,6 @@
     "education",
     "lifestyle"
   ],
-  "orientation": "any"
+  "orientation": "any",
+  "id": "/"
 }
