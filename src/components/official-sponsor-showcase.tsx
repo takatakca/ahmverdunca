@@ -35,7 +35,7 @@ export function OfficialSponsorShowcase({
           baseSponsor as unknown as Record<string, unknown>,
         ) as unknown as typeof baseSponsor;
         const overlayLogoApproved =
-          typeof overlay?.patch.logoUrl === "string" && overlay.patch.logoUrl.startsWith("https://");
+          typeof overlay?.patch["logoUrl"] === "string" && overlay.patch["logoUrl"].startsWith("https://");
         const hasOfficialLogo = Boolean(sponsor.logoUrl) && (sponsor.logoApproved || overlayLogoApproved);
         const fields = [
           { key: "website", label: { fr: "Site officiel", en: "Official website" }, kind: "url" as const, current: sponsor.website },

@@ -46,14 +46,14 @@ function ArticlePage() {
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const category = NEWS_CATEGORIES.find((c) => c.id === a.category);
   const baseBody = lang === "en" && a.body.en ? a.body.en : a.body.fr;
-  const body = Array.isArray(patch.body) && patch.body.every((item) => typeof item === "string")
-    ? patch.body as string[]
+  const body = Array.isArray(patch["body"]) && patch["body"].every((item) => typeof item === "string")
+    ? patch["body"] as string[]
     : baseBody;
-  const displayTitle = typeof patch.title === "string" ? patch.title : l(a.title);
-  const displayExcerpt = typeof patch.text === "string" ? patch.text : l(a.excerpt);
-  const displayAuthor = typeof patch.author === "string" ? patch.author : a.author;
-  const displaySourceUrl = typeof patch.url === "string" ? patch.url : a.sourceUrl;
-  const publishedOverride = typeof patch.publishedAt === "string" ? new Date(patch.publishedAt) : null;
+  const displayTitle = typeof patch["title"] === "string" ? patch["title"] : l(a.title);
+  const displayExcerpt = typeof patch["text"] === "string" ? patch["text"] : l(a.excerpt);
+  const displayAuthor = typeof patch["author"] === "string" ? patch["author"] : a.author;
+  const displaySourceUrl = typeof patch["url"] === "string" ? patch["url"] : a.sourceUrl;
+  const publishedOverride = typeof patch["publishedAt"] === "string" ? new Date(patch["publishedAt"]) : null;
   const displayDate = publishedOverride && Number.isFinite(publishedOverride.getTime())
     ? new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
         year: "numeric",
@@ -74,7 +74,7 @@ function ArticlePage() {
           : a.category === "registration"
             ? uploadedAhmvMediaById(39)
             : OFFICIAL_MEDIA.tournamentM11Tertiary;
-  const displayImageUrl = typeof patch.imageUrl === "string" ? patch.imageUrl : storyMedia!.url;
+  const displayImageUrl = typeof patch["imageUrl"] === "string" ? patch["imageUrl"] : storyMedia!.url;
   const contributionFields = [
     { key: "title", label: { fr: "Titre", en: "Title" }, kind: "text" as const, current: displayTitle },
     { key: "text", label: { fr: "Résumé", en: "Summary" }, kind: "textarea" as const, current: displayExcerpt },
@@ -82,7 +82,7 @@ function ArticlePage() {
     { key: "imageUrl", label: { fr: "Image principale", en: "Main image" }, kind: "image-url" as const, current: displayImageUrl },
     { key: "url", label: { fr: "Lien source", en: "Source link" }, kind: "url" as const, current: displaySourceUrl },
     { key: "author", label: { fr: "Auteur / source", en: "Author / source" }, kind: "text" as const, current: displayAuthor },
-    { key: "publishedAt", label: { fr: "Date publiée", en: "Published date" }, kind: "text" as const, current: typeof patch.publishedAt === "string" ? patch.publishedAt : a.date },
+    { key: "publishedAt", label: { fr: "Date publiée", en: "Published date" }, kind: "text" as const, current: typeof patch["publishedAt"] === "string" ? patch["publishedAt"] : a.date },
   ];
 
   return (
@@ -103,7 +103,7 @@ function ArticlePage() {
               imageUrl: displayImageUrl,
               url: displaySourceUrl,
               author: displayAuthor,
-              publishedAt: typeof patch.publishedAt === "string" ? patch.publishedAt : a.date,
+              publishedAt: typeof patch["publishedAt"] === "string" ? patch["publishedAt"] : a.date,
             }}
             fields={contributionFields}
             appearance="menu"

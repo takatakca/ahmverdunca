@@ -115,6 +115,8 @@ export function ContentContributionButton({
   if (!selected || fields.length === 0) return null;
 
   async function submit() {
+    const activeField = selected;
+    if (!activeField) return;
     setError("");
     setResult(null);
     if (!reason.trim()) {
@@ -128,7 +130,7 @@ export function ContentContributionButton({
 
     let parsed: unknown;
     try {
-      parsed = parseFieldValue(selected, value);
+      parsed = parseFieldValue(activeField, value);
     } catch {
       setError(lang === "fr" ? "La nouvelle valeur n’est pas dans un format valide." : "The new value is not in a valid format.");
       return;
@@ -137,7 +139,7 @@ export function ContentContributionButton({
     setSending(true);
     try {
       const attachmentUrls =
-        selected.kind === "image-url" && typeof parsed === "string" && parsed.startsWith("https://")
+        activeField.kind === "image-url" && typeof parsed === "string" && parsed.startsWith("https://")
           ? [parsed]
           : [];
       const response = await fetch("/api/ahmv/contributions", {
@@ -148,13 +150,13 @@ export function ContentContributionButton({
           resourceType,
           resourceKey,
           action:
-            selected.kind === "image-url"
+            activeField.kind === "image-url"
               ? "replace_media"
               : resourceType === "schedule"
                 ? "correct_fact"
                 : "update",
           originalSnapshot: snapshot,
-          proposedPatch: { [selected.key]: parsed },
+          proposedPatch: { [activeField.key]: parsed },
           reason: reason.trim(),
           evidenceUrls: evidenceUrl.trim() ? [evidenceUrl.trim()] : [],
           attachmentUrls,
@@ -248,17 +250,17 @@ export function ContentContributionButton({
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/55">
                 {lang === "fr" ? "Nouvelle valeur proposée" : "Proposed new value"}
               </span>
-              {selected.kind === "textarea" || selected.kind === "json" || selected.kind === "string-list" ? (
+              {activeField.kind === "textarea" || activeField.kind === "json" || activeField.kind === "string-list" ? (
                 <textarea
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
-                  rows={selected.kind === "json" ? 8 : 5}
+                  rows={activeField.kind === "json" ? 8 : 5}
                   className="mt-2 w-full border border-white/15 bg-competition p-3 font-mono text-sm text-white outline-none focus:border-sport"
                   placeholder={selected.placeholder?.[lang]}
                 />
               ) : (
                 <input
-                  type={selected.kind === "url" || selected.kind === "image-url" ? "url" : selected.kind === "number" ? "number" : selected.kind}
+                  type={activeField.kind === "url" || activeField.kind === "image-url" ? "url" : activeField.kind === "number" ? "number" : activeField.kind}
                   value={value}
                   onChange={(event) => setValue(event.target.value)}
                   className="mt-2 h-11 w-full border border-white/15 bg-competition px-3 text-sm text-white outline-none focus:border-sport"

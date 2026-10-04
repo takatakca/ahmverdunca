@@ -61,11 +61,11 @@ function safeObject(value: unknown): Record<string, unknown> | undefined {
 function sanitizeContribution(value: unknown) {
   const row = safeObject(value);
   if (!row) return undefined;
-  const resourceType = safeString(row.resourceType, 40);
-  const resourceKey = safeString(row.resourceKey, 180);
-  const action = safeString(row.action, 40);
-  const idempotencyKey = safeString(row.idempotencyKey, 120);
-  const proposedPatch = safeObject(row.proposedPatch);
+  const resourceType = safeString(row["resourceType"], 40);
+  const resourceKey = safeString(row["resourceKey"], 180);
+  const action = safeString(row["action"], 40);
+  const idempotencyKey = safeString(row["idempotencyKey"], 120);
+  const proposedPatch = safeObject(row["proposedPatch"]);
 
   if (
     !resourceType ||
@@ -80,10 +80,10 @@ function sanitizeContribution(value: unknown) {
   }
 
   const originalVersion =
-    typeof row.originalVersion === "number" &&
-    Number.isInteger(row.originalVersion) &&
-    row.originalVersion >= 1
-      ? row.originalVersion
+    typeof row["originalVersion"] === "number" &&
+    Number.isInteger(row["originalVersion"]) &&
+    row["originalVersion"] >= 1
+      ? row["originalVersion"]
       : undefined;
 
   return {
@@ -92,12 +92,12 @@ function sanitizeContribution(value: unknown) {
     action,
     idempotencyKey,
     proposedPatch,
-    ...(safeString(row.targetUrl, 1200) ? { targetUrl: safeString(row.targetUrl, 1200)! } : {}),
+    ...(safeString(row["targetUrl"], 1200) ? { targetUrl: safeString(row["targetUrl"], 1200)! } : {}),
     ...(originalVersion ? { originalVersion } : {}),
-    ...(safeObject(row.originalSnapshot) ? { originalSnapshot: safeObject(row.originalSnapshot)! } : {}),
-    ...(safeString(row.reason, 2000) ? { reason: safeString(row.reason, 2000)! } : {}),
-    evidenceUrls: safeStringArray(row.evidenceUrls),
-    attachmentUrls: safeStringArray(row.attachmentUrls),
+    ...(safeObject(row["originalSnapshot"]) ? { originalSnapshot: safeObject(row["originalSnapshot"])! } : {}),
+    ...(safeString(row["reason"], 2000) ? { reason: safeString(row["reason"], 2000)! } : {}),
+    evidenceUrls: safeStringArray(row["evidenceUrls"]),
+    attachmentUrls: safeStringArray(row["attachmentUrls"]),
   };
 }
 
@@ -148,18 +148,18 @@ async function submitContribution(request: Request) {
 
 function sanitizePublications(value: unknown) {
   const root = safeObject(value);
-  if (!root || root.ok !== true || !Array.isArray(root.publications)) return [];
+  if (!root || root["ok"] !== true || !Array.isArray(root["publications"])) return [];
 
-  return root.publications
+  return root["publications"]
     .slice(0, 1000)
     .map((raw) => {
       const row = safeObject(raw);
       if (!row) return null;
-      const id = safeString(row.id, 80);
-      const resourceType = safeString(row.resourceType, 40);
-      const resourceKey = safeString(row.resourceKey, 180);
-      const patch = safeObject(row.patch);
-      const version = typeof row.version === "number" && Number.isInteger(row.version) ? row.version : undefined;
+      const id = safeString(row["id"], 80);
+      const resourceType = safeString(row["resourceType"], 40);
+      const resourceKey = safeString(row["resourceKey"], 180);
+      const patch = safeObject(row["patch"]);
+      const version = typeof row["version"] === "number" && Number.isInteger(row["version"]) ? row["version"] : undefined;
       if (!id || !resourceType || !CONTENT_TYPES.has(resourceType) || !resourceKey || !patch || !version) return null;
       return { id, resourceType, resourceKey, patch, version };
     })

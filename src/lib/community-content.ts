@@ -46,9 +46,10 @@ export function applyContentOverlay<T extends Record<string, unknown>>(
 ): T {
   if (!overlay) return base;
   const next = clonePlain(base);
+  const writable = next as Record<string, unknown>;
   for (const [field, value] of Object.entries(overlay.patch)) {
-    if (field.includes(".")) setNested(next, field, value);
-    else next[field] = value;
+    if (field.includes(".")) setNested(writable, field, value);
+    else writable[field] = value;
   }
   return next;
 }
