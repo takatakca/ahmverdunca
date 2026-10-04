@@ -109,13 +109,17 @@ export function CommunicationsPreview() {
     if (window.localStorage.getItem(HIDE_KEY) === "1") return;
     if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
 
+    // Phones already have the persistent parent dock and assistant access.
+    // Keep the content surface clear instead of stacking another floating card.
+    if (window.matchMedia("(max-width: 767px)").matches) return;
+
     const timer = window.setTimeout(() => {
       if (document.body.style.overflow === "hidden") return;
       if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
       if (document.querySelector("[data-ahmv-attention-surface]")) return;
       setTeaserOpen(true);
       window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 12000);
+    }, 15000);
 
     return () => window.clearTimeout(timer);
   }, []);
