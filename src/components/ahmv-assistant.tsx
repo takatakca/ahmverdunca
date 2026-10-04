@@ -80,15 +80,39 @@ export function AhmvAssistant() {
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
   const [reply, setReply] = useState<AssistantReply | null>(null);
   const [bookmarkNotice, setBookmarkNotice] = useState("");
+  const [showNudge, setShowNudge] = useState(false);
 
   useEffect(() => {
     setAssistantLanguage(readAssistantLanguage(lang));
   }, [lang]);
 
   useEffect(() => {
+    let alreadySeen = false;
+    try {
+      alreadySeen = window.sessionStorage.getItem("ahmv-assistant-nudge-seen") === "1";
+    } catch {
+      alreadySeen = false;
+    }
+    if (alreadySeen) return;
+
+    const timer = window.setTimeout(() => {
+      setShowNudge(true);
+    }, 4200);
+
+    return () => window.clearTimeout(timer);
+  }, []);
+
+
+  useEffect(() => {
     const openAssistant = () => {
       setOpen(true);
+      setShowNudge(false);
       setBookmarkNotice("");
+      try {
+        window.sessionStorage.setItem("ahmv-assistant-nudge-seen", "1");
+      } catch {
+        // Session storage is optional; the assistant must still open.
+      }
     };
     window.addEventListener("ahmv:assistant-open", openAssistant);
     return () => window.removeEventListener("ahmv:assistant-open", openAssistant);
@@ -111,6 +135,23 @@ export function AhmvAssistant() {
   }, [open]);
 
   const copy = useMemo(() => assistantCopy(assistantLanguage), [assistantLanguage]);
+
+  const nudgeCopy = useMemo(() => {
+    const ui = assistantUiLanguage(assistantLanguage);
+    if (ui === "es") return { title: "¿Necesitas ayuda?", body: "Habla al micrófono. Puedo encontrar equipo, horario, resultados o arena.", action: "Hablar" };
+    if (ui === "en") return { title: "Need help?", body: "Talk to the mic. I can find a team, schedule, results or arena.", action: "Talk" };
+    return { title: "Besoin d’aide?", body: "Parlez au micro. Je peux trouver équipe, horaire, résultats ou aréna.", action: "Parler" };
+  }, [assistantLanguage]);
+
+  const dismissNudge = () => {
+    setShowNudge(false);
+    try {
+      window.sessionStorage.setItem("ahmv-assistant-nudge-seen", "1");
+    } catch {
+      // Session storage is optional.
+    }
+  };
+
 
   const chooseLanguage = (code: AssistantLanguageCode) => {
     setAssistantLanguage(code);
@@ -139,12 +180,50 @@ export function AhmvAssistant() {
   };
 
   const openAssistant = () => {
+    dismissNudge();
     window.dispatchEvent(new CustomEvent("ahmv:navigation-open"));
     setOpen(true);
   };
 
   return (
     <>
+      {showNudge && !open && (
+        <aside
+          className="rise fixed bottom-36 left-3 z-40 w-[min(19rem,calc(100vw-1.5rem))] border border-sport/45 bg-competition/97 p-3 text-white shadow-[0_22px_65px_-28px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-20 lg:left-4"
+          aria-label={nudgeCopy.title}
+        >
+          <button
+            type="button"
+            onClick={dismissNudge}
+            className="absolute right-2 top-2 flex size-8 items-center justify-center border border-white/10 text-white/55 transition hover:border-white/25 hover:text-white"
+            aria-label={copy.close}
+          >
+            <X className="size-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={openAssistant}
+            className="group flex w-full items-start gap-3 pr-9 text-left"
+          >
+            <span className="relative mt-0.5 flex size-10 shrink-0 items-center justify-center border border-white/12 bg-white/[0.05]">
+              <Bot className="size-5 text-sport-foreground" />
+              <span className="absolute -bottom-1 -right-1 flex size-5 items-center justify-center rounded-full bg-sport text-white shadow-lg">
+                <Mic className="size-3" aria-hidden />
+              </span>
+            </span>
+            <span className="min-w-0">
+              <span className="block font-display text-xl font-extrabold uppercase leading-none">{nudgeCopy.title}</span>
+              <span className="mt-1.5 block text-xs leading-relaxed text-white/62">{nudgeCopy.body}</span>
+              <span className="mt-2 inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
+                <Mic className="size-3.5" aria-hidden />
+                {nudgeCopy.action}
+                <Sparkles className="size-3" aria-hidden />
+              </span>
+            </span>
+          </button>
+        </aside>
+      )}
+
       <button
         type="button"
         onClick={openAssistant}
