@@ -87,18 +87,6 @@ export function SiteHeader() {
     };
   }, [open, scrolled]);
 
-  // Do not keep a phone/tablet overlay alive after crossing the desktop
-  // breakpoint (rotation, foldables, window resizing).
-  useEffect(() => {
-    const media = window.matchMedia("(min-width: 1024px)");
-    const closeMobileMenuOnDesktop = (event: MediaQueryListEvent | MediaQueryList) => {
-      if (event.matches) setOpen(false);
-    };
-    closeMobileMenuOnDesktop(media);
-    media.addEventListener("change", closeMobileMenuOnDesktop);
-    return () => media.removeEventListener("change", closeMobileMenuOnDesktop);
-  }, []);
-
   // Let keyboard users close either navigation menu immediately.
   useEffect(() => {
     if (!open && !moreOpen) return;
@@ -128,7 +116,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header ref={headerRef} className={cn("sticky top-0 border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition/96 text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)] backdrop-blur-xl", open ? "z-[110]" : "z-50")}>
+    <header ref={headerRef} className={cn("sticky top-0 isolate border-b border-t-2 border-b-navy-foreground/12 border-t-sport bg-competition text-navy-foreground shadow-[0_18px_40px_-32px_rgba(0,0,0,0.9)]", open ? "z-[300]" : "z-[200]")}>
       {/* Top utility bar (desktop) */}
       <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
@@ -292,10 +280,10 @@ export function SiteHeader() {
           <button
             type="button"
             className={cn(
-              "premium-control tap-target inline-flex h-11 shrink-0 items-center justify-center gap-1.5 border px-2 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] min-[360px]:gap-2 min-[360px]:px-3 min-[360px]:text-xs min-[360px]:tracking-[0.12em] lg:hidden",
+              "premium-control tap-target relative z-[1] inline-flex h-11 shrink-0 items-center justify-center gap-1.5 border-2 px-3 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.95)] min-[360px]:gap-2 min-[360px]:px-4 min-[360px]:text-xs min-[360px]:tracking-[0.12em]",
               open
                 ? "border-sport bg-sport text-sport-foreground"
-                : "border-navy-foreground/18 bg-navy-foreground/[0.035] text-navy-foreground hover:bg-navy-foreground/10",
+                : "border-white/60 bg-white text-competition hover:border-sport hover:bg-sport hover:text-sport-foreground",
             )}
             aria-label={open ? t("nav.close") : t("nav.menu")}
             aria-expanded={open}
@@ -312,7 +300,7 @@ export function SiteHeader() {
       {open && createPortal(
         <div
           id="mobile-menu"
-          className="technical-grid fixed inset-x-0 z-[110] overflow-y-auto overscroll-contain bg-competition shadow-[0_24px_80px_rgba(0,0,0,0.5)] pb-[env(safe-area-inset-bottom)] lg:hidden animate-in fade-in slide-in-from-top-2"
+          className="technical-grid fixed inset-x-0 z-[290] overflow-y-auto overscroll-contain border-t border-white/10 bg-competition shadow-[0_24px_80px_rgba(0,0,0,0.65)] pb-[env(safe-area-inset-bottom)] animate-in fade-in slide-in-from-top-2"
           style={{
             top: mobileMenuTop,
             bottom: "calc(3.5rem + env(safe-area-inset-bottom))",
