@@ -136,16 +136,16 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.verdunM11Registration}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
+              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
             >
               <div className="flex items-center justify-between">
                 <Users className="size-6 text-sport" aria-hidden />
-                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+                <ExternalLink className="size-4 text-white/38" aria-hidden />
               </div>
-              <h3 className="heading-card mt-5 group-hover:text-sport">
+              <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
                 {lang === "fr" ? "Inscriptions M11" : "U11 registration"}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm leading-relaxed text-white/58">
                 {lang === "fr"
                   ? "Inscriptions ouvertes sur le site officiel jusqu’au 15 novembre 2026."
                   : "Registration is open on the official site until November 15, 2026."}
@@ -156,16 +156,16 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m11TournamentSchedule}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
+              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
             >
               <div className="flex items-center justify-between">
                 <CalendarDays className="size-6 text-sport" aria-hidden />
-                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+                <ExternalLink className="size-4 text-white/38" aria-hidden />
               </div>
-              <h3 className="heading-card mt-5 group-hover:text-sport">
+              <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
                 {lang === "fr" ? "Horaires & classements M11" : "U11 schedules & standings"}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm leading-relaxed text-white/58">
                 {lang === "fr"
                   ? "Ouvrir les données sportives officielles dans Spordle."
                   : "Open official sport data in Spordle."}
@@ -176,16 +176,16 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m11TournamentRules}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
+              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
             >
               <div className="flex items-center justify-between">
                 <FileText className="size-6 text-sport" aria-hidden />
-                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+                <ExternalLink className="size-4 text-white/38" aria-hidden />
               </div>
-              <h3 className="heading-card mt-5 group-hover:text-sport">
+              <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
                 {lang === "fr" ? "Règlements M11" : "U11 tournament rules"}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm leading-relaxed text-white/58">
                 {lang === "fr"
                   ? "Consulter les règlements actuellement publiés sur le site officiel du tournoi."
                   : "Read the rules currently published on the tournament’s official site."}
@@ -196,16 +196,16 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m7FestivalSchedule}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40"
+              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
             >
               <div className="flex items-center justify-between">
                 <Trophy className="size-6 text-sport" aria-hidden />
-                <ExternalLink className="size-4 text-muted-foreground" aria-hidden />
+                <ExternalLink className="size-4 text-white/38" aria-hidden />
               </div>
-              <h3 className="heading-card mt-5 group-hover:text-sport">
+              <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
                 {lang === "fr" ? "Festival M7" : "U7 Festival"}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm leading-relaxed text-white/58">
                 {lang === "fr"
                   ? "Accéder à l'horaire officiel actuellement publié."
                   : "Open the currently published official schedule."}
@@ -213,12 +213,12 @@ function TournamentsPage() {
             </a>
           </div>
 
-          <div className="mt-5 border border-navy/12 bg-ice p-6">
+          <div className="mt-5 border border-white/12 bg-navy p-6 text-white">
             <Users className="size-6 text-sport" aria-hidden />
-            <h3 className="heading-card mt-5">
+            <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white">
               {lang === "fr" ? "Bénévoles & partenaires" : "Volunteers & partners"}
             </h3>
-            <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/58">
               {lang === "fr"
                 ? "Pour contribuer au tournoi comme bénévole ou partenaire, communiquez avec l’association. Les inscriptions, horaires et résultats demeurent sur les plateformes officielles."
                 : "To support the tournament as a volunteer or partner, contact the association. Registration, schedules and results remain on the official platforms."}

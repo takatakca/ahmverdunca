@@ -98,11 +98,11 @@ function RegistrationPage() {
             </a>
           </div>
         </section>
-        <div className="broadcast-rail border border-navy/12 bg-ice p-5 pl-7">
-          <p className="eyebrow text-sport">
+        <div className="broadcast-rail border border-white/12 bg-competition p-5 pl-7 text-white">
+          <p className="eyebrow text-sport-foreground">
             {lang === "fr" ? "Parcours officiel" : "Official pathway"}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-white/62">
             {lang === "fr"
               ? "AHM Verdun explique le parcours ici, puis l'inscription elle-même se poursuit sur Spordle, la plateforme officielle déjà utilisée par l'association."
               : "AHM Verdun explains the process here, then registration continues on Spordle, the official platform already used by the association."}
@@ -149,13 +149,13 @@ function RegistrationPage() {
                 enText: "Documents, payments and confirmations stay in the Spordle process.",
               },
             ].map(({ Icon, number, frTitle, enTitle, frText, enText }) => (
-              <div key={number} className="interactive-surface relative overflow-hidden border border-navy/12 bg-background p-6">
-                <span className="absolute right-4 top-2 font-display text-5xl font-extrabold text-navy/5">
+              <div key={number} className="interactive-surface relative overflow-hidden border border-white/12 bg-competition p-6 text-white">
+                <span className="absolute right-4 top-2 font-display text-5xl font-extrabold text-white/5">
                   {number}
                 </span>
                 <Icon className="size-6 text-sport" aria-hidden />
-                <h3 className="heading-card mt-6">{lang === "fr" ? frTitle : enTitle}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <h3 className="mt-6 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white">{lang === "fr" ? frTitle : enTitle}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/58">
                   {lang === "fr" ? frText : enText}
                 </p>
               </div>
@@ -241,14 +241,17 @@ function RegistrationPage() {
 
 
 
-        <section>
-          <SectionHeading title={lang === "fr" ? "Aide financière" : "Financial assistance"} />
-          <p className="max-w-2xl text-base text-muted-foreground">
+        <section className="border border-white/12 bg-competition p-6 text-white md:p-8">
+          <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Soutien aux familles" : "Family support"}</p>
+          <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9]">
+            {lang === "fr" ? "Aide financière" : "Financial assistance"}
+          </h2>
+          <p className="mt-4 max-w-2xl text-base text-white/62">
             {lang === "fr"
               ? "Des programmes externes peuvent soutenir la participation sportive. Consultez toujours les critères directement auprès du programme concerné."
               : "External programs may support sport participation. Always verify eligibility directly with the relevant program."}
           </p>
-          <Button asChild variant="outline" className="mt-4">
+          <Button asChild variant="outline-light" className="mt-5">
             <Link to="/ressources">{t("nav.resources")}</Link>
           </Button>
         </section>
