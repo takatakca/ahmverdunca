@@ -309,7 +309,7 @@ function TeamPage() {
 
         <section
           aria-labelledby="team-command-title"
-          className="overflow-hidden border border-navy/12 bg-background"
+          className="overflow-hidden border border-white/12 bg-navy-deep text-white"
         >
           <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
             <div className="competition-panel p-6 text-navy-foreground md:p-8">
@@ -355,15 +355,15 @@ function TeamPage() {
               </div>
             </div>
 
-            <div className="p-6 md:p-8">
-              <p className="eyebrow text-sport">
+            <div className="bg-competition p-6 md:p-8">
+              <p className="eyebrow text-sport-foreground">
                 {lang === "fr" ? "Accès rapide" : "Quick access"}
               </p>
               <div className="mt-5 grid gap-2">
                 {news.length > 0 && (
                   <a
                     href="#nouvelles-equipe"
-                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
                   >
                     {lang === "fr" ? "Nouvelles" : "News"}
                     <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -372,7 +372,7 @@ function TeamPage() {
                 {albums.length > 0 && (
                   <a
                     href="#photos-equipe"
-                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
                   >
                     {lang === "fr" ? "Photos" : "Photos"}
                     <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -381,7 +381,7 @@ function TeamPage() {
                 {(exactTeam || socialLinks.length > 0) && (
                   <a
                     href="#social-equipe"
-                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
                   >
                     {lang === "fr" ? "Réseaux sociaux" : "Social"}
                     <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -389,7 +389,7 @@ function TeamPage() {
                 )}
                 <Link
                   to="/inscriptions"
-                  className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
                 >
                   {lang === "fr" ? "Inscriptions" : "Registration"}
                   <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
@@ -397,7 +397,7 @@ function TeamPage() {
                 {slug === "feminin" && (
                   <a
                     href={`mailto:${SITE.girlsHockeyEmail}`}
-                    className="premium-control group flex items-center justify-between border border-navy/12 px-4 py-3 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                    className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
                   >
                     {lang === "fr" ? "Questions hockey féminin" : "Girls' hockey questions"}
                     <Mail className="size-4 text-sport" />
@@ -408,19 +408,19 @@ function TeamPage() {
           </div>
         </section>
 
-        <section className="grid overflow-hidden border border-navy/12 bg-ice lg:grid-cols-[1fr_auto] lg:items-stretch">
+        <section className="grid overflow-hidden border border-white/12 bg-competition text-white lg:grid-cols-[1fr_auto] lg:items-stretch">
           <div className="p-6 md:p-8">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Communauté d'équipe" : "Team community"}</p>
-            <h2 className="mt-2 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy md:text-4xl">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Communauté d'équipe" : "Team community"}</p>
+            <h2 className="mt-2 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] text-white md:text-4xl">
               {lang === "fr" ? "Vous avez une mise à jour fiable?" : "Have a reliable team update?"}
             </h2>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
               {lang === "fr"
                 ? "Parents, entraîneurs et bénévoles peuvent proposer une nouvelle, un document ou un lien d'équipe. Pour l'instant, chaque envoi passe par une révision humaine avant publication."
                 : "Parents, coaches and volunteers can suggest a story, document or team link. For now, every submission is reviewed by a person before publication."}
             </p>
           </div>
-          <div className="flex min-w-[250px] flex-col justify-center border-t border-navy/12 p-6 lg:border-l lg:border-t-0 md:p-8">
+          <div className="flex min-w-[250px] flex-col justify-center border-t border-white/12 bg-navy-deep p-6 lg:border-l lg:border-t-0 md:p-8">
             <Button asChild variant="sport" size="lg" className="justify-between">
               <a
                 href={`mailto:${SITE.operationsEmail}?subject=${encodeURIComponent(updateSubject)}&body=${encodeURIComponent(updateBody)}`}
@@ -429,7 +429,7 @@ function TeamPage() {
                 <ArrowRight className="size-4" />
               </a>
             </Button>
-            <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-[11px] leading-relaxed text-white/45">
               {lang === "fr"
                 ? "Canal courriel actuel — aucune publication automatique n'est activée."
                 : "Current email channel — automatic publishing is not enabled."}
