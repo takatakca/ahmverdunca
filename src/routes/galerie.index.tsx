@@ -53,7 +53,9 @@ function GalleryPage() {
         }
       />
 
-      <div className="relative overflow-hidden bg-navy-deep py-9 text-white md:py-14">\n        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />\n        <div className="container-site relative">
+      <div className="relative overflow-hidden bg-navy-deep py-9 text-white md:py-14">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
+        <div className="container-site relative">
         <HouseSponsorSlot placement="gallery" compact className="mb-8" />
         <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
           <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
@@ -223,6 +225,7 @@ function GalleryPage() {
         <div className="mt-8 flex items-center gap-3 border-t border-white/12 pt-5 text-xs text-white/48">
           <CalendarDays className="size-4 text-sport" />
           <span>{lang === "fr" ? "Archives organisées par saison et type d’événement." : "Archives organized by season and event type."}</span>
+        </div>
         </div>
       </div>
     </>
