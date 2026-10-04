@@ -24,7 +24,7 @@ export function ScheduleFinder() {
   const [team, setTeam] = useState("");
 
   useEffect(() => {
-    if (preferredTeam) setTeam(preferredTeam);
+    setTeam(preferredTeam);
   }, [preferredTeam]);
 
   const selected = TEAMS.find((item) => item.slug === team);
@@ -95,6 +95,21 @@ export function ScheduleFinder() {
                     ))}
                   </select>
                 </label>
+                {team && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="mt-3 min-h-11 gap-2"
+                    onClick={() => {
+                      setTeam("");
+                      savePreferredTeam("");
+                    }}
+                    aria-label={lang === "fr" ? "Effacer ma catégorie" : "Clear my category"}
+                  >
+                    <XCircle className="size-4" aria-hidden />
+                    {lang === "fr" ? "Effacer mon choix" : "Clear my selection"}
+                  </Button>
+                )}
                 <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
                   {selected
                     ? lang === "fr"
