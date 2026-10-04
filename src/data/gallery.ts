@@ -94,7 +94,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-04",
     season: "2026-2027",
-    teamSlugs: ["m11", "m12", "feminin"],
+    teamSlugs: ["m11", "feminin"],
     eventType: { fr: "Tournois", en: "Tournaments" },
     coverUrl: uploadedMedia("tournaments")[0]!.url,
     photos: uploadedMedia("tournaments"),
