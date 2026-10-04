@@ -144,7 +144,8 @@ export function AhmvCommunityFeed() {
 
   if (connected === false && items.length === 0) {
     return (
-      <section className="relative overflow-hidden border-y border-white/10 bg-competition py-8 text-white md:py-10">\n        <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
+      <section className="relative overflow-hidden border-y border-white/10 bg-competition py-8 text-white md:py-10">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
         <div className="container-site relative flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="eyebrow text-sport-foreground">
@@ -178,7 +179,8 @@ export function AhmvCommunityFeed() {
   }
 
   return (
-    <section className="relative overflow-hidden border-y border-white/10 bg-competition py-10 text-white md:py-14">\n      <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
+    <section className="relative overflow-hidden border-y border-white/10 bg-competition py-10 text-white md:py-14">
+      <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
       <div className="container-site relative">
         <div className="flex flex-col gap-4 border-b border-white/15 pb-5 md:flex-row md:items-end md:justify-between">
           <div>
