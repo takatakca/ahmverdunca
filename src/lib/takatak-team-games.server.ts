@@ -120,7 +120,7 @@ export async function handleTakatakTeamGames(
     });
   }
 
-  if (settings["TAKATAK_TEAM_GAMES_ENABLED"] !== "true") {
+  if (settings["TAKATAK_TEAM_GAMES_ENABLED"] === "false") {
     return json({ status: "disabled" }, 503);
   }
 
@@ -128,9 +128,9 @@ export async function handleTakatakTeamGames(
   const team = getPublicTeamById(teamId);
   if (!team) return json({ status: "unknown_team" }, 404);
 
-  const originValue = settings["TAKATAK_TEAM_GAMES_ORIGIN"];
-  const token = settings["TAKATAK_TEAM_GAMES_TOKEN"];
-  if (!originValue || !token) return json({ status: "unavailable" }, 503);
+  const originValue = settings["TAKATAK_TEAM_GAMES_ORIGIN"]?.trim() || "https://takatak.ca";
+  const token = settings["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim();
+  if (!token) return json({ status: "unavailable" }, 503);
 
   let origin: URL;
   try {
