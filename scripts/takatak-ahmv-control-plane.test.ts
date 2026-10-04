@@ -14,6 +14,15 @@ import { assertExpectedRevision } from "../src/features/takatak-dashboard-ahmv/r
 import { parseTakatakAhmvCommand } from "../src/features/takatak-dashboard-ahmv/command.ts";
 import { assertCompleteAdapterCatalog } from "../src/features/takatak-dashboard-ahmv/adapters.ts";
 import { canRetryControlJob } from "../src/features/takatak-dashboard-ahmv/jobs.ts";
+import {
+  grantAllowsControlPlane,
+  principalFromAssociationGrant,
+} from "../src/features/takatak-dashboard-ahmv/subscription-access.ts";
+import {
+  assertSafeConnectorReference,
+  buildConnectorExecutionRequest,
+} from "../src/features/takatak-dashboard-ahmv/connectors.ts";
+import { createTakatakUsageEvent } from "../src/features/takatak-dashboard-ahmv/usage-metering.ts";
 
 function request(headers: Record<string, string> = {}) {
   return new Request("https://ahmverdun.ca/internal/takatak/ahmv", { headers });
@@ -203,4 +212,90 @@ test("failed jobs retry only while attempts remain", () => {
   assert.equal(canRetryControlJob(base), true);
   assert.equal(canRetryControlJob({ ...base, attempts: 3 }), false);
   assert.equal(canRetryControlJob({ ...base, status: "succeeded" }), false);
+});
+
+
+test("association subscription grant is required and expires server-side", () => {
+  const grant = {
+    organizationId: "org_123",
+    actorId: "user_123",
+    role: "admin" as const,
+    subscriptionId: "sub_123",
+    productCode: "managed_hockey_association",
+    status: "active" as const,
+    enabledServices: ["website", "seo"] as const,
+    validUntil: "2026-10-31T23:59:59.000Z",
+  };
+
+  const now = new Date("2026-10-04T12:00:00.000Z");
+  assert.equal(grantAllowsControlPlane(grant, now), true);
+  assert.deepEqual(principalFromAssociationGrant(grant, now).enabledServices, [
+    "website",
+    "seo",
+  ]);
+
+  assert.equal(
+    grantAllowsControlPlane({ ...grant, status: "cancelled" }, now),
+    false,
+  );
+  assert.equal(
+    grantAllowsControlPlane(
+      { ...grant, validUntil: "2026-10-01T00:00:00.000Z" },
+      now,
+    ),
+    false,
+  );
+});
+
+test("connector contract carries references but never provider secrets", () => {
+  const connector = assertSafeConnectorReference({
+    connectorId: "connector_twilio_01",
+    provider: "twilio",
+    accountRef: "account_primary",
+    service: "voice",
+    secretLocation: "takatak_vault",
+  });
+
+  const request = buildConnectorExecutionRequest({
+    connector,
+    operation: "voice_call",
+    resourceRef: "lead_123",
+    idempotencyKey: "cmd_12345678",
+    payloadFingerprint: "abc",
+  });
+
+  assert.equal(request.secretMaterialIncluded, false);
+  assert.throws(
+    () =>
+      assertSafeConnectorReference({
+        ...connector,
+        connectorId: "bad connector id",
+      }),
+    /invalid_takatak_connector_reference/,
+  );
+});
+
+test("AHMV emits usage facts but never becomes billing authority", () => {
+  const event = createTakatakUsageEvent({
+    eventId: "usage_123",
+    organizationId: "org_123",
+    service: "sms",
+    unit: "segment",
+    quantity: 2,
+    occurredAt: new Date("2026-10-04T12:00:00.000Z"),
+  });
+
+  assert.equal(event.quantity, 2);
+  assert.equal(event.billingAuthority, "takatak");
+  assert.throws(
+    () =>
+      createTakatakUsageEvent({
+        eventId: "usage_124",
+        organizationId: "org_123",
+        service: "sms",
+        unit: "segment",
+        quantity: 0,
+      }),
+    /invalid_usage_quantity/,
+  );
 });
