@@ -143,12 +143,12 @@ function TournamentsPage() {
                 : "AHM Verdun showcases the event; tournament operations remain in their official system."
             }
           />
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 md:mx-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-4">
             <a
               href={EXTERNAL_LINKS.verdunM11Registration}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
+              className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center border border-white/12 bg-competition p-6 text-white hover:border-sport/60 md:w-auto md:max-w-none"
             >
               <div className="flex items-center justify-between">
                 <Users className="size-6 text-sport" aria-hidden />
@@ -168,7 +168,7 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m11TournamentSchedule}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
+              className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center border border-white/12 bg-competition p-6 text-white hover:border-sport/60 md:w-auto md:max-w-none"
             >
               <div className="flex items-center justify-between">
                 <CalendarDays className="size-6 text-sport" aria-hidden />
@@ -188,7 +188,7 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m11TournamentRules}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
+              className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center border border-white/12 bg-competition p-6 text-white hover:border-sport/60 md:w-auto md:max-w-none"
             >
               <div className="flex items-center justify-between">
                 <FileText className="size-6 text-sport" aria-hidden />
@@ -208,7 +208,7 @@ function TournamentsPage() {
               href={EXTERNAL_LINKS.m7FestivalSchedule}
               target="_blank"
               rel="noopener noreferrer"
-              className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/60"
+              className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center border border-white/12 bg-competition p-6 text-white hover:border-sport/60 md:w-auto md:max-w-none"
             >
               <div className="flex items-center justify-between">
                 <Trophy className="size-6 text-sport" aria-hidden />
