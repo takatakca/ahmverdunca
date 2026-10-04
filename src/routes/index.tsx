@@ -319,16 +319,17 @@ function Home() {
       </section>
 
       {/* Newsroom */}
-      <section className="bg-ice py-8 md:py-10">
-        <div className="container-site">
-          <div className="flex flex-col gap-4 border-b-2 border-navy pb-5 md:flex-row md:items-end md:justify-between">
+      <section className="relative overflow-hidden bg-competition py-8 text-white md:py-10">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
+        <div className="container-site relative">
+          <div className="flex flex-col gap-4 border-b border-white/15 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
               <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl md:text-6xl">
                 {t("home.news")}
               </h2>
             </div>
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline-light" size="sm">
               <Link to="/nouvelles">{t("common.seeAll")} <ArrowRight className="size-4" /></Link>
             </Button>
           </div>
@@ -522,38 +523,39 @@ function Home() {
       </section>
 
       {/* Arenas */}
-      <section className="bg-background py-14 md:py-20">
-        <div className="container-site">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+      <section className="relative overflow-hidden bg-navy-deep py-12 text-white md:py-16">
+        <div className="arena-light opacity-25" aria-hidden />
+        <div className="container-site relative">
+          <div className="grid gap-7 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
               <p className="eyebrow text-sport">{lang === "fr" ? "Où nous jouons" : "Where we play"}</p>
-              <h2 className="mt-2 font-display text-6xl font-extrabold uppercase leading-[0.85] tracking-[-0.035em] text-navy md:text-7xl">
+              <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.85] tracking-[-0.035em] text-white sm:text-6xl md:text-7xl">
                 {lang === "fr" ? "Les arénas" : "Arenas"}
               </h2>
-              <p className="mt-5 max-w-md text-sm leading-relaxed text-muted-foreground">
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-white/60">
                 {lang === "fr"
                   ? "Adresses vérifiées, itinéraires et installations utilisées autour de Verdun et Montréal."
                   : "Verified addresses, directions and facilities used around Verdun and Montreal."}
               </p>
-              <Button asChild variant="outline" className="mt-6">
+              <Button asChild variant="outline-light" className="mt-6">
                 <Link to="/arenas">{lang === "fr" ? `Voir les ${ARENAS.length} arénas` : `View all ${ARENAS.length} arenas`} <ArrowRight className="size-4" /></Link>
               </Button>
             </div>
 
             {featuredArena && (
-              <div className="border-t-4 border-sport bg-ice">
+              <div className="overflow-hidden border border-white/12 border-t-4 border-t-sport bg-competition">
                 <div className="grid md:grid-cols-[1.15fr_0.85fr]">
                   <div className="p-6 md:p-8">
                     <p className="eyebrow text-sport">{lang === "fr" ? "Aréna principal" : "Featured arena"}</p>
-                    <h3 className="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy md:text-5xl">
+                    <h3 className="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.9] text-white md:text-5xl">
                       {featuredArena.name}
                     </h3>
-                    <p className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
+                    <p className="mt-4 flex items-start gap-2 text-sm text-white/66">
                       <MapPin className="mt-0.5 size-4 shrink-0 text-sport" />
                       {featuredArena.address}
                     </p>
                     {featuredArena.facilities && (
-                      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{l(featuredArena.facilities)}</p>
+                      <p className="mt-4 text-sm leading-relaxed text-white/58">{l(featuredArena.facilities)}</p>
                     )}
                     <div className="mt-6 flex flex-wrap gap-2">
                       <Button asChild variant="sport">
@@ -561,7 +563,7 @@ function Home() {
                           <MapPin className="size-4" /> {lang === "fr" ? "Itinéraire" : "Directions"}
                         </a>
                       </Button>
-                      <Button asChild variant="outline">
+                      <Button asChild variant="outline-light">
                         <Link to="/arenas/$slug" params={{ slug: featuredArena.slug }}>
                           {lang === "fr" ? "Fiche aréna" : "Arena details"} <ArrowRight className="size-4" />
                         </Link>
@@ -569,17 +571,17 @@ function Home() {
                     </div>
                   </div>
 
-                  <div className="divide-y divide-navy/10 border-t border-navy/10 md:border-l md:border-t-0">
+                  <div className="divide-y divide-white/10 border-t border-white/10 md:border-l md:border-t-0">
                     {ARENAS.slice(1, 5).map((arena, index) => (
                       <Link
                         key={arena.slug}
                         to="/arenas/$slug"
                         params={{ slug: arena.slug }}
-                        className="group flex min-h-24 items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-background"
+                        className="group flex min-h-24 items-center justify-between gap-4 px-5 py-4 transition-colors hover:bg-white/[0.05]"
                       >
                         <div className="min-w-0">
-                          <p className="eyebrow text-muted-foreground">0{index + 2} · {l(arena.borough)}</p>
-                          <p className="mt-1 truncate font-display text-xl font-bold uppercase text-navy">{arena.name}</p>
+                          <p className="eyebrow text-white/42">0{index + 2} · {l(arena.borough)}</p>
+                          <p className="mt-1 truncate font-display text-xl font-bold uppercase text-white">{arena.name}</p>
                         </div>
                         <ArrowRight className="size-4 shrink-0 text-sport transition-transform group-hover:translate-x-1" />
                       </Link>
@@ -642,10 +644,10 @@ function Home() {
       </section>
 
       {/* Hockey heritage */}
-      <section id="archives-hockey" className="relative scroll-mt-28 overflow-hidden border-y border-navy/10 bg-background py-14 md:py-20">
+      <section id="archives-hockey" className="relative scroll-mt-28 overflow-hidden border-y border-white/10 bg-navy-deep py-12 text-white md:py-16">
         <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
         <div className="container-site relative">
-          <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="grid gap-px overflow-hidden border border-white/12 bg-white/10 lg:grid-cols-[1.15fr_0.85fr]">
             <div className="bg-competition p-7 text-white md:p-10 lg:p-12">
               <div className="flex items-center gap-3">
                 <Archive className="size-7 text-sport-foreground" aria-hidden />
@@ -677,28 +679,28 @@ function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col justify-between bg-ice p-7 md:p-10 lg:p-12">
+            <div className="flex flex-col justify-between bg-navy p-7 md:p-10 lg:p-12">
               <div>
                 <BookOpen className="size-8 text-sport" aria-hidden />
                 <p className="eyebrow mt-6 text-sport">
                   {lang === "fr" ? "Vos archives font partie de l’histoire" : "Your archives are part of the story"}
                 </p>
-                <p className="mt-3 font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy sm:text-4xl">
+                <p className="mt-3 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white sm:text-4xl">
                   {lang === "fr" ? "Photos. Chandails. Trophées. Souvenirs." : "Photos. Jerseys. Trophies. Memories."}
                 </p>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-4 text-sm leading-relaxed text-white/58">
                   {lang === "fr" ? HOCKEY_HERITAGE.archiveCall.fr : HOCKEY_HERITAGE.archiveCall.en}
                 </p>
               </div>
 
-              <div className="mt-8 border-t border-navy/12 pt-6">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+              <div className="mt-8 border-t border-white/12 pt-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/45">
                   {lang === "fr" ? "Archive féminine — septembre 2026" : "Girls hockey archive — September 2026"}
                 </p>
-                <p className="mt-2 font-display text-2xl font-extrabold uppercase text-navy">
+                <p className="mt-2 font-display text-2xl font-extrabold uppercase text-white">
                   {lang === "fr" ? "M12A + M12B" : "U12A + U12B"}
                 </p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-3 text-sm leading-relaxed text-white/58">
                   {lang === "fr"
                     ? "L’appel visait les joueuses et gardiennes nées en 2015, 2016 ou 2017. La date limite du 23 septembre étant passée, l’annonce est conservée comme archive du programme féminin."
                     : "The call targeted players and goaltenders born in 2015, 2016 or 2017. Because the September 23 deadline has passed, the notice is preserved as part of the girls hockey archive."}
@@ -708,13 +710,13 @@ function Home() {
                     href="https://www.facebook.com/share/19JZX8MAwx/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="premium-control inline-flex min-h-11 items-center gap-2 border border-navy/12 bg-background px-4 text-xs font-bold uppercase tracking-[0.12em] text-navy hover:border-sport"
+                    className="premium-control inline-flex min-h-11 items-center gap-2 border border-white/18 px-4 text-xs font-bold uppercase tracking-[0.12em] text-white hover:border-sport"
                   >
                     Facebook archive <ExternalLink className="size-3.5" />
                   </a>
                   <a
                     href={`mailto:${SITE.girlsHockeyEmail}`}
-                    className="premium-control inline-flex min-h-11 items-center gap-2 bg-navy px-4 text-xs font-bold uppercase tracking-[0.12em] text-white"
+                    className="premium-control inline-flex min-h-11 items-center gap-2 bg-sport px-4 text-xs font-bold uppercase tracking-[0.12em] text-sport-foreground"
                   >
                     {lang === "fr" ? "Hockey féminin" : "Girls hockey"} <ArrowRight className="size-3.5" />
                   </a>
