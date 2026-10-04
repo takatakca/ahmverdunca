@@ -244,7 +244,7 @@ function TeamsPage() {
           </div>
         </div>
 
-        <section id="resultats" className="mt-9 scroll-mt-28 overflow-hidden border border-navy/12 bg-background">
+        <section id="resultats" className="mt-9 scroll-mt-28 overflow-hidden border border-white/12 bg-navy-deep text-white">
           <div className="grid bg-competition text-white lg:grid-cols-[1.1fr_0.9fr]">
             <div className="p-6 md:p-8">
               <p className="eyebrow text-sport-foreground">
@@ -286,7 +286,7 @@ function TeamsPage() {
             </div>
           </div>
 
-          <div className="divide-y divide-navy/10">
+          <div className="divide-y divide-white/10">
             {CURRENT_TEAMS.map((category) => {
               const allEntries = teamsForCategory(category.slug);
               const entries = filterToMine
@@ -295,23 +295,23 @@ function TeamsPage() {
               if (!entries.length) return null;
               return (
                 <div key={category.slug} className="grid lg:grid-cols-[10rem_minmax(0,1fr)]">
-                  <div className="bg-ice p-4 lg:border-r lg:border-navy/10 lg:p-5">
-                    <p className="font-display text-3xl font-extrabold uppercase text-navy">{category.code}</p>
-                    <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                  <div className="bg-navy-deep p-4 lg:border-r lg:border-white/10 lg:p-5">
+                    <p className="font-display text-3xl font-extrabold uppercase text-white">{category.code}</p>
+                    <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/42">
                       {entries.length} {lang === "fr" ? "équipe(s)" : "team(s)"}
                     </p>
                   </div>
                   <div className="grid gap-px bg-navy/10 sm:grid-cols-2 xl:grid-cols-3">
                     {entries.map((entry) => (
-                      <article key={entry.legacyScheduleTeamId} className="flex min-h-40 flex-col bg-background p-4">
+                      <article key={entry.legacyScheduleTeamId} className="flex min-h-40 flex-col bg-competition p-4 text-white">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <p className="eyebrow text-sport">{entry.level}</p>
-                            <h3 className="mt-2 font-display text-xl font-extrabold uppercase leading-none text-navy">
+                            <p className="eyebrow text-sport-foreground">{entry.level}</p>
+                            <h3 className="mt-2 font-display text-xl font-extrabold uppercase leading-none text-white">
                               {entry.name}
                             </h3>
                           </div>
-                          <span className="shrink-0 border border-navy/10 px-2 py-1 font-mono text-[9px] text-muted-foreground">
+                          <span className="shrink-0 border border-white/10 px-2 py-1 font-mono text-[9px] text-white/42">
                             #{entry.legacyScheduleTeamId.slice(-4)}
                           </span>
                         </div>
@@ -319,7 +319,7 @@ function TeamsPage() {
                         <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
                           <a
                             href={publicTeamHubUrl(entry)}
-                            className="premium-control flex min-h-10 items-center justify-between border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy hover:border-sport hover:text-sport"
+                            className="premium-control flex min-h-10 items-center justify-between border border-white/12 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white/72 hover:border-sport hover:text-white"
                           >
                             {lang === "fr" ? "Équipe" : "Team"}
                             <ArrowRight className="size-3.5" />
@@ -340,7 +340,7 @@ function TeamsPage() {
                               "premium-control col-span-2 flex min-h-10 items-center justify-between border px-3 text-[9px] font-bold uppercase tracking-[0.1em]",
                               isTeamSelected(entry.legacyScheduleTeamId)
                                 ? "border-sport bg-sport text-sport-foreground"
-                                : "border-navy/12 bg-background text-navy hover:border-sport",
+                                : "border-white/12 bg-navy-deep text-white/70 hover:border-sport hover:text-white",
                             )}
                           >
                             <span>{isTeamSelected(entry.legacyScheduleTeamId)
@@ -359,8 +359,8 @@ function TeamsPage() {
             })}
           </div>
 
-          <div className="border-t border-navy/10 bg-ice px-5 py-4">
-            <p className="text-xs leading-relaxed text-muted-foreground">
+          <div className="border-t border-white/10 bg-competition px-5 py-4">
+            <p className="text-xs leading-relaxed text-white/48">
               {lang === "fr"
                 ? "Source officielle externe : la surface publique AHMV « Horaire et Classements ». Les scores et classements ne sont pas inventés ni recopiés manuellement dans ce portail."
                 : "Official external source: AHMV’s public “Schedule and Standings” surface. Scores and standings are not invented or manually duplicated in this portal."}
@@ -368,7 +368,7 @@ function TeamsPage() {
           </div>
         </section>
 
-        <div className="mt-9 flex flex-col gap-4 border-t-2 border-navy pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-9 flex flex-col gap-4 border-t-2 border-sport/70 pt-5 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="eyebrow text-sport">{lang === "fr" ? "Répertoire des catégories" : "Category directory"}</p>
             {selectedTeamIds.length > 0 && !showAllDirectory && (
@@ -381,7 +381,7 @@ function TeamsPage() {
             <button
               type="button"
               onClick={() => setShowAllDirectory((value) => !value)}
-              className="premium-control min-h-11 border border-navy/12 px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport"
+              className="premium-control min-h-11 border border-white/14 bg-navy-deep px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white/72 hover:border-sport hover:text-white"
             >
               {showAllDirectory
                 ? (lang === "fr" ? "Afficher seulement mes catégories" : "Show only my categories")
@@ -389,7 +389,7 @@ function TeamsPage() {
             </button>
           )}
         </div>
-        <div className="border-t border-navy/12">
+        <div className="border-t border-white/12 bg-navy-deep text-white">
           {categoriesToRender.map((team, index) => {
             const saved = preferredTeam === team.slug;
             const publicTeams = teamsForCategory(team.slug);
@@ -398,14 +398,14 @@ function TeamsPage() {
               <article
                 key={team.slug}
                 className={cn(
-                  "interactive-surface group grid border-b border-navy/12 md:grid-cols-[8rem_8rem_minmax(0,1fr)_13rem] md:items-stretch",
+                  "interactive-surface group grid border-b border-white/12 md:grid-cols-[8rem_8rem_minmax(0,1fr)_13rem] md:items-stretch",
                   saved && "bg-sport/[0.045]",
                 )}
               >
                 <Link
                   to="/equipes/$slug"
                   params={{ slug: team.slug }}
-                  className="relative min-h-28 overflow-hidden bg-navy md:min-h-full md:border-r md:border-navy/10"
+                  className="relative min-h-28 overflow-hidden bg-navy md:min-h-full md:border-r md:border-white/10"
                 >
                   {media && (
                     <img
@@ -428,9 +428,9 @@ function TeamsPage() {
                 <Link
                   to="/equipes/$slug"
                   params={{ slug: team.slug }}
-                  className="flex items-center px-4 py-4 md:border-r md:border-navy/10 md:px-5"
+                  className="flex items-center px-4 py-4 md:border-r md:border-white/10 md:px-5"
                 >
-                  <span className="font-display text-5xl font-extrabold uppercase leading-none tracking-[-0.04em] text-navy transition-colors group-hover:text-sport">
+                  <span className="font-display text-5xl font-extrabold uppercase leading-none tracking-[-0.04em] text-white transition-colors group-hover:text-sport-foreground">
                     {team.code}
                   </span>
                 </Link>
@@ -443,25 +443,25 @@ function TeamsPage() {
                       </span>
                     )}
                     {publicTeams.length > 0 && (
-                      <span className="border border-navy/12 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
+                      <span className="border border-white/12 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/42">
                         {publicTeams.length} {lang === "fr" ? "équipe(s) publique(s)" : "public team(s)"}
                       </span>
                     )}
                   </div>
-                  <h2 className="mt-3 font-display text-3xl font-extrabold uppercase leading-[0.9] text-navy md:text-4xl">
+                  <h2 className="mt-3 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white md:text-4xl">
                     {l(team.name)}
                   </h2>
-                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-sport">
+                  <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-sport-foreground">
                     {t("teams.ages")} · {l(team.ages)}
                   </p>
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{l(team.description)}</p>
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/52">{l(team.description)}</p>
                 </Link>
 
-                <div className="flex flex-col justify-center gap-2 border-t border-navy/10 py-4 md:border-l md:border-t-0 md:px-5">
+                <div className="flex flex-col justify-center gap-2 border-t border-white/10 py-4 md:border-l md:border-t-0 md:px-5">
                   <Link
                     to="/equipes/$slug"
                     params={{ slug: team.slug }}
-                    className="premium-control inline-flex min-h-11 items-center justify-between border border-navy/12 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-navy hover:border-sport hover:text-sport"
+                    className="premium-control inline-flex min-h-11 items-center justify-between border border-white/12 px-3 text-[10px] font-bold uppercase tracking-[0.14em] text-white/72 hover:border-sport hover:text-white"
                   >
                     {lang === "fr" ? "Ouvrir" : "Open"} <ArrowRight className="size-4" />
                   </Link>
@@ -472,7 +472,7 @@ function TeamsPage() {
                       "premium-control min-h-11 border px-3 text-[10px] font-bold uppercase tracking-[0.13em]",
                       saved
                         ? "border-sport bg-sport text-sport-foreground"
-                        : "border-navy/12 bg-background text-navy hover:border-sport",
+                        : "border-white/12 bg-navy-deep text-white/70 hover:border-sport hover:text-white",
                     )}
                   >
                     {saved
