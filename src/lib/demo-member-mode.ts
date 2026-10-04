@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-export const DEMO_MEMBER_DEMO_MEMBER_STORAGE_KEY = "ahmv-demo-member-mode";
-export const DEMO_MEMBER_DEMO_MEMBER_EVENT_NAME = "ahmv:demo-member-mode";
+export const DEMO_MEMBER_STORAGE_KEY = "ahmv-demo-member-mode";
+export const DEMO_MEMBER_EVENT_NAME = "ahmv:demo-member-mode";
 
 export const DEMO_MEMBER_PREVIEW_ENABLED =
   import.meta.env["VITE_DEMO_MEMBER_PREVIEW_ENABLED"] === "true";
