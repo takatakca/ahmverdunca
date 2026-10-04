@@ -6,7 +6,7 @@ import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { usePreferredTeam } from "@/lib/team-preference";
-import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
+import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { NewsletterInterest } from "@/components/newsletter-interest";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
 
@@ -77,7 +77,7 @@ export function SiteFooter() {
                     <a href={publicTeamHubUrl(primaryTeam)} className="premium-control flex min-h-11 items-center justify-center gap-2 bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
                       <Users className="size-3.5" /> {lang === "fr" ? "Équipe" : "Team"}
                     </a>
-                    <a href={legacyTeamScheduleUrl(primaryTeam)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
+                    <a href={publicTeamScheduleUrl(primaryTeam)} className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
                       <CalendarDays className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Horaire" : "Schedule"}
                     </a>
                     <a href={officialTeamResultsUrl(primaryTeam)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
