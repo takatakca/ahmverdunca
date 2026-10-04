@@ -35,6 +35,7 @@ import { HomeParentCommand } from "@/components/home/home-parent-command";
 import { HomeCreativeRail } from "@/components/home/home-creative-rail";
 import { AHMV_LOGO_URL, LogoSlot } from "@/components/layout/logo-slot";
 import { AdSenseSlot } from "@/components/adsense-slot";
+import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { publicTeamHubUrl } from "@/data/team-directory";
 import { montrealDateKey } from "@/lib/montreal-date";
@@ -243,6 +244,13 @@ function Home() {
       <ScheduleFinder />
 
       <HomeCreativeRail />
+
+      {/* Local restaurant / business inventory — always visible to free visitors. */}
+      <section className="bg-competition py-5 text-white md:py-7">
+        <div className="container-site">
+          <HouseSponsorSlot placement="home-local-food" count={4} />
+        </div>
+      </section>
 
       <OfficialWeekPreview />
 
