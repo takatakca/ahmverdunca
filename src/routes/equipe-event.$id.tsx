@@ -93,15 +93,15 @@ function TeamEventPage() {
       </section>
 
       <div className="container-site space-y-8 py-8 md:py-12">
-        <section className="grid overflow-hidden border border-navy/12 bg-background lg:grid-cols-[1.15fr_0.85fr]">
+        <section className="grid overflow-hidden border border-white/12 bg-navy-deep text-white lg:grid-cols-[1.15fr_0.85fr]">
           <div className="p-5 md:p-7">
-            <p className="eyebrow text-sport">
+            <p className="eyebrow text-sport-foreground">
               {type === "game"
                 ? (lang === "fr" ? "Détail de la partie" : "Game detail")
                 : (lang === "fr" ? "Détail de la pratique" : "Practice detail")}
             </p>
 
-            <div className="mt-6 grid gap-px bg-navy/10 sm:grid-cols-2">
+            <div className="mt-6 grid gap-px bg-white/10 sm:grid-cols-2">
               {[
                 {
                   Icon: CalendarDays,
@@ -132,10 +132,10 @@ function TeamEventPage() {
                   valueEn: isPublishedPractice ? (publishedGroup || publishedActivity) : "Not published",
                 },
               ].map(({ Icon, labelFr, labelEn, valueFr, valueEn }) => (
-                <article key={labelFr} className="bg-background p-5">
-                  <Icon className="size-5 text-sport" />
-                  <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">{lang === "fr" ? labelFr : labelEn}</p>
-                  <p className="mt-1 font-display text-2xl font-extrabold uppercase text-navy">{lang === "fr" ? valueFr : valueEn}</p>
+                <article key={labelFr} className="bg-competition p-5 text-white">
+                  <Icon className="size-5 text-sport-foreground" />
+                  <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.16em] text-white/42">{lang === "fr" ? labelFr : labelEn}</p>
+                  <p className="mt-1 font-display text-2xl font-extrabold uppercase text-white">{lang === "fr" ? valueFr : valueEn}</p>
                 </article>
               ))}
             </div>
@@ -147,7 +147,7 @@ function TeamEventPage() {
                   {lang === "fr" ? "Ouvrir la source officielle" : "Open official source"}
                 </a>
               </Button>
-              <Button asChild variant="outline">
+              <Button asChild variant="outline-light">
                 <a href="/arenas">
                   <Navigation className="size-4" />
                   {lang === "fr" ? "Arénas & itinéraires" : "Arenas & directions"}
@@ -156,7 +156,7 @@ function TeamEventPage() {
             </div>
           </div>
 
-          <aside className="border-t border-navy/10 bg-ice p-5 lg:border-l lg:border-t-0 md:p-7">
+          <aside className="border-t border-white/10 bg-competition p-5 lg:border-l lg:border-t-0 md:p-7">
             <p className="eyebrow text-sport">
               {isPublishedPractice
                 ? (lang === "fr" ? "Source de l’activité" : "Activity source")
@@ -177,7 +177,7 @@ function TeamEventPage() {
                     lang === "fr" ? "Les résultats et classements restent reliés au circuit officiel." : "Results and standings remain linked to the official circuit.",
                     lang === "fr" ? "Les itinéraires sont accessibles depuis le répertoire des arénas." : "Directions are available from the arena directory.",
                   ]).map((item) => (
-                <div key={item} className="flex items-start gap-3 border-b border-navy/10 pb-3 text-sm text-navy last:border-b-0">
+                <div key={item} className="flex items-start gap-3 border-b border-white/10 pb-3 text-sm text-white/68 last:border-b-0">
                   <span className="mt-1 size-2 shrink-0 rounded-full bg-sport" />
                   <span>{item}</span>
                 </div>
