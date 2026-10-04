@@ -5,8 +5,8 @@ const auto = readFileSync(".github/workflows/deploy-production-auto.yml", "utf8"
 const manual = readFileSync(".github/workflows/deploy-production.yml", "utf8");
 const pre = readFileSync(".github/workflows/deploy-preproduction.yml", "utf8");
 
-assert.match(auto, /concurrency:\s*\n\s*group: ahmverdun-production\s*\n\s*cancel-in-progress: true/);
-assert.match(manual, /concurrency:\s*\n\s*group: ahmverdun-production\s*\n\s*cancel-in-progress: true/);
+assert.match(auto, /concurrency:\s*\n\s*group: ahmverdun-production-auto\s*\n\s*cancel-in-progress: true/);
+assert.match(manual, /concurrency:\s*\n\s*group: ahmverdun-production-auto\s*\n\s*cancel-in-progress: true/);
 assert.match(pre, /concurrency:\s*\n\s*group: ahmverdun-preproduction\s*\n\s*cancel-in-progress: true/);
 
 assert.match(auto, /AHMV_SSH_MAX_ATTEMPTS=3 ahmv-ssh/);
