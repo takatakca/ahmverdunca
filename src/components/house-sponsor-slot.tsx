@@ -5,6 +5,8 @@ import { RUNWAY_AD_CREATIVES, type RunwayAdPlacement } from "@/data/runway-ad-cr
 import { useI18n } from "@/lib/i18n";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
 import { TakatakAdSlot } from "@/components/takatak-ad-slot";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
 
 const ROTATION_MS = 6500;
 
@@ -42,10 +44,24 @@ function HouseSponsorInventory({
   const { isDemoMember } = useDemoMemberMode();
   const [rotation, setRotation] = useState(0);
   const [paused, setPaused] = useState(false);
+  const contentRegistry = useContentOverlayRegistry();
 
   const sequence = useMemo(
-    () => houseSponsorsForPlacement(placement, HOUSE_SPONSORS.length),
-    [placement],
+    () =>
+      houseSponsorsForPlacement(placement, HOUSE_SPONSORS.length).map((sponsor) =>
+        (() => {
+          const patched = contentRegistry.apply(
+            "sponsor",
+            `house-sponsor:${sponsor.id}`,
+            sponsor as unknown as Record<string, unknown>,
+          ) as unknown as typeof sponsor & { website?: string };
+          return {
+            ...patched,
+            href: patched.website ?? patched.href,
+          };
+        })(),
+      ),
+    [contentRegistry.overlays, placement],
   );
   const visibleCount = Math.max(1, Math.min(count, sequence.length));
   const sponsors = Array.from({ length: visibleCount }, (_, offset) =>
@@ -143,26 +159,53 @@ function HouseSponsorInventory({
             </p>
           </div>
           <div className="scrollbar-none flex snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain bg-white/10 md:grid md:grid-cols-2 md:overflow-visible">
-            {creatives.map((creative) => (
-              <div
-                key={creative.id}
-                className="group relative min-w-[86vw] snap-start overflow-hidden bg-navy md:min-w-0"
-              >
-                <div className="relative aspect-video overflow-hidden">
-                  <img
-                    src={creative.path}
-                    alt={lang === "fr" ? "Créatif publicitaire local" : "Local advertising creative"}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                  />
-                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.72)_100%)]" />
-                  <span className="absolute bottom-2 left-2 border border-white/16 bg-navy-deep/72 px-2 py-1 text-[7px] font-bold uppercase tracking-[0.14em] text-white/72 backdrop-blur">
-                    {lang === "fr" ? "Publicité locale" : "Local ad"}
-                  </span>
+            {creatives.map((creative) => {
+              const overlay = contentRegistry.apply(
+                "image",
+                `ad-creative:${creative.id}`,
+                { imageUrl: creative.path },
+              );
+              const imageUrl =
+                typeof overlay.imageUrl === "string" && overlay.imageUrl
+                  ? overlay.imageUrl
+                  : creative.path;
+              return (
+                <div
+                  key={creative.id}
+                  className="group relative min-w-[86vw] snap-start overflow-hidden bg-navy md:min-w-0"
+                >
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={imageUrl}
+                      alt={lang === "fr" ? "Créatif publicitaire local" : "Local advertising creative"}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                    />
+                    <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.72)_100%)]" />
+                    <span className="absolute bottom-2 left-2 border border-white/16 bg-navy-deep/72 px-2 py-1 text-[7px] font-bold uppercase tracking-[0.14em] text-white/72 backdrop-blur">
+                      {lang === "fr" ? "Publicité locale" : "Local ad"}
+                    </span>
+                    <ContentContributionButton
+                      resourceType="image"
+                      resourceKey={`ad-creative:${creative.id}`}
+                      title={lang === "fr" ? "Créatif publicitaire local" : "Local advertising creative"}
+                      snapshot={{ imageUrl }}
+                      fields={[
+                        {
+                          key: "imageUrl",
+                          label: { fr: "Nouvelle image", en: "Replacement image" },
+                          kind: "image-url",
+                          current: imageUrl,
+                        },
+                      ]}
+                      appearance="menu"
+                      className="absolute right-2 top-2 z-20"
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -212,12 +255,40 @@ function HouseSponsorInventory({
             </div>
           );
 
-          return sponsor.href ? (
-            <a key={sponsor.id} href={sponsor.href} target="_blank" rel="noopener noreferrer" className={`block ${itemClass}`}>
+          const sponsorCard = sponsor.href ? (
+            <a href={sponsor.href} target="_blank" rel="noopener noreferrer" className={`block ${itemClass}`}>
               {card}
             </a>
           ) : (
-            <div key={sponsor.id} className={itemClass}>{card}</div>
+            <div className={itemClass}>{card}</div>
+          );
+
+          return (
+            <div key={sponsor.id} className="relative">
+              <ContentContributionButton
+                resourceType="sponsor"
+                resourceKey={`house-sponsor:${sponsor.id}`}
+                title={sponsor.name}
+                snapshot={sponsor as unknown as Record<string, unknown>}
+                fields={[
+                  {
+                    key: `tagline.${lang}`,
+                    label: { fr: "Texte promotionnel", en: "Promotional text" },
+                    kind: "textarea",
+                    current: sponsor.tagline[lang],
+                  },
+                  {
+                    key: "website",
+                    label: { fr: "Lien public", en: "Public link" },
+                    kind: "url",
+                    current: sponsor.href,
+                  },
+                ]}
+                appearance="menu"
+                className="absolute right-2 top-2 z-20"
+              />
+              {sponsorCard}
+            </div>
           );
         })}
       </div>
