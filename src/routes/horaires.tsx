@@ -15,6 +15,8 @@ import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
+const WEEKLY_SCHEDULE_VISUAL = uploadedAhmvMediaById(10)!;
+
 export const Route = createFileRoute("/horaires")({
   head: () => ({
     links: canonicalLink("/horaires"),
@@ -22,6 +24,7 @@ export const Route = createFileRoute("/horaires")({
       { title: "Horaires — AHM Verdun" },
       { name: "description", content: "Horaire hebdomadaire publié par l'AHM Verdun, recherche rapide et accès aux calendriers sportifs officiels." },
       { property: "og:title", content: "Horaires — AHM Verdun" },
+      { property: "og:image", content: WEEKLY_SCHEDULE_VISUAL.url },
       { property: "og:description", content: "Consultez l'horaire hebdomadaire AHMV et accédez aux calendriers sportifs officiels." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -32,7 +35,7 @@ export const Route = createFileRoute("/horaires")({
 
 function SchedulePage() {
   const { t, lang } = useI18n();
-  const weeklyScheduleVisual = uploadedAhmvMediaById(10)!;
+  const weeklyScheduleVisual = WEEKLY_SCHEDULE_VISUAL;
   const { preferredTeam, savePreferredTeam, selectedTeams } = usePreferredTeam();
   const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
 
