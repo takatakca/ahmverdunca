@@ -122,6 +122,14 @@ test("control payloads reject provider credentials and unsafe size/depth", () =>
     () => assertSafeControlPayload({ nested: { refresh_token: "secret" } }),
     /control_payload_forbidden_key/,
   );
+  assert.throws(
+    () => assertSafeControlPayload({ accessToken: "secret" }),
+    /control_payload_forbidden_key/,
+  );
+  assert.throws(
+    () => assertSafeControlPayload({ apiKey: "secret" }),
+    /control_payload_forbidden_key/,
+  );
 });
 
 test("idempotency keys and fingerprints are deterministic", () => {
@@ -213,6 +221,10 @@ test("failed jobs retry only while attempts remain", () => {
 
   assert.equal(canRetryControlJob(base), true);
   assert.equal(canRetryControlJob({ ...base, attempts: 3 }), false);
+  assert.equal(
+    canRetryControlJob({ ...base, completedAt: new Date().toISOString() }),
+    false,
+  );
   assert.equal(canRetryControlJob({ ...base, status: "succeeded" }), false);
 });
 
@@ -309,6 +321,10 @@ test("worker retry policy backs off and sanitizes errors", () => {
   assert.equal(retryDelaySeconds(10), 900);
   assert.equal(
     safeWorkerErrorCode(new Error("Provider 503: Temporary Failure!")),
-    "provider_503:_temporary_failure_",
+    "worker_exception",
+  );
+  assert.equal(
+    safeWorkerErrorCode(new Error("provider_unavailable")),
+    "provider_unavailable",
   );
 });
