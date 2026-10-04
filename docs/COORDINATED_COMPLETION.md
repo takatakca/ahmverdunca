@@ -19,7 +19,9 @@ Done requires implementation evidence and relevant validation. A UI component or
 - Homepage ScheduleFinder still kept its local category when a preference was cleared elsewhere. This branch synchronizes the empty preference and adds an explicit bilingual clear control.
 - Current main includes services/ahmv-voice-ai v0.9.0-preproduction and package-lock.json. The older v0.4 missing-lockfile blocker must not be applied to current main without fresh evidence.
 - The saved v0.4 archive passed npm run verify here: 62 tests, 62 passed. This is package-specific verification, not v0.9 runtime or live-provider acceptance.
-- PR #139 is open, draft and reported mergeable=false. Current main already contains Voice-related scripts; compare its remaining diff before treating the whole draft as missing work.
+- PR #139 is open, draft and reported mergeable=false. Its branch diverged: 26 commits ahead and 215 behind the inspected main. Current main already contains the private bridge, live schedule adapter, SMS deduplication, retention and server wiring, plus replacement migrations 20261003091000_ahmv_voice_sessions.sql and 20261003110000_ahmv_phone_spanish.sql. Do not merge the old migration filenames or old bridge wholesale.
+- Current main's weekly fallback still ends 2026-10-04. Schedule refresh is a concrete release dependency.
+- Corrected the production runbook's obsolete npm run verify command: v0.9 exposes check, guardian, release:report and preflight.
 - Current CI includes phone/SMS, team-feed, assistant, data, SEO, runtime, mobile navigation, media, monetization, Parent Premium, deployment safeguards, standalone voice install/check/audit, production build and artifact validation.
 
 ## Ordered tasks
@@ -28,7 +30,7 @@ Done requires implementation evidence and relevant validation. A UI component or
 | --- | --- | --- | --- | --- |
 | A01 | Establish current source baseline and avoid old ZIP regressions | None | Commit SHA, current packages and current route inspections | Completed at checkpoint |
 | A02 | Clear optional homepage category, including preference changes from another surface | A01 | Review fix, passing CI; browser check select/clear/reload and cross-surface clear | Implemented on coordination branch; validation pending |
-| A03 | Reconcile PR #139 against current main | A01 | File-level comparison; resolve only remaining changes/conflicts; no duplicate migrations or features | Pending |
+| A03 | Reconcile PR #139 against current main | A01 | File-level comparison; resolve only remaining changes/conflicts; no duplicate migrations or features | Main already contains core functionality and replacement migrations; old draft must not be merged wholesale |
 | A04 | Refresh official schedule continuously | A01 | Approved authoritative feed, provenance, freshness checks, expired-feed failure and exact-team lookup | Live configuration unverified |
 | A05 | Verify the unified news feed end to end | A01 | Real official/community source delivery, source attribution, team/date filters, saved/reset preferences; unavailable provider leaves archive usable | UI present; connector acceptance unverified |
 | A06 | Map authentic gallery assets to exact teams and seasons | A01 | Asset inventory, source/permission metadata, duplicate review, album/team links and mobile image checks | Pending |
