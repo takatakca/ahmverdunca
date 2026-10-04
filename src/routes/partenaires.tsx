@@ -21,6 +21,7 @@ import { SPONSORS } from "@/data/sponsors";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { OfficialSponsorShowcase, SponsorIdentityNotice } from "@/components/official-sponsor-showcase";
+import { HOUSE_SPONSORS } from "@/data/house-sponsors";
 
 export const Route = createFileRoute("/partenaires")({
   head: () => ({
@@ -223,18 +224,76 @@ function PartnersPage() {
           </div>
         </section>
 
-        <section className="space-y-4">
+        <section className="space-y-6">
           <div>
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Promotion maison · distincte des commanditaires" : "House promotion · separate from sponsors"}
             </p>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy sm:text-5xl">
+              {lang === "fr" ? "Galerie des créatives publicitaires" : "Advertising creative gallery"}
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
                 ? "Ces créatives servent de remplissage publicitaire tant qu’un espace n’est pas attribué à AdSense ou à une commandite officielle. Elles ne sont pas présentées comme des commanditaires AHMV."
                 : "These creatives fill advertising inventory until a placement is assigned to AdSense or an official sponsorship. They are not presented as AHMV sponsors."}
             </p>
           </div>
+
           <HouseSponsorSlot placement="partners-house-network" count={4} />
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {HOUSE_SPONSORS.map((sponsor) => (
+              <article
+                key={sponsor.id}
+                className="group overflow-hidden border border-navy/12 bg-background"
+              >
+                <div className="relative aspect-[16/9] overflow-hidden bg-ice">
+                  {sponsor.creative ? (
+                    <img
+                      src={sponsor.creative}
+                      alt={sponsor.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.015]"
+                    />
+                  ) : (
+                    <div className="flex size-full items-center justify-center bg-navy text-white">
+                      <span className="font-display text-4xl font-extrabold uppercase">{sponsor.short}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="border-t border-navy/10 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="font-display text-2xl font-extrabold uppercase leading-none text-navy">
+                        {sponsor.name}
+                      </p>
+                      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                        {lang === "fr" ? sponsor.tagline.fr : sponsor.tagline.en}
+                      </p>
+                    </div>
+                    <span className="shrink-0 border border-navy/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                      {lang === "fr" ? "Maison" : "House"}
+                    </span>
+                  </div>
+                  {sponsor.href ? (
+                    <a
+                      href={sponsor.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.1em] text-sport hover:underline"
+                    >
+                      {lang === "fr" ? "Visiter" : "Visit"} <ArrowRight className="size-3.5" />
+                    </a>
+                  ) : (
+                    <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                      {lang === "fr" ? "Lien public à confirmer" : "Public link to confirm"}
+                    </p>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="border border-navy/12 bg-ice p-6 md:p-8">
