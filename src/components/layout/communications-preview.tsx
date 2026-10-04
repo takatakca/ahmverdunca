@@ -18,6 +18,9 @@ import {
   type AssistantLanguageCode,
 } from "@/lib/assistant-language";
 
+const COMMUNICATIONS_PREVIEW_ENABLED =
+  import.meta.env["VITE_COMMUNICATIONS_PREVIEW_ENABLED"] === "true";
+
 const HIDE_KEY = "ahmv-communications-preview-hidden";
 const SESSION_KEY = "ahmv-communications-preview-seen";
 
@@ -75,6 +78,11 @@ function popupCopy(language: AssistantLanguageCode) {
 }
 
 export function CommunicationsPreview() {
+  if (!COMMUNICATIONS_PREVIEW_ENABLED) return null;
+  return <EnabledCommunicationsPreview />;
+}
+
+function EnabledCommunicationsPreview() {
   const { lang, setLang } = useI18n();
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const { selectedTeams } = usePreferredTeam();
