@@ -2,7 +2,7 @@ import { ALERTS } from "../src/data/alerts";
 import { ARENAS, arenaDirectionsTargetForVenue } from "../src/data/arenas";
 import { ALBUMS } from "../src/data/gallery";
 import { CURRENT_LEGACY_NEWS_IDS, DISCOVERED_ARCHIVE_NEWS_IDS, NEWS } from "../src/data/news";
-import { PUBLIC_TEAM_DIRECTORY, officialTeamResultsUrl, publicTeamHubUrl } from "../src/data/team-directory";
+import { PUBLIC_TEAM_DIRECTORY, officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "../src/data/team-directory";
 import { TAKATAK_TEAM_PORTAL_CONTRACT, teamPortalServices } from "../src/data/team-portal";
 import { REQUIRED_ARENA_COUNT, REQUIRED_COACH_RESOURCE_TITLES, REQUIRED_LEGACY_TEAM_SCHEDULE_IDS, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
@@ -341,10 +341,14 @@ for (const entry of PUBLIC_TEAM_DIRECTORY) {
   }
 
   const hubUrl = publicTeamHubUrl(entry);
+  const scheduleUrl = publicTeamScheduleUrl(entry);
   const resultsUrl = officialTeamResultsUrl(entry);
   const expectedPrefix = `/equipes/${entry.categorySlug}?teamId=`;
   if (!hubUrl.startsWith(expectedPrefix) || !hubUrl.includes(encodeURIComponent(entry.legacyScheduleTeamId))) {
     errors.push(`Public team hub URL is invalid for "${entry.name}" (${entry.legacyScheduleTeamId}): "${hubUrl}".`);
+  }
+  if (scheduleUrl !== `${hubUrl}#match-center`) {
+    errors.push(`Integrated team schedule URL is invalid for "${entry.name}" (${entry.legacyScheduleTeamId}): "${scheduleUrl}".`);
   }
   if (!resultsUrl.startsWith("https://ahmverdun.com/schedules?teamId=") || !resultsUrl.endsWith(entry.legacyScheduleTeamId)) {
     errors.push(`Official results URL is invalid for "${entry.name}" (${entry.legacyScheduleTeamId}): "${resultsUrl}".`);

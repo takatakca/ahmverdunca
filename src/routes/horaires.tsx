@@ -12,7 +12,7 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
-import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
+import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { MediaZoomTrigger } from "@/components/media/media-zoom-trigger";
 
@@ -150,9 +150,7 @@ function SchedulePage() {
                       {lang === "fr" ? "Équipe" : "Team"}
                     </a>
                     <a
-                      href={legacyTeamScheduleUrl(entry)}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={publicTeamScheduleUrl(entry)}
                       className="premium-control flex min-h-10 items-center justify-center border border-white/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white/75 hover:border-sport hover:text-white"
                     >
                       {lang === "fr" ? "Horaire" : "Schedule"}

@@ -42,6 +42,8 @@ describe("AHMV assistant team matching", () => {
     const reply = buildAssistantReply("horario Coyotes M11", "es");
     expect(reply.matchedTeamIds).toEqual(["2025191400019495"]);
     expect(reply.actions[0]?.kind).toBe("schedule");
+    expect(reply.actions[0]?.href).toBe("/equipes/m11?teamId=2025191400019495#match-center");
+    expect(reply.actions[0]?.external).toBeUndefined();
   });
 });
 
@@ -54,6 +56,15 @@ test("lists exact saved teams from family context", () => {
   expect(reply.actions).toHaveLength(2);
   expect(reply.actions.some((action) => action.href.includes("teamId=2025191400019495"))).toBe(true);
   expect(reply.actions.some((action) => action.href.includes("teamId=2025191400035012"))).toBe(true);
+});
+
+test("routes saved-team schedules to the integrated mini-sites", () => {
+  const reply = buildAssistantReply("horaires de mes équipes", "fr", {
+    selectedTeamIds: ["2025191400019495", "2025191400035012"],
+  });
+  expect(reply.actions.map((action) => action.kind)).toEqual(["schedule", "schedule"]);
+  expect(reply.actions.every((action) => action.href.endsWith("#match-center"))).toBe(true);
+  expect(reply.actions.every((action) => action.external === undefined)).toBe(true);
 });
 
 test("routes saved-team results to each official source", () => {

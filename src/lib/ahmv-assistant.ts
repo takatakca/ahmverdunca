@@ -2,7 +2,7 @@ import { searchAhmvKnowledge } from "@/lib/ahmv-knowledge";
 import {
   PUBLIC_TEAM_DIRECTORY,
   getPublicTeamById,
-  legacyTeamScheduleUrl,
+  publicTeamScheduleUrl,
   officialTeamResultsUrl,
   publicTeamHubUrl,
   type PublicTeamDirectoryEntry,
@@ -177,7 +177,7 @@ function teamActions(team: PublicTeamDirectoryEntry, language: AssistantLanguage
   const c = copy(language);
   return [
     { label: c.openTeam, href: publicTeamHubUrl(team), kind: "team" },
-    { label: c.openSchedule, href: legacyTeamScheduleUrl(team), kind: "schedule", external: true },
+    { label: c.openSchedule, href: publicTeamScheduleUrl(team), kind: "schedule" },
     { label: c.openResults, href: officialTeamResultsUrl(team), kind: "results", external: true },
   ];
 }
@@ -206,7 +206,7 @@ export function buildAssistantReply(
       actions: wantsResults
         ? [{ label: c.openResults, href: officialTeamResultsUrl(team), kind: "results", external: true }, { label: c.openTeam, href: publicTeamHubUrl(team), kind: "team" }]
         : wantsSchedule
-          ? [{ label: c.openSchedule, href: legacyTeamScheduleUrl(team), kind: "schedule", external: true }, { label: c.openTeam, href: publicTeamHubUrl(team), kind: "team" }]
+          ? [{ label: c.openSchedule, href: publicTeamScheduleUrl(team), kind: "schedule" }, { label: c.openTeam, href: publicTeamHubUrl(team), kind: "team" }]
           : teamActions(team, language),
       ...(bookmarkTeamId ? { bookmarkTeamId } : {}),
       matchedTeamIds: [team.legacyScheduleTeamId],
@@ -245,10 +245,10 @@ export function buildAssistantReply(
         href: wantsResults
           ? officialTeamResultsUrl(team)
           : wantsSchedule
-            ? legacyTeamScheduleUrl(team)
+            ? publicTeamScheduleUrl(team)
             : publicTeamHubUrl(team),
         kind: wantsResults ? "results" as const : wantsSchedule ? "schedule" as const : "team" as const,
-        ...(wantsResults || wantsSchedule ? { external: true } : {}),
+        ...(wantsResults ? { external: true } : {}),
       })),
       matchedTeamIds: selectedTeams.map((team) => team.legacyScheduleTeamId),
     };
