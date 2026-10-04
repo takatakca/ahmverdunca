@@ -15,6 +15,7 @@ import { I18nProvider } from "../lib/i18n";
 import { SiteLayout } from "../components/layout/site-layout";
 import { EXTERNAL_LINKS, SITE } from "../lib/site";
 import { AdSenseScriptController } from "../components/adsense-script-controller";
+import { AppLaunchSplash } from "../components/layout/app-launch-splash";
 
 function NotFoundComponent() {
   return (
@@ -114,6 +115,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/site.webmanifest" },
       { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/branding/ahmv-logo-gallery-2026.png", type: "image/png" },
+      { rel: "apple-touch-startup-image", href: "/branding/ahmv-app-splash-2026.webp", type: "image/webp" },
     ],
   }),
   shellComponent: RootShell,
@@ -144,6 +147,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
+        <AppLaunchSplash />
         <SiteLayout>
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
