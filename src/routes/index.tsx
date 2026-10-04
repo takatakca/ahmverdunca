@@ -60,6 +60,22 @@ function teamCardMedia(slug: string) {
   return id ? uploadedAhmvMediaById(id) : undefined;
 }
 
+function homeNewsMedia(category: (typeof NEWS)[number]["category"]) {
+  const mediaIdByCategory: Partial<Record<(typeof NEWS)[number]["category"], number>> = {
+    feminine: 50,
+    cancellations: 10,
+    teams: 2,
+    games: 52,
+    tournaments: 26,
+    camps: 40,
+    registration: 39,
+    association: 17,
+    releases: 25,
+  };
+  const id = mediaIdByCategory[category] ?? 1;
+  return uploadedAhmvMediaById(id) ?? HOME_HERO_MEDIA;
+}
+
 export const Route = createFileRoute("/")({
   head: () => ({
     links: canonicalLink("/"),
@@ -352,8 +368,8 @@ function Home() {
                 className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
                 <img
-                  src={OFFICIAL_MEDIA.practicePlayers.url}
-                  alt={lang === "fr" ? OFFICIAL_MEDIA.practicePlayers.alt.fr : OFFICIAL_MEDIA.practicePlayers.alt.en}
+                  src={homeNewsMedia(news[0].category).url}
+                  alt={lang === "fr" ? homeNewsMedia(news[0].category).alt.fr : homeNewsMedia(news[0].category).alt.en}
                   loading="lazy"
                   decoding="async"
                   className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -381,26 +397,44 @@ function Home() {
                 </div>
               </Link>
 
-              <div className="grid divide-y divide-navy/10">
-                {news.slice(1).map((article, index) => (
-                  <Link
-                    key={article.slug}
-                    to="/nouvelles/$slug"
-                    params={{ slug: article.slug }}
-                    className="interactive-surface group flex min-h-52 flex-col justify-between bg-ice p-6 transition-colors hover:bg-background md:p-7"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
-                      <span className="font-display text-4xl font-extrabold text-navy/8">0{index + 2}</span>
-                    </div>
-                    <div>
-                      <h3 className="font-display text-3xl font-extrabold uppercase leading-[0.92] text-navy group-hover:text-sport">
-                        {l(article.title)}
-                      </h3>
-                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{l(article.excerpt)}</p>
-                    </div>
-                  </Link>
-                ))}
+              <div className="grid divide-y divide-white/10 bg-navy-deep">
+                {news.slice(1).map((article, index) => {
+                  const media = homeNewsMedia(article.category);
+                  return (
+                    <Link
+                      key={article.slug}
+                      to="/nouvelles/$slug"
+                      params={{ slug: article.slug }}
+                      className="interactive-surface group grid min-h-56 overflow-hidden bg-competition sm:grid-cols-[0.78fr_1.22fr] lg:grid-cols-1 xl:grid-cols-[0.78fr_1.22fr]"
+                    >
+                      <div className="relative min-h-40 overflow-hidden bg-navy sm:min-h-full lg:min-h-40 xl:min-h-full">
+                        <img
+                          src={media.url}
+                          alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 size-full object-cover opacity-80 transition-[transform,opacity] duration-500 group-hover:scale-[1.035] group-hover:opacity-95"
+                        />
+                        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_38%,rgba(7,16,43,0.78)_100%)]" />
+                        <span className="absolute left-3 top-3 border border-white/15 bg-navy-deep/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/78 backdrop-blur">
+                          {lang === "fr" ? "Photo AHMV" : "AHMV photo"}
+                        </span>
+                      </div>
+                      <div className="flex min-w-0 flex-col justify-between p-5 md:p-6">
+                        <div className="flex items-start justify-between gap-4">
+                          <p className="eyebrow text-sport-foreground">{newsDateLabel(article, lang)}</p>
+                          <span className="font-display text-3xl font-extrabold text-white/10">0{index + 2}</span>
+                        </div>
+                        <div className="mt-5">
+                          <h3 className="font-display text-2xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
+                            {l(article.title)}
+                          </h3>
+                          <p className="mt-3 line-clamp-3 text-sm text-white/56">{l(article.excerpt)}</p>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
