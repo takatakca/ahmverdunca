@@ -205,3 +205,30 @@ export async function cancelPendingControlReview(input: {
   if (!result.data) throw new Error("control_review_cancel_conflict");
   return mapReview(result.data);
 }
+
+
+export async function listControlReviews(input: {
+  organizationId: string;
+  status?: ControlReviewStatus | undefined;
+  service?: TakatakAhmvService | undefined;
+  limit?: number | undefined;
+}) {
+  let query = db()
+    .from("ahmv_takatak_control_reviews")
+    .select(
+      "id,organization_id,service,control_record_id,revision,status,requested_by,requested_at,resolved_by,resolved_at,decision_note,self_approval_override",
+    )
+    .eq("tenant", "ahmverdun")
+    .eq("organization_id", input.organizationId);
+
+  if (input.status) query = query.eq("status", input.status);
+  if (input.service) query = query.eq("service", input.service);
+
+  const limit = Math.max(1, Math.min(100, input.limit ?? 25));
+  const result = await query
+    .order("requested_at", { ascending: false })
+    .limit(limit);
+
+  if (result.error) throw result.error;
+  return (result.data ?? []).map(mapReview);
+}
