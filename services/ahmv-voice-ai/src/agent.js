@@ -171,6 +171,7 @@ function rememberArenaResults(session, result) {
       type: 'arena',
       name: arena.name,
       address: arena.address,
+      phone: arena.phone,
       mapsUrl: arena.mapsUrl,
       wazeUrl: arena.wazeUrl,
       appleMapsUrl: arena.appleMapsUrl,
