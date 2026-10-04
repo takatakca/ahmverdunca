@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CalendarDays, ChevronRight, MapPin, ShieldCheck, Trophy, Users, X } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
-import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
+import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
 
@@ -43,7 +43,7 @@ export function ParentQuickPanel() {
           <div className="grid grid-cols-2 gap-px bg-navy/10">
             {[
               { href: publicTeamHubUrl(team), labelFr: "Mini-site", labelEn: "Mini-site", icon: Users },
-              { href: legacyTeamScheduleUrl(team), labelFr: "Horaire", labelEn: "Schedule", icon: CalendarDays, external: true },
+              { href: publicTeamScheduleUrl(team), labelFr: "Horaire", labelEn: "Schedule", icon: CalendarDays },
               { href: officialTeamResultsUrl(team), labelFr: "Résultats", labelEn: "Results", icon: Trophy, external: true },
               { href: "/arenas", labelFr: "Arénas", labelEn: "Arenas", icon: MapPin },
             ].map(({ href, labelFr, labelEn, icon: Icon, external }) => (
