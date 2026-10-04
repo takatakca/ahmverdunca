@@ -22,6 +22,7 @@ import { handleAhmvMarketingCampaignCron } from "./features/ahmv-phone/marketing
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 import { handleTakatakTeamGames } from "./lib/takatak-team-games.server";
 import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
+import { handleTakatakContentContributions } from "./lib/takatak-content-contributions.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -139,6 +140,8 @@ export default {
     if (voiceBridgeResponse) return voiceBridgeResponse;
     const phoneResponse = await handleAhmvTwilio(request);
     if (phoneResponse) return phoneResponse;
+    const contentContributionResponse = await handleTakatakContentContributions(request);
+    if (contentContributionResponse) return contentContributionResponse;
     const teamGamesResponse = await handleTakatakTeamGames(request);
     if (teamGamesResponse) return teamGamesResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);
