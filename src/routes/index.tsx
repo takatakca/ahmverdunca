@@ -259,22 +259,22 @@ function Home() {
                 to="/equipes/$slug"
                 params={{ slug: team.slug }}
                 className={cn(
-                  "interactive-surface group relative min-h-56 min-w-[170px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-4 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[205px]",
+                  "interactive-surface group relative min-h-44 min-w-[148px] snap-start border-r border-navy-foreground/15 bg-navy-foreground/[0.025] p-3 transition-colors hover:bg-navy-foreground/[0.08] sm:min-w-[178px]",
                   preferredTeam === team.slug && "bg-sport/15",
                 )}
               >
-                <span className="font-display text-5xl font-extrabold text-navy-foreground/8">
+                <span className="font-display text-4xl font-extrabold text-navy-foreground/8">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <div className="absolute inset-x-5 bottom-5">
+                <div className="absolute inset-x-4 bottom-4">
                   {preferredTeam === team.slug && (
                     <span className="mb-3 inline-block bg-sport px-2 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
                       {lang === "fr" ? "Mon équipe" : "My team"}
                     </span>
                   )}
-                  <p className="font-display text-4xl font-extrabold uppercase leading-none sm:text-5xl">{team.code}</p>
+                  <p className="font-display text-3xl font-extrabold uppercase leading-none sm:text-4xl">{team.code}</p>
                   <p className="mt-2 text-sm font-semibold text-navy-foreground/65">{l(team.ages)}</p>
-                  <div className="mt-4 flex items-center justify-between border-t border-navy-foreground/15 pt-3 text-xs font-semibold uppercase tracking-[0.12em] text-navy-foreground/55">
+                  <div className="mt-3 flex items-center justify-between border-t border-navy-foreground/15 pt-3 text-xs font-semibold uppercase tracking-[0.12em] text-navy-foreground/55">
                     <span>{team.code === "F" ? l(team.name) : lang === "fr" ? "Voir la catégorie" : "View category"}</span>
                     <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
                   </div>
