@@ -8,7 +8,7 @@ function todayInMontreal() {
 }
 
 /** Published association notices only; expired and future notices stay hidden. */
-export function AlertStatus({ language = "fr" }: { language?: string }) {
+export function AlertStatus({ language = "fr", compact = false }: { language?: string; compact?: boolean }) {
   const [today, setToday] = useState(todayInMontreal);
   useEffect(() => {
     const refresh = () => setToday(todayInMontreal());
@@ -21,12 +21,12 @@ export function AlertStatus({ language = "fr" }: { language?: string }) {
   const lang = language === "en" ? "en" : "fr";
   const empty = language === "es" ? "No hay alertas por ahora" : lang === "fr" ? "Aucune alerte en cours" : "No alerts right now";
   return (
-    <div className="px-4 py-3 text-white" role="status" aria-live="polite" aria-atomic="true">
-      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em]">
+    <div className={compact ? "flex min-h-8 items-center gap-3 px-3 py-1.5 text-white" : "px-4 py-3 text-white"} role="status" aria-live="polite" aria-atomic="true">
+      <div className="flex shrink-0 items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em]">
         {active.length ? <Bell className="size-4 shrink-0 text-amber-300" aria-hidden /> : <CircleCheck className="size-4 shrink-0 text-emerald-300" aria-hidden />}
         <span>{language === "es" ? "Alertas AHMV" : lang === "fr" ? "Alertes AHMV" : "AHMV alerts"}</span>
       </div>
-      {active.length === 0 ? <p className="mt-1 text-xs text-white/75">{empty}</p> : (
+      {active.length === 0 ? <p className={compact ? "text-[11px] text-white/75" : "mt-1 text-xs text-white/75"}>{empty}</p> : compact ? (\n        <p className="min-w-0 truncate text-[11px] font-semibold text-amber-100">\n          {active[0]?.title[lang]}{active.length > 1 ? ` · +${active.length - 1}` : ""}\n        </p>\n      ) : (
         <ul className="mt-2 space-y-3">
           {active.map((alert) => (
             <li key={alert.id} className="border-l-2 border-amber-300 pl-3">
