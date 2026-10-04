@@ -22,8 +22,8 @@ requireFragment(headerPath, header, "aria-expanded={open}", "aria-expanded state
 requireFragment(headerPath, header, 'id="mobile-menu"', "mobile menu panel id");
 requireFragment(headerPath, header, "onClick={toggleMobileMenu}", "explicit mobile menu toggle handler");
 requireFragment(headerPath, header, 'new CustomEvent("ahmv:navigation-open")', "navigation priority event");
-requireFragment(headerPath, header, 'open ? "z-[110]" : "z-50"', "open-header overlay priority");
-requireFragment(headerPath, header, 'z-[110] overflow-y-auto', "mobile panel overlay priority");
+requireFragment(headerPath, header, 'open ? "z-[300]" : "z-[200]"', "open-header overlay priority");
+requireFragment(headerPath, header, 'z-[290] overflow-y-auto', "mobile panel overlay priority");
 
 requireFragment(previewPath, preview, '"ahmv:navigation-open"', "navigation-open listener");
 requireFragment(previewPath, preview, "closeForNavigation", "communications overlay close handler");
