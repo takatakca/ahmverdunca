@@ -162,47 +162,117 @@ function GalleryPage() {
         </section>
 
         {albums.length > 0 ? (
-          <div className="mt-7 grid auto-rows-[220px] gap-2 sm:auto-rows-[240px] sm:grid-cols-2 lg:grid-cols-4">
-            {albums.map((album, index) => (
-            <Link
-              key={album.slug}
-              to="/galerie/$slug"
-              params={{ slug: album.slug }}
-              className={cn(
-                "interactive-surface group relative overflow-hidden",
-                index === 0 && "sm:row-span-2 lg:col-span-2 lg:row-span-2",
-                index === 1 && "lg:col-span-2",
-              )}
-            >
-              <SportArtwork
-                index={String(index + 1).padStart(2, "0")}
-                kicker={`${l(album.eventType)} · ${formatShortDate(album.date, lang)}`}
-                title={l(album.title)}
-                code={album.season.slice(-2)}
-                aspect="absolute inset-0"
-                className="absolute inset-0"
-              />
-              {album.coverUrl && (
-                <img
-                  src={album.coverUrl}
-                  alt={l(album.title)}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 z-[1] size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
-                  onError={(event) => { event.currentTarget.style.display = "none"; }}
-                />
-              )}
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(7,16,43,0.62)_100%)]" />
-              <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t border-navy-foreground/12 bg-competition/85 px-5 py-3 text-navy-foreground backdrop-blur-sm">
-                <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em]">
-                  <Images className="size-3.5 text-sport-foreground" />
-                  {album.coverUrl ? (lang === "fr" ? "Aperçu AHMV" : "AHMV preview") : (lang === "fr" ? "Archive AHMV" : "AHMV archive")}
+          <>
+            <div className="mt-7 sm:hidden">
+              <div className="mb-3 flex items-center justify-between gap-4">
+                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/48">
+                  {lang === "fr" ? "Glissez entre les albums" : "Swipe through albums"}
+                </p>
+                <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
+                  {albums.length} {lang === "fr" ? "collections" : "collections"}
                 </span>
-                <ArrowRight className="size-4 text-sport-foreground transition-transform group-hover:translate-x-1" />
               </div>
-            </Link>
-            ))}
-          </div>
+              <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3">
+                {albums.map((album, index) => (
+                  <Link
+                    key={album.slug}
+                    to="/galerie/$slug"
+                    params={{ slug: album.slug }}
+                    className="interactive-surface group relative h-[68vw] max-h-[330px] min-h-[250px] w-[84vw] max-w-[24rem] shrink-0 snap-center overflow-hidden border border-white/12 bg-navy"
+                  >
+                    <SportArtwork
+                      index={String(index + 1).padStart(2, "0")}
+                      kicker={`${l(album.eventType)} · ${formatShortDate(album.date, lang)}`}
+                      title={l(album.title)}
+                      code={album.season.slice(-2)}
+                      aspect="absolute inset-0"
+                      className="absolute inset-0"
+                    />
+                    {album.coverUrl && (
+                      <img
+                        src={album.coverUrl}
+                        alt={l(album.title)}
+                        loading={index < 2 ? "eager" : "lazy"}
+                        decoding="async"
+                        className="absolute inset-0 z-[1] size-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
+                        onError={(event) => { event.currentTarget.style.display = "none"; }}
+                      />
+                    )}
+                    <div className="absolute inset-0 z-[2] bg-[linear-gradient(180deg,transparent_28%,rgba(7,16,43,0.88)_100%)]" />
+                    <div className="absolute inset-x-0 bottom-0 z-10 p-5 text-white">
+                      <p className="eyebrow text-sport-foreground">{l(album.eventType)}</p>
+                      <h3 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9]">
+                        {l(album.title)}
+                      </h3>
+                      <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/12 pt-3">
+                        <span className="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.14em] text-white/62">
+                          <Images className="size-3.5 text-sport-foreground" />
+                          {album.photoCount
+                            ? lang === "fr"
+                              ? `${album.photoCount} médias`
+                              : `${album.photoCount} media`
+                            : album.season}
+                        </span>
+                        <ArrowRight className="size-4 text-sport-foreground" />
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-7 hidden auto-rows-[220px] gap-2 sm:grid sm:auto-rows-[240px] sm:grid-cols-2 lg:grid-cols-4">
+              {albums.map((album, index) => (
+                <Link
+                  key={album.slug}
+                  to="/galerie/$slug"
+                  params={{ slug: album.slug }}
+                  className={cn(
+                    "interactive-surface group relative overflow-hidden",
+                    index === 0 && "sm:row-span-2 lg:col-span-2 lg:row-span-2",
+                    index === 1 && "lg:col-span-2",
+                  )}
+                >
+                  <SportArtwork
+                    index={String(index + 1).padStart(2, "0")}
+                    kicker={`${l(album.eventType)} · ${formatShortDate(album.date, lang)}`}
+                    title={l(album.title)}
+                    code={album.season.slice(-2)}
+                    aspect="absolute inset-0"
+                    className="absolute inset-0"
+                  />
+                  {album.coverUrl && (
+                    <img
+                      src={album.coverUrl}
+                      alt={l(album.title)}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 z-[1] size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                      onError={(event) => { event.currentTarget.style.display = "none"; }}
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_35%,rgba(7,16,43,0.62)_100%)]" />
+                  <div className="absolute inset-x-0 bottom-0 z-10 flex items-center justify-between gap-3 border-t border-navy-foreground/12 bg-competition/85 px-5 py-3 text-navy-foreground backdrop-blur-sm">
+                    <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em]">
+                      <Images className="size-3.5 text-sport-foreground" />
+                      {album.photoCount
+                        ? lang === "fr"
+                          ? `${album.photoCount} médias`
+                          : `${album.photoCount} media`
+                        : album.coverUrl
+                          ? lang === "fr"
+                            ? "Aperçu AHMV"
+                            : "AHMV preview"
+                          : lang === "fr"
+                            ? "Archive AHMV"
+                            : "AHMV archive"}
+                    </span>
+                    <ArrowRight className="size-4 text-sport-foreground transition-transform group-hover:translate-x-1" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
         ) : (
           <div className="mt-7 border border-white/12 bg-competition p-8 text-center">
             <Images className="mx-auto size-6 text-sport" aria-hidden />
