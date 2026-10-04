@@ -157,8 +157,8 @@ function AlbumPage() {
             </div>
           </div>
 
-          <aside className="broadcast-rail self-start border border-navy/12 bg-background p-6 pl-8 md:p-8 md:pl-10">
-            <p className="eyebrow text-sport">
+          <aside className="broadcast-rail self-start border border-white/12 bg-competition p-6 pl-8 text-white md:p-8 md:pl-10">
+            <p className="eyebrow text-sport-foreground">
               {photos.length
                 ? lang === "fr"
                   ? "Médiathèque AHMV"
@@ -167,7 +167,7 @@ function AlbumPage() {
                   ? "Archive AHMV"
                   : "AHMV archive"}
             </p>
-            <h2 className="heading-card mt-3">
+            <h2 className="heading-card mt-3 text-white">
               {photos.length
                 ? lang === "fr"
                   ? "Collection restaurée sur le site"
@@ -180,7 +180,7 @@ function AlbumPage() {
                     ? "Archive publique AHMV"
                     : "Public AHMV archive"}
             </h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-sm leading-relaxed text-white/56">
               {photos.length
                 ? lang === "fr"
                   ? "Les médias disponibles dans cette fiche sont maintenant hébergés et consultables directement dans l’expérience AHM Verdun. Utilisez les filtres plus bas pour naviguer par catégorie."
@@ -191,7 +191,7 @@ function AlbumPage() {
             </p>
 
             {al.sourceUrl && (
-              <Button asChild variant="outline" className="mt-5 w-full">
+              <Button asChild variant="outline-light" className="mt-5 w-full">
                 <a href={al.sourceUrl} target="_blank" rel="noopener noreferrer">
                   {lang === "fr" ? "Voir l’album AHMV d’origine" : "View original AHMV album"}
                   <ExternalLink className="size-4" />
@@ -199,7 +199,7 @@ function AlbumPage() {
               </Button>
             )}
 
-            <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="mt-5 text-xs font-semibold uppercase tracking-wide text-white/42">
               {al.season} · {l(al.eventType)}
               {al.photoCount ? ` · ${al.photoCount}` : ""}
             </p>
@@ -237,7 +237,7 @@ function AlbumPage() {
                       "premium-control shrink-0 border px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em]",
                       category === "all"
                         ? "border-navy bg-navy text-white"
-                        : "border-navy/15 bg-background text-navy hover:border-sport",
+                        : "border-white/14 bg-navy-deep text-white/62 hover:border-sport hover:text-white",
                     )}
                   >
                     {lang === "fr" ? "Tout" : "All"}
@@ -252,7 +252,7 @@ function AlbumPage() {
                         "premium-control shrink-0 border px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em]",
                         category === id
                           ? "border-sport bg-sport text-sport-foreground"
-                          : "border-navy/15 bg-background text-navy hover:border-sport",
+                          : "border-white/14 bg-navy-deep text-white/62 hover:border-sport hover:text-white",
                       )}
                     >
                       {l(label)}
@@ -283,7 +283,7 @@ function AlbumPage() {
                         setViewerIndex(Math.max(fullIndex, 0));
                         setViewerOpen(true);
                       }}
-                      className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center overflow-hidden border border-navy/10 bg-background text-left"
+                      className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center overflow-hidden border border-white/10 bg-competition text-left"
                     >
                       <figure>
                         <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
@@ -305,7 +305,7 @@ function AlbumPage() {
                           </span>
                         </div>
                         <figcaption className="min-h-16 p-3">
-                          <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-navy">
+                          <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white/78">
                             {media.label ? l(media.label) : lang === "fr" ? "Média AHMV" : "AHMV media"}
                           </p>
                         </figcaption>
@@ -327,7 +327,7 @@ function AlbumPage() {
                       setViewerIndex(Math.max(fullIndex, 0));
                       setViewerOpen(true);
                     }}
-                    className="interactive-surface group overflow-hidden border border-navy/10 bg-background text-left"
+                    className="interactive-surface group overflow-hidden border border-white/10 bg-competition text-left"
                   >
                     <figure>
                       <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
@@ -348,7 +348,7 @@ function AlbumPage() {
                         </span>
                       </div>
                       <figcaption className="min-h-16 p-3">
-                        <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-navy">
+                        <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white/78">
                           {media.label ? l(media.label) : lang === "fr" ? "Média AHMV" : "AHMV media"}
                         </p>
                       </figcaption>
@@ -364,7 +364,7 @@ function AlbumPage() {
           <ShareButton title={l(al.title)} text={l(al.description)} />
           <Link
             to="/galerie"
-            className="premium-control inline-flex min-h-10 items-center gap-2 border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.11em] text-navy"
+            className="premium-control inline-flex min-h-10 items-center gap-2 border border-white/14 bg-navy-deep px-3 text-[9px] font-bold uppercase tracking-[0.11em] text-white/72 hover:border-sport hover:text-white"
           >
             <ArrowLeft className="size-3.5 text-sport" />
             {lang === "fr" ? "Tous les albums" : "All albums"}

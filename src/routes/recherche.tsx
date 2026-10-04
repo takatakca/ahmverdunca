@@ -385,23 +385,23 @@ function SearchPage() {
         </section>
 
         <div className="mb-5 grid grid-cols-3 gap-2">
-          <Link to="/horaires" className="premium-control flex min-h-16 flex-col justify-between border border-navy/12 bg-background p-3 text-navy hover:bg-ice">
-            <CalendarDays className="size-4 text-sport" />
+          <Link to="/horaires" className="premium-control flex min-h-16 flex-col justify-between border border-white/12 bg-competition p-3 text-white hover:bg-white/[0.04]">
+            <CalendarDays className="size-4 text-sport-foreground" />
             <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Horaires" : "Schedules"}</span>
           </Link>
-          <Link to="/arenas" className="premium-control flex min-h-16 flex-col justify-between border border-navy/12 bg-background p-3 text-navy hover:bg-ice">
-            <MapPin className="size-4 text-sport" />
+          <Link to="/arenas" className="premium-control flex min-h-16 flex-col justify-between border border-white/12 bg-competition p-3 text-white hover:bg-white/[0.04]">
+            <MapPin className="size-4 text-sport-foreground" />
             <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Arénas" : "Arenas"}</span>
           </Link>
-          <Link to="/inscriptions" className="premium-control flex min-h-16 flex-col justify-between border border-navy/12 bg-background p-3 text-navy hover:bg-ice">
-            <ArrowRight className="size-4 text-sport" />
+          <Link to="/inscriptions" className="premium-control flex min-h-16 flex-col justify-between border border-white/12 bg-competition p-3 text-white hover:bg-white/[0.04]">
+            <ArrowRight className="size-4 text-sport-foreground" />
             <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Inscription" : "Register"}</span>
           </Link>
         </div>
 
         <div className="relative">
           <Search
-            className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground"
+            className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-white/38"
             aria-hidden
           />
           <input
@@ -415,13 +415,13 @@ function SearchPage() {
                 : "Ex. Leafs, Louves, U11, Denis Savard, Spordle…"
             }
             aria-label={t("common.search")}
-            className="h-14 w-full border border-navy/15 bg-background pl-12 pr-4 text-base outline-none transition-colors focus:border-sport"
+            className="h-14 w-full border border-white/14 bg-navy-deep pl-12 pr-4 text-base text-white placeholder:text-white/34 outline-none transition-colors focus:border-sport"
           />
         </div>
 
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-center">
-          <div className="border border-navy/12 bg-ice px-4 py-3">
-            <p className="text-sm text-muted-foreground">
+          <div className="border border-white/12 bg-competition px-4 py-3 text-white">
+            <p className="text-sm text-white/52">
               {q.trim().length >= 2
                 ? lang === "fr"
                   ? `${hits.length} résultat${hits.length > 1 ? "s" : ""} trouvé${hits.length > 1 ? "s" : ""}`
@@ -455,7 +455,7 @@ function SearchPage() {
                 <Link
                   key={page.key}
                   to={page.to}
-                  className="premium-control border border-navy/12 bg-background px-4 py-2 text-sm font-semibold hover:border-sport/40 hover:bg-ice"
+                  className="premium-control border border-white/12 bg-navy-deep px-4 py-2 text-sm font-semibold text-white/72 hover:border-sport/50 hover:text-white"
                 >
                   {lang === "fr" ? page.fr : page.en}
                 </Link>
@@ -466,11 +466,11 @@ function SearchPage() {
 
         <div className="mt-8 grid gap-3" aria-live="polite">
           {q.trim().length >= 2 && hits.length === 0 && (
-            <div className="border border-navy/12 bg-ice p-6">
-              <p className="heading-card">
+            <div className="border border-white/12 bg-navy-deep p-6 text-white">
+              <p className="heading-card text-white">
                 {lang === "fr" ? "Aucun résultat trouvé" : "No results found"}
               </p>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-white/52">
                 {lang === "fr"
                   ? "Essayez une catégorie comme M11, un aréna, Spordle, entraîneur ou aide financière."
                   : "Try a category such as U11, an arena, Spordle, coach or financial assistance."}
@@ -483,16 +483,16 @@ function SearchPage() {
               <>
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="eyebrow text-sport">{hit.kind}</p>
-                    <p className="heading-card mt-1.5">{hit.label}</p>
+                    <p className="eyebrow text-sport-foreground">{hit.kind}</p>
+                    <p className="heading-card mt-1.5 text-white">{hit.label}</p>
                     {hit.detail && (
-                      <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">{hit.detail}</p>
+                      <p className="mt-2 line-clamp-2 text-sm text-white/52">{hit.detail}</p>
                     )}
                   </div>
                   {hit.kind === (lang === "fr" ? "Horaire officiel" : "Official schedule") ? (
-                    <CalendarDays className="mt-1 size-5 shrink-0 text-sport" aria-hidden />
+                    <CalendarDays className="mt-1 size-5 shrink-0 text-sport-foreground" aria-hidden />
                   ) : (
-                    <ArrowRight className="mt-1 size-5 shrink-0 text-sport" aria-hidden />
+                    <ArrowRight className="mt-1 size-5 shrink-0 text-sport-foreground" aria-hidden />
                   )}
                 </div>
               </>
@@ -505,7 +505,7 @@ function SearchPage() {
                   href={hit.href}
                   target={hit.external ? "_blank" : undefined}
                   rel={hit.external ? "noopener noreferrer" : undefined}
-                  className="card-elevated block p-5 transition-transform hover:-translate-y-0.5"
+                  className="interactive-surface block border border-white/12 bg-competition p-5 text-white transition-transform hover:-translate-y-0.5 hover:border-sport/50"
                 >
                   {card}
                 </a>
@@ -518,7 +518,7 @@ function SearchPage() {
                   key={hit.key}
                   to={hit.to}
                   params={{ slug: hit.slug }}
-                  className="card-elevated block p-5 transition-transform hover:-translate-y-0.5"
+                  className="interactive-surface block border border-white/12 bg-competition p-5 text-white transition-transform hover:-translate-y-0.5 hover:border-sport/50"
                 >
                   {card}
                 </Link>
@@ -529,7 +529,7 @@ function SearchPage() {
               <Link
                 key={hit.key}
                 to={hit.to ?? "/"}
-                className="card-elevated block p-5 transition-transform hover:-translate-y-0.5"
+                className="interactive-surface block border border-white/12 bg-competition p-5 text-white transition-transform hover:-translate-y-0.5 hover:border-sport/50"
               >
                 {card}
               </Link>
