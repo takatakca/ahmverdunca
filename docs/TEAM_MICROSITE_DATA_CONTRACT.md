@@ -14,7 +14,7 @@ The server-only activation gates are:
 - `TAKATAK_TEAM_GAMES_ORIGIN=https://...`
 - `TAKATAK_TEAM_GAMES_TOKEN=...`
 
-The normalized upstream contract is `GET /api/integrations/ahmv/team-games?teamId={PUBLIC_TEAM_ID}` on the configured HTTPS origin. Authentication stays server-side and the public AHMV response is reduced to the approved fields documented below.
+The normalized upstream contract is `GET /api/integrations/ahmv/team-games?teamId={PUBLIC_TEAM_ID}` on the configured HTTPS origin. Authentication stays server-side and includes both `X-AHMV-Tenant: ahmverdun` and an exact `X-AHMV-Team-ID` binding. The public AHMV response is reduced to the approved fields documented below.
 
 ## Response
 
