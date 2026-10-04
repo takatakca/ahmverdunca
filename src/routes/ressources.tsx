@@ -54,9 +54,9 @@ function ResourcesPage() {
                 : "The portal groups useful organizations and programs without copying their rules or eligibility criteria. Each entry points to its source."}
             </p>
           </div>
-          <div className="flex min-w-48 flex-col justify-center bg-ice p-6 md:p-8">
-            <p className="font-display text-6xl font-extrabold tracking-[-0.05em] text-navy">{String(RESOURCES.length).padStart(2, "0")}</p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-muted-foreground">
+          <div className="flex min-w-48 flex-col justify-center bg-competition p-6 text-white md:p-8">
+            <p className="font-display text-6xl font-extrabold tracking-[-0.05em] text-white">{String(RESOURCES.length).padStart(2, "0")}</p>
+            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-white/42">
               {lang === "fr" ? "ressources publiques" : "public resources"}
             </p>
           </div>
@@ -92,11 +92,11 @@ function ResourcesPage() {
 
         <HouseSponsorSlot placement="resources-help" count={1} compact className="mb-6" />
 
-        <div className="mb-6 border border-navy/12 bg-ice p-5">
-          <p className="eyebrow text-sport">
+        <div className="mb-6 border border-white/12 bg-navy-deep p-5 text-white">
+          <p className="eyebrow text-sport-foreground">
             {lang === "fr" ? "À savoir" : "Good to know"}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-white/55">
             {lang === "fr"
               ? "Les liens ci-dessous ouvrent des organismes externes. Les critères, montants et disponibilités des programmes d'aide peuvent changer; vérifiez toujours la source officielle."
               : "Links below open external organizations. Financial-assistance criteria, amounts and availability may change; always verify the official source."}
@@ -122,13 +122,13 @@ function ResourcesPage() {
 
         <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 md:grid-cols-2 lg:grid-cols-3">
           {list.map((r) => (
-            <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className="interactive-surface group bg-background p-5 hover:bg-ice/55">
-              <h2 className="heading-card flex items-center gap-2 group-hover:text-sport">
+            <a key={r.id} href={r.url} target="_blank" rel="noopener noreferrer" className="interactive-surface group bg-competition p-5 text-white hover:bg-white/[0.04]">
+              <h2 className="heading-card flex items-center gap-2 text-white group-hover:text-sport-foreground">
                 {r.name} <ExternalLink className="size-4 shrink-0" aria-hidden />
               </h2>
-              <p className="mt-2 text-sm text-muted-foreground">{l(r.description)}</p>
+              <p className="mt-2 text-sm text-white/55">{l(r.description)}</p>
               {r.note && (
-                <p className="mt-3 border-l-2 border-sport bg-ice px-3 py-2 text-xs leading-relaxed text-muted-foreground">
+                <p className="mt-3 border-l-2 border-sport bg-white/[0.04] px-3 py-2 text-xs leading-relaxed text-white/52">
                   {l(r.note)}
                 </p>
               )}
