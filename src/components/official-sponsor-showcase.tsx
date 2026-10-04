@@ -1,6 +1,17 @@
 import { ExternalLink, Handshake } from "lucide-react";
 import { SPONSORS } from "@/data/sponsors";
 import { useI18n } from "@/lib/i18n";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
+
+function sponsorResourceKey(name: string) {
+  return "sponsor:" + name
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 export function OfficialSponsorShowcase({
   compact = false,
@@ -8,14 +19,28 @@ export function OfficialSponsorShowcase({
   compact?: boolean;
 }) {
   const { lang } = useI18n();
+  const contentRegistry = useContentOverlayRegistry();
 
   return (
     <div className={compact
       ? "grid gap-px overflow-hidden border border-white/12 bg-white/12 sm:grid-cols-2 lg:grid-cols-4"
       : "grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     }>
-      {SPONSORS.map((sponsor, index) => {
-        const hasOfficialLogo = sponsor.logoApproved && Boolean(sponsor.logoUrl);
+      {SPONSORS.map((baseSponsor, index) => {
+        const resourceKey = sponsorResourceKey(baseSponsor.name);
+        const overlay = contentRegistry.get("sponsor", resourceKey);
+        const sponsor = contentRegistry.apply(
+          "sponsor",
+          resourceKey,
+          baseSponsor as unknown as Record<string, unknown>,
+        ) as unknown as typeof baseSponsor;
+        const overlayLogoApproved =
+          typeof overlay?.patch["logoUrl"] === "string" && overlay.patch["logoUrl"].startsWith("https://");
+        const hasOfficialLogo = Boolean(sponsor.logoUrl) && (sponsor.logoApproved || overlayLogoApproved);
+        const fields = [
+          { key: "website", label: { fr: "Site officiel", en: "Official website" }, kind: "url" as const, current: sponsor.website },
+          { key: "logoUrl", label: { fr: "Logo officiel", en: "Official logo" }, kind: "image-url" as const, current: sponsor.logoUrl },
+        ];
         const inner = (
           <>
             <div className="flex items-start justify-between gap-4">
@@ -82,9 +107,8 @@ export function OfficialSponsorShowcase({
           ? "interactive-surface flex min-h-48 flex-col justify-between bg-competition p-4 transition-colors hover:bg-white/[0.05]"
           : "interactive-surface flex min-h-64 flex-col justify-between bg-background p-5 transition-colors hover:bg-ice/55";
 
-        return sponsor.website ? (
+        const card = sponsor.website ? (
           <a
-            key={sponsor.name}
             href={sponsor.website}
             target="_blank"
             rel="noopener noreferrer"
@@ -94,9 +118,22 @@ export function OfficialSponsorShowcase({
             {inner}
           </a>
         ) : (
-          <article key={sponsor.name} className={classes}>
-            {inner}
-          </article>
+          <article className={classes}>{inner}</article>
+        );
+
+        return (
+          <div key={sponsor.name} className="relative">
+            <ContentContributionButton
+              resourceType="sponsor"
+              resourceKey={resourceKey}
+              title={sponsor.name}
+              snapshot={sponsor as unknown as Record<string, unknown>}
+              fields={fields}
+              appearance="menu"
+              className="absolute right-2 top-2 z-20"
+            />
+            {card}
+          </div>
         );
       })}
     </div>
