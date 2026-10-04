@@ -14,6 +14,7 @@ import { officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory"
 import { usePreferredTeam } from "@/lib/team-preference";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import type { TranslationKey } from "@/lib/translations";
+import { PARENT_PREMIUM } from "@/lib/parent-premium";
 
 export function SiteHeader() {
   const { t, lang } = useI18n();
@@ -271,12 +272,14 @@ export function SiteHeader() {
           >
             <Link to="/recherche"><Search className="size-5" /></Link>
           </Button>
-          <Button asChild variant="ghost" size="sm" className="hidden border border-sport/30 text-navy-foreground hover:bg-sport/10 md:inline-flex">
-            <a href="/membership">
-              <Sparkles className="size-4 text-sport-foreground" />
-              {lang === "fr" ? "Member · Aperçu" : "Member · Preview"}
-            </a>
-          </Button>
+          {PARENT_PREMIUM.visible ? (
+            <Button asChild variant="ghost" size="sm" className="hidden border border-sport/30 text-navy-foreground hover:bg-sport/10 md:inline-flex">
+              <a href="/membership">
+                <Sparkles className="size-4 text-sport-foreground" />
+                {lang === "fr" ? "AHMV Member" : "AHMV Member"}
+              </a>
+            </Button>
+          ) : null}
           <button
             type="button"
             className={cn(
@@ -475,21 +478,23 @@ export function SiteHeader() {
               ))}
             </div>
 
-            <a
-              href="/membership"
-              className="premium-control mt-3 flex min-h-10 items-center justify-between border border-sport/30 bg-sport/10 px-3 text-white"
-            >
-              <span className="flex items-center gap-2">
-                <Sparkles className="size-4 text-sport-foreground" />
-                <span>
-                  <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member · APERÇU</span>
-                  <span className="mt-0.5 block font-display text-sm font-extrabold uppercase">
-                    {lang === "fr" ? "Aperçu sans publicité" : "Ad-free preview"}
+            {PARENT_PREMIUM.visible ? (
+              <a
+                href="/membership"
+                className="premium-control mt-3 flex min-h-10 items-center justify-between border border-sport/30 bg-sport/10 px-3 text-white"
+              >
+                <span className="flex items-center gap-2">
+                  <Sparkles className="size-4 text-sport-foreground" />
+                  <span>
+                    <span className="block text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground">AHMV Member</span>
+                    <span className="mt-0.5 block font-display text-sm font-extrabold uppercase">
+                      {lang === "fr" ? "Services pour les parents" : "Parent services"}
+                    </span>
                   </span>
                 </span>
-              </span>
-              <ChevronDown className="size-3.5 -rotate-90 text-sport-foreground" />
-            </a>
+                <ChevronDown className="size-3.5 -rotate-90 text-sport-foreground" />
+              </a>
+            ) : null}
 
             <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
               <Link
