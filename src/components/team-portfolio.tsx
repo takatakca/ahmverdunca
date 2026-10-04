@@ -99,7 +99,7 @@ export function TeamPortfolio({
   };
 
   return (
-    <section className="overflow-hidden border border-navy/12 bg-background">
+    <section className="overflow-hidden border border-white/12 bg-navy-deep text-white">
       <div className="grid bg-competition text-white lg:grid-cols-[1.2fr_0.8fr]">
         <div className="p-6 md:p-8">
           <p className="eyebrow text-sport-foreground">
@@ -216,15 +216,15 @@ export function TeamPortfolio({
           const card = (
             <>
               <div className="flex items-start justify-between gap-3">
-                <Icon className="size-5 text-sport" aria-hidden />
-                <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                <Icon className="size-5 text-sport-foreground" aria-hidden />
+                <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-white/42">
                   {statusLabel(service.module)}
                 </span>
               </div>
               <div className="mt-9">
-                <h3 className="font-display text-2xl font-extrabold uppercase leading-[0.9] text-navy">{label}</h3>
-                <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{details(service.module)}</p>
-                <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.16em] text-navy/38">
+                <h3 className="font-display text-2xl font-extrabold uppercase leading-[0.9] text-white">{label}</h3>
+                <p className="mt-3 text-xs leading-relaxed text-white/52">{details(service.module)}</p>
+                <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.16em] text-white/34">
                   {service.provider}
                 </p>
               </div>
@@ -237,12 +237,12 @@ export function TeamPortfolio({
               href={href}
               target={isOfficial ? "_blank" : undefined}
               rel={isOfficial ? "noopener noreferrer" : undefined}
-              className="interactive-surface min-h-48 bg-background p-5 hover:bg-ice/55"
+              className="interactive-surface min-h-48 bg-competition p-5 text-white hover:bg-white/[0.04]"
             >
               {card}
             </a>
           ) : (
-            <div key={service.module} className="min-h-48 bg-background p-5">
+            <div key={service.module} className="min-h-48 bg-competition p-5 text-white">
               {card}
             </div>
           );

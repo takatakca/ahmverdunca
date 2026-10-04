@@ -33,7 +33,7 @@ export function CoachMatchDayChecklist({ lang }: { lang: "fr" | "en" }) {
   };
 
   return (
-    <section className="overflow-hidden border border-navy/12 bg-background">
+    <section className="overflow-hidden border border-white/12 bg-navy-deep text-white">
       <div className="competition-panel flex flex-col gap-4 p-5 text-white sm:flex-row sm:items-end sm:justify-between md:p-6">
         <div>
           <div className="flex items-center gap-2">
@@ -67,15 +67,15 @@ export function CoachMatchDayChecklist({ lang }: { lang: "fr" | "en" }) {
               onClick={() => toggle(item.key)}
               className={
                 active
-                  ? "premium-control flex min-h-16 items-center gap-3 bg-sport/10 p-4 text-left text-navy"
-                  : "premium-control flex min-h-16 items-center gap-3 bg-background p-4 text-left text-navy hover:bg-ice"
+                  ? "premium-control flex min-h-16 items-center gap-3 bg-sport/10 p-4 text-left text-white"
+                  : "premium-control flex min-h-16 items-center gap-3 bg-competition p-4 text-left text-white hover:bg-white/[0.04]"
               }
             >
               <span className={active
                 ? "flex size-8 shrink-0 items-center justify-center bg-sport text-sport-foreground"
-                : "flex size-8 shrink-0 items-center justify-center border border-navy/12 bg-ice text-muted-foreground"
+                : "flex size-8 shrink-0 items-center justify-center border border-white/12 bg-white/[0.04] text-white/42"
               }>
-                {active ? <Check className="size-4" /> : <span className="size-2 rounded-full bg-navy/20" />}
+                {active ? <Check className="size-4" /> : <span className="size-2 rounded-full bg-white/20" />}
               </span>
               <span className="font-display text-lg font-extrabold uppercase leading-none">
                 {lang === "fr" ? item.fr : item.en}
@@ -85,14 +85,14 @@ export function CoachMatchDayChecklist({ lang }: { lang: "fr" | "en" }) {
         })}
       </div>
 
-      <div className="border-t border-navy/10 p-3 text-right">
+      <div className="border-t border-white/10 p-3 text-right">
         <button
           type="button"
           onClick={() => {
             window.localStorage.removeItem(STORAGE_KEY);
             setChecked([]);
           }}
-          className="inline-flex min-h-9 items-center gap-2 px-2 text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground hover:text-sport"
+          className="inline-flex min-h-9 items-center gap-2 px-2 text-[8px] font-bold uppercase tracking-[0.14em] text-white/42 hover:text-sport-foreground"
         >
           <RotateCcw className="size-3" aria-hidden />
           {lang === "fr" ? "Réinitialiser" : "Reset"}
