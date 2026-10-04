@@ -52,6 +52,9 @@ jobs:
       - name: TAKATAK AHMV backend control-plane tests
         run: bun run test:takatak-ahmv-backend
 
+      - name: Enforce TAKATAK AHMV backend-only boundary
+        run: bun run check:takatak-ahmv-backend-boundary
+
       - name: GROUPE TAKATAK team feed security tests
         run: bun run test:team-feed
 
