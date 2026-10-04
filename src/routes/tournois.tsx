@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/tournois")({
 
 function TournamentsPage() {
   const { lang } = useI18n();
+  const tournamentPoster = uploadedAhmvMediaById(26)!;
 
   return (
     <>
@@ -48,11 +50,11 @@ function TournamentsPage() {
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.25fr_0.75fr]">
           <div className="relative min-h-[420px] overflow-hidden sm:min-h-[520px]">
             <img
-              src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+              src={tournamentPoster.url}
+              alt={lang === "fr" ? tournamentPoster.alt.fr : tournamentPoster.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 size-full bg-navy-deep object-contain"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.92))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8 lg:p-10">
