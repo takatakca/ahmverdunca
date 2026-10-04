@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
 import { config } from './config.js';
 import { SYSTEM_PROMPT } from './prompt.js';
-import { findSchedule, findArena } from './ahm-data.js';
+import { findSchedule, findArena, findKnowledge } from './ahm-data.js';
 import { requestHumanHandoff } from './ahm-bridge.js';
 import { persistSessionSnapshot, saveSession } from './store.js';
 import { throwIfAborted } from './turn-controller.js';
@@ -50,6 +50,20 @@ const tools = [
       type: 'object',
       properties: { arena: { type: 'string' } },
       required: ['arena'],
+      additionalProperties: false
+    }
+  },
+  {
+    type: 'function',
+    name: 'find_knowledge',
+    description: 'Search the shared validated AHM Verdun public knowledge base. Use before answering factual questions about registration, volunteering, coaches, funding, arena services/accessibility, or other association information that is not a specific schedule lookup.',
+    strict: true,
+    parameters: {
+      type: 'object',
+      properties: {
+        query: { type: 'string', description: 'The caller question or concise factual lookup.' }
+      },
+      required: ['query'],
       additionalProperties: false
     }
   },
@@ -166,6 +180,18 @@ function rememberArenaResults(session, result) {
   }
 }
 
+function rememberKnowledgeResults(session, result) {
+  if (!result?.ok || !Array.isArray(result.hits)) return;
+  for (const hit of result.hits.slice(0, 2)) {
+    if (!hit?.sourceUrl) continue;
+    addSmsItem(session, {
+      type: 'link',
+      label: hit.title || 'AHM Verdun',
+      url: hit.sourceUrl
+    });
+  }
+}
+
 async function checkpoint(session, persist = true) {
   if (!persist) return;
   saveSession(session);
@@ -243,6 +269,13 @@ async function runTool(session, call, { signal, persist = true } = {}) {
       result = await findArena(args);
       recordArenaLookup(session, result);
       rememberArenaResults(session, result);
+      break;
+    case 'find_knowledge':
+      result = await findKnowledge({
+        query: args.query,
+        language: session.language || 'fr'
+      });
+      rememberKnowledgeResults(session, result);
       break;
     case 'remember_official_page': {
       const pages = {
