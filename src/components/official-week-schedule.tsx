@@ -5,6 +5,8 @@ import { VoiceSearchButton } from "@/components/voice-search-button";
 import { AddToCalendarButton } from "@/components/add-to-calendar-button";
 import { ShareButton } from "@/components/share-button";
 import {
+  HAS_NEWER_PUBLISHED_SCHEDULE,
+  LATEST_PUBLISHED_SCHEDULE_DOCUMENT,
   OFFICIAL_WEEK_ACTIVITIES,
   LEGACY_SCHEDULE_DOCUMENTS,
   OFFICIAL_WEEK_META,
@@ -122,6 +124,28 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
     year: "numeric",
   });
 
+  const newerPublishedDocument =
+    HAS_NEWER_PUBLISHED_SCHEDULE ? LATEST_PUBLISHED_SCHEDULE_DOCUMENT : null;
+  const newerPublishedIsActive = Boolean(
+    newerPublishedDocument &&
+      today >= newerPublishedDocument.start &&
+      today <= newerPublishedDocument.end,
+  );
+  const newerPublishedRangeLabel = newerPublishedDocument
+    ? `${formatDate(newerPublishedDocument.start, lang, { day: "numeric", month: "long" })} — ${formatDate(
+        newerPublishedDocument.end,
+        lang,
+        { day: "numeric", month: "long", year: "numeric" },
+      )}`
+    : "";
+  const newerPublishedAtLabel = newerPublishedDocument
+    ? formatDate(newerPublishedDocument.publishedAt, lang, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
+
   useEffect(() => {
     setQuery(initialQuery);
   }, [initialQuery]);
@@ -194,6 +218,41 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
       </div>
 
       <div className="p-4 md:p-6">
+        {newerPublishedDocument && (
+          <a
+            href={newerPublishedDocument.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="interactive-surface mb-5 flex flex-col gap-4 border border-sport/45 bg-sport/10 p-4 text-white sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div>
+              <p className="eyebrow text-sport-foreground">
+                {newerPublishedIsActive
+                  ? (lang === "fr" ? "Horaire officiel plus récent disponible" : "Newer official schedule available")
+                  : (lang === "fr" ? "Prochaine semaine déjà publiée" : "Next week already published")}
+              </p>
+              <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none text-white">
+                {lang === "fr"
+                  ? `Semaine ${newerPublishedDocument.week} · ${newerPublishedRangeLabel}`
+                  : `Week ${newerPublishedDocument.week} · ${newerPublishedRangeLabel}`}
+              </p>
+              <p className="mt-2 max-w-2xl text-xs leading-relaxed text-white/58">
+                {newerPublishedIsActive
+                  ? (lang === "fr"
+                      ? `Source officielle publiée le ${newerPublishedAtLabel}. Les activités structurées plus bas proviennent de la dernière semaine intégrée; ouvrez cette source pour les détails les plus récents.`
+                      : `Official source published ${newerPublishedAtLabel}. The structured activities below come from the last integrated week; open this source for the latest details.`)
+                  : (lang === "fr"
+                      ? `Source officielle publiée le ${newerPublishedAtLabel}. Elle prendra le relais à partir du ${formatDate(newerPublishedDocument.start, lang, { day: "numeric", month: "long" })}.`
+                      : `Official source published ${newerPublishedAtLabel}. It takes effect on ${formatDate(newerPublishedDocument.start, lang, { day: "numeric", month: "long" })}.`)}
+              </p>
+            </div>
+            <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
+              {lang === "fr" ? "Ouvrir la source officielle" : "Open official source"}
+              <ExternalLink className="size-3.5" />
+            </span>
+          </a>
+        )}
+
         {weekExpired && !showArchive ? (
           <div className="rounded-xl border border-border bg-background p-5 md:p-6">
             <p className="eyebrow text-sport">
