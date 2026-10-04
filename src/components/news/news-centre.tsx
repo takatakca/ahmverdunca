@@ -349,8 +349,10 @@ export function NewsCentre() {
   const resetFilters = () => setFilters(DEFAULT_FILTERS);
 
   return (
-    <section className="container-site py-8 md:py-11">
-      <div className="overflow-hidden border border-navy/12 bg-background">
+    <section className="relative overflow-hidden bg-navy-deep py-8 text-white md:py-11">
+      <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
+      <div className="container-site relative">
+        <div className="overflow-hidden border border-white/12 bg-competition">
         <div className="bg-competition px-5 py-6 text-white md:px-7">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -677,6 +679,7 @@ export function NewsCentre() {
             </button>
           </div>
         )}
+        </div>
       </div>
     </section>
   );
