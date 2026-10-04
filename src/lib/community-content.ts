@@ -13,12 +13,44 @@ type OverlayResponse = {
   publications?: PublicContentOverlay[];
 };
 
+function clonePlain<T>(value: T): T {
+  try {
+    return structuredClone(value);
+  } catch {
+    return JSON.parse(JSON.stringify(value)) as T;
+  }
+}
+
+function setNested(target: Record<string, unknown>, path: string, value: unknown) {
+  const parts = path.split(".").map((part) => part.trim()).filter(Boolean);
+  if (parts.length === 0) return;
+  let cursor = target;
+
+  for (let index = 0; index < parts.length - 1; index += 1) {
+    const key = parts[index]!;
+    const current = cursor[key];
+    if (!current || typeof current !== "object" || Array.isArray(current)) {
+      cursor[key] = {};
+    } else {
+      cursor[key] = { ...(current as Record<string, unknown>) };
+    }
+    cursor = cursor[key] as Record<string, unknown>;
+  }
+
+  cursor[parts[parts.length - 1]!] = value;
+}
+
 export function applyContentOverlay<T extends Record<string, unknown>>(
   base: T,
   overlay: PublicContentOverlay | undefined,
 ): T {
   if (!overlay) return base;
-  return { ...base, ...overlay.patch } as T;
+  const next = clonePlain(base);
+  for (const [field, value] of Object.entries(overlay.patch)) {
+    if (field.includes(".")) setNested(next, field, value);
+    else next[field] = value;
+  }
+  return next;
 }
 
 export function useContentOverlayRegistry() {
