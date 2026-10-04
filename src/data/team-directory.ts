@@ -59,6 +59,9 @@ export const getPublicTeamById = (teamId: string) =>
 export const publicTeamHubUrl = (entry: PublicTeamDirectoryEntry) =>
   `/equipes/${entry.categorySlug}?teamId=${encodeURIComponent(entry.legacyScheduleTeamId)}`;
 
+export const publicTeamScheduleUrl = (entry: PublicTeamDirectoryEntry) =>
+  `${publicTeamHubUrl(entry)}#match-center`;
+
 export const legacyTeamScheduleUrl = (entry: PublicTeamDirectoryEntry) =>
   scheduleUrl(entry.legacyScheduleTeamId);
 
