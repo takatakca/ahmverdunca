@@ -8,7 +8,7 @@ const root = "/api/ahmv/team-games";
 const enabled = {
   TAKATAK_TEAM_GAMES_ENABLED: "true",
   TAKATAK_TEAM_GAMES_ORIGIN: "https://takatak.ca",
-  TAKATAK_TEAM_GAMES_TOKEN: "server-only-test-token",
+  TAKATAK_AHMV_SERVICE_TOKEN: "server-only-test-token",
 };
 
 test("unrelated requests bypass team games handler", async () => {
@@ -16,10 +16,18 @@ test("unrelated requests bypass team games handler", async () => {
   assert.equal(result, null);
 });
 
-test("disabled connector fails closed", async () => {
+test("missing shared service token fails closed", async () => {
   const response = await handleTakatakTeamGames(
     new Request(`https://ahmverdun.ca${root}?teamId=${validTeamId}`),
     {},
+  );
+  assert.equal(response?.status, 503);
+});
+
+test("explicit connector kill switch fails closed", async () => {
+  const response = await handleTakatakTeamGames(
+    new Request(`https://ahmverdun.ca${root}?teamId=${validTeamId}`),
+    { ...enabled, TAKATAK_TEAM_GAMES_ENABLED: "false" },
   );
   assert.equal(response?.status, 503);
 });
