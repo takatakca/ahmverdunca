@@ -175,3 +175,22 @@ test("Voice shared knowledge route is private, source-linked and uses the common
   assert.match(prompt, /call find_knowledge/);
   assert.doesNotMatch(knowledge, /service_role|SUPABASE_SERVICE_ROLE_KEY|AHMV_VOICE_BRIDGE_TOKEN/);
 });
+
+
+test("Voice arena lookup exposes only verified practical parent details", async () => {
+  const [bridge, voiceData, voiceSms] = await Promise.all([
+    source("src/lib/ahmv-voice-bridge.server.ts"),
+    source("services/ahmv-voice-ai/src/ahm-data.js"),
+    source("services/ahmv-voice-ai/src/sms-body.js"),
+  ]);
+
+  assert.match(bridge, /phone: item\.phone \?\? null/);
+  assert.match(bridge, /parking: item\.parking \?\? null/);
+  assert.match(bridge, /accessibility: item\.accessibility \?\? \[\]/);
+  assert.match(bridge, /amenities: item\.amenities \?\? \[\]/);
+  assert.match(bridge, /sourceVerifiedAt: item\.sourceVerifiedAt \?\? null/);
+  assert.match(voiceData, /function localizedList/);
+  assert.match(voiceData, /function normalizeArena/);
+  assert.match(voiceSms, /item\.phone/);
+  assert.doesNotMatch(bridge, /parkingCountInternal|internalNotes/);
+});
