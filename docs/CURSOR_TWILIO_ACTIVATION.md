@@ -34,13 +34,18 @@ Runtime:
 
 ## 1. Open the project in Cursor
 
-Checkout the dedicated activation branch:
+Start from the current production authority: `main`. Do not use the historical `voice-ai-preprod-v4` or `cursor-twilio-activation` branches as deployment authority; they may be useful only for archaeology.
+
+Create a fresh operator branch from the current `main` before making any activation-related code or documentation change:
 
 ```bash
 git fetch origin
-git checkout cursor-twilio-activation
-git pull
+git checkout main
+git pull --ff-only origin main
+git checkout -b voice-master-connection-$(date +%Y%m%d)
 ```
+
+If the operator branch already exists, rebase or recreate it from the current `main` before continuing. Never deploy a stale activation branch merely because an older runbook named it.
 
 ## 2. Connect Twilio to Cursor
 
