@@ -85,7 +85,9 @@ export function AppLaunchSplash() {
         fetchPriority="high"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-b from-navy-deep/10 via-navy-deep/50 to-navy-deep" />
+      <div className="absolute inset-0 bg-navy-deep/10" />
+      <div className="absolute inset-x-0 top-[22%] h-[16%] bg-gradient-to-b from-transparent to-navy-deep" />
+      <div className="absolute inset-x-0 bottom-0 h-[62%] bg-navy-deep" />
       <div className="absolute inset-0 technical-grid text-white/10" />
 
       <div className="relative flex min-h-[100dvh] flex-col items-center justify-between px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] text-center">
