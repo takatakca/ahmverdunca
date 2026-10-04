@@ -141,7 +141,7 @@ export function SiteFooter() {
           <NewsletterInterest
             lang={lang}
             source="ahmv-footer"
-            teamId={primaryTeam?.legacyScheduleTeamId}
+            {...(primaryTeam ? { teamId: primaryTeam.legacyScheduleTeamId } : {})}
           />
         </div>
       </div>
