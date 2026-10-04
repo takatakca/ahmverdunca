@@ -5,6 +5,7 @@ import { NewsCentre } from "@/components/news/news-centre";
 import { PageHeader } from "@/components/page-header";
 import { useI18n } from "@/lib/i18n";
 import { canonicalLink } from "@/lib/seo";
+import { newsVisualForCategory } from "@/data/news-visuals";
 
 export const Route = createFileRoute("/nouvelles/")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/nouvelles/")({
         property: "og:title",
         content: "Centre Nouvelles AHM Verdun",
       },
+      { property: "og:image", content: newsVisualForCategory("association")?.url ?? "" },
       {
         property: "og:description",
         content:
