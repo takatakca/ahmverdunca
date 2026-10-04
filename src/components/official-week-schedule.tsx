@@ -19,6 +19,8 @@ import { arenaDirectionsTargetForVenue, getArenaForVenue } from "@/data/arenas";
 import { mapsDirectionsUrl } from "@/lib/site";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
 
 function normalizeSearch(value: string) {
   return value
@@ -48,6 +50,14 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   const googleUrl = mapsDirectionsUrl(directionTarget);
   const wazeUrl = `https://www.waze.com/ul?q=${encodedTarget}&navigate=yes`;
   const appleUrl = `https://maps.apple.com/?daddr=${encodedTarget}`;
+  const contributionFields = [
+    { key: "date", label: { fr: "Date", en: "Date" }, kind: "date" as const, current: item.date },
+    { key: "start", label: { fr: "Heure de début", en: "Start time" }, kind: "time" as const, current: item.start },
+    { key: "end", label: { fr: "Heure de fin", en: "End time" }, kind: "time" as const, current: item.end },
+    { key: "venue", label: { fr: "Aréna / glace", en: "Arena / rink" }, kind: "text" as const, current: item.venue },
+    { key: "activity", label: { fr: "Type d’activité", en: "Activity type" }, kind: "text" as const, current: item.activity },
+    { key: "status", label: { fr: "Statut", en: "Status" }, kind: "text" as const, current: item.status },
+  ];
 
   return (
     <article
@@ -86,6 +96,17 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
       </div>
 
       <div className="w-full sm:w-auto">
+        <div className="mb-2 flex justify-end">
+          <ContentContributionButton
+            resourceType="schedule"
+            resourceKey={`schedule:${item.id}`}
+            title={`${item.group} · ${item.date} · ${item.start}`}
+            snapshot={item as unknown as Record<string, unknown>}
+            fields={contributionFields}
+            evidenceRequired
+            appearance="menu"
+          />
+        </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {arena ? (
             <Button asChild variant="sport" size="sm" className="w-full">
@@ -133,6 +154,18 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
   const [query, setQuery] = useState(initialQuery);
   const [showPast, setShowPast] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
+  const contentRegistry = useContentOverlayRegistry();
+  const activities = useMemo(
+    () =>
+      OFFICIAL_WEEK_ACTIVITIES.map((item) =>
+        contentRegistry.apply(
+          "schedule",
+          `schedule:${item.id}`,
+          item as unknown as Record<string, unknown>,
+        ) as unknown as OfficialWeekActivity,
+      ),
+    [contentRegistry.overlays],
+  );
   const today = montrealDateKey();
   const weekActive = today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
   const weekExpired = today > OFFICIAL_WEEK_META.end;
@@ -180,11 +213,11 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
 
   const filtered = useMemo(() => {
     const needle = normalizeSearch(query);
-    if (!needle) return OFFICIAL_WEEK_ACTIVITIES;
-    return OFFICIAL_WEEK_ACTIVITIES.filter((item) =>
+    if (!needle) return activities;
+    return activities.filter((item) =>
       normalizeSearch(`${item.group} ${item.activity} ${item.venue} ${item.date} ${item.start} ${item.end}`).includes(needle),
     );
-  }, [query]);
+  }, [activities, query]);
 
   const displayed = useMemo(() => {
     if (weekExpired && !showArchive) return [];
