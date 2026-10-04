@@ -61,22 +61,22 @@ function optionalText(value: unknown): string | null {
 function normalizeAd(value: unknown): TakatakAd | null {
   if (!value || typeof value !== "object") return null;
   const item = value as Record<string, unknown>;
-  const headline = optionalText(item.headline);
-  const destinationUrl = httpsUrl(item.destinationUrl);
+  const headline = optionalText(item["headline"]);
+  const destinationUrl = httpsUrl(item["destinationUrl"]);
   if (!headline || !destinationUrl) return null;
 
   return {
-    campaignId: optionalText(item.campaignId) ?? "unknown",
-    creativeId: optionalText(item.creativeId) ?? "unknown",
-    placementId: optionalText(item.placementId) ?? "unknown",
+    campaignId: optionalText(item["campaignId"]) ?? "unknown",
+    creativeId: optionalText(item["creativeId"]) ?? "unknown",
+    placementId: optionalText(item["placementId"]) ?? "unknown",
     headline,
-    body: optionalText(item.body),
-    callToAction: optionalText(item.callToAction),
+    body: optionalText(item["body"]),
+    callToAction: optionalText(item["callToAction"]),
     destinationUrl,
-    clickUrl: httpsUrl(item.clickUrl),
-    imageUrl: httpsUrl(item.imageUrl),
-    trackingToken: optionalText(item.trackingToken),
-    trackingEnabled: item.trackingEnabled === true,
+    clickUrl: httpsUrl(item["clickUrl"]),
+    imageUrl: httpsUrl(item["imageUrl"]),
+    trackingToken: optionalText(item["trackingToken"]),
+    trackingEnabled: item["trackingEnabled"] === true,
   };
 }
 
