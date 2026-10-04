@@ -289,16 +289,17 @@ function Home() {
       </section>
 
       {/* Newsroom */}
-      <section className="bg-ice py-8 md:py-10">
-        <div className="container-site">
-          <div className="flex flex-col gap-4 border-b-2 border-navy pb-5 md:flex-row md:items-end md:justify-between">
+      <section className="relative overflow-hidden bg-competition py-8 text-white md:py-10">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
+        <div className="container-site relative">
+          <div className="flex flex-col gap-4 border-b border-white/15 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="eyebrow text-sport">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
-              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-navy sm:text-5xl md:text-6xl">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
+              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl md:text-6xl">
                 {t("home.news")}
               </h2>
             </div>
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline-light" size="sm">
               <Link to="/nouvelles">{t("common.seeAll")} <ArrowRight className="size-4" /></Link>
             </Button>
           </div>
@@ -340,23 +341,23 @@ function Home() {
                 </div>
               </Link>
 
-              <div className="grid divide-y divide-navy/10">
+              <div className="grid divide-y divide-white/10">
                 {news.slice(1).map((article, index) => (
                   <Link
                     key={article.slug}
                     to="/nouvelles/$slug"
                     params={{ slug: article.slug }}
-                    className="interactive-surface group flex min-h-52 flex-col justify-between bg-ice p-6 transition-colors hover:bg-background md:p-7"
+                    className="interactive-surface group flex min-h-52 flex-col justify-between bg-white/[0.045] p-6 transition-colors hover:bg-white/[0.085] md:p-7"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
-                      <span className="font-display text-4xl font-extrabold text-navy/8">0{index + 2}</span>
+                      <span className="font-display text-4xl font-extrabold text-white/10">0{index + 2}</span>
                     </div>
                     <div>
-                      <h3 className="font-display text-3xl font-extrabold uppercase leading-[0.92] text-navy group-hover:text-sport">
+                      <h3 className="font-display text-3xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
                         {l(article.title)}
                       </h3>
-                      <p className="mt-3 line-clamp-3 text-sm text-muted-foreground">{l(article.excerpt)}</p>
+                      <p className="mt-3 line-clamp-3 text-sm text-white/55">{l(article.excerpt)}</p>
                     </div>
                   </Link>
                 ))}
@@ -367,23 +368,23 @@ function Home() {
       </section>
 
       {/* Tournament bridge */}
-      <section className="border-y border-navy/10 bg-ice">
+      <section className="border-y border-white/10 bg-navy text-white">
         <div className="container-site grid gap-6 py-8 md:grid-cols-[auto_1fr_auto] md:items-center">
           <div className="flex size-16 items-center justify-center bg-sport text-sport-foreground">
             <Trophy className="size-7" />
           </div>
           <div>
-            <p className="eyebrow text-sport">{lang === "fr" ? "Événement officiel" : "Official event"}</p>
-            <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-navy">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Événement officiel" : "Official event"}</p>
+            <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-white">
               {lang === "fr" ? "30e Tournoi Provincial M11 de Verdun" : "30th Verdun Provincial U11 Tournament"}
             </p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-white/58">
               {lang === "fr"
                 ? "18–31 janvier 2027 · passerelle vers le site officiel, les horaires et les classements."
                 : "January 18–31, 2027 · gateway to the official site, schedules and standings."}
             </p>
           </div>
-          <Button asChild variant="outline">
+          <Button asChild variant="outline-light">
             <Link to="/tournois">{lang === "fr" ? "Voir le tournoi" : "View tournament"} <ArrowRight className="size-4" /></Link>
           </Button>
         </div>
@@ -520,19 +521,19 @@ function Home() {
       </section>
 
       {/* Social strip */}
-      <section className="border-y border-navy/10 bg-ice">
+      <section className="border-y border-white/10 bg-competition text-white">
         <div className="container-site flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="eyebrow text-sport">{t("home.socialPreview")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{t("home.socialNote")}</p>
+            <p className="eyebrow text-sport-foreground">{t("home.socialPreview")}</p>
+            <p className="mt-1 text-sm text-white/52">{t("home.socialNote")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline-light" size="sm">
               <a href={EXTERNAL_LINKS.instagram} target="_blank" rel="noopener noreferrer">
                 <Instagram className="size-4" /> Instagram <ExternalLink className="size-3" />
               </a>
             </Button>
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline-light" size="sm">
               <a href={EXTERNAL_LINKS.facebook} target="_blank" rel="noopener noreferrer">
                 <Facebook className="size-4" /> Facebook <ExternalLink className="size-3" />
               </a>
