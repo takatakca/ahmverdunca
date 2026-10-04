@@ -20,6 +20,7 @@ import { mapsDirectionsUrl } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { ArenaMemberTools } from "@/components/arena-member-tools";
+import { NewsletterInterest } from "@/components/newsletter-interest";
 
 export const Route = createFileRoute("/arenas/$slug")({
   loader: ({ params }) => {
@@ -243,6 +244,8 @@ function ArenaPage() {
         </section>
 
         <ArenaMemberTools arena={arena} lang={lang} />
+
+        <NewsletterInterest lang={lang} source="ahmv-arena" arenaSlug={arena.slug} />
 
         <HouseSponsorSlot placement={`arena-${arena.slug}`} count={1} compact />
 
