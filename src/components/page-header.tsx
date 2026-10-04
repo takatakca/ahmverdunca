@@ -21,15 +21,15 @@ export function PageHeader({
       <div className="technical-grid absolute inset-0 opacity-25" aria-hidden />
       <div className="absolute inset-y-0 left-[12%] w-px bg-sport/35" aria-hidden />
       <div className="absolute inset-y-0 right-[18%] hidden w-px bg-navy-foreground/7 lg:block" aria-hidden />
-      <div className="giant-watermark pointer-events-none absolute -bottom-8 -right-2 hidden select-none opacity-34 lg:block" aria-hidden>
+      <div className="giant-watermark pointer-events-none absolute -bottom-6 -right-2 hidden select-none opacity-24 lg:block" aria-hidden>
         Verdun
       </div>
       <LogoSlot
         size="lg"
-        className="pointer-events-none absolute right-[4vw] top-1/2 hidden size-36 -translate-y-1/2 opacity-[0.11] grayscale md:flex lg:size-44"
+        className="pointer-events-none absolute right-[4vw] top-1/2 hidden size-28 -translate-y-1/2 opacity-[0.09] grayscale md:flex lg:size-32"
       />
 
-      <div className="container-site relative grid gap-6 py-9 sm:py-11 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-16">
+      <div className="container-site relative grid gap-4 py-7 sm:py-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-11">
         <div className="max-w-5xl min-w-0">
           {eyebrow && (
             <p className="eyebrow mb-3 flex flex-wrap items-center gap-2.5 text-sport-foreground/90">
@@ -37,19 +37,19 @@ export function PageHeader({
               {eyebrow}
             </p>
           )}
-          <h1 className="max-w-[16ch] break-words font-display text-[clamp(2.9rem,8vw,6.5rem)] font-extrabold uppercase leading-[0.82] tracking-[-0.045em] text-balance">
+          <h1 className="max-w-[17ch] break-words font-display text-[clamp(2.65rem,7vw,5.5rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.04em] text-balance">
             {title}
           </h1>
           {description && (
-            <p className="mt-4 max-w-3xl border-l-2 border-sport pl-4 text-sm leading-relaxed text-navy-foreground/72 sm:text-base md:text-lg">
+            <p className="mt-3 max-w-3xl border-l-2 border-sport pl-4 text-sm leading-relaxed text-navy-foreground/70 sm:text-base">
               {description}
             </p>
           )}
-          {actions && <div className="mt-5 flex flex-wrap gap-3">{actions}</div>}
+          {actions && <div className="mt-4 flex flex-wrap gap-2">{actions}</div>}
         </div>
 
-        <div className="hidden min-w-[8rem] border-l border-navy-foreground/12 pl-5 lg:block">
-          <p className="font-display text-3xl font-extrabold uppercase leading-none tracking-[-0.03em] text-navy-foreground/75">
+        <div className="hidden min-w-[7rem] border-l border-navy-foreground/12 pl-4 lg:block">
+          <p className="font-display text-2xl font-extrabold uppercase leading-none tracking-[-0.03em] text-navy-foreground/75">
             AHMV
           </p>
           <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy-foreground/45">
