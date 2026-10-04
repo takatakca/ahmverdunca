@@ -49,12 +49,50 @@ function normalizeEvent(raw = {}) {
   };
 }
 
+function localizedText(raw, max = 600) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const fr = clean(raw.fr, max);
+  const en = clean(raw.en, max);
+  return fr || en ? { fr, en } : null;
+}
+
+function localizedList(raw, maxItems = 8, max = 240) {
+  if (!Array.isArray(raw)) return [];
+  return raw.slice(0, maxItems).map((item) => localizedText(item, max)).filter(Boolean);
+}
+
 function normalizeArena(raw = {}) {
+  const parking = raw.parking && typeof raw.parking === 'object' && !Array.isArray(raw.parking)
+    ? {
+        type: clean(raw.parking.type, 40),
+        accessible: raw.parking.accessible === true,
+        evCharging: raw.parking.evCharging === true || raw.parking.ev_charging === true,
+        details: localizedText(raw.parking.details, 600)
+      }
+    : null;
+  const publicStatus = raw.publicStatus && typeof raw.publicStatus === 'object' && !Array.isArray(raw.publicStatus)
+    ? {
+        code: clean(raw.publicStatus.code, 60),
+        label: localizedText(raw.publicStatus.label, 240),
+        note: localizedText(raw.publicStatus.note, 800)
+      }
+    : null;
+
   return {
     name: clean(raw.name || raw.arena),
     address: clean(raw.address, 500),
     addressVerified: raw.addressVerified === true || raw.address_verified === true,
     website: safeHttpsUrl(raw.website),
+    phone: clean(raw.phone, 40),
+    phoneExtension: clean(raw.phoneExtension || raw.phone_extension, 20),
+    description: localizedText(raw.description, 900),
+    facilities: localizedText(raw.facilities, 600),
+    parking,
+    accessibility: localizedList(raw.accessibility),
+    amenities: localizedList(raw.amenities),
+    activities: localizedList(raw.activities),
+    publicStatus,
+    sourceVerifiedAt: clean(raw.sourceVerifiedAt || raw.source_verified_at, 10),
     mapsUrl: safeHttpsUrl(raw.mapsUrl || raw.maps_url),
     wazeUrl: safeHttpsUrl(raw.wazeUrl || raw.waze_url),
     appleMapsUrl: safeHttpsUrl(raw.appleMapsUrl || raw.apple_maps_url),
