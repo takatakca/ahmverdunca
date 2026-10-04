@@ -13,7 +13,8 @@ export function HomeParentCommand() {
 
   return (
     <section className="relative overflow-hidden border-y border-white/10 bg-competition text-white">
-      <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />\n      <div className="container-site relative py-5 md:py-6">
+      <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
+      <div className="container-site relative py-5 md:py-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Centre parent" : "Parent centre"}</p>
@@ -53,7 +54,7 @@ export function HomeParentCommand() {
 
         {team ? (
           <>
-            <div className="mt-4 grid gap-px overflow-hidden border border-white/12 bg-white/12 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="scrollbar-none -mx-4 mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-hidden sm:border sm:border-white/12 sm:bg-white/12 sm:px-0 sm:pb-0 lg:grid-cols-4">
               {[
                 { href: publicTeamHubUrl(team), icon: Users, fr: "Mini-site", en: "Mini-site", hintFr: "Équipe & contenu", hintEn: "Team & content" },
                 { href: legacyTeamScheduleUrl(team), icon: CalendarDays, fr: "Horaire", en: "Schedule", hintFr: "Source officielle", hintEn: "Official source", external: true },
@@ -65,14 +66,14 @@ export function HomeParentCommand() {
                   href={href}
                   target={external ? "_blank" : undefined}
                   rel={external ? "noopener noreferrer" : undefined}
-                  className="interactive-surface group flex min-h-24 flex-col justify-between bg-white/[0.045] p-4 transition-colors hover:bg-white/[0.085]"
+                  className="interactive-surface group flex min-h-20 w-[44vw] max-w-[11rem] shrink-0 snap-center flex-col justify-between border border-white/12 bg-white/[0.045] p-3 transition-colors hover:bg-white/[0.085] sm:min-h-24 sm:w-auto sm:max-w-none sm:border-0 sm:p-4"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <Icon className="size-5 text-sport" />
                     <ChevronRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
                   </div>
                   <div>
-                    <p className="font-display text-2xl font-extrabold uppercase leading-none text-white">{lang === "fr" ? fr : en}</p>
+                    <p className="font-display text-xl font-extrabold uppercase leading-none text-white sm:text-2xl">{lang === "fr" ? fr : en}</p>
                     <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.12em] text-white/45">
                       {lang === "fr" ? hintFr : hintEn}
                     </p>
@@ -81,7 +82,7 @@ export function HomeParentCommand() {
               ))}
             </div>
 
-            <div className="mt-3 flex items-center justify-between gap-4 border border-white/12 bg-white/[0.04] px-4 py-3">
+            <div className="mt-2 flex items-center justify-between gap-4 border border-white/12 bg-white/[0.035] px-3 py-2.5 sm:mt-3 sm:px-4 sm:py-3">
               <div className="min-w-0">
                 <p className="text-[8px] font-bold uppercase tracking-[0.14em] text-white/42">{lang === "fr" ? "Équipe active" : "Active team"}</p>
                 <p className="mt-1 truncate font-display text-xl font-extrabold uppercase text-white">{team.name} · {team.level}</p>
