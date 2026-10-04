@@ -1,0 +1,488 @@
+[
+  {
+    "id": "runway-s1-t01",
+    "sheet": 1,
+    "tile": 1,
+    "row": 1,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-01.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t02",
+    "sheet": 1,
+    "tile": 2,
+    "row": 1,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-02.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t03",
+    "sheet": 1,
+    "tile": 3,
+    "row": 1,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-03.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t04",
+    "sheet": 1,
+    "tile": 4,
+    "row": 2,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-04.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t05",
+    "sheet": 1,
+    "tile": 5,
+    "row": 2,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-05.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t06",
+    "sheet": 1,
+    "tile": 6,
+    "row": 2,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-06.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t07",
+    "sheet": 1,
+    "tile": 7,
+    "row": 3,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-07.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t08",
+    "sheet": 1,
+    "tile": 8,
+    "row": 3,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-08.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s1-t09",
+    "sheet": 1,
+    "tile": 9,
+    "row": 3,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-1-tile-09.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t01",
+    "sheet": 2,
+    "tile": 1,
+    "row": 1,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-01.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t02",
+    "sheet": 2,
+    "tile": 2,
+    "row": 1,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-02.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t03",
+    "sheet": 2,
+    "tile": 3,
+    "row": 1,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-03.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t04",
+    "sheet": 2,
+    "tile": 4,
+    "row": 2,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-04.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t05",
+    "sheet": 2,
+    "tile": 5,
+    "row": 2,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-05.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t06",
+    "sheet": 2,
+    "tile": 6,
+    "row": 2,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-06.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t07",
+    "sheet": 2,
+    "tile": 7,
+    "row": 3,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-07.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t08",
+    "sheet": 2,
+    "tile": 8,
+    "row": 3,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-08.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s2-t09",
+    "sheet": 2,
+    "tile": 9,
+    "row": 3,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-2-tile-09.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t01",
+    "sheet": 3,
+    "tile": 1,
+    "row": 1,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-01.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t02",
+    "sheet": 3,
+    "tile": 2,
+    "row": 1,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-02.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t03",
+    "sheet": 3,
+    "tile": 3,
+    "row": 1,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-03.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t04",
+    "sheet": 3,
+    "tile": 4,
+    "row": 2,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-04.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t05",
+    "sheet": 3,
+    "tile": 5,
+    "row": 2,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-05.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t06",
+    "sheet": 3,
+    "tile": 6,
+    "row": 2,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-06.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t07",
+    "sheet": 3,
+    "tile": 7,
+    "row": 3,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-07.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t08",
+    "sheet": 3,
+    "tile": 8,
+    "row": 3,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-08.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s3-t09",
+    "sheet": 3,
+    "tile": 9,
+    "row": 3,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-3-tile-09.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t01",
+    "sheet": 4,
+    "tile": 1,
+    "row": 1,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-01.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t02",
+    "sheet": 4,
+    "tile": 2,
+    "row": 1,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-02.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t03",
+    "sheet": 4,
+    "tile": 3,
+    "row": 1,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-03.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t04",
+    "sheet": 4,
+    "tile": 4,
+    "row": 2,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-04.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t05",
+    "sheet": 4,
+    "tile": 5,
+    "row": 2,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-05.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t06",
+    "sheet": 4,
+    "tile": 6,
+    "row": 2,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-06.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t07",
+    "sheet": 4,
+    "tile": 7,
+    "row": 3,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-07.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t08",
+    "sheet": 4,
+    "tile": 8,
+    "row": 3,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-08.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s4-t09",
+    "sheet": 4,
+    "tile": 9,
+    "row": 3,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-4-tile-09.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t01",
+    "sheet": 5,
+    "tile": 1,
+    "row": 1,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-01.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t02",
+    "sheet": 5,
+    "tile": 2,
+    "row": 1,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-02.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t03",
+    "sheet": 5,
+    "tile": 3,
+    "row": 1,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-03.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t04",
+    "sheet": 5,
+    "tile": 4,
+    "row": 2,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-04.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t05",
+    "sheet": 5,
+    "tile": 5,
+    "row": 2,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-05.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t06",
+    "sheet": 5,
+    "tile": 6,
+    "row": 2,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-06.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t07",
+    "sheet": 5,
+    "tile": 7,
+    "row": 3,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-07.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t08",
+    "sheet": 5,
+    "tile": 8,
+    "row": 3,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-08.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s5-t09",
+    "sheet": 5,
+    "tile": 9,
+    "row": 3,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-5-tile-09.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t01",
+    "sheet": 6,
+    "tile": 1,
+    "row": 1,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-01.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t02",
+    "sheet": 6,
+    "tile": 2,
+    "row": 1,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-02.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t03",
+    "sheet": 6,
+    "tile": 3,
+    "row": 1,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-03.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t04",
+    "sheet": 6,
+    "tile": 4,
+    "row": 2,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-04.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t05",
+    "sheet": 6,
+    "tile": 5,
+    "row": 2,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-05.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t06",
+    "sheet": 6,
+    "tile": 6,
+    "row": 2,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-06.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t07",
+    "sheet": 6,
+    "tile": 7,
+    "row": 3,
+    "column": 1,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-07.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t08",
+    "sheet": 6,
+    "tile": 8,
+    "row": 3,
+    "column": 2,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-08.jpg",
+    "status": "needs-sponsor-classification"
+  },
+  {
+    "id": "runway-s6-t09",
+    "sheet": 6,
+    "tile": 9,
+    "row": 3,
+    "column": 3,
+    "path": "/sponsor-creatives/runway/runway-sheet-6-tile-09.jpg",
+    "status": "needs-sponsor-classification"
+  }
+]
