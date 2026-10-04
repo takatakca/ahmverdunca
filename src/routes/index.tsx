@@ -319,16 +319,17 @@ function Home() {
       </section>
 
       {/* Newsroom */}
-      <section className="relative overflow-hidden bg-competition py-8 text-white md:py-10">\n        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
-        <div className="container-site">
-          <div className="flex flex-col gap-4 border-b-2 border-navy pb-5 md:flex-row md:items-end md:justify-between">
+      <section className="relative overflow-hidden bg-competition py-8 text-white md:py-10">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
+        <div className="container-site relative">
+          <div className="flex flex-col gap-4 border-b border-white/15 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
               <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl md:text-6xl">
                 {t("home.news")}
               </h2>
             </div>
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline-light" size="sm">
               <Link to="/nouvelles">{t("common.seeAll")} <ArrowRight className="size-4" /></Link>
             </Button>
           </div>
@@ -522,9 +523,10 @@ function Home() {
       </section>
 
       {/* Arenas */}
-      <section className="relative overflow-hidden bg-navy-deep py-12 text-white md:py-16">\n        <div className="arena-light opacity-25" aria-hidden />
-        <div className="container-site">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+      <section className="relative overflow-hidden bg-navy-deep py-12 text-white md:py-16">
+        <div className="arena-light opacity-25" aria-hidden />
+        <div className="container-site relative">
+          <div className="grid gap-7 lg:grid-cols-[0.8fr_1.2fr]">
             <div>
               <p className="eyebrow text-sport">{lang === "fr" ? "Où nous jouons" : "Where we play"}</p>
               <h2 className="mt-2 font-display text-5xl font-extrabold uppercase leading-[0.85] tracking-[-0.035em] text-white sm:text-6xl md:text-7xl">
@@ -561,7 +563,7 @@ function Home() {
                           <MapPin className="size-4" /> {lang === "fr" ? "Itinéraire" : "Directions"}
                         </a>
                       </Button>
-                      <Button asChild variant="outline">
+                      <Button asChild variant="outline-light">
                         <Link to="/arenas/$slug" params={{ slug: featuredArena.slug }}>
                           {lang === "fr" ? "Fiche aréna" : "Arena details"} <ArrowRight className="size-4" />
                         </Link>
