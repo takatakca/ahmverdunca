@@ -323,8 +323,8 @@ function Home() {
         <div className="container-site">
           <div className="flex flex-col gap-4 border-b-2 border-navy pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="eyebrow text-sport">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
-              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-navy sm:text-5xl md:text-6xl">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
+              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl md:text-6xl">
                 {t("home.news")}
               </h2>
             </div>
@@ -334,7 +334,7 @@ function Home() {
           </div>
 
           {news[0] && (
-            <div className="mt-7 grid gap-0 overflow-hidden border border-navy/10 lg:grid-cols-[1.65fr_0.85fr]">
+            <div className="mt-7 grid gap-0 overflow-hidden border border-white/10 lg:grid-cols-[1.65fr_0.85fr]">
               <Link
                 to="/nouvelles/$slug"
                 params={{ slug: news[0].slug }}
