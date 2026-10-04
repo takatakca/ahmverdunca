@@ -4,6 +4,7 @@ import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl } from "@/data/team-directory";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
+import { PARENT_PREMIUM } from "@/lib/parent-premium";
 
 export function ParentQuickPanel() {
   const { lang } = useI18n();
@@ -62,18 +63,20 @@ export function ParentQuickPanel() {
             ))}
           </div>
 
-          <a
-            href="/membership"
-            className="flex min-h-12 items-center justify-between border-t border-white/10 bg-white/[0.04] px-4 text-[9px] font-bold uppercase tracking-[0.12em] text-white/72"
-          >
-            <span className="flex items-center gap-2">
-              <ShieldCheck className="size-4 text-sport-foreground" />
-              {isDemoMember
-                ? (lang === "fr" ? "AHMV Member · aperçu actif" : "AHMV Member · preview active")
-                : (lang === "fr" ? "Voir AHMV Member" : "View AHMV Member")}
-            </span>
-            <ChevronRight className="size-3.5 text-sport-foreground" />
-          </a>
+          {PARENT_PREMIUM.visible ? (
+            <a
+              href="/membership"
+              className="flex min-h-12 items-center justify-between border-t border-white/10 bg-white/[0.04] px-4 text-[9px] font-bold uppercase tracking-[0.12em] text-white/72"
+            >
+              <span className="flex items-center gap-2">
+                <ShieldCheck className="size-4 text-sport-foreground" />
+                {isDemoMember
+                  ? (lang === "fr" ? "AHMV Member · aperçu actif" : "AHMV Member · preview active")
+                  : "AHMV Member"}
+              </span>
+              <ChevronRight className="size-3.5 text-sport-foreground" />
+            </a>
+          ) : null}
         </section>
       )}
 
