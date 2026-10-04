@@ -64,3 +64,64 @@ export function normalizeControlProvenance(
     verifiedAt,
   };
 }
+
+
+export function parseControlProvenance(value: unknown): ControlProvenance {
+  if (value === undefined || value === null) {
+    return normalizeControlProvenance(undefined);
+  }
+  if (typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("invalid_control_provenance");
+  }
+
+  const record = value as Record<string, unknown>;
+  const allowed = new Set([
+    "sourceKind",
+    "verificationStatus",
+    "sourceRef",
+    "verifiedAt",
+  ]);
+  for (const key of Object.keys(record)) {
+    if (!allowed.has(key)) throw new Error("invalid_control_provenance_field");
+  }
+
+  if (
+    record["sourceKind"] !== undefined &&
+    (typeof record["sourceKind"] !== "string" ||
+      !CONTROL_SOURCE_KINDS.includes(record["sourceKind"] as ControlSourceKind))
+  ) {
+    throw new Error("invalid_control_source_kind");
+  }
+  if (
+    record["verificationStatus"] !== undefined &&
+    (typeof record["verificationStatus"] !== "string" ||
+      !CONTROL_VERIFICATION_STATUSES.includes(
+        record["verificationStatus"] as ControlVerificationStatus,
+      ))
+  ) {
+    throw new Error("invalid_control_verification_status");
+  }
+  if (
+    record["sourceRef"] !== undefined &&
+    record["sourceRef"] !== null &&
+    typeof record["sourceRef"] !== "string"
+  ) {
+    throw new Error("invalid_control_source_ref");
+  }
+  if (
+    record["verifiedAt"] !== undefined &&
+    record["verifiedAt"] !== null &&
+    typeof record["verifiedAt"] !== "string"
+  ) {
+    throw new Error("invalid_control_verified_at");
+  }
+
+  return normalizeControlProvenance({
+    sourceKind: record["sourceKind"] as ControlSourceKind | undefined,
+    verificationStatus: record["verificationStatus"] as
+      | ControlVerificationStatus
+      | undefined,
+    sourceRef: record["sourceRef"] as string | null | undefined,
+    verifiedAt: record["verifiedAt"] as string | null | undefined,
+  });
+}
