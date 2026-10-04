@@ -46,24 +46,27 @@ function AlbumPage() {
         </Link>
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.6fr)]">
           <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
-            {slug === "tournoi-m11-2025" ? (
-              <div className="absolute inset-0 grid grid-cols-2 grid-rows-3 gap-px bg-white/10 sm:grid-cols-3 sm:grid-rows-2">
-                {[
-                  OFFICIAL_MEDIA.tournamentM11Primary,
-                  OFFICIAL_MEDIA.tournamentM11Champions,
-                  OFFICIAL_MEDIA.tournamentM11Finalist,
-                  OFFICIAL_MEDIA.tournamentM11Secondary,
-                  OFFICIAL_MEDIA.tournamentM11ChampionB,
-                  OFFICIAL_MEDIA.tournamentM11Tertiary,
-                ].map((media, index) => (
-                  <img
+            {al.photos && al.photos.length > 0 ? (
+              <div className={`absolute inset-0 grid gap-px bg-white/10 ${
+                al.photos.length >= 5 ? "grid-cols-2 grid-rows-3 sm:grid-cols-3 sm:grid-rows-2" : "grid-cols-2"
+              }`}>
+                {al.photos.map((media, index) => (
+                  <a
                     key={media.url}
-                    src={media.url}
-                    alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                    loading={index < 2 ? "eager" : "lazy"}
-                    decoding="async"
-                    className="size-full object-cover"
-                  />
+                    href={media.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative overflow-hidden"
+                    aria-label={lang === "fr" ? media.alt.fr : media.alt.en}
+                  >
+                    <img
+                      src={media.url}
+                      alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                      loading={index < 2 ? "eager" : "lazy"}
+                      decoding="async"
+                      className="size-full object-cover transition-transform duration-300 hover:scale-[1.02]"
+                    />
+                  </a>
                 ))}
               </div>
             ) : al.coverUrl ? (
@@ -92,7 +95,9 @@ function AlbumPage() {
             <div className="absolute inset-x-0 bottom-0 p-5 text-white md:p-7">
               <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/72">
                 {al.coverUrl
-                  ? (lang === "fr" ? "Aperçu provenant des archives publiques AHMV" : "Preview from AHMV public archives")
+                  ? (al.photos?.length
+                    ? (lang === "fr" ? `${al.photos.length} photos AHMV vérifiées` : `${al.photos.length} verified AHMV photos`)
+                    : (lang === "fr" ? "Aperçu provenant des archives publiques AHMV" : "Preview from AHMV public archives"))
                   : (lang === "fr" ? "Montage d’archives AHMV · aperçu générique" : "AHMV archive montage · generic preview")}
               </p>
               <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">{l(al.title)}</p>
