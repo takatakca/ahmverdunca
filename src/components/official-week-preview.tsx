@@ -2,9 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { ExternalLink, MapPin, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
+  HAS_NEWER_PUBLISHED_SCHEDULE,
+  LATEST_PUBLISHED_SCHEDULE_DOCUMENT,
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
-  WEEKLY_SCHEDULE_DOCUMENTS,
 } from "@/data/official-week";
 import { TEAMS } from "@/data/teams";
 import { formatDate, useI18n } from "@/lib/i18n";
@@ -36,9 +37,22 @@ export function OfficialWeekPreview() {
     year: "numeric",
   });
 
-  const latestDocument = WEEKLY_SCHEDULE_DOCUMENTS[0];
   const upcomingOfficialDocument =
-    latestDocument && latestDocument.start > OFFICIAL_WEEK_META.end ? latestDocument : null;
+    HAS_NEWER_PUBLISHED_SCHEDULE ? LATEST_PUBLISHED_SCHEDULE_DOCUMENT : null;
+  const upcomingRangeLabel = upcomingOfficialDocument
+    ? `${formatDate(upcomingOfficialDocument.start, lang, { day: "numeric", month: "long" })} — ${formatDate(
+        upcomingOfficialDocument.end,
+        lang,
+        { day: "numeric", month: "long", year: "numeric" },
+      )}`
+    : "";
+  const upcomingPublishedLabel = upcomingOfficialDocument
+    ? formatDate(upcomingOfficialDocument.publishedAt, lang, {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "";
 
   const savedTeam = TEAMS.find((item) => item.slug === preferredTeam);
   const savedTerms = officialScheduleTermsForTeam(savedTeam).map((term) => term.toUpperCase());
@@ -76,13 +90,13 @@ export function OfficialWeekPreview() {
               </p>
               <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none text-white">
                 {lang === "fr"
-                  ? `Semaine ${upcomingOfficialDocument.week} · 5 au 11 octobre`
-                  : `Week ${upcomingOfficialDocument.week} · October 5–11`}
+                  ? `Semaine ${upcomingOfficialDocument.week} · ${upcomingRangeLabel}`
+                  : `Week ${upcomingOfficialDocument.week} · ${upcomingRangeLabel}`}
               </p>
               <p className="mt-2 text-xs text-white/58">
                 {lang === "fr"
-                  ? "PDF officiel AHMV publié le 2 octobre 2026. Touchez pour ouvrir l’horaire complet."
-                  : "Official AHMV PDF published October 2, 2026. Tap to open the full schedule."}
+                  ? `Source officielle AHMV publiée le ${upcomingPublishedLabel}. Touchez pour ouvrir l’horaire complet.`
+                  : `Official AHMV source published ${upcomingPublishedLabel}. Tap to open the full schedule.`}
               </p>
             </div>
             <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
