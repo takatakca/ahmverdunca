@@ -26,6 +26,7 @@ import { createTakatakUsageEvent } from "../src/features/takatak-dashboard-ahmv/
 import { retryDelaySeconds, safeWorkerErrorCode } from "../src/features/takatak-dashboard-ahmv/job-policy.ts";
 import { parseControlProvenance } from "../src/features/takatak-dashboard-ahmv/provenance.ts";
 import { hasUnpublishedChanges, publishedRevisionForRecord } from "../src/features/takatak-dashboard-ahmv/published.ts";
+import { buildPortableControlBundle } from "../src/features/takatak-dashboard-ahmv/portability.ts";
 
 function request(headers: Record<string, string> = {}) {
   return new Request("https://ahmverdun.ca/internal/takatak/ahmv", { headers });
@@ -474,4 +475,57 @@ test("published snapshots stay pinned while a newer draft exists", () => {
     publishedRevisionForRecord({ ...record, status: "archived" }),
     null,
   );
+});
+
+
+test("portable AHMV export excludes TAKATAK commercial and operator internals", () => {
+  const provenance = parseControlProvenance({
+    sourceKind: "association",
+    verificationStatus: "verified",
+    sourceRef: "https://www.ahmverdun.com/news/39",
+    verifiedAt: "2026-10-04T20:00:00.000Z",
+  });
+
+  const bundle = buildPortableControlBundle({
+    organizationId: "org_123",
+    generatedAt: new Date("2026-10-04T21:00:00.000Z"),
+    records: [
+      {
+        id: "record_1",
+        tenant: "ahmverdun",
+        organizationId: "org_123",
+        service: "website",
+        resourceType: "news_post",
+        resourceId: "news_1",
+        status: "active",
+        revision: 2,
+        publishedRevision: 2,
+        lastPublishedAt: "2026-10-04T20:30:00.000Z",
+        payload: { title: { fr: "Nouvelle" } },
+        provenance,
+        createdAt: "2026-10-04T19:00:00.000Z",
+        updatedAt: "2026-10-04T20:30:00.000Z",
+        archivedAt: null,
+      },
+    ],
+    versions: [
+      {
+        id: "version_1",
+        controlRecordId: "record_1",
+        revision: 2,
+        status: "draft",
+        payload: { title: { fr: "Nouvelle" } },
+        provenance,
+        actorId: "internal_operator_should_not_export",
+        createdAt: "2026-10-04T20:00:00.000Z",
+      },
+    ],
+  });
+
+  const serialized = JSON.stringify(bundle);
+  assert.equal(bundle.excluded.billing, true);
+  assert.equal(bundle.excluded.connectorCredentials, true);
+  assert.doesNotMatch(serialized, /internal_operator_should_not_export/);
+  assert.doesNotMatch(serialized, /idempotencyKey|providerSecret|subscriptionId/);
+  assert.equal(bundle.records[0]?.recordKey, "website:news_post:news_1");
 });
