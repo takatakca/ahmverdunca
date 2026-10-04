@@ -24,6 +24,9 @@ export interface Arena {
   addressVerified: boolean;
   website?: string;
   officialPhotoPage?: string;
+  photoUrl?: string;
+  photoAlt?: Localized;
+  directionsNotes?: Localized;
   phone?: string;
   phoneExtension?: string;
   description?: Localized;
