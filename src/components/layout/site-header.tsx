@@ -283,7 +283,7 @@ export function SiteHeader() {
               "premium-control tap-target relative z-[1] inline-flex h-10 shrink-0 items-center justify-center gap-1.5 border px-3 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.95)] min-[360px]:gap-2 min-[360px]:px-4 min-[360px]:text-xs min-[360px]:tracking-[0.12em]",
               open
                 ? "border-sport bg-sport text-sport-foreground"
-                : "border-white/60 bg-white text-competition hover:border-sport hover:bg-sport hover:text-sport-foreground",
+                : "border-white/22 bg-white/[0.055] text-white hover:border-sport hover:bg-sport hover:text-sport-foreground",
             )}
             aria-label={open ? t("nav.close") : t("nav.menu")}
             aria-expanded={open}
