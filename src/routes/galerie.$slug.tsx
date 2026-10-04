@@ -207,13 +207,13 @@ function AlbumPage() {
         </div>
 
         {photos.length > 0 && (
-          <section className="mt-10 border-t border-navy/12 pt-7 md:mt-12 md:pt-9">
+          <section className="mt-10 overflow-hidden border border-white/12 bg-navy-deep p-4 text-white md:mt-12 md:p-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="eyebrow text-sport">
+                <p className="eyebrow text-sport-foreground">
                   {lang === "fr" ? "Collection complète" : "Complete collection"}
                 </p>
-                <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-navy sm:text-5xl">
+                <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl">
                   {category === "all"
                     ? lang === "fr"
                       ? `${photos.length} médias`
@@ -236,7 +236,7 @@ function AlbumPage() {
                     className={cn(
                       "premium-control shrink-0 border px-3 py-2 text-[9px] font-bold uppercase tracking-[0.14em]",
                       category === "all"
-                        ? "border-navy bg-navy text-white"
+                        ? "border-sport bg-sport text-sport-foreground"
                         : "border-white/14 bg-navy-deep text-white/62 hover:border-sport hover:text-white",
                     )}
                   >
@@ -264,10 +264,10 @@ function AlbumPage() {
 
             <div className="mt-6 sm:hidden">
               <div className="mb-3 flex items-center justify-between gap-4">
-                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+                <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/42">
                   {lang === "fr" ? "Glissez pour parcourir" : "Swipe to browse"}
                 </p>
-                <span className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-sport">
+                <span className="inline-flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
                   <ZoomIn className="size-3.5" />
                   {lang === "fr" ? "Touchez pour zoomer" : "Tap to zoom"}
                 </span>

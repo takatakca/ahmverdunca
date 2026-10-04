@@ -224,7 +224,7 @@ export function CommunicationsPreview() {
         role="dialog"
         aria-modal="true"
         aria-labelledby="communications-preview-title"
-        className="relative flex max-h-[calc(100dvh-1rem)] w-full max-w-[520px] flex-col overflow-hidden rounded-2xl border border-white/12 bg-background shadow-[0_28px_80px_-36px_rgba(0,0,0,0.8)]"
+        className="relative flex max-h-[calc(100dvh-1rem)] w-full max-w-[520px] flex-col overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_28px_80px_-36px_rgba(0,0,0,0.9)]"
       >
         <div className="flex shrink-0 items-start bg-competition pt-2 text-white">
           <div className="min-w-0 flex-1"><AlertStatus language={assistantUiLanguage(assistantLanguage)} /></div>
@@ -261,8 +261,8 @@ export function CommunicationsPreview() {
 
         </div>
 
-        <div className="min-h-0 overflow-y-auto p-4 sm:max-h-[470px] sm:p-5">
-          <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">{copy.body}</p>
+        <div className="min-h-0 overflow-y-auto bg-navy-deep p-4 sm:max-h-[470px] sm:p-5">
+          <p className="max-w-xl text-xs leading-relaxed text-white/58">{copy.body}</p>
 
           <div className="mt-5 grid grid-cols-3 gap-2">
             <Button asChild variant="sport" className="h-auto min-h-[58px] flex-col gap-1 px-2 py-2.5">
@@ -280,7 +280,7 @@ export function CommunicationsPreview() {
                 </Link>
               )}
             </Button>
-            <Button asChild variant="outline" className="h-auto min-h-[58px] flex-col gap-1 px-2 py-3">
+            <Button asChild variant="outline-light" className="h-auto min-h-[58px] flex-col gap-1 px-2 py-3">
               <Link to="/horaires" onClick={() => setOpen(false)}>
                 <CalendarDays className="size-4 text-sport" />
                 <span className="text-[9px] uppercase tracking-[0.08em]">{copy.schedules}</span>
@@ -300,25 +300,25 @@ export function CommunicationsPreview() {
             {phonePublic ? (
               <a
                 href={`tel:${phoneE164}`}
-                className="premium-control flex min-h-11 items-center justify-between border border-sport/30 bg-sport/8 px-3 text-navy"
+                className="premium-control flex min-h-11 items-center justify-between border border-sport/35 bg-sport/10 px-3 text-white"
               >
                 <span className="flex items-center gap-3">
                   <span className="flex size-7 items-center justify-center bg-sport text-sport-foreground">
                     <PhoneCall className="size-4" />
                   </span>
                   <span>
-                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-sport">{copy.phoneReady}</span>
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground">{copy.phoneReady}</span>
                     <span className="mt-0.5 block font-display text-lg font-extrabold uppercase leading-none">{phoneDisplay}</span>
                   </span>
                 </span>
-                <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-sport">1 clic</span>
+                <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground">1 clic</span>
               </a>
             ) : (
-              <div className="flex min-h-11 items-center justify-between border border-navy/10 bg-ice px-3 text-navy">
+              <div className="flex min-h-11 items-center justify-between border border-white/12 bg-competition px-3 text-white">
                 <span className="flex items-center gap-3">
                   <PhoneCall className="size-4 text-sport" />
                   <span>
-                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{copy.phoneReserved}</span>
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-white/42">{copy.phoneReserved}</span>
                     <span className="mt-0.5 block font-display text-lg font-extrabold uppercase leading-none">{phoneDisplay}</span>
                   </span>
                 </span>
@@ -326,9 +326,9 @@ export function CommunicationsPreview() {
             )}
           </div>
 
-          <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-navy/10 pt-3">
-            <Globe2 className="size-4 text-sport" />
-            <span className="mr-1 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground">{copy.language}</span>
+          <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-white/10 pt-3">
+            <Globe2 className="size-4 text-sport-foreground" />
+            <span className="mr-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/42">{copy.language}</span>
             {ASSISTANT_LANGUAGE_OPTIONS.slice(0, 3).map((option) => (
               <button
                 key={option.code}
@@ -336,7 +336,7 @@ export function CommunicationsPreview() {
                 onClick={() => chooseLanguage(option.code)}
                 className={assistantLanguage === option.code
                   ? "premium-control min-h-8 border border-sport bg-sport/10 px-3 text-[9px] font-bold uppercase text-sport"
-                  : "premium-control min-h-8 border border-navy/10 px-3 text-[9px] font-bold uppercase text-navy"}
+                  : "premium-control min-h-8 border border-white/12 px-3 text-[9px] font-bold uppercase text-white/62 hover:border-sport hover:text-white"}
               >
                 {option.code.toUpperCase()}
               </button>
@@ -347,7 +347,7 @@ export function CommunicationsPreview() {
                 const code = event.target.value as AssistantLanguageCode;
                 if (code) chooseLanguage(code);
               }}
-              className="h-8 min-w-24 border border-navy/10 bg-background px-2 text-[9px] font-bold uppercase text-navy outline-none"
+              className="h-8 min-w-24 border border-white/12 bg-competition px-2 text-[9px] font-bold uppercase text-white outline-none"
               aria-label={copy.otherLanguages}
             >
               <option value="">+ {copy.otherLanguages}</option>
