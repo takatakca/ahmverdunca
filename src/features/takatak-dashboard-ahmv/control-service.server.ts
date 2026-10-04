@@ -96,7 +96,11 @@ export async function executeTakatakAhmvControlCommand(
     assertExpectedRevision(existing.revision, command.expectedRevision);
   }
 
-  const queued = await enqueueControlJob(command);
+  const queuedCommand =
+    command.action === "publish" && existing
+      ? { ...command, payload: existing.payload }
+      : command;
+  const queued = await enqueueControlJob(queuedCommand);
   await appendControlAudit(
     createAuditEvent(command, {
       outcome: "accepted",
