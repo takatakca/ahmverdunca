@@ -6,6 +6,13 @@ import { useDemoMemberMode } from "@/lib/demo-member-mode";
 
 const ROTATION_MS = 6500;
 
+const GROUP_LABELS = {
+  takatak: { fr: "Écosystème TAKATAK", en: "TAKATAK ecosystem" },
+  hospitality: { fr: "Escapades & loisirs", en: "Getaways & leisure" },
+  food: { fr: "Restaurants & gourmandises", en: "Food & treats" },
+  local: { fr: "Entreprise locale", en: "Local business" },
+} as const;
+
 export function HouseSponsorSlot({
   placement,
   className = "",
@@ -56,7 +63,7 @@ export function HouseSponsorSlot({
 
   return (
     <aside
-      className={`overflow-hidden border border-navy/10 bg-background ${className}`}
+      className={`overflow-hidden border border-navy/12 bg-navy-deep text-white ${className}`}
       aria-label={lang === "fr" ? "Publicités et promotions maison" : "House advertising and promotions"}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -65,16 +72,16 @@ export function HouseSponsorSlot({
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setPaused(false);
       }}
     >
-      <div className="flex items-center justify-between gap-3 border-b border-navy/10 bg-ice px-4 py-2.5">
+      <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-white/[0.035] px-4 py-2.5">
         <div className="flex items-center gap-2">
-          <Megaphone className="size-3.5 text-sport" aria-hidden />
-          <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
-            {lang === "fr" ? "Promotion maison" : "House promotion"}
+          <Megaphone className="size-3.5 text-sport-foreground" aria-hidden />
+          <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/56">
+            {lang === "fr" ? "Découvertes locales" : "Local discoveries"}
           </p>
         </div>
 
         <div className="flex items-center gap-1">
-          <span className="mr-1 hidden items-center gap-1 text-[8px] font-bold uppercase tracking-[0.14em] text-sport sm:inline-flex">
+          <span className="mr-1 hidden items-center gap-1 text-[8px] font-bold uppercase tracking-[0.14em] text-sport-foreground sm:inline-flex">
             {paused ? <Pause className="size-3" /> : <Sparkles className="size-3" />}
             {paused
               ? (lang === "fr" ? "Pause" : "Paused")
@@ -83,7 +90,7 @@ export function HouseSponsorSlot({
           <button
             type="button"
             onClick={() => move(-1)}
-            className="premium-control flex size-8 items-center justify-center border border-navy/10 bg-background text-navy hover:border-sport"
+            className="premium-control flex size-8 items-center justify-center border border-white/12 bg-white/[0.04] text-white hover:border-sport"
             aria-label={lang === "fr" ? "Publicité précédente" : "Previous advertisement"}
           >
             <ChevronLeft className="size-3.5" />
@@ -91,7 +98,7 @@ export function HouseSponsorSlot({
           <button
             type="button"
             onClick={() => move(1)}
-            className="premium-control flex size-8 items-center justify-center border border-navy/10 bg-background text-navy hover:border-sport"
+            className="premium-control flex size-8 items-center justify-center border border-white/12 bg-white/[0.04] text-white hover:border-sport"
             aria-label={lang === "fr" ? "Publicité suivante" : "Next advertisement"}
           >
             <ChevronRight className="size-3.5" />
@@ -100,42 +107,40 @@ export function HouseSponsorSlot({
       </div>
 
       <div
-        className={compact ? "grid gap-px bg-navy/10 sm:grid-cols-2" : "grid gap-px bg-navy/10 md:grid-cols-2"}
+        className={compact ? "grid gap-px bg-white/10 sm:grid-cols-2" : "grid gap-px bg-white/10 md:grid-cols-2"}
         aria-live="off"
       >
         {sponsors.map((sponsor) => {
-          const card = sponsor.creative ? (
-            <div className="premium-depth group relative overflow-hidden bg-competition">
-              <img
-                src={sponsor.creative}
-                alt={`${sponsor.name} — ${sponsor.tagline[lang]}`}
-                loading="lazy"
-                decoding="async"
-                className={`premium-depth-media w-full object-cover transition-[transform,filter,opacity] duration-700 group-hover:scale-[1.018] ${compact ? "aspect-[12/4.4]" : "aspect-[12/5.2]"}`}
-              />
-              <span className="absolute left-3 top-3 border border-white/15 bg-navy-deep/72 px-2 py-1 text-[7px] font-bold uppercase tracking-[0.16em] text-white/78 backdrop-blur">
-                {lang === "fr" ? "Publicité" : "Advertisement"}
-              </span>
-              {sponsor.href && (
-                <span className="absolute bottom-3 right-3 flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur">
-                  <ExternalLink className="size-4" aria-hidden />
-                </span>
-              )}
-            </div>
-          ) : (
-            <div className={`group flex min-w-0 items-center gap-4 bg-background ${compact ? "p-3" : "p-4 md:p-5"}`}>
-              <div className={`flex shrink-0 items-center justify-center border border-sport/25 bg-competition font-display font-extrabold uppercase text-sport-foreground ${compact ? "size-10 text-sm" : "size-14 text-lg"}`}>
+          const card = (
+            <div className={`interactive-surface group relative flex min-h-[150px] flex-col justify-between overflow-hidden bg-competition ${compact ? "p-4" : "p-5 md:p-6"}`}>
+              <div className="pointer-events-none absolute -right-8 -top-10 font-display text-[7rem] font-extrabold uppercase leading-none text-white/[0.025]" aria-hidden>
                 {sponsor.short}
               </div>
-              <div className="min-w-0 flex-1">
-                <p className={`truncate font-display font-extrabold uppercase leading-none text-navy ${compact ? "text-lg" : "text-2xl"}`}>
-                  {sponsor.name}
-                </p>
-                <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-muted-foreground">
-                  {sponsor.tagline[lang]}
+
+              <div className="relative flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[8px] font-bold uppercase tracking-[0.17em] text-sport-foreground">
+                    {GROUP_LABELS[sponsor.group][lang]}
+                  </p>
+                  <p className={`mt-2 font-display font-extrabold uppercase leading-[0.9] text-white ${compact ? "text-2xl" : "text-3xl"}`}>
+                    {sponsor.name}
+                  </p>
+                </div>
+                {sponsor.href && (
+                  <span className="flex size-9 shrink-0 items-center justify-center border border-white/12 bg-white/[0.04] text-sport-foreground transition-colors group-hover:border-sport">
+                    <ExternalLink className="size-4" aria-hidden />
+                  </span>
+                )}
+              </div>
+
+              <div className="relative mt-5 border-t border-white/10 pt-3">
+                <p className="text-[11px] leading-relaxed text-white/58">{sponsor.tagline[lang]}</p>
+                <p className="mt-2 text-[8px] font-bold uppercase tracking-[0.13em] text-white/34">
+                  {lang === "fr"
+                    ? "Annonce textuelle — aucun faux logo utilisé"
+                    : "Text advertisement — no simulated logo used"}
                 </p>
               </div>
-              {sponsor.href && <ExternalLink className="size-3.5 shrink-0 text-sport" aria-hidden />}
             </div>
           );
 
@@ -149,13 +154,13 @@ export function HouseSponsorSlot({
         })}
       </div>
 
-      <div className="flex items-center justify-between gap-4 border-t border-navy/10 px-4 py-2">
-        <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-muted-foreground">
+      <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2">
+        <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-white/36">
           {lang === "fr"
-            ? "Inventaire maison rotatif · remplaçable par AdSense ou commanditaire officiel."
-            : "Rotating house inventory · replaceable by AdSense or an official sponsor."}
+            ? "Inventaire local · les logos officiels sont affichés seulement lorsqu’ils sont fournis ou vérifiés."
+            : "Local inventory · official logos appear only when supplied or verified."}
         </p>
-        <span className="shrink-0 text-[8px] font-bold tabular-nums text-muted-foreground">
+        <span className="shrink-0 text-[8px] font-bold tabular-nums text-white/38">
           {String(rotation + 1).padStart(2, "0")} / {String(sequence.length).padStart(2, "0")}
         </span>
       </div>
