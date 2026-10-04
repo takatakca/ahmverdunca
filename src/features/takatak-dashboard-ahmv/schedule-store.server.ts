@@ -211,3 +211,30 @@ export function scheduleWindowFromRecord(
     expiresAt: schedule.expiresAt,
   };
 }
+
+
+export async function listControlPublicationSchedules(input: {
+  organizationId: string;
+  status?: PublicationScheduleStatus | undefined;
+  service?: TakatakAhmvService | undefined;
+  limit?: number | undefined;
+}) {
+  let query = db()
+    .from("ahmv_takatak_control_publication_schedules")
+    .select(
+      "id,organization_id,service,control_record_id,revision,publish_at,expires_at,status,requested_by,requested_at,claimed_at,completed_at,last_error_code",
+    )
+    .eq("tenant", "ahmverdun")
+    .eq("organization_id", input.organizationId);
+
+  if (input.status) query = query.eq("status", input.status);
+  if (input.service) query = query.eq("service", input.service);
+
+  const limit = Math.max(1, Math.min(100, input.limit ?? 25));
+  const result = await query
+    .order("publish_at", { ascending: true })
+    .limit(limit);
+
+  if (result.error) throw result.error;
+  return (result.data ?? []).map(mapSchedule);
+}
