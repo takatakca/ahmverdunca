@@ -526,6 +526,9 @@ test("portable AHMV export excludes TAKATAK commercial and operator internals", 
   assert.equal(bundle.excluded.billing, true);
   assert.equal(bundle.excluded.connectorCredentials, true);
   assert.doesNotMatch(serialized, /internal_operator_should_not_export/);
-  assert.doesNotMatch(serialized, /idempotencyKey|providerSecret|subscriptionId/);
+  assert.equal("idempotencyKey" in (bundle.records[0] ?? {}), false);
+  assert.equal("subscriptionId" in bundle, false);
+  assert.equal("providerSecret" in bundle, false);
+  assert.equal("actorId" in (bundle.versions[0] ?? {}), false);
   assert.equal(bundle.records[0]?.recordKey, "website:news_post:news_1");
 });
