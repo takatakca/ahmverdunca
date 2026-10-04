@@ -15,6 +15,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { CURRENT_TEAMS } from "@/data/teams";
+import { newsVisualForCategory } from "@/data/news-visuals";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { cn } from "@/lib/utils";
@@ -233,7 +234,7 @@ export function NewsCentre() {
         title,
         text,
         url,
-        imageUrl: article.image ?? null,
+        imageUrl: article.image ?? newsVisualForCategory(article.category)?.url ?? null,
         internalSlug: article.slug,
         teamSlugs: article.teamSlugs,
         searchable: normalize(
