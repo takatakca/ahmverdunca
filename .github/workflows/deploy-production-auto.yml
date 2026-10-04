@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ahmverdun-production
+  group: ahmverdun-production-auto
   cancel-in-progress: true
 
 jobs:
