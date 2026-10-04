@@ -407,7 +407,7 @@ export function NewsCentre() {
                       association: event.target.value,
                     }))
                   }
-                  className="mt-2 h-11 w-full border border-navy/15 bg-background px-3 text-sm font-semibold text-navy outline-none focus:border-sport"
+                  className="mt-2 h-11 w-full border border-white/14 bg-navy-deep px-3 text-sm font-semibold text-white outline-none focus:border-sport"
                 >
                   <option value="all">{lang === "fr" ? "Toutes les associations" : "All associations"}</option>
                   {associations.map((association) => (
@@ -423,7 +423,7 @@ export function NewsCentre() {
                 <select
                   value={filters.team}
                   onChange={(event) => setFilters((current) => ({ ...current, team: event.target.value }))}
-                  className="mt-2 h-11 w-full border border-navy/15 bg-background px-3 text-sm font-semibold text-navy outline-none focus:border-sport"
+                  className="mt-2 h-11 w-full border border-white/14 bg-navy-deep px-3 text-sm font-semibold text-white outline-none focus:border-sport"
                 >
                   <option value="all">{lang === "fr" ? "Toutes les équipes" : "All teams"}</option>
                   {selectedTeams.length > 0 ? (
@@ -455,7 +455,7 @@ export function NewsCentre() {
                       network: event.target.value as SavedFilters["network"],
                     }))
                   }
-                  className="mt-2 h-11 w-full border border-navy/15 bg-background px-3 text-sm font-semibold text-navy outline-none focus:border-sport"
+                  className="mt-2 h-11 w-full border border-white/14 bg-navy-deep px-3 text-sm font-semibold text-white outline-none focus:border-sport"
                 >
                   <option value="all">{lang === "fr" ? "Toutes les sources" : "All sources"}</option>
                   <option value="website">{lang === "fr" ? "Site AHMV" : "AHMV website"}</option>
@@ -476,7 +476,7 @@ export function NewsCentre() {
                       kind: event.target.value as SavedFilters["kind"],
                     }))
                   }
-                  className="mt-2 h-11 w-full border border-navy/15 bg-background px-3 text-sm font-semibold text-navy outline-none focus:border-sport"
+                  className="mt-2 h-11 w-full border border-white/14 bg-navy-deep px-3 text-sm font-semibold text-white outline-none focus:border-sport"
                 >
                   <option value="all">{lang === "fr" ? "Tout" : "All"}</option>
                   <option value="official">{lang === "fr" ? "Officiel" : "Official"}</option>
@@ -494,7 +494,7 @@ export function NewsCentre() {
                       timeRange: event.target.value as TimeRange,
                     }))
                   }
-                  className="mt-2 h-11 w-full border border-navy/15 bg-background px-3 text-sm font-semibold text-navy outline-none focus:border-sport"
+                  className="mt-2 h-11 w-full border border-white/14 bg-navy-deep px-3 text-sm font-semibold text-white outline-none focus:border-sport"
                 >
                   <option value="all">{lang === "fr" ? "Tout le temps" : "All time"}</option>
                   <option value="hour">{lang === "fr" ? "Dernière heure" : "Last hour"}</option>
@@ -514,7 +514,7 @@ export function NewsCentre() {
                       sort: event.target.value as SortMode,
                     }))
                   }
-                  className="mt-2 h-11 w-full border border-navy/15 bg-background px-3 text-sm font-semibold text-navy outline-none focus:border-sport"
+                  className="mt-2 h-11 w-full border border-white/14 bg-navy-deep px-3 text-sm font-semibold text-white outline-none focus:border-sport"
                 >
                   <option value="newest">{lang === "fr" ? "Plus récent" : "Newest"}</option>
                   <option value="oldest">{lang === "fr" ? "Plus ancien" : "Oldest"}</option>
@@ -524,20 +524,20 @@ export function NewsCentre() {
 
             <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="relative flex-1">
-                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-white/38" />
                 <input
                   value={filters.query}
                   onChange={(event) =>
                     setFilters((current) => ({ ...current, query: event.target.value.slice(0, 100) }))
                   }
                   placeholder={lang === "fr" ? "Chercher une équipe, un tournoi, un mot..." : "Search a team, tournament, keyword..."}
-                  className="h-11 w-full border border-navy/15 bg-background pl-10 pr-3 text-sm outline-none focus:border-sport"
+                  className="h-11 w-full border border-white/14 bg-navy-deep pl-10 pr-3 text-sm text-white placeholder:text-white/34 outline-none focus:border-sport"
                 />
               </label>
               <button
                 type="button"
                 onClick={resetFilters}
-                className="premium-control inline-flex min-h-11 items-center justify-center gap-2 border border-navy/12 bg-background px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-navy hover:border-sport hover:text-sport"
+                className="premium-control inline-flex min-h-11 items-center justify-center gap-2 border border-white/14 bg-white/[0.03] px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white/72 hover:border-sport hover:text-sport-foreground"
               >
                 <RotateCcw className="size-4" aria-hidden />
                 {lang === "fr" ? "Réinitialiser" : "Reset"}
