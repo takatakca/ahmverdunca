@@ -355,3 +355,58 @@ comment on function public.ahmv_finish_takatak_control_job(
   uuid,boolean,text,text,integer,boolean,timestamptz
 ) is
   'Completes or schedules retry for a claimed TAKATAK AHMV control-plane job without exposing provider credentials.';
+
+
+create or replace function public.ahmv_cancel_takatak_control_job(
+  p_job_id uuid,
+  p_now timestamptz default now()
+)
+returns table (
+  id uuid,
+  status text,
+  completed_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_job public.ahmv_takatak_control_jobs%rowtype;
+begin
+  select *
+    into v_job
+  from public.ahmv_takatak_control_jobs
+  where ahmv_takatak_control_jobs.id = p_job_id
+  for update;
+
+  if not found then
+    raise exception 'TAKATAK AHMV control job not found'
+      using errcode = 'P0002';
+  end if;
+
+  if v_job.status not in ('queued','failed') or v_job.completed_at is not null then
+    raise exception 'TAKATAK AHMV control job cannot be cancelled'
+      using errcode = '55000';
+  end if;
+
+  update public.ahmv_takatak_control_jobs
+  set
+    status = 'cancelled',
+    completed_at = p_now,
+    updated_at = p_now
+  where ahmv_takatak_control_jobs.id = p_job_id;
+
+  return query
+    select j.id, j.status, j.completed_at
+    from public.ahmv_takatak_control_jobs j
+    where j.id = p_job_id;
+end;
+$$;
+
+revoke all on function public.ahmv_cancel_takatak_control_job(uuid,timestamptz)
+  from public, anon, authenticated;
+grant execute on function public.ahmv_cancel_takatak_control_job(uuid,timestamptz)
+  to service_role;
+
+comment on function public.ahmv_cancel_takatak_control_job(uuid,timestamptz) is
+  'Cancels only queued/retryable control-plane work; running or completed provider actions are never silently cancelled.';
