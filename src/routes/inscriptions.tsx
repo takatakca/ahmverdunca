@@ -10,6 +10,8 @@ import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
+const REGISTRATION_POSTER = uploadedAhmvMediaById(39)!;
+
 export const Route = createFileRoute("/inscriptions")({
   head: () => ({
     links: canonicalLink("/inscriptions"),
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/inscriptions")({
           "Informations d'inscription AHM Verdun et accès direct à la plateforme officielle de hockey.",
       },
       { property: "og:title", content: "Inscriptions 2026–2027 — AHM Verdun" },
+      { property: "og:image", content: REGISTRATION_POSTER.url },
       {
         property: "og:description",
         content:
@@ -33,7 +36,7 @@ export const Route = createFileRoute("/inscriptions")({
 
 function RegistrationPage() {
   const { t, l, lang } = useI18n();
-  const registrationPoster = uploadedAhmvMediaById(39)!;
+  const registrationPoster = REGISTRATION_POSTER;
 
   return (
     <>
