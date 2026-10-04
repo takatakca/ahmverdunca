@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 const takatakAdsEnabled = process.env["VITE_TAKATAK_ADS_ENABLED"] === "true";
 const takatakAdsOrigin = process.env["VITE_TAKATAK_ADS_ORIGIN"] ?? "https://takatak.ca";
 const takatakAdsPublisher = process.env["VITE_TAKATAK_ADS_PUBLISHER"] ?? "ahmv";
@@ -16,7 +18,29 @@ const supportUrls = [
   process.env["VITE_SUPPORT_URL_CUSTOM"],
 ].filter((value): value is string => Boolean(value));
 
+const demoMemberSource = readFileSync("src/lib/demo-member-mode.ts", "utf8");
+const adSenseControllerSource = readFileSync(
+  "src/components/adsense-script-controller.tsx",
+  "utf8",
+);
+const directStorageKeyOccurrences = [
+  demoMemberSource,
+  adSenseControllerSource,
+].join("\n").match(/ahmv-demo-member-mode/g)?.length ?? 0;
+
 const errors: string[] = [];
+
+if (directStorageKeyOccurrences !== 1) {
+  errors.push("Demo member storage key must be declared exactly once in src/lib/demo-member-mode.ts.");
+}
+
+if (!adSenseControllerSource.includes("DEMO_MEMBER_PREVIEW_ENABLED")) {
+  errors.push("AdSense loader must honor the explicit demo member preview gate.");
+}
+
+if (adSenseControllerSource.includes('const MEMBER_STORAGE_KEY = "ahmv-demo-member-mode"')) {
+  errors.push("AdSense loader must not redeclare the demo member storage key.");
+}
 
 if (takatakAdsEnabled) {
   try {
