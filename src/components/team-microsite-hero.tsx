@@ -4,6 +4,8 @@ import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-direc
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlay } from "@/lib/community-content";
 
 type Lang = "fr" | "en";
 
@@ -138,6 +140,23 @@ export function TeamMicrositeHero({
   lang: Lang;
 }) {
   const heroMedia = teamVisualForCategory(team.categorySlug) ?? (team.categorySlug === "m11" ? OFFICIAL_MEDIA.tournamentM11Primary : OFFICIAL_MEDIA.practiceGroup);
+  const publicContent = useContentOverlay(
+    "team",
+    `team:${team.legacyScheduleTeamId}`,
+    {
+      heroImageUrl: heroMedia.url,
+      scheduleUrl: legacyTeamScheduleUrl(team),
+      resultsUrl: officialTeamResultsUrl(team),
+    },
+  );
+  const heroImageUrl = typeof publicContent.heroImageUrl === "string" ? publicContent.heroImageUrl : heroMedia.url;
+  const scheduleUrl = typeof publicContent.scheduleUrl === "string" ? publicContent.scheduleUrl : legacyTeamScheduleUrl(team);
+  const resultsUrl = typeof publicContent.resultsUrl === "string" ? publicContent.resultsUrl : officialTeamResultsUrl(team);
+  const contributionFields = [
+    { key: "heroImageUrl", label: { fr: "Photo / visuel", en: "Photo / visual" }, kind: "image-url" as const, current: heroImageUrl },
+    { key: "scheduleUrl", label: { fr: "Lien d’horaire officiel", en: "Official schedule link" }, kind: "url" as const, current: scheduleUrl },
+    { key: "resultsUrl", label: { fr: "Lien de résultats officiels", en: "Official results link" }, kind: "url" as const, current: resultsUrl },
+  ];
 
   const categoryToken = team.categorySlug === "feminin"
     ? "M12"
@@ -174,7 +193,7 @@ export function TeamMicrositeHero({
       time: "—",
       noteFr: "Prochaine partie · source officielle",
       noteEn: "Next game · official source",
-      href: legacyTeamScheduleUrl(team),
+      href: scheduleUrl,
     },
     {
       dayFr: "SCORES",
@@ -182,18 +201,27 @@ export function TeamMicrositeHero({
       time: "—",
       noteFr: "Résultats et classement officiels",
       noteEn: "Official results and standings",
-      href: officialTeamResultsUrl(team),
+      href: resultsUrl,
     },
   ];
 
   const practiceRows = publishedPracticeRows;
 
   return (
-    <section className="premium-depth overflow-hidden border border-navy/12 bg-competition text-white shadow-[0_30px_70px_-52px_rgba(7,16,43,0.9)]">
+    <section className="premium-depth relative overflow-hidden border border-navy/12 bg-competition text-white shadow-[0_30px_70px_-52px_rgba(7,16,43,0.9)]">
+      <ContentContributionButton
+        resourceType="team"
+        resourceKey={`team:${team.legacyScheduleTeamId}`}
+        title={`${team.name} · ${team.level}`}
+        snapshot={{ heroImageUrl, scheduleUrl, resultsUrl }}
+        fields={contributionFields}
+        appearance="menu"
+        className="absolute right-3 top-3 z-30"
+      />
       <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
         <div className="relative min-h-[300px] overflow-hidden sm:min-h-[390px] lg:min-h-[520px]">
           <img
-            src={heroMedia.url}
+            src={heroImageUrl}
             alt={lang === "fr" ? heroMedia.alt.fr : heroMedia.alt.en}
             loading="eager"
             fetchPriority="high"
@@ -265,6 +293,7 @@ export function TeamMicrositeHero({
             team={team}
             kind="game"
             lang={lang}
+            sourceHref={resultsUrl}
           />
 
           <MiniCalendar
@@ -274,16 +303,16 @@ export function TeamMicrositeHero({
             team={team}
             kind="practice"
             lang={lang}
-            sourceHref={publishedPracticeRows.length > 0 ? OFFICIAL_WEEK_META.sourceUrl : undefined}
+            sourceHref={publishedPracticeRows.length > 0 ? OFFICIAL_WEEK_META.sourceUrl : scheduleUrl}
           />
         </div>
       </div>
 
       <div className="grid gap-px border-t border-white/10 bg-white/10 sm:grid-cols-3">
         {[
-          { icon: Trophy, fr: "Résultats", en: "Results", href: officialTeamResultsUrl(team) },
+          { icon: Trophy, fr: "Résultats", en: "Results", href: resultsUrl },
           { icon: MapPin, fr: "Arénas", en: "Arenas", href: "/arenas" },
-          { icon: CalendarDays, fr: "Horaire officiel", en: "Official schedule", href: legacyTeamScheduleUrl(team) },
+          { icon: CalendarDays, fr: "Horaire officiel", en: "Official schedule", href: scheduleUrl },
         ].map(({ icon: Icon, fr, en, href }) => (
           <a
             key={fr}
