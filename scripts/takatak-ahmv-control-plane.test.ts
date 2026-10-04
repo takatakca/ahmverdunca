@@ -171,9 +171,9 @@ test("command parsing requires safe scoped and idempotent input", () => {
     idempotencyKey: "cmd_12345678",
     service: "seo",
     action: "save_draft",
-    resourceType: "page",
+    resourceType: "page_meta",
     resourceId: "home",
-    payload: { title: "Accueil" },
+    payload: { title: { fr: "Accueil", en: "Home" } },
   });
 
   assert.equal(command.service, "seo");
@@ -326,5 +326,67 @@ test("worker retry policy backs off and sanitizes errors", () => {
   assert.equal(
     safeWorkerErrorCode(new Error("provider_unavailable")),
     "provider_unavailable",
+  );
+});
+
+
+test("website draft schemas allow content corrections but protect structural identifiers", () => {
+  const command = parseTakatakAhmvCommand({
+    tenant: "ahmverdun",
+    organizationId: "org_123",
+    actorId: "user_123",
+    requestId: "req_web_123",
+    idempotencyKey: "cmd_web_12345678",
+    service: "website",
+    action: "save_draft",
+    resourceType: "news_post",
+    resourceId: "annulations-22-26-septembre-2026",
+    payload: {
+      title: { fr: "Annulations mises à jour", en: "Updated cancellations" },
+      sourceUrl: "https://www.ahmverdun.com/news/39",
+      contentPending: false,
+    },
+  });
+
+  assert.equal(command.service, "website");
+  assert.equal(command.resourceType, "news_post");
+
+  assert.throws(
+    () =>
+      parseTakatakAhmvCommand({
+        tenant: "ahmverdun",
+        organizationId: "org_123",
+        actorId: "user_123",
+        requestId: "req_web_124",
+        idempotencyKey: "cmd_web_87654321",
+        service: "website",
+        action: "save_draft",
+        resourceType: "news_post",
+        resourceId: "annulations-22-26-septembre-2026",
+        payload: {
+          slug: "attempt-to-change-identity",
+          title: { fr: "Titre" },
+        },
+      }),
+    /invalid_website_control_payload/,
+  );
+});
+
+test("website control rejects unknown resource types instead of accepting arbitrary JSON", () => {
+  assert.throws(
+    () =>
+      parseTakatakAhmvCommand({
+        tenant: "ahmverdun",
+        organizationId: "org_123",
+        actorId: "user_123",
+        requestId: "req_web_125",
+        idempotencyKey: "cmd_web_11223344",
+        service: "website",
+        action: "save_draft",
+        resourceType: "unknown_blob",
+        resourceId: "anything",
+        payload: { anything: true },
+      }),
+    /unsupported_website_control_resource_type/,
   );
 });
