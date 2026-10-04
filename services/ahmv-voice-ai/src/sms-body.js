@@ -22,7 +22,8 @@ function lineForItem(item, lang) {
     return { core: core ? `• ${core}` : '', link };
   }
   if (item.type === 'arena') {
-    const core = [item.name, item.address].map(compact).filter(Boolean).join(' — ');
+    const phone = compact(item.phone);
+    const core = [item.name, item.address, phone].map(compact).filter(Boolean).join(' — ');
     const link = compact(item.mapsUrl || item.url || item.sourceUrl);
     return { core: core ? `• ${core}` : '', link };
   }
