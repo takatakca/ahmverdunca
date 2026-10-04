@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Bookmark, BookmarkCheck, CalendarDays, ExternalLink, Images, Trophy, X } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { CURRENT_TEAMS } from "@/data/teams";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
 import { useI18n } from "@/lib/i18n";
@@ -27,6 +27,7 @@ export const Route = createFileRoute("/equipes/")({
 
 function TeamsPage() {
   const { t, l, lang } = useI18n();
+  const teamsHeroMedia = uploadedAhmvMediaById(51)!;
   const {
     preferredTeam,
     savePreferredTeam,
@@ -62,8 +63,8 @@ function TeamsPage() {
         <section className="mb-8 grid overflow-hidden border border-navy/12 bg-navy text-navy-foreground lg:grid-cols-[1.15fr_0.85fr]">
           <div className="relative min-h-[320px] overflow-hidden sm:min-h-[390px]">
             <img
-              src={OFFICIAL_MEDIA.tournamentM11Primary.url}
-              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Primary.alt.fr : OFFICIAL_MEDIA.tournamentM11Primary.alt.en}
+              src={teamsHeroMedia.url}
+              alt={lang === "fr" ? teamsHeroMedia.alt.fr : teamsHeroMedia.alt.en}
               loading="eager"
               decoding="async"
               className="absolute inset-0 size-full object-cover"
@@ -110,12 +111,10 @@ function TeamsPage() {
               </div>
             </div>
             <a
-              href={OFFICIAL_MEDIA.tournamentM11Primary.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/galerie/mediatheque-ahmv-2026-2027"
               className="mt-6 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-white/55 hover:text-white"
             >
-              {lang === "fr" ? "Photo : archive publique AHMV" : "Photo: AHMV public archive"} <ArrowRight className="size-3.5" />
+              {lang === "fr" ? "Voir la médiathèque AHMV" : "View the AHMV media library"} <ArrowRight className="size-3.5" />
             </a>
           </div>
         </section>
