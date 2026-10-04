@@ -2,6 +2,8 @@ import type { TakatakAhmvService } from "./contracts";
 import { getControlRecord } from "./record-store.server";
 import { getControlRecordVersion } from "./version-store.server";
 import { publishedRevisionForRecord } from "./published";
+import { getPublicationScheduleForRevision, scheduleWindowFromRecord } from "./schedule-store.server";
+import { publicationWindowVisible } from "./schedule-policy";
 
 export async function getPublishedControlSnapshot(input: {
   organizationId: string;
@@ -21,6 +23,17 @@ export async function getPublishedControlSnapshot(input: {
     throw new Error("published_control_revision_missing");
   }
 
+  const schedule = await getPublicationScheduleForRevision({
+    controlRecordId: record.id,
+    revision: version.revision,
+  });
+  if (
+    schedule?.status === "enqueued" &&
+    !publicationWindowVisible(scheduleWindowFromRecord(schedule))
+  ) {
+    return null;
+  }
+
   return {
     recordId: record.id,
     organizationId: record.organizationId,
@@ -33,5 +46,6 @@ export async function getPublishedControlSnapshot(input: {
     publishedAt: record.lastPublishedAt,
     currentRevision: record.revision,
     hasUnpublishedChanges: record.revision > version.revision,
+    publicationWindow: schedule?.status === "enqueued" ? scheduleWindowFromRecord(schedule) : null,
   };
 }
