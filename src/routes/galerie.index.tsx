@@ -10,6 +10,8 @@ import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { MediaLuxuryViewer } from "@/components/media/media-luxury-viewer";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
 
 export const Route = createFileRoute("/galerie/")({
   head: () => ({
@@ -30,16 +32,44 @@ function GalleryPage() {
   const [eventType, setEventType] = useState("all");
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
-  const featuredMedia = useMemo(() => UPLOADED_AHMV_MEDIA.filter((_, index) => [0, 3, 34, 49].includes(index)), []);
+  const contentRegistry = useContentOverlayRegistry();
+  const allAlbums = useMemo(
+    () =>
+      ALBUMS.map((album) =>
+        contentRegistry.apply(
+          "gallery",
+          `gallery:${album.slug}`,
+          album as unknown as Record<string, unknown>,
+        ) as unknown as typeof album,
+      ),
+    [contentRegistry.overlays],
+  );
+  const featuredIndices = [0, 3, 34, 49] as const;
+  const featuredMedia = useMemo(
+    () =>
+      featuredIndices
+        .map((sourceIndex) => {
+          const media = UPLOADED_AHMV_MEDIA[sourceIndex];
+          if (!media) return null;
+          const patched = contentRegistry.apply(
+            "photo",
+            `photo:mediatheque-ahmv-2026-2027:${sourceIndex}`,
+            media as unknown as Record<string, unknown>,
+          ) as unknown as typeof media;
+          return { media: patched, sourceIndex };
+        })
+        .filter((item): item is NonNullable<typeof item> => Boolean(item)),
+    [contentRegistry.overlays],
+  );
   const seasons = useMemo(
-    () => Array.from(new Set(ALBUMS.map((album) => album.season))).sort().reverse(),
-    [],
+    () => Array.from(new Set(allAlbums.map((album) => album.season))).sort().reverse(),
+    [allAlbums],
   );
   const eventTypes = useMemo(
-    () => Array.from(new Map(ALBUMS.map((album) => [album.eventType.fr, album.eventType])).values()),
-    [],
+    () => Array.from(new Map(allAlbums.map((album) => [album.eventType.fr, album.eventType])).values()),
+    [allAlbums],
   );
-  const albums = ALBUMS.filter((album) => {
+  const albums = allAlbums.filter((album) => {
     const seasonMatch = season === "all" || album.season === season;
     const typeMatch = eventType === "all" || album.eventType.fr === eventType;
     return seasonMatch && typeMatch;
@@ -63,9 +93,9 @@ function GalleryPage() {
         <HouseSponsorSlot placement="gallery" compact className="mb-8" />
         <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
           <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
-            {featuredMedia.map((media, index) => (
+            {featuredMedia.map(({ media, sourceIndex }, index) => (
+              <div key={media.url} className="relative overflow-hidden">
               <button
-                key={media.url}
                 type="button"
                 onClick={() => {
                   setViewerIndex(index);
@@ -96,6 +126,21 @@ function GalleryPage() {
                       : "Enlarge"}
                 </span>
               </button>
+              <ContentContributionButton
+                resourceType="photo"
+                resourceKey={`photo:mediatheque-ahmv-2026-2027:${sourceIndex}`}
+                title={media.label[lang]}
+                snapshot={media as unknown as Record<string, unknown>}
+                fields={[
+                  { key: "url", label: { fr: "Image", en: "Image" }, kind: "image-url", current: media.url },
+                  { key: `alt.${lang}`, label: { fr: "Texte alternatif", en: "Alternative text" }, kind: "text", current: media.alt[lang] },
+                  { key: `label.${lang}`, label: { fr: "Légende", en: "Caption" }, kind: "text", current: media.label[lang] },
+                  { key: "sourceUrl", label: { fr: "Source", en: "Source" }, kind: "url", current: media.sourceUrl },
+                ]}
+                appearance="menu"
+                className="absolute right-3 top-3 z-20"
+              />
+              </div>
             ))}
           </div>
         </section>
@@ -315,7 +360,7 @@ function GalleryPage() {
       </div>
 
       <MediaLuxuryViewer
-        items={featuredMedia}
+        items={featuredMedia.map((item) => item.media)}
         open={viewerOpen}
         initialIndex={viewerIndex}
         lang={lang}
