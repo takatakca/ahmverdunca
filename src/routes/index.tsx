@@ -21,6 +21,7 @@ import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { teamVisualForCategory } from "@/data/team-visuals";
 import { ARENAS } from "@/data/arenas";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
@@ -41,24 +42,6 @@ import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase"
 import { RevenueActionPanel } from "@/components/revenue-action-panel";
 
 const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
-
-const TEAM_CARD_MEDIA_IDS: Record<string, number> = {
-  m5: 47,
-  m7: 2,
-  m9: 3,
-  m11: 52,
-  m13: 51,
-  m15: 53,
-  m17: 48,
-  m19: 54,
-  m22: 1,
-  feminin: 35,
-};
-
-function teamCardMedia(slug: string) {
-  const id = TEAM_CARD_MEDIA_IDS[slug];
-  return id ? uploadedAhmvMediaById(id) : undefined;
-}
 
 function homeNewsMedia(category: (typeof NEWS)[number]["category"]) {
   const mediaIdByCategory: Partial<Record<(typeof NEWS)[number]["category"], number>> = {
@@ -297,7 +280,7 @@ function Home() {
 
           <div className="scrollbar-none mt-7 flex snap-x gap-px overflow-x-auto border-y border-navy-foreground/15">
             {CURRENT_TEAMS.map((team, index) => {
-              const media = teamCardMedia(team.slug);
+              const media = teamVisualForCategory(team.slug);
               return (
                 <Link
                   key={team.slug}
