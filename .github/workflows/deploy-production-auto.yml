@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 concurrency:
-  group: ahmverdun-production-auto
-  cancel-in-progress: false
+  group: ahmverdun-production
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -285,7 +285,7 @@ jobs:
           echo "Testing production SSH command channel..."
 
           set +e
-          AHMV_SSH_MAX_ATTEMPTS=8 ahmv-ssh \
+          AHMV_SSH_MAX_ATTEMPTS=3 ahmv-ssh \
             "printf 'AHM Verdun production SSH command channel OK\n'"
           SSH_STATUS=$?
           set -e
@@ -299,7 +299,7 @@ jobs:
           echo "SSH command and shell channels are unavailable."
           echo "Testing SFTP subsystem as a fail-closed fallback..."
 
-          scripts/deploy-production-sftp.sh test
+          AHMV_SFTP_MAX_ATTEMPTS=2 scripts/deploy-production-sftp.sh test
 
           echo "AHMV_DEPLOY_TRANSPORT=sftp" >> "$GITHUB_ENV"
           echo "Production transport: SFTP-only fallback."
