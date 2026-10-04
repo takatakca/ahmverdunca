@@ -5,7 +5,6 @@ import { ArrowRight, CalendarDays, Images } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { SportArtwork } from "@/components/sport-artwork";
 import { ALBUMS } from "@/data/gallery";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
@@ -58,12 +57,7 @@ function GalleryPage() {
         <HouseSponsorSlot placement="gallery" compact className="mb-8" />
         <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
           <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
-            {[
-              UPLOADED_AHMV_MEDIA[0],
-              UPLOADED_AHMV_MEDIA[3],
-              UPLOADED_AHMV_MEDIA[34],
-              UPLOADED_AHMV_MEDIA[49],
-            ].filter(Boolean).map((media, index) => (
+            {UPLOADED_AHMV_MEDIA.filter((_, index) => [0, 3, 34, 49].includes(index)).map((media, index) => (
               <a
                 key={media.url}
                 href={media.sourceUrl}
