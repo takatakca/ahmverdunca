@@ -585,8 +585,46 @@ function TeamPage() {
 
         {news.length > 0 && (
           <section id="nouvelles-equipe">
-            <SectionHeading title={t("teams.news")} />
-            <div className="grid gap-5 md:grid-cols-3">
+            <div className="flex items-end justify-between gap-4">
+              <SectionHeading title={t("teams.news")} />
+              <p className="mb-1 hidden text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground sm:block md:hidden">
+                {lang === "fr" ? "Glissez pour parcourir" : "Swipe to browse"}
+              </p>
+            </div>
+
+            <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 md:hidden">
+              {news.map((article, index) => {
+                const media = archiveImages[index % archiveImages.length]!;
+                return (
+                  <Link
+                    key={article.slug}
+                    to="/nouvelles/$slug"
+                    params={{ slug: article.slug }}
+                    className="interactive-surface group w-[84vw] max-w-[23rem] shrink-0 snap-center overflow-hidden border border-navy/12 bg-background"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden bg-navy">
+                      <img
+                        src={media.url}
+                        alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                        loading={index < 2 ? "eager" : "lazy"}
+                        decoding="async"
+                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_48%,rgba(7,16,43,0.84)_100%)]" />
+                      <span className="absolute bottom-3 left-3 bg-navy/78 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+                        {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
+                      </span>
+                    </div>
+                    <div className="p-5">
+                      <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
+                      <h3 className="heading-card mt-2 group-hover:text-sport">{l(article.title)}</h3>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="hidden gap-5 md:grid md:grid-cols-3">
               {news.map((article, index) => {
                 const media = archiveImages[index % archiveImages.length]!;
                 return (
@@ -602,7 +640,7 @@ function TeamPage() {
                         alt={lang === "fr" ? media.alt.fr : media.alt.en}
                         loading="lazy"
                         decoding="async"
-                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                       />
                       <span className="absolute bottom-3 left-3 bg-navy/78 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
                         {lang === "fr" ? "Archive AHMV" : "AHMV archive"}
@@ -621,8 +659,55 @@ function TeamPage() {
 
         {albums.length > 0 && (
           <section id="photos-equipe">
-            <SectionHeading title={t("teams.albums")} />
-            <div className="grid gap-5 sm:grid-cols-3">
+            <div className="flex items-end justify-between gap-4">
+              <SectionHeading title={t("teams.albums")} />
+              <p className="mb-1 hidden text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground sm:block md:hidden">
+                {lang === "fr" ? "Albums à glisser" : "Swipe albums"}
+              </p>
+            </div>
+
+            <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 md:hidden">
+              {albums.map((album, index) => {
+                const media = archiveImages[index % archiveImages.length]!;
+                const imageUrl = album.coverUrl ?? media.url;
+                return (
+                  <Link
+                    key={album.slug}
+                    to="/galerie/$slug"
+                    params={{ slug: album.slug }}
+                    className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center overflow-hidden border border-navy/12 bg-background"
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden bg-navy">
+                      <img
+                        src={imageUrl}
+                        alt={l(album.title)}
+                        loading={index < 2 ? "eager" : "lazy"}
+                        decoding="async"
+                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
+                      />
+                      <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_48%,rgba(7,16,43,0.82)_100%)]" />
+                      <span className="absolute bottom-3 left-3 bg-navy/78 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
+                        {album.photoCount
+                          ? lang === "fr"
+                            ? `${album.photoCount} médias`
+                            : `${album.photoCount} media`
+                          : lang === "fr"
+                            ? "Album AHMV"
+                            : "AHMV album"}
+                      </span>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="heading-card group-hover:text-sport">{l(album.title)}</h3>
+                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                        {album.season} · {l(album.eventType)}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <div className="hidden gap-5 md:grid md:grid-cols-3">
               {albums.map((album, index) => {
                 const media = archiveImages[index % archiveImages.length]!;
                 const imageUrl = album.coverUrl ?? media.url;
@@ -639,12 +724,20 @@ function TeamPage() {
                         alt={l(album.title)}
                         loading="lazy"
                         decoding="async"
-                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
                       />
                       <span className="absolute bottom-3 left-3 bg-navy/78 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white backdrop-blur">
-                        {album.coverUrl
-                          ? (lang === "fr" ? "Aperçu de l’album" : "Album preview")
-                          : (lang === "fr" ? "Archive AHMV · aperçu générique" : "AHMV archive · generic preview")}
+                        {album.photoCount
+                          ? lang === "fr"
+                            ? `${album.photoCount} médias`
+                            : `${album.photoCount} media`
+                          : album.coverUrl
+                            ? lang === "fr"
+                              ? "Aperçu de l’album"
+                              : "Album preview"
+                            : lang === "fr"
+                              ? "Archive AHMV"
+                              : "AHMV archive"}
                       </span>
                     </div>
                     <div className="p-4">
