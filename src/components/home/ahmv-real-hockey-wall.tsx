@@ -1,17 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, BookOpen, Images, Users } from "lucide-react";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
 
 const MEDIA = [
-  OFFICIAL_MEDIA.practiceGroup,
-  OFFICIAL_MEDIA.practiceSkaters,
-  OFFICIAL_MEDIA.practiceGoalie,
-  OFFICIAL_MEDIA.practiceCoach,
-] as const;
+  uploadedAhmvMediaById(35),
+  uploadedAhmvMediaById(50),
+  uploadedAhmvMediaById(52),
+  uploadedAhmvMediaById(53),
+].filter((media): media is NonNullable<typeof media> => Boolean(media));
 
 export function AhmvRealHockeyWall() {
-  const { lang } = useI18n();
+  const { lang, l } = useI18n();
 
   const actions = [
     {
@@ -123,10 +123,10 @@ export function AhmvRealHockeyWall() {
               <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.80)_100%)]" />
               <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
                 <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/62">
-                  {lang === "fr" ? "Entraînement · Photo réelle AHMV" : "Practice · Real AHMV photo"}
+                  {l(media.categoryLabel)} · {lang === "fr" ? "Photo réelle AHMV" : "Real AHMV photo"}
                 </p>
                 <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
-                  {lang === "fr" ? "Voir la source" : "View source"} <ArrowRight className="size-3.5" />
+                  {l(media.label)} <ArrowRight className="size-3.5" />
                 </span>
               </div>
             </a>
