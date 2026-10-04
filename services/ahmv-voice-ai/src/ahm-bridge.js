@@ -1,5 +1,6 @@
 import { config } from './config.js';
 import { isSmsCapableCaller, languageKey } from './caller.js';
+import { deriveVoiceAccess } from './access-policy.js';
 
 function clean(value, max = 500) {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
@@ -68,30 +69,27 @@ function httpsUrl(value) {
   }
 }
 
-function accessFromBootstrap(data) {
-  if (config.accessMode === 'free_beta') {
-    return { allowed: true, mode: 'free_beta', reason: 'beta_open_access', tier: data?.contact?.accessTier || 'guest' };
-  }
-
-  const tier = clean(data?.contact?.accessTier, 30) || 'guest';
-  const trialActive = Boolean(data?.entitlement?.trialActive);
-  const premium = tier === 'premium' || Boolean(data?.entitlement?.premium);
-  const allowed = config.paidAccessPolicy === 'premium_only' ? premium : premium || trialActive;
-  return {
-    allowed,
-    mode: 'paid',
-    reason: allowed ? (premium ? 'premium' : 'trial') : 'membership_required',
-    tier
-  };
-}
-
 export async function bootstrapVoiceCaller(session) {
   if (config.ahmDataMode === 'fixture') {
     return {
       ok: true,
       contactId: isSmsCapableCaller(session.from) ? 'fixture-contact' : null,
       transactionalSmsAllowed: isSmsCapableCaller(session.from),
-      access: { allowed: true, mode: config.accessMode, reason: 'fixture', tier: 'trial' }
+      access: deriveVoiceAccess(
+        {
+          contact: { accessTier: 'trial' },
+          entitlement: {
+            trialActive: true,
+            premium: false,
+            nextEvent: true,
+            weeklySchedule: true
+          }
+        },
+        {
+          accessMode: config.accessMode,
+          paidAccessPolicy: config.paidAccessPolicy
+        }
+      )
     };
   }
 
@@ -111,7 +109,10 @@ export async function bootstrapVoiceCaller(session) {
     ok: true,
     contactId: clean(data?.contact?.id, 100) || null,
     transactionalSmsAllowed: data?.contact?.transactionalSmsAllowed !== false,
-    access: accessFromBootstrap(data),
+    access: deriveVoiceAccess(data, {
+      accessMode: config.accessMode,
+      paidAccessPolicy: config.paidAccessPolicy
+    }),
     membershipUrl: httpsUrl(data?.entitlement?.membershipUrl),
     source: clean(data?.source, 100) || 'ahmv-phone-v2'
   };
@@ -213,4 +214,4 @@ export async function probeBridgeReadiness() {
   return { ready: true, reason: clean(result.data?.reason, 100) || 'ready' };
 }
 
-export const _test = { accessFromBootstrap };
+export const _test = {};
