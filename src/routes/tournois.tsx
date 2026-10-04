@@ -10,6 +10,8 @@ import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 
+const TOURNAMENT_POSTER = uploadedAhmvMediaById(26)!;
+
 export const Route = createFileRoute("/tournois")({
   head: () => ({
     links: canonicalLink("/tournois"),
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/tournois")({
           "Portail AHM Verdun vers les informations officielles des tournois, notamment la 30e édition du Tournoi Provincial M11 de Verdun.",
       },
       { property: "og:title", content: "Tournois — AHM Verdun" },
+      { property: "og:image", content: TOURNAMENT_POSTER.url },
       {
         property: "og:description",
         content: "Accès rapide aux informations officielles des tournois AHM Verdun.",
@@ -32,7 +35,7 @@ export const Route = createFileRoute("/tournois")({
 
 function TournamentsPage() {
   const { lang } = useI18n();
-  const tournamentPoster = uploadedAhmvMediaById(26)!;
+  const tournamentPoster = TOURNAMENT_POSTER;
 
   return (
     <>

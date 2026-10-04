@@ -21,6 +21,7 @@ import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { newsVisualForCategory } from "@/data/news-visuals";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { ARENAS } from "@/data/arenas";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
@@ -42,21 +43,10 @@ import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase"
 import { RevenueActionPanel } from "@/components/revenue-action-panel";
 
 const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
+const HOME_TOURNAMENT_MEDIA = uploadedAhmvMediaById(26)!;
 
 function homeNewsMedia(category: (typeof NEWS)[number]["category"]) {
-  const mediaIdByCategory: Partial<Record<(typeof NEWS)[number]["category"], number>> = {
-    feminine: 50,
-    cancellations: 10,
-    teams: 2,
-    games: 52,
-    tournaments: 26,
-    camps: 40,
-    registration: 39,
-    association: 17,
-    releases: 25,
-  };
-  const id = mediaIdByCategory[category] ?? 1;
-  return uploadedAhmvMediaById(id) ?? HOME_HERO_MEDIA;
+  return newsVisualForCategory(category) ?? HOME_HERO_MEDIA;
 }
 
 export const Route = createFileRoute("/")({
@@ -425,25 +415,50 @@ function Home() {
       </section>
 
       {/* Tournament bridge */}
-      <section className="border-y border-navy/10 bg-ice">
-        <div className="container-site grid gap-6 py-8 md:grid-cols-[auto_1fr_auto] md:items-center">
-          <div className="flex size-16 items-center justify-center bg-sport text-sport-foreground">
-            <Trophy className="size-7" />
-          </div>
-          <div>
-            <p className="eyebrow text-sport">{lang === "fr" ? "Événement officiel" : "Official event"}</p>
-            <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-none text-navy">
+      <section className="relative overflow-hidden border-y border-white/10 bg-competition text-white">
+        <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
+        <div className="container-site relative grid gap-px bg-white/10 lg:grid-cols-[0.72fr_1.28fr]">
+          <Link
+            to="/tournois"
+            className="interactive-surface group relative min-h-[260px] overflow-hidden bg-navy lg:min-h-[330px]"
+          >
+            <img
+              src={HOME_TOURNAMENT_MEDIA.url}
+              alt={lang === "fr" ? HOME_TOURNAMENT_MEDIA.alt.fr : HOME_TOURNAMENT_MEDIA.alt.en}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-contain transition-transform duration-500 group-hover:scale-[1.018]"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_45%,rgba(7,16,43,0.28)_100%)]" />
+            <span className="absolute left-4 top-4 border border-white/15 bg-navy-deep/76 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.15em] text-white backdrop-blur">
+              {lang === "fr" ? "Affiche AHMV officielle" : "Official AHMV artwork"}
+            </span>
+          </Link>
+
+          <div className="flex flex-col justify-center bg-competition px-6 py-8 md:px-9 lg:px-12 lg:py-10">
+            <div className="flex items-center gap-3">
+              <span className="flex size-11 items-center justify-center bg-sport text-sport-foreground">
+                <Trophy className="size-5" />
+              </span>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Événement officiel" : "Official event"}</p>
+            </div>
+            <p className="mt-5 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-5xl">
               {lang === "fr" ? "30e Tournoi Provincial M11 de Verdun" : "30th Verdun Provincial U11 Tournament"}
             </p>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/62">
               {lang === "fr"
-                ? "18–31 janvier 2027 · passerelle vers le site officiel, les horaires et les classements."
-                : "January 18–31, 2027 · gateway to the official site, schedules and standings."}
+                ? "18–31 janvier 2027 · Auditorium de Verdun. Une passerelle claire vers les informations du tournoi, les horaires et les classements."
+                : "January 18–31, 2027 · Verdun Auditorium. A clear gateway to tournament information, schedules and standings."}
             </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              <Button asChild variant="sport">
+                <Link to="/tournois">{lang === "fr" ? "Voir tous les détails" : "View all details"} <ArrowRight className="size-4" /></Link>
+              </Button>
+              <Button asChild variant="outline-light">
+                <Link to="/equipes/$slug" params={{ slug: "m11" }}>{lang === "fr" ? "Voir M11" : "View U11"}</Link>
+              </Button>
+            </div>
           </div>
-          <Button asChild variant="outline">
-            <Link to="/tournois">{lang === "fr" ? "Voir le tournoi" : "View tournament"} <ArrowRight className="size-4" /></Link>
-          </Button>
         </div>
       </section>
 
@@ -578,19 +593,19 @@ function Home() {
       </section>
 
       {/* Social strip */}
-      <section className="border-y border-navy/10 bg-ice">
+      <section className="border-y border-white/10 bg-navy-deep text-white">
         <div className="container-site flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="eyebrow text-sport">{t("home.socialPreview")}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{t("home.socialNote")}</p>
+            <p className="eyebrow text-sport-foreground">{t("home.socialPreview")}</p>
+            <p className="mt-1 text-sm text-white/52">{t("home.socialNote")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline-light" size="sm">
               <a href={EXTERNAL_LINKS.instagram} target="_blank" rel="noopener noreferrer">
                 <Instagram className="size-4" /> Instagram <ExternalLink className="size-3" />
               </a>
             </Button>
-            <Button asChild variant="outline" size="sm">
+            <Button asChild variant="outline-light" size="sm">
               <a href={EXTERNAL_LINKS.facebook} target="_blank" rel="noopener noreferrer">
                 <Facebook className="size-4" /> Facebook <ExternalLink className="size-3" />
               </a>

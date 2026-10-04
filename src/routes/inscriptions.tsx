@@ -5,9 +5,12 @@ import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { CURRENT_TEAMS } from "@/data/teams";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { teamVisualForCategory } from "@/data/team-visuals";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+
+const REGISTRATION_POSTER = uploadedAhmvMediaById(39)!;
 
 export const Route = createFileRoute("/inscriptions")({
   head: () => ({
@@ -20,6 +23,7 @@ export const Route = createFileRoute("/inscriptions")({
           "Informations d'inscription AHM Verdun et accès direct à la plateforme officielle de hockey.",
       },
       { property: "og:title", content: "Inscriptions 2026–2027 — AHM Verdun" },
+      { property: "og:image", content: REGISTRATION_POSTER.url },
       {
         property: "og:description",
         content:
@@ -32,7 +36,7 @@ export const Route = createFileRoute("/inscriptions")({
 
 function RegistrationPage() {
   const { t, l, lang } = useI18n();
-  const registrationPoster = uploadedAhmvMediaById(39)!;
+  const registrationPoster = REGISTRATION_POSTER;
 
   return (
     <>
@@ -197,18 +201,41 @@ function RegistrationPage() {
               </Button>
             }
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {CURRENT_TEAMS.map((team) => (
-              <Link
-                key={team.slug}
-                to="/equipes/$slug"
-                params={{ slug: team.slug }}
-                className="interactive-surface flex items-center justify-between border border-navy/12 bg-background p-5 hover:border-sport hover:text-sport"
-              >
-                <span className="heading-card">{l(team.name)}</span>
-                <span className="text-xs text-muted-foreground">{l(team.ages)}</span>
-              </Link>
-            ))}
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {CURRENT_TEAMS.map((team) => {
+              const media = teamVisualForCategory(team.slug);
+              return (
+                <Link
+                  key={team.slug}
+                  to="/equipes/$slug"
+                  params={{ slug: team.slug }}
+                  className="interactive-surface group relative min-h-40 overflow-hidden border border-navy/12 bg-navy"
+                >
+                  {media && (
+                    <img
+                      src={media.url}
+                      alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 size-full object-cover opacity-76 transition-[transform,opacity] duration-500 group-hover:scale-[1.035] group-hover:opacity-92"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.16),rgba(7,16,43,0.94))]" />
+                  <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                    <div className="flex items-end justify-between gap-4">
+                      <div>
+                        <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
+                          {lang === "fr" ? "Catégorie AHMV" : "AHMV category"}
+                        </span>
+                        <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none">{l(team.name)}</p>
+                        <p className="mt-1.5 text-[10px] font-semibold text-white/58">{l(team.ages)}</p>
+                      </div>
+                      <span className="font-display text-3xl font-extrabold uppercase text-white/30">{team.code}</span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
