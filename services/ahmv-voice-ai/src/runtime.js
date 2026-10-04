@@ -2,7 +2,7 @@ import { config } from './config.js';
 import { validateHttpWebhook } from './twilio-security.js';
 import { claimCallAudit, completeCallAudit, releaseCallAuditClaim, persistCallEnd, saveSession } from './store.js';
 import { sendPostCallSms } from './sms.js';
-import { ACCESS_DENIED_BETA_QUOTA, ACCESS_DENIED_BUSY, ACCESS_DENIED_MEMBERSHIP, ACCESS_DENIED_TECHNICAL } from './copy.js';
+import { ACCESS_DENIED_BETA_QUOTA, ACCESS_DENIED_BLOCKED, ACCESS_DENIED_BUSY, ACCESS_DENIED_MEMBERSHIP, ACCESS_DENIED_TECHNICAL } from './copy.js';
 import { createDrainController } from './drain.js';
 import { createConcurrencyController } from './concurrency.js';
 import { safeRequestPath } from './log-safe.js';
@@ -61,6 +61,7 @@ export function sendRelayEnd(socket, reasonCode) {
 }
 
 export function accessDeniedCopy(access) {
+  if (access?.reason === 'blocked') return ACCESS_DENIED_BLOCKED;
   if (access?.mode === 'paid') return ACCESS_DENIED_MEMBERSHIP;
   if (access?.reason === 'beta_quota_reached') return ACCESS_DENIED_BETA_QUOTA;
   if (['global_concurrency_limit', 'caller_concurrency_limit'].includes(access?.reason)) return ACCESS_DENIED_BUSY;

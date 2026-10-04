@@ -72,3 +72,10 @@ export const CALL_DURATION_LIMIT = {
   en: 'To keep the service available, this call has reached its maximum duration. Verified information found will be sent by text if that service is enabled.',
   es: 'Para mantener el servicio disponible, esta llamada alcanzó su duración máxima. La información verificada encontrada se enviará por texto si este servicio está activado.'
 };
+
+
+export const ACCESS_DENIED_BLOCKED = {
+  fr: 'Ce service téléphonique n’est pas disponible pour ce numéro. Consultez ahmverdun.ca pour les informations publiques.',
+  en: 'This phone service is not available for this number. Please use ahmverdun.ca for public information.',
+  es: 'Este servicio telefónico no está disponible para este número. Consulte ahmverdun.ca para información pública.'
+};
