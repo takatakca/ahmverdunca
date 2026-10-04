@@ -22,6 +22,7 @@ import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { OfficialSponsorShowcase, SponsorIdentityNotice } from "@/components/official-sponsor-showcase";
 import { HOUSE_SPONSORS } from "@/data/house-sponsors";
+import { RUNWAY_AD_CREATIVES } from "@/data/runway-ad-creatives";
 
 export const Route = createFileRoute("/partenaires")({
   head: () => ({
@@ -292,6 +293,51 @@ function PartnersPage() {
                   )}
                 </div>
               </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="space-y-6">
+          <div>
+            <p className="eyebrow text-sport">
+              {lang === "fr" ? "Laboratoire créatif · 16:9" : "Creative lab · 16:9"}
+            </p>
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy sm:text-5xl">
+              {lang === "fr" ? "54 créatives prêtes à classer" : "54 creatives ready to classify"}
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+              {lang === "fr"
+                ? "Ces visuels proviennent des six planches Runway confirmées. Ils ont été découpés en fichiers 16:9 permanents. Tant que le logo, le lien et l’entreprise n’ont pas été recoupés, ils restent des aperçus non cliquables et ne sont pas présentés comme des commanditaires officiels."
+                : "These visuals come from the six confirmed Runway contact sheets. They were split into permanent 16:9 files. Until each logo, link and business is cross-checked, they remain non-clickable previews and are not presented as official sponsors."}
+            </p>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {RUNWAY_AD_CREATIVES.map((creative, index) => (
+              <figure
+                key={creative.id}
+                className="overflow-hidden border border-navy/12 bg-background"
+              >
+                <div className="aspect-video overflow-hidden bg-ice">
+                  <img
+                    src={creative.path}
+                    alt={lang === "fr"
+                      ? `Aperçu créatif publicitaire ${index + 1}`
+                      : `Advertising creative preview ${index + 1}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="size-full object-cover"
+                  />
+                </div>
+                <figcaption className="flex items-center justify-between gap-3 border-t border-navy/10 px-3 py-2">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                    {String(index + 1).padStart(2, "0")} · {creative.ratio}
+                  </span>
+                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-sport">
+                    {creative.placement}
+                  </span>
+                </figcaption>
+              </figure>
             ))}
           </div>
         </section>
