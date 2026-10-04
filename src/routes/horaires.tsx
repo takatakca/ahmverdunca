@@ -135,9 +135,9 @@ function SchedulePage() {
               </div>
             </div>
 
-            <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto bg-navy/10 p-3 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-visible sm:p-0 lg:grid-cols-3">
               {selectedTeams.map((entry) => (
-                <article key={entry.legacyScheduleTeamId} className="flex min-h-44 flex-col bg-background p-4">
+                <article key={entry.legacyScheduleTeamId} className="flex min-h-44 w-[82vw] max-w-[23rem] shrink-0 snap-center flex-col bg-background p-4 sm:w-auto sm:max-w-none">
                   <div>
                     <p className="eyebrow text-sport">{entry.level}</p>
                     <p className="mt-2 font-display text-xl font-extrabold uppercase leading-[0.9] text-navy">{entry.name}</p>

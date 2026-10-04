@@ -206,7 +206,7 @@ function RegistrationPage() {
               </Button>
             }
           />
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
             {CURRENT_TEAMS.map((team) => {
               const media = teamVisualForCategory(team.slug);
               return (
@@ -214,7 +214,7 @@ function RegistrationPage() {
                   key={team.slug}
                   to="/equipes/$slug"
                   params={{ slug: team.slug }}
-                  className="interactive-surface group relative min-h-40 overflow-hidden border border-navy/12 bg-navy"
+                  className="interactive-surface group relative min-h-40 w-[74vw] max-w-[20rem] shrink-0 snap-center overflow-hidden border border-navy/12 bg-navy sm:w-auto sm:max-w-none"
                 >
                   {media && (
                     <img

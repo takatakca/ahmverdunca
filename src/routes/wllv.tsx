@@ -156,14 +156,14 @@ function WllvPage() {
               {lang === "fr" ? "Parcours Chacals" : "Chacals pathway"}
             </h2>
           </div>
-          <div className="grid gap-px bg-navy/10 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="scrollbar-none flex snap-x snap-mandatory gap-2 overflow-x-auto bg-navy/10 p-2 sm:grid sm:grid-cols-3 sm:gap-px sm:overflow-visible sm:p-0 lg:grid-cols-6">
             {["M11", "M13", "M15", "M17", "M19", "M21"].map((category) => (
               <a
                 key={category}
                 href={EXTERNAL_LINKS.wllvSchedules}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="interactive-surface flex min-h-24 flex-col justify-between bg-background p-4 hover:bg-ice"
+                className="interactive-surface flex min-h-24 w-[42vw] max-w-40 shrink-0 snap-center flex-col justify-between bg-background p-4 hover:bg-ice sm:w-auto sm:max-w-none"
               >
                 <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-muted-foreground">WLLV</span>
                 <span className="font-display text-3xl font-extrabold uppercase text-navy">{category}</span>
