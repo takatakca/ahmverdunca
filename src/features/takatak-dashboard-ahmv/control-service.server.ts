@@ -13,6 +13,8 @@ import {
   type TakatakAhmvPrincipal,
 } from "./rbac";
 import { assertExpectedRevision } from "./revision";
+import { requiresControlReview } from "./review-policy";
+import { assertRevisionApprovedForPublish } from "./review-store.server";
 
 function assertCommandMatchesPrincipal(
   command: TakatakAhmvCommand,
@@ -98,6 +100,15 @@ export async function executeTakatakAhmvControlCommand(
       throw new Error("cannot_publish_archived_control_record");
     }
     assertExpectedRevision(existing.revision, command.expectedRevision);
+    if (
+      command.action === "publish" &&
+      requiresControlReview(command.service)
+    ) {
+      await assertRevisionApprovedForPublish({
+        controlRecordId: existing.id,
+        revision: existing.revision,
+      });
+    }
   }
 
   const queuedCommand =
