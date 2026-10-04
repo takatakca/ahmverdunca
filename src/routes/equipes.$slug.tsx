@@ -24,7 +24,7 @@ import { TeamLiveFeed } from "@/components/team-live-feed";
 import { TeamParentPremium } from "@/components/team-parent-premium";
 import { TeamCommunityBoard } from "@/components/team-community-board";
 import { getTeam } from "@/data/teams";
-import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, teamsForCategory } from "@/data/team-directory";
+import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl, teamsForCategory } from "@/data/team-directory";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
