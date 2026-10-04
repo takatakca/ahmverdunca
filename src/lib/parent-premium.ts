@@ -10,7 +10,9 @@ export type ParentPremiumCapabilityId =
   | "family_live_coordination"
   | "tournament_travel"
   | "live_tracking"
-  | "video_chat";
+  | "video_chat"
+  | "arena_reviews"
+  | "arena_parent_tips";
 
 function httpsUrl(value: string) {
   if (!value) return undefined;
@@ -51,6 +53,8 @@ export const PARENT_PREMIUM = {
     "tournament_travel",
     "live_tracking",
     "video_chat",
+    "arena_reviews",
+    "arena_parent_tips",
   ] satisfies ParentPremiumCapabilityId[],
 } as const;
 
@@ -62,5 +66,21 @@ export function parentPremiumSignupUrl(teamId: string) {
   url.searchParams.set("product", PARENT_PREMIUM.productCode);
   url.searchParams.set("teamId", teamId);
   url.searchParams.set("source", "ahmverdun");
+  return url.toString();
+}
+
+export function parentPremiumContextUrl(
+  source: string,
+  params: Record<string, string | undefined> = {},
+) {
+  if (!PARENT_PREMIUM.launchEnabled) return undefined;
+  const url = httpsUrl(PARENT_PREMIUM.authStartUrl);
+  if (!url) return undefined;
+
+  url.searchParams.set("product", PARENT_PREMIUM.productCode);
+  url.searchParams.set("source", source);
+  for (const [key, value] of Object.entries(params)) {
+    if (value) url.searchParams.set(key, value);
+  }
   return url.toString();
 }
