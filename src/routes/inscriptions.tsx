@@ -4,7 +4,7 @@ import { CheckCircle2, ExternalLink, Info } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { CURRENT_TEAMS } from "@/data/teams";
-import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
@@ -32,6 +32,7 @@ export const Route = createFileRoute("/inscriptions")({
 
 function RegistrationPage() {
   const { t, l, lang } = useI18n();
+  const registrationPoster = uploadedAhmvMediaById(39)!;
 
   return (
     <>
@@ -56,11 +57,11 @@ function RegistrationPage() {
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
           <div className="relative min-h-[300px] overflow-hidden sm:min-h-[380px]">
             <img
-              src={OFFICIAL_MEDIA.tournamentM11Secondary.url}
-              alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Secondary.alt.fr : OFFICIAL_MEDIA.tournamentM11Secondary.alt.en}
+              src={registrationPoster.url}
+              alt={lang === "fr" ? registrationPoster.alt.fr : registrationPoster.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full object-cover"
+              className="absolute inset-0 size-full bg-navy-deep object-contain"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.84))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
