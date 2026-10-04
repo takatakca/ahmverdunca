@@ -203,7 +203,7 @@ function PartnersPage() {
           </div>
           <div className="bg-competition p-6 text-white md:p-8">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Demande commanditaire" : "Sponsor inquiry"}</p>
-            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy">
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-white">
               {lang === "fr" ? "Quel espace vous intéresse?" : "Which placement interests you?"}
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/58">
