@@ -86,79 +86,79 @@ function ContactPage() {
           </div>
         </section>
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <Link to="/horaires" className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40">
+          <Link to="/horaires" className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/50">
             <CalendarDays className="size-6 text-sport" aria-hidden />
-            <h2 className="heading-card mt-5 group-hover:text-sport">
+            <h2 className="heading-card mt-5 text-white group-hover:text-sport-foreground">
               {lang === "fr" ? "Horaires" : "Schedules"}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-white/55">
               {lang === "fr"
                 ? "Horaire hebdomadaire AHMV et liens vers les calendriers sportifs officiels."
                 : "AHMV weekly schedule and links to official sport calendars."}
             </p>
-            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport-foreground">
               {lang === "fr" ? "Ouvrir" : "Open"} <ArrowRight className="size-3.5" />
             </span>
           </Link>
 
-          <Link to="/inscriptions" className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40">
+          <Link to="/inscriptions" className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/50">
             <ShieldCheck className="size-6 text-sport" aria-hidden />
-            <h2 className="heading-card mt-5 group-hover:text-sport">
+            <h2 className="heading-card mt-5 text-white group-hover:text-sport-foreground">
               {lang === "fr" ? "Inscriptions" : "Registration"}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-white/55">
               {lang === "fr"
                 ? "Information AHMV puis redirection vers Spordle pour l'inscription officielle."
                 : "AHMV information followed by redirection to Spordle for official registration."}
             </p>
-            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport-foreground">
               {lang === "fr" ? "Continuer" : "Continue"} <ArrowRight className="size-3.5" />
             </span>
           </Link>
 
-          <Link to="/entraineurs" className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40">
+          <Link to="/entraineurs" className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/50">
             <HandHeart className="size-6 text-sport" aria-hidden />
-            <h2 className="heading-card mt-5 group-hover:text-sport">
+            <h2 className="heading-card mt-5 text-white group-hover:text-sport-foreground">
               {lang === "fr" ? "Entraîneurs & bénévoles" : "Coaches & volunteers"}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-white/55">
               {lang === "fr"
                 ? "Formations, ressources et accès publiés par l'association."
                 : "Training, resources and access published by the association."}
             </p>
-            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport-foreground">
               {lang === "fr" ? "Voir les ressources" : "View resources"} <ArrowRight className="size-3.5" />
             </span>
           </Link>
 
-          <Link to="/partenaires" className="interactive-surface group border border-navy/12 bg-background p-6 hover:border-sport/40">
+          <Link to="/partenaires" className="interactive-surface group border border-white/12 bg-competition p-6 text-white hover:border-sport/50">
             <Megaphone className="size-6 text-sport" aria-hidden />
-            <h2 className="heading-card mt-5 group-hover:text-sport">
+            <h2 className="heading-card mt-5 text-white group-hover:text-sport-foreground">
               {lang === "fr" ? "Commandites" : "Sponsorships"}
             </h2>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-white/55">
               {lang === "fr"
                 ? "Partenaires actuels, visibilité et demandes de commandite."
                 : "Current partners, visibility and sponsorship inquiries."}
             </p>
-            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport">
+            <span className="mt-5 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport-foreground">
               {lang === "fr" ? "Voir les partenaires" : "View partners"} <ArrowRight className="size-3.5" />
             </span>
           </Link>
         </section>
 
-        <section className="border border-navy/12 bg-ice p-5 md:flex md:items-center md:justify-between md:gap-6">
+        <section className="border border-white/12 bg-navy-deep p-5 text-white md:flex md:items-center md:justify-between md:gap-6">
           <div>
-            <p className="eyebrow text-sport">
+            <p className="eyebrow text-sport-foreground">
               {lang === "fr" ? "Opérations & bénévolat" : "Operations & volunteering"}
             </p>
-            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            <p className="mt-2 max-w-2xl text-sm text-white/55">
               {lang === "fr"
                 ? "Pour les rôles opérationnels et de recrutement actuellement publiés par l’AHM Verdun, utilisez le contact fonctionnel ci-dessous."
                 : "For operational and recruitment roles currently published by AHM Verdun, use the functional contact below."}
             </p>
           </div>
-          <Button asChild variant="outline" className="mt-4 shrink-0 md:mt-0">
+          <Button asChild variant="outline-light" className="mt-4 shrink-0 md:mt-0">
             <a href={`mailto:${SITE.operationsEmail}`}>
               <Mail className="size-4" />
               {SITE.operationsEmail}
@@ -194,14 +194,14 @@ function ContactPage() {
             title={lang === "fr" ? "Association du hockey mineur de Verdun" : "Verdun Minor Hockey Association"}
           />
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="border border-navy/12 bg-ice p-5">
+            <div className="border border-white/12 bg-competition p-5 text-white">
               <p className="flex items-start gap-2 text-sm">
                 <MapPin className="mt-0.5 size-4 shrink-0 text-sport" aria-hidden />
                 {SITE.city}
               </p>
             </div>
-            <div className="border border-navy/12 bg-ice p-5">
-              <p className="text-sm text-muted-foreground">
+            <div className="border border-white/12 bg-competition p-5 text-white">
+              <p className="text-sm text-white/55">
                 {lang === "fr"
                   ? "Le courriel général officiel et l'adresse postale seront publiés seulement après confirmation par l'AHM Verdun."
                   : "The official general email and mailing address will be published only after confirmation by AHM Verdun."}
