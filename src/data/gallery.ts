@@ -44,7 +44,7 @@ export const ALBUMS: Album[] = [
     season: "2026-2027",
     teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
     eventType: { fr: "Médiathèque", en: "Media library" },
-    coverUrl: UPLOADED_AHMV_MEDIA[0]?.url,
+    coverUrl: UPLOADED_AHMV_MEDIA[0]!.url,
     photos: UPLOADED_AHMV_MEDIA,
     photoCount: UPLOADED_AHMV_MEDIA.length,
     photosPending: false,
