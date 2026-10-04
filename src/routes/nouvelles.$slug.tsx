@@ -4,6 +4,7 @@ import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { getArticle, NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { getTeam } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,16 @@ function ArticlePage() {
   const body = lang === "en" && a.body.en ? a.body.en : a.body.fr;
   const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
   const teams = a.teamSlugs.map(getTeam).filter(Boolean);
+  const storyMedia =
+    a.slug === "30e-tournoi-atome-m11-verdun-2027"
+      ? uploadedAhmvMediaById(26)
+      : a.slug === "relance-ahmv-enjeu-couts-glace-2026"
+        ? uploadedAhmvMediaById(25)
+        : a.category === "feminine"
+          ? uploadedAhmvMediaById(16)
+          : a.category === "registration"
+            ? uploadedAhmvMediaById(39)
+            : OFFICIAL_MEDIA.tournamentM11Tertiary;
 
   return (
     <>
@@ -59,8 +70,8 @@ function ArticlePage() {
           <article>
             <div className="group relative aspect-[16/8] overflow-hidden bg-navy">
               <img
-                src={OFFICIAL_MEDIA.tournamentM11Tertiary.url}
-                alt={lang === "fr" ? OFFICIAL_MEDIA.tournamentM11Tertiary.alt.fr : OFFICIAL_MEDIA.tournamentM11Tertiary.alt.en}
+                src={storyMedia!.url}
+                alt={lang === "fr" ? storyMedia!.alt.fr : storyMedia!.alt.en}
                 loading="eager"
                 decoding="async"
                 className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
@@ -69,7 +80,7 @@ function ArticlePage() {
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white md:p-7">
                 <div>
                   <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/70">
-                    {lang === "fr" ? "Photo d’archive officielle AHMV" : "Official AHMV archive photo"}
+                    {lang === "fr" ? "Média AHMV associé à la nouvelle" : "AHMV media related to this update"}
                   </p>
                   <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none">
                     {category ? l(category.label) : "AHMV"}
