@@ -91,10 +91,10 @@ function MembershipPreviewPage() {
         <DemoMemberSwitch />
         <section className="grid gap-px overflow-hidden border border-navy/10 bg-navy/10 sm:grid-cols-2 lg:grid-cols-3">
           {benefits.map(({ Icon, fr, en }) => (
-            <article key={fr} className="bg-background p-5 md:p-6">
-              <Icon className="size-5 text-sport" />
-              <h2 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.9] text-navy">{lang === "fr" ? fr : en}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            <article key={fr} className="bg-competition p-5 text-white md:p-6">
+              <Icon className="size-5 text-sport-foreground" />
+              <h2 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.9] text-white">{lang === "fr" ? fr : en}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-white/55">
                 {lang === "fr"
                   ? "Cette fonction est illustrée ici sans créer de compte, d’abonnement ni de droit membre réel."
                   : "This capability is illustrated here without creating an account, subscription or real member entitlement."}
@@ -104,12 +104,12 @@ function MembershipPreviewPage() {
         </section>
 
         <section className="grid overflow-hidden border border-navy/12 lg:grid-cols-2">
-          <div className="bg-background p-6 md:p-8">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Visiteur" : "Visitor"}</p>
-            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] text-navy">
+          <div className="bg-navy-deep p-6 text-white md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Visiteur" : "Visitor"}</p>
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] text-white">
               {lang === "fr" ? "Commandites visibles" : "Sponsors visible"}
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-sm leading-relaxed text-white/55">
               {lang === "fr"
                 ? "Les espaces promotionnels maison ou AdSense restent visibles dans l’expérience publique."
                 : "House promotion or AdSense placements remain visible in the public experience."}
