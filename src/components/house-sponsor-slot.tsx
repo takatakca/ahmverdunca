@@ -1,10 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, ExternalLink, Megaphone, Pause, Sparkles } from "lucide-react";
 import { HOUSE_SPONSORS, houseSponsorsForPlacement } from "@/data/house-sponsors";
+import { RUNWAY_AD_CREATIVES, type RunwayAdPlacement } from "@/data/runway-ad-creatives";
 import { useI18n } from "@/lib/i18n";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
 
 const ROTATION_MS = 6500;
+
+
+function visualPlacementForHouseSlot(placement: string): RunwayAdPlacement {
+  const value = placement.toLowerCase();
+  if (value.includes("schedule") || value.includes("horaire")) return "schedule";
+  if (value.includes("team") || value.includes("equipe")) return "team";
+  if (value.includes("gallery") || value.includes("galerie") || value.includes("album")) return "gallery";
+  if (value.includes("news") || value.includes("nouvelle")) return "news";
+  if (value.includes("arena") || value.includes("arena")) return "arena";
+  if (value.includes("partner") || value.includes("partenaire") || value.includes("sponsor")) return "partners";
+  return "home";
+}
 
 const GROUP_LABELS = {
   takatak: { fr: "Écosystème TAKATAK", en: "TAKATAK ecosystem" },
@@ -36,6 +49,14 @@ export function HouseSponsorSlot({
   const visibleCount = Math.max(1, Math.min(count, sequence.length));
   const sponsors = Array.from({ length: visibleCount }, (_, offset) =>
     sequence[(rotation + offset) % sequence.length]!,
+  );
+  const visualPlacement = visualPlacementForHouseSlot(placement);
+  const creativeSequence = RUNWAY_AD_CREATIVES.filter(
+    (creative) => creative.placement === visualPlacement,
+  );
+  const creativeCount = Math.max(1, Math.min(compact ? 2 : Math.max(2, count), creativeSequence.length));
+  const creatives = Array.from({ length: creativeCount }, (_, offset) =>
+    creativeSequence[(rotation + offset) % creativeSequence.length]!,
   );
 
   useEffect(() => {
@@ -109,6 +130,41 @@ export function HouseSponsorSlot({
           </button>
         </div>
       </div>
+
+      {creatives.length > 0 && (
+        <div className="border-b border-white/10 bg-competition">
+          <div className="flex items-center justify-between gap-3 px-4 py-2">
+            <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
+              {lang === "fr" ? "Créatifs publicitaires locaux" : "Local advertising creatives"}
+            </p>
+            <p className="text-[8px] font-semibold uppercase tracking-[0.12em] text-white/34">
+              {lang === "fr" ? "Touchez ou glissez" : "Tap or swipe"}
+            </p>
+          </div>
+          <div className="scrollbar-none flex snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain bg-white/10 md:grid md:grid-cols-2 md:overflow-visible">
+            {creatives.map((creative) => (
+              <div
+                key={creative.id}
+                className="group relative min-w-[86vw] snap-start overflow-hidden bg-navy md:min-w-0"
+              >
+                <div className="relative aspect-video overflow-hidden">
+                  <img
+                    src={creative.path}
+                    alt={lang === "fr" ? "Créatif publicitaire local" : "Local advertising creative"}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                  <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.72)_100%)]" />
+                  <span className="absolute bottom-2 left-2 border border-white/16 bg-navy-deep/72 px-2 py-1 text-[7px] font-bold uppercase tracking-[0.14em] text-white/72 backdrop-blur">
+                    {lang === "fr" ? "Publicité locale" : "Local ad"}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div
         className={
