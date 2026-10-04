@@ -36,7 +36,8 @@
     "test:team-games": "bun test scripts/takatak-team-games.test.ts",
     "check:pwa-splash": "bun scripts/validate-pwa-splash.ts",
     "test:schedule-normalizer": "bun test scripts/weekly-schedule-normalizer.test.ts",
-    "check:newsletter": "bun scripts/validate-newsletter.ts"
+    "check:newsletter": "bun scripts/validate-newsletter.ts",
+    "check:deploy-concurrency": "bun scripts/validate-deployment-concurrency.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"

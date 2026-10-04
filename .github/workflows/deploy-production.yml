@@ -22,8 +22,8 @@ permissions:
   actions: read
 
 concurrency:
-  group: ahmverdun-production
-  cancel-in-progress: false
+  group: ahmverdun-production-auto
+  cancel-in-progress: true
 
 jobs:
   deploy:
