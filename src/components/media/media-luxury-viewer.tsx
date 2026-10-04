@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
 import { ChevronLeft, ChevronRight, Images, X, ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -87,13 +87,13 @@ export function MediaLuxuryViewer({
     setIndex((value) => (value + 1) % items.length);
   };
 
-  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
     if (zoomed) return;
     touchStartX.current = event.touches[0]?.clientX ?? null;
     touchStartY.current = event.touches[0]?.clientY ?? null;
   };
 
-  const handleTouchEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
     if (zoomed || touchStartX.current == null || touchStartY.current == null) return;
     const endX = event.changedTouches[0]?.clientX ?? touchStartX.current;
     const endY = event.changedTouches[0]?.clientY ?? touchStartY.current;
@@ -227,8 +227,8 @@ export function MediaLuxuryViewer({
             <span className="sm:hidden">{countLabel}</span>
             <span className="hidden sm:inline">
               {lang === "fr"
-                ? "Glissez horizontalement · double-cliquez pour zoomer"
-                : "Swipe horizontally · double-click to zoom"}
+                ? "Glissez horizontalement · touchez l’image pour zoomer"
+                : "Swipe horizontally · tap the image to zoom"}
             </span>
           </div>
           <div className="flex gap-1 sm:hidden">
