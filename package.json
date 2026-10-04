@@ -34,7 +34,8 @@
     "doctor:voice-db": "bun scripts/ahmv-voice-db-doctor.ts",
     "test:deploy-smoke": "bun test scripts/deploy-production-http-smoke.test.ts",
     "test:team-games": "bun test scripts/takatak-team-games.test.ts",
-    "check:pwa-splash": "bun scripts/validate-pwa-splash.ts"
+    "check:pwa-splash": "bun scripts/validate-pwa-splash.ts",
+    "test:schedule-normalizer": "bun test scripts/weekly-schedule-normalizer.test.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
