@@ -26,6 +26,7 @@ export async function enqueueControlJob(command: TakatakAhmvCommand) {
       resource_type: command.resourceType,
       resource_id: command.resourceId,
       expected_revision: command.expectedRevision ?? null,
+      payload: command.payload,
       status: "queued",
     })
     .select("id,idempotency_key,request_fingerprint,status,attempts,max_attempts")
@@ -77,6 +78,7 @@ export async function finishControlJob(input: {
   errorCode?: string | undefined;
   externalReference?: string | undefined;
   retryDelaySeconds?: number | undefined;
+  retryable?: boolean | undefined;
   now?: Date | undefined;
 }) {
   const result = await db().rpc("ahmv_finish_takatak_control_job", {
@@ -88,6 +90,7 @@ export async function finishControlJob(input: {
       0,
       Math.min(86_400, input.retryDelaySeconds ?? 60),
     ),
+    p_retryable: input.retryable ?? true,
     p_now: (input.now ?? new Date()).toISOString(),
   });
 
