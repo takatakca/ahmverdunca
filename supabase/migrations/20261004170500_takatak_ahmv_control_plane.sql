@@ -16,6 +16,8 @@ create table if not exists public.ahmv_takatak_control_records (
   status text not null default 'draft'
     check (status in ('draft','queued','active','archived')),
   revision bigint not null default 1 check (revision >= 1),
+  published_revision bigint check (published_revision is null or published_revision >= 1),
+  last_published_at timestamptz,
   payload jsonb not null default '{}'::jsonb,
   created_by text not null,
   updated_by text not null,
@@ -100,6 +102,7 @@ create table if not exists public.ahmv_takatak_control_jobs (
   resource_type text not null,
   resource_id text not null,
   expected_revision bigint,
+  payload jsonb not null default '{}'::jsonb,
   status text not null default 'queued'
     check (status in ('queued','running','succeeded','failed','cancelled')),
   attempts integer not null default 0 check (attempts >= 0),
@@ -183,6 +186,7 @@ returns table (
   resource_type text,
   resource_id text,
   expected_revision bigint,
+  payload jsonb,
   status text,
   attempts integer,
   max_attempts integer
@@ -232,6 +236,7 @@ as $$
     c.resource_type,
     c.resource_id,
     c.expected_revision,
+    c.payload,
     c.status,
     c.attempts,
     c.max_attempts
@@ -244,6 +249,7 @@ create or replace function public.ahmv_finish_takatak_control_job(
   p_error_code text default null,
   p_external_reference text default null,
   p_retry_delay_seconds integer default 60,
+  p_retryable boolean default true,
   p_now timestamptz default now()
 )
 returns table (
@@ -301,13 +307,13 @@ begin
       external_reference = p_external_reference,
       available_at =
         case
-          when v_job.attempts < v_job.max_attempts
+          when p_retryable and v_job.attempts < v_job.max_attempts
             then p_now + make_interval(secs => p_retry_delay_seconds)
           else v_job.available_at
         end,
       completed_at =
         case
-          when v_job.attempts >= v_job.max_attempts then p_now
+          when (not p_retryable) or v_job.attempts >= v_job.max_attempts then p_now
           else null
         end,
       updated_at = p_now
@@ -332,7 +338,7 @@ revoke all on function public.capture_ahmv_takatak_control_record_version()
 revoke all on function public.ahmv_claim_takatak_control_job(timestamptz)
   from public, anon, authenticated;
 revoke all on function public.ahmv_finish_takatak_control_job(
-  uuid,boolean,text,text,integer,timestamptz
+  uuid,boolean,text,text,integer,boolean,timestamptz
 ) from public, anon, authenticated;
 
 grant execute on function public.capture_ahmv_takatak_control_record_version()
@@ -340,12 +346,12 @@ grant execute on function public.capture_ahmv_takatak_control_record_version()
 grant execute on function public.ahmv_claim_takatak_control_job(timestamptz)
   to service_role;
 grant execute on function public.ahmv_finish_takatak_control_job(
-  uuid,boolean,text,text,integer,timestamptz
+  uuid,boolean,text,text,integer,boolean,timestamptz
 ) to service_role;
 
 comment on function public.ahmv_claim_takatak_control_job(timestamptz) is
   'Atomically claims one eligible control-plane job using SKIP LOCKED so multiple workers cannot execute the same job concurrently.';
 comment on function public.ahmv_finish_takatak_control_job(
-  uuid,boolean,text,text,integer,timestamptz
+  uuid,boolean,text,text,integer,boolean,timestamptz
 ) is
   'Completes or schedules retry for a claimed TAKATAK AHMV control-plane job without exposing provider credentials.';
