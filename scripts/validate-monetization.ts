@@ -5,6 +5,8 @@ const adsEnabled = process.env["VITE_ADSENSE_ENABLED"] === "true";
 const adsClient = process.env["VITE_ADSENSE_CLIENT"] ?? "";
 const adsSlot = process.env["VITE_ADSENSE_SLOT"] ?? "";
 const supportEnabled = process.env["VITE_SUPPORT_ENABLED"] === "true";
+const publicIndexing = process.env["VITE_PUBLIC_INDEXING"] === "true";
+const demoMemberPreviewEnabled = process.env["VITE_DEMO_MEMBER_PREVIEW_ENABLED"] === "true";
 const supportBeneficiary = process.env["VITE_SUPPORT_BENEFICIARY"] ?? "";
 const supportUrls = [
   process.env["VITE_SUPPORT_URL_10"],
@@ -31,6 +33,10 @@ if (takatakAdsEnabled) {
   }
 }
 
+
+if (publicIndexing && demoMemberPreviewEnabled) {
+  errors.push("VITE_DEMO_MEMBER_PREVIEW_ENABLED must be false when public indexing is enabled; real member ad suppression must come from verified entitlement state, not localStorage.");
+}
 
 if (adsEnabled) {
   if (!/^ca-pub-\d+$/.test(adsClient)) {
@@ -65,5 +71,5 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `AHM Verdun monetization check passed. TAKATAK_ADS=${takatakAdsEnabled ? takatakAdsPublisher : "off"}; AdSense=${adsEnabled ? (adsSlot ? "manual+auto-ready" : "auto-ready") : "off"}; support=${supportEnabled ? "configured" : "off"}.`,
+  `AHM Verdun monetization check passed. TAKATAK_ADS=${takatakAdsEnabled ? takatakAdsPublisher : "off"}; AdSense=${adsEnabled ? (adsSlot ? "manual+auto-ready" : "auto-ready") : "off"}; demoMemberPreview=${demoMemberPreviewEnabled ? "on" : "off"}; support=${supportEnabled ? "configured" : "off"}.`,
 );
