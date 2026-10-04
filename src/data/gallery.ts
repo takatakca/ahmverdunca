@@ -32,6 +32,10 @@ export interface Album {
   photosPending: boolean;
 }
 
+const uploadedMedia = (
+  ...categories: Array<(typeof UPLOADED_AHMV_MEDIA)[number]["category"]>
+) => UPLOADED_AHMV_MEDIA.filter((asset) => categories.includes(asset.category));
+
 export const ALBUMS: Album[] = [
   {
     slug: "mediatheque-ahmv-2026-2027",
@@ -47,6 +51,118 @@ export const ALBUMS: Album[] = [
     coverUrl: UPLOADED_AHMV_MEDIA[0]!.url,
     photos: UPLOADED_AHMV_MEDIA,
     photoCount: UPLOADED_AHMV_MEDIA.length,
+    photosPending: false,
+  },
+  {
+    slug: "entrainements-2026-2027",
+    title: { fr: "Entraînements 2026-2027", en: "Practices 2026-2027" },
+    description: {
+      fr: "Photos réelles des entraînements et du développement sur glace de l’AHM Verdun.",
+      en: "Real photos from AHM Verdun practices and on-ice development.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    eventType: { fr: "Entraînements", en: "Practices" },
+    coverUrl: uploadedMedia("training")[0]!.url,
+    photos: uploadedMedia("training"),
+    photoCount: uploadedMedia("training").length,
+    photosPending: false,
+  },
+  {
+    slug: "hockey-feminin-2026-2027",
+    title: { fr: "Hockey féminin 2026-2027", en: "Girls hockey 2026-2027" },
+    description: {
+      fr: "Affiches, équipes et moments du programme féminin AHMV pour la saison 2026-2027.",
+      en: "Posters, teams and moments from the AHMV girls hockey program for the 2026-2027 season.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: ["feminin"],
+    eventType: { fr: "Hockey féminin", en: "Girls hockey" },
+    coverUrl: uploadedMedia("feminine")[0]!.url,
+    photos: uploadedMedia("feminine"),
+    photoCount: uploadedMedia("feminine").length,
+    photosPending: false,
+  },
+  {
+    slug: "tournois-honneurs-2026-2027",
+    title: { fr: "Tournois et honneurs 2026-2027", en: "Tournaments and honours 2026-2027" },
+    description: {
+      fr: "Tournois, célébrations et souvenirs compétitifs de l’AHM Verdun.",
+      en: "AHM Verdun tournaments, celebrations and competitive memories.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: ["m11", "m12", "feminin"],
+    eventType: { fr: "Tournois", en: "Tournaments" },
+    coverUrl: uploadedMedia("tournaments")[0]!.url,
+    photos: uploadedMedia("tournaments"),
+    photoCount: uploadedMedia("tournaments").length,
+    photosPending: false,
+  },
+  {
+    slug: "communaute-verdun-2026-2027",
+    title: { fr: "Communauté de Verdun 2026-2027", en: "Verdun community 2026-2027" },
+    description: {
+      fr: "Événements communautaires, reconnaissances et rencontres autour du hockey à Verdun.",
+      en: "Community events, recognition moments and gatherings around hockey in Verdun.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: [],
+    eventType: { fr: "Communauté", en: "Community" },
+    coverUrl: uploadedMedia("community")[0]!.url,
+    photos: uploadedMedia("community"),
+    photoCount: uploadedMedia("community").length,
+    photosPending: false,
+  },
+  {
+    slug: "inscriptions-vie-associative-2026-2027",
+    title: { fr: "Inscriptions et vie associative", en: "Registration and association life" },
+    description: {
+      fr: "Inscriptions, bénévolat, communications et identité de l’association pour 2026-2027.",
+      en: "Registration, volunteering, communications and association identity for 2026-2027.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    eventType: { fr: "Association", en: "Association" },
+    coverUrl: uploadedMedia("registration", "association", "news", "branding")[0]!.url,
+    photos: uploadedMedia("registration", "association", "news", "branding"),
+    photoCount: uploadedMedia("registration", "association", "news", "branding").length,
+    photosPending: false,
+  },
+  {
+    slug: "horaires-camps-2026-2027",
+    title: { fr: "Horaires et camps 2026-2027", en: "Schedules and camps 2026-2027" },
+    description: {
+      fr: "Horaires hebdomadaires, camps, cliniques et documents de planification pour la saison.",
+      en: "Weekly schedules, camps, clinics and planning documents for the season.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    eventType: { fr: "Horaires et camps", en: "Schedules and camps" },
+    coverUrl: uploadedMedia("schedules", "camps", "events")[0]!.url,
+    photos: uploadedMedia("schedules", "camps", "events"),
+    photoCount: uploadedMedia("schedules", "camps", "events").length,
+    photosPending: false,
+  },
+  {
+    slug: "presse-partenaires-2026-2027",
+    title: { fr: "Presse et partenaires 2026-2027", en: "Press and partners 2026-2027" },
+    description: {
+      fr: "Articles, documents de partenaires et matériel de référence lié à l’AHM Verdun.",
+      en: "Articles, partner documents and reference material related to AHM Verdun.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: [],
+    eventType: { fr: "Presse et partenaires", en: "Press and partners" },
+    coverUrl: uploadedMedia("press", "partners")[0]!.url,
+    photos: uploadedMedia("press", "partners"),
+    photoCount: uploadedMedia("press", "partners").length,
     photosPending: false,
   },
   {
