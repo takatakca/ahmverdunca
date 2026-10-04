@@ -1,12 +1,19 @@
 import { useEffect } from "react";
 import { ADSENSE_CONFIG } from "@/lib/monetization";
+import {
+  DEMO_MEMBER_EVENT_NAME,
+  DEMO_MEMBER_PREVIEW_ENABLED,
+  DEMO_MEMBER_STORAGE_KEY,
+} from "@/lib/demo-member-mode";
 
-const MEMBER_STORAGE_KEY = "ahmv-demo-member-mode";
-const MEMBER_EVENT_NAME = "ahmv:demo-member-mode";
 const SCRIPT_ID = "ahmv-adsense-script";
 
 function memberPreviewActive() {
-  return typeof window !== "undefined" && window.localStorage.getItem(MEMBER_STORAGE_KEY) === "member";
+  return (
+    DEMO_MEMBER_PREVIEW_ENABLED &&
+    typeof window !== "undefined" &&
+    window.localStorage.getItem(DEMO_MEMBER_STORAGE_KEY) === "member"
+  );
 }
 
 function removeAdSense() {
@@ -30,17 +37,23 @@ function loadAdSense() {
 
 export function AdSenseScriptController() {
   useEffect(() => {
+    if (!DEMO_MEMBER_PREVIEW_ENABLED) {
+      window.localStorage.removeItem(DEMO_MEMBER_STORAGE_KEY);
+      loadAdSense();
+      return;
+    }
+
     const sync = () => {
       if (memberPreviewActive()) removeAdSense();
       else loadAdSense();
     };
 
     sync();
-    window.addEventListener(MEMBER_EVENT_NAME, sync);
+    window.addEventListener(DEMO_MEMBER_EVENT_NAME, sync);
     window.addEventListener("storage", sync);
 
     return () => {
-      window.removeEventListener(MEMBER_EVENT_NAME, sync);
+      window.removeEventListener(DEMO_MEMBER_EVENT_NAME, sync);
       window.removeEventListener("storage", sync);
     };
   }, []);
