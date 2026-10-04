@@ -27,7 +27,7 @@ export function LangSwitch({ className }: { className?: string }) {
           className={cn(
             "tap-target min-h-9 rounded-[4px] px-3 font-display text-xs font-bold uppercase tracking-wider transition-colors",
             lang === language
-              ? "bg-navy-foreground text-navy"
+              ? "bg-sport text-sport-foreground"
               : "text-navy-foreground/70 hover:bg-navy-foreground/10 hover:text-navy-foreground",
           )}
         >
