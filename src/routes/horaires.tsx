@@ -112,7 +112,7 @@ function SchedulePage() {
         </section>
 
         {selectedTeams.length > 0 && (
-          <section className="mb-6 overflow-hidden border border-sport/30 bg-background">
+          <section className="mb-6 overflow-hidden border border-sport/30 bg-navy-deep text-white">
             <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
               <div className="p-5 md:p-6">
                 <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail parent" : "Parent portal"}</p>
@@ -137,15 +137,15 @@ function SchedulePage() {
 
             <div className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto bg-navy/10 p-3 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-visible sm:p-0 lg:grid-cols-3">
               {selectedTeams.map((entry) => (
-                <article key={entry.legacyScheduleTeamId} className="flex min-h-44 w-[82vw] max-w-[23rem] shrink-0 snap-center flex-col bg-background p-4 sm:w-auto sm:max-w-none">
+                <article key={entry.legacyScheduleTeamId} className="flex min-h-44 w-[82vw] max-w-[23rem] shrink-0 snap-center flex-col bg-competition p-4 text-white sm:w-auto sm:max-w-none">
                   <div>
-                    <p className="eyebrow text-sport">{entry.level}</p>
-                    <p className="mt-2 font-display text-xl font-extrabold uppercase leading-[0.9] text-navy">{entry.name}</p>
+                    <p className="eyebrow text-sport-foreground">{entry.level}</p>
+                    <p className="mt-2 font-display text-xl font-extrabold uppercase leading-[0.9] text-white">{entry.name}</p>
                   </div>
                   <div className="mt-auto grid grid-cols-3 gap-2 pt-5">
                     <a
                       href={publicTeamHubUrl(entry)}
-                      className="premium-control flex min-h-10 items-center justify-center border border-navy/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-navy hover:border-sport"
+                      className="premium-control flex min-h-10 items-center justify-center border border-white/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white/75 hover:border-sport hover:text-white"
                     >
                       {lang === "fr" ? "Équipe" : "Team"}
                     </a>
@@ -153,7 +153,7 @@ function SchedulePage() {
                       href={legacyTeamScheduleUrl(entry)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="premium-control flex min-h-10 items-center justify-center border border-navy/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-navy hover:border-sport"
+                      className="premium-control flex min-h-10 items-center justify-center border border-white/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white/75 hover:border-sport hover:text-white"
                     >
                       {lang === "fr" ? "Horaire" : "Schedule"}
                     </a>
@@ -172,37 +172,37 @@ function SchedulePage() {
           </section>
         )}
 
-        <section className="mb-6 overflow-hidden border border-navy/12 bg-background">
-          <div className="border-b border-border bg-ice px-5 py-4 md:px-6">
-            <p className="eyebrow text-sport">
+        <section className="mb-6 overflow-hidden border border-white/12 bg-navy-deep text-white">
+          <div className="border-b border-white/10 bg-competition px-5 py-4 md:px-6">
+            <p className="eyebrow text-sport-foreground">
               {lang === "fr" ? "Horaires et classements officiels" : "Official schedules and standings"}
             </p>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-white/55">
               {lang === "fr"
                 ? "Besoin de la donnée sportive officielle maintenant? Choisissez votre circuit."
                 : "Need official sport data right now? Choose your circuit."}
             </p>
           </div>
           <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 md:p-6">
-            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
               <a href={EXTERNAL_LINKS.officialSimpleLetterSchedule} target="_blank" rel="noopener noreferrer">
                 <span>{lang === "fr" ? "Simple lettre" : "Single letter"}</span>
                 <ExternalLink className="size-4" />
               </a>
             </Button>
-            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
               <a href={EXTERNAL_LINKS.officialDoubleLetterSchedule} target="_blank" rel="noopener noreferrer">
                 <span>{lang === "fr" ? "Double lettre AA/BB" : "Double letter AA/BB"}</span>
                 <ExternalLink className="size-4" />
               </a>
             </Button>
-            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
               <a href={EXTERNAL_LINKS.officialGirlsSchedule} target="_blank" rel="noopener noreferrer">
                 <span>{lang === "fr" ? "Hockey féminin" : "Girls' hockey"}</span>
                 <ExternalLink className="size-4" />
               </a>
             </Button>
-            <Button asChild variant="outline" className="h-auto min-h-12 justify-between py-3">
+            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
               <a href={EXTERNAL_LINKS.legacyTeamNotifications} target="_blank" rel="noopener noreferrer">
                 <span>{lang === "fr" ? "Notifications d’équipe" : "Team notifications"}</span>
                 <ExternalLink className="size-4" />

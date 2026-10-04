@@ -43,20 +43,20 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   return (
     <article
       className={cn(
-        "interactive-surface grid gap-3 border border-navy/12 bg-background p-4 sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-center",
+        "interactive-surface grid gap-3 border border-white/12 bg-navy-deep p-4 text-white sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-center",
         cancelled && "border-status-cancelled/40 bg-status-cancelled-soft/40",
       )}
     >
       <div>
         <p
           className={cn(
-            "font-display text-xl font-extrabold tabular-nums text-navy",
+            "font-display text-xl font-extrabold tabular-nums text-white",
             cancelled && "text-status-cancelled line-through decoration-2",
           )}
         >
           {displayTime(item.start)}
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">→ {displayTime(item.end)}</p>
+        <p className="mt-0.5 text-xs text-white/42">→ {displayTime(item.end)}</p>
       </div>
 
       <div className="min-w-0">
@@ -69,15 +69,15 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
             </span>
           )}
         </div>
-        <p className="mt-1 text-sm font-semibold text-sport">{item.activity}</p>
-        <p className="mt-1 flex items-start gap-1.5 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm font-semibold text-sport-foreground">{item.activity}</p>
+        <p className="mt-1 flex items-start gap-1.5 text-sm text-white/52">
           <MapPin className="mt-0.5 size-3.5 shrink-0" aria-hidden />
           {item.venue}
         </p>
       </div>
 
       <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-1">
-        <Button asChild variant="outline" size="sm" className="w-full sm:w-auto">
+        <Button asChild variant="outline-light" size="sm" className="w-full sm:w-auto">
           <a href={mapsDirectionsUrl(arenaDirectionsTargetForVenue(item.venue))} target="_blank" rel="noopener noreferrer">
             {lang === "fr" ? "Itinéraire" : "Directions"}
           </a>
@@ -151,7 +151,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
   return (
     <section
       aria-labelledby="official-week-heading"
-      className="broadcast-cut overflow-hidden border border-sport/30 bg-ice shadow-[0_24px_60px_-48px_rgba(7,16,43,0.85)]"
+      className="broadcast-cut overflow-hidden border border-sport/30 bg-competition text-white shadow-[0_24px_60px_-48px_rgba(7,16,43,0.85)]"
     >
       <div className="scoreboard-panel grid gap-5 border-b border-navy-foreground/10 p-5 text-navy-foreground md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:p-7">
         <div>
@@ -180,18 +180,16 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                 : "Official AHM Verdun weekly schedule"
             }
           />
-          {!publicLaunch && (
-            <div className="flex flex-wrap gap-2">
-              {WEEKLY_SCHEDULE_DOCUMENTS.map((document) => (
-                <Button key={document.week} asChild variant={document === WEEKLY_SCHEDULE_DOCUMENTS[WEEKLY_SCHEDULE_DOCUMENTS.length - 1] ? "sport" : "outline"} size="sm">
-                  <a href={document.sourceUrl} target="_blank" rel="noopener noreferrer">
-                    {lang === "fr" ? `Semaine ${document.week}` : `Week ${document.week}`}
-                    <ExternalLink className="size-4" />
-                  </a>
-                </Button>
-              ))}
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2">
+            {WEEKLY_SCHEDULE_DOCUMENTS.map((document, index) => (
+              <Button key={document.week} asChild variant={index === 0 ? "sport" : "outline-light"} size="sm">
+                <a href={document.sourceUrl} target="_blank" rel="noopener noreferrer">
+                  {lang === "fr" ? `Semaine ${document.week}` : `Week ${document.week}`}
+                  <ExternalLink className="size-4" />
+                </a>
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -229,7 +227,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
             <span className="sr-only">
               {lang === "fr" ? "Rechercher dans l'horaire officiel" : "Search official schedule"}
             </span>
-            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-white/38" aria-hidden />
             <input
               type="search"
               value={query}
@@ -239,13 +237,13 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                   ? "M11, Louves, Chacals, Denis Savard…"
                   : "U11, Louves, Chacals, Denis Savard…"
               }
-              className="h-12 w-full border border-navy/15 bg-background pl-11 pr-11 text-base outline-none transition-colors focus:border-sport"
+              className="h-12 w-full border border-white/14 bg-navy-deep pl-11 pr-11 text-base text-white placeholder:text-white/34 outline-none transition-colors focus:border-sport"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
-                className="premium-control absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center text-muted-foreground hover:bg-ice hover:text-foreground"
+                className="premium-control absolute right-2 top-1/2 inline-flex size-9 -translate-y-1/2 items-center justify-center text-white/42 hover:bg-white/[0.06] hover:text-white"
                 aria-label={lang === "fr" ? "Effacer la recherche" : "Clear search"}
               >
                 <XCircle className="size-4" aria-hidden />
@@ -306,8 +304,8 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           </div>
         )}
 
-        <details className="mt-6 border-t border-border pt-4">
-          <summary className="cursor-pointer text-xs font-bold uppercase tracking-[0.14em] text-navy">
+        <details className="mt-6 border-t border-white/10 pt-4">
+          <summary className="cursor-pointer text-xs font-bold uppercase tracking-[0.14em] text-white/70">
             {lang === "fr" ? "Archives documentaires du site précédent" : "Previous-site document archive"}
           </summary>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -317,7 +315,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                 href={document.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between gap-3 border border-navy/12 bg-background px-4 py-3 text-sm font-semibold text-navy hover:border-sport hover:text-sport"
+                className="flex items-center justify-between gap-3 border border-white/12 bg-navy-deep px-4 py-3 text-sm font-semibold text-white/72 hover:border-sport hover:text-sport-foreground"
               >
                 <span>
                   {document.label[lang]}
@@ -331,7 +329,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           </div>
         </details>
 
-        <p className="mt-6 border-t border-border pt-4 text-xs text-muted-foreground">
+        <p className="mt-6 border-t border-white/10 pt-4 text-xs text-white/45">
           {weekExpired
             ? (lang === "fr"
                 ? "Archive historique — ne l'utilisez pas comme horaire courant."
