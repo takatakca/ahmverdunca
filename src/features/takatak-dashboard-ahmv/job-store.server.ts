@@ -99,3 +99,16 @@ export async function finishControlJob(input: {
   if (!row) throw new Error("control_job_finish_returned_no_result");
   return row;
 }
+
+
+export async function cancelControlJob(jobId: string, now = new Date()) {
+  const result = await db().rpc("ahmv_cancel_takatak_control_job", {
+    p_job_id: jobId,
+    p_now: now.toISOString(),
+  });
+
+  if (result.error) throw result.error;
+  const row = Array.isArray(result.data) ? result.data[0] : result.data;
+  if (!row) throw new Error("control_job_cancel_returned_no_result");
+  return row;
+}
