@@ -67,7 +67,7 @@ function ArticlePage() {
         </Link>
 
         <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-          <article>
+          <article className="overflow-hidden border border-white/12 bg-navy-deep text-white">
             <div className="group relative aspect-[16/8] overflow-hidden bg-navy">
               <img
                 src={storyMedia!.url}
@@ -106,24 +106,24 @@ function ArticlePage() {
               </div>
             </div>
             {lang === "en" && !a.body.en && (
-              <div className="mt-4 rounded-lg border border-border bg-ice px-4 py-3 text-sm text-muted-foreground">
+              <div className="mt-4 border border-white/12 bg-navy-deep px-4 py-3 text-sm text-white/52">
                 {t("article.noEnglish")}
               </div>
             )}
-            <div className="mt-8 border-t-2 border-sport/70 pt-7">
-              <p className="eyebrow text-sport">{lang === "fr" ? "Le communiqué" : "The update"}</p>
-              <div className="mt-5 space-y-5 text-base leading-[1.78] text-foreground/90 md:text-lg">
+            <div className="border-t-2 border-sport/70 bg-competition px-5 py-7 md:px-7">
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Le communiqué" : "The update"}</p>
+              <div className="mt-5 space-y-5 text-base leading-[1.78] text-white/72 md:text-lg">
                 {body.map((p, i) => (
-                  <p key={i} className={i === 0 ? "text-lg font-medium leading-[1.7] text-navy md:text-xl" : undefined}>{p}</p>
+                  <p key={i} className={i === 0 ? "text-lg font-medium leading-[1.7] text-white md:text-xl" : undefined}>{p}</p>
                 ))}
               </div>
             </div>
             {a.links && a.links.length > 0 && (
-              <div className="mt-7 border-y border-border py-5">
-                <p className="eyebrow text-sport">{lang === "fr" ? "Liens officiels associés" : "Related official links"}</p>
+              <div className="border-y border-white/10 bg-navy-deep px-5 py-5 md:px-7">
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Liens officiels associés" : "Related official links"}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {a.links.map((link) => (
-                    <Button key={link.url} asChild variant="outline" size="sm">
+                    <Button key={link.url} asChild variant="outline-light" size="sm">
                       <a href={link.url} target="_blank" rel="noopener noreferrer">
                         {l(link.label)} <ExternalLink className="size-4" />
                       </a>
@@ -132,10 +132,10 @@ function ArticlePage() {
                 </div>
               </div>
             )}
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 bg-navy-deep px-5 py-6 md:px-7">
               <ShareButton title={l(a.title)} text={l(a.excerpt)} />
               {a.sourceUrl && !publicLaunch && (
-                <Button asChild variant="outline" size="sm">
+                <Button asChild variant="outline-light" size="sm">
                   <a href={a.sourceUrl} target="_blank" rel="noopener noreferrer">
                     {lang === "fr" ? "Voir l'article original AHMV" : "View original AHMV article"}
                     <ExternalLink className="size-4" />
@@ -144,20 +144,20 @@ function ArticlePage() {
               )}
             </div>
             {a.contentPending && (
-              <div className="mt-6 rounded-lg border border-border bg-ice px-4 py-3 text-sm text-muted-foreground">
+              <div className="mt-6 border border-white/12 bg-navy-deep px-4 py-3 text-sm text-white/52">
                 {t("common.toValidate")}
               </div>
             )}
           </article>
 
-          <aside className="space-y-8 lg:border-l lg:border-navy/12 lg:pl-8">
+          <aside className="space-y-8 lg:border-l lg:border-white/12 lg:pl-8">
             <HouseSponsorSlot placement={`story-${a.slug}`} count={1} compact />
             {teams.length > 0 && (
               <div>
                 <p className="eyebrow mb-3 text-sport">{t("article.teams")}</p>
                 <div className="flex flex-wrap gap-2">
                   {teams.map((tm) => (
-                    <Link key={tm!.slug} to="/equipes/$slug" params={{ slug: tm!.slug }} className="rounded-full border border-input px-3 py-1.5 text-sm hover:bg-secondary">
+                    <Link key={tm!.slug} to="/equipes/$slug" params={{ slug: tm!.slug }} className="rounded-full border border-white/14 bg-navy-deep px-3 py-1.5 text-sm text-white/70 hover:border-sport hover:text-white">
                       {l(tm!.name)}
                     </Link>
                   ))}
@@ -168,9 +168,9 @@ function ArticlePage() {
               <SectionHeading title={t("article.related")} className="mb-4" />
               <div className="space-y-4">
                 {related.map((r) => (
-                  <Link key={r.slug} to="/nouvelles/$slug" params={{ slug: r.slug }} className="card-elevated block p-4 hover:text-sport">
-                    <p className="eyebrow text-sport">{newsDateLabel(r, lang)}</p>
-                    <p className="heading-card mt-1.5">{l(r.title)}</p>
+                  <Link key={r.slug} to="/nouvelles/$slug" params={{ slug: r.slug }} className="interactive-surface block border border-white/12 bg-competition p-4 text-white hover:border-sport/50">
+                    <p className="eyebrow text-sport-foreground">{newsDateLabel(r, lang)}</p>
+                    <p className="heading-card mt-1.5 text-white">{l(r.title)}</p>
                   </Link>
                 ))}
               </div>
