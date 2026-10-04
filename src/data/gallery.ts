@@ -1,5 +1,6 @@
 import type { Localized } from "@/lib/i18n";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
+import { UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
 
 export interface Album {
   slug: string;
@@ -15,7 +16,16 @@ export interface Album {
   /** Number of photos in the official album — unknown until media are provided. */
   photoCount?: number;
   /** Verified public images rendered directly in this album. */
-  photos?: readonly { url: string; sourceUrl: string; alt: { fr: string; en: string } }[];
+  photos?: readonly {
+    url: string;
+    sourceUrl: string;
+    alt: { fr: string; en: string };
+    label?: { fr: string; en: string };
+    category?: string;
+    categoryLabel?: { fr: string; en: string };
+    kind?: string;
+    containsMinors?: boolean;
+  }[];
   /** Public legacy AHMV album retained as the complete archive source. */
   sourceUrl?: string;
   /** Full local migration is still incomplete even when a verified cover is available. */
@@ -23,6 +33,22 @@ export interface Album {
 }
 
 export const ALBUMS: Album[] = [
+  {
+    slug: "mediatheque-ahmv-2026-2027",
+    title: { fr: "Médiathèque AHMV — saison 2026-2027", en: "AHMV Media Library — 2026-2027 season" },
+    description: {
+      fr: "Collection de 54 photos, affiches, horaires, documents et souvenirs AHM Verdun fournis à l’association et regroupés par catégorie.",
+      en: "Collection of 54 AHM Verdun photos, posters, schedules, documents and memories supplied to the association and grouped by category.",
+    },
+    date: "2026-10-04",
+    season: "2026-2027",
+    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    eventType: { fr: "Médiathèque", en: "Media library" },
+    coverUrl: UPLOADED_AHMV_MEDIA[0]?.url,
+    photos: UPLOADED_AHMV_MEDIA,
+    photoCount: UPLOADED_AHMV_MEDIA.length,
+    photosPending: false,
+  },
   {
     slug: "fete-fin-annee-2025-2026",
     title: { fr: "Fête de fin d'année des équipes 2025/2026", en: "2025/2026 teams' year-end party" },
