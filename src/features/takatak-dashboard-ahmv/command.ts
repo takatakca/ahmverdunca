@@ -65,6 +65,7 @@ export function parseTakatakAhmvCommand(input: unknown): TakatakAhmvCommand {
 
   return {
     ...parsed,
+    payload: parsed.payload ?? {},
     idempotencyKey,
     fingerprint,
   };
