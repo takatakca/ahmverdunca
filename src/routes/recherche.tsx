@@ -467,7 +467,7 @@ function SearchPage() {
         <div className="mt-8 grid gap-3" aria-live="polite">
           {q.trim().length >= 2 && hits.length === 0 && (
             <div className="border border-white/12 bg-navy-deep p-6 text-white">
-              <p className="heading-card">
+              <p className="heading-card text-white">
                 {lang === "fr" ? "Aucun résultat trouvé" : "No results found"}
               </p>
               <p className="mt-2 text-sm text-white/52">
