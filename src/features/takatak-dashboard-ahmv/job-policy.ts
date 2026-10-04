@@ -5,9 +5,8 @@ export function retryDelaySeconds(attempt: number) {
 
 export function safeWorkerErrorCode(error: unknown) {
   if (!(error instanceof Error)) return "worker_unknown_error";
-  const code = error.message
-    .toLowerCase()
-    .replace(/[^a-z0-9:_-]+/g, "_")
-    .slice(0, 120);
-  return code || "worker_error";
+  const candidate = error.message.trim().toLowerCase();
+  return /^[a-z0-9][a-z0-9:_-]{0,119}$/.test(candidate)
+    ? candidate
+    : "worker_exception";
 }
