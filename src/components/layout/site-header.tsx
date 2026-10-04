@@ -419,7 +419,7 @@ export function SiteHeader() {
                 className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
               >
                 <CalendarDays className="size-4 text-sport-foreground" />
-                <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Horaire" : "Schedule"}</span>
+                <span className="font-display text-[11px] font-extrabold uppercase leading-none tracking-[0.04em]">{lang === "fr" ? "Horaire" : "Schedule"}</span>
               </Link>
               {selectedTeams[0] ? (
                 <a
@@ -429,7 +429,7 @@ export function SiteHeader() {
                   className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
                 >
                   <Trophy className="size-4 text-sport-foreground" />
-                  <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Résultats" : "Results"}</span>
+                  <span className="font-display text-[11px] font-extrabold uppercase leading-none tracking-[0.04em]">{lang === "fr" ? "Résultats" : "Results"}</span>
                 </a>
               ) : (
                 <Link
@@ -437,7 +437,7 @@ export function SiteHeader() {
                   className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
                 >
                   <Trophy className="size-4 text-sport-foreground" />
-                  <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Résultats" : "Results"}</span>
+                  <span className="font-display text-[11px] font-extrabold uppercase leading-none tracking-[0.04em]">{lang === "fr" ? "Résultats" : "Results"}</span>
                 </Link>
               )}
               <Link
@@ -445,14 +445,14 @@ export function SiteHeader() {
                 className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
               >
                 <MapPin className="size-4 text-sport-foreground" />
-                <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Arénas" : "Arenas"}</span>
+                <span className="font-display text-[11px] font-extrabold uppercase leading-none tracking-[0.04em]">{lang === "fr" ? "Arénas" : "Arenas"}</span>
               </Link>
               <Link
                 to="/equipes"
                 className="premium-control flex min-h-[58px] flex-col items-center justify-center gap-1.5 bg-competition p-2 text-center text-white"
               >
                 <Users className="size-4 text-sport-foreground" />
-                <span className="font-display text-lg font-extrabold uppercase leading-none">{lang === "fr" ? "Équipes" : "Teams"}</span>
+                <span className="font-display text-[11px] font-extrabold uppercase leading-none tracking-[0.04em]">{lang === "fr" ? "Équipes" : "Teams"}</span>
               </Link>
             </div>
 
