@@ -106,3 +106,183 @@ comment on table public.ahmv_takatak_control_jobs is
   'Idempotent asynchronous managed-service jobs. Provider secrets and raw credentials must never be stored in job rows.';
 comment on table public.ahmv_takatak_control_audit is
   'Payload-free audit metadata for TAKATAK managed-service commands against the standalone AHMV application.';
+
+
+create or replace function public.ahmv_claim_takatak_control_job(
+  p_now timestamptz default now()
+)
+returns table (
+  id uuid,
+  tenant text,
+  organization_id text,
+  actor_id text,
+  request_id text,
+  idempotency_key text,
+  request_fingerprint text,
+  service text,
+  action text,
+  resource_type text,
+  resource_id text,
+  expected_revision bigint,
+  status text,
+  attempts integer,
+  max_attempts integer
+)
+language sql
+security definer
+set search_path = ''
+as $$
+  with candidate as (
+    select j.id
+    from public.ahmv_takatak_control_jobs j
+    where
+      (
+        j.status = 'queued'
+        or (
+          j.status = 'failed'
+          and j.completed_at is null
+          and j.attempts < j.max_attempts
+        )
+      )
+      and j.available_at <= p_now
+    order by j.available_at asc, j.created_at asc
+    for update skip locked
+    limit 1
+  ),
+  claimed as (
+    update public.ahmv_takatak_control_jobs j
+    set
+      status = 'running',
+      attempts = j.attempts + 1,
+      started_at = p_now,
+      updated_at = p_now
+    from candidate c
+    where j.id = c.id
+    returning j.*
+  )
+  select
+    c.id,
+    c.tenant,
+    c.organization_id,
+    c.actor_id,
+    c.request_id,
+    c.idempotency_key,
+    c.request_fingerprint,
+    c.service,
+    c.action,
+    c.resource_type,
+    c.resource_id,
+    c.expected_revision,
+    c.status,
+    c.attempts,
+    c.max_attempts
+  from claimed c;
+$$;
+
+create or replace function public.ahmv_finish_takatak_control_job(
+  p_job_id uuid,
+  p_success boolean,
+  p_error_code text default null,
+  p_external_reference text default null,
+  p_retry_delay_seconds integer default 60,
+  p_now timestamptz default now()
+)
+returns table (
+  id uuid,
+  status text,
+  attempts integer,
+  max_attempts integer,
+  available_at timestamptz,
+  completed_at timestamptz
+)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_job public.ahmv_takatak_control_jobs%rowtype;
+begin
+  if p_job_id is null
+     or p_retry_delay_seconds < 0
+     or p_retry_delay_seconds > 86400 then
+    raise exception 'invalid TAKATAK AHMV control job completion input'
+      using errcode = '22023';
+  end if;
+
+  select *
+    into v_job
+  from public.ahmv_takatak_control_jobs
+  where ahmv_takatak_control_jobs.id = p_job_id
+  for update;
+
+  if not found then
+    raise exception 'TAKATAK AHMV control job not found'
+      using errcode = 'P0002';
+  end if;
+
+  if v_job.status <> 'running' then
+    raise exception 'TAKATAK AHMV control job is not running'
+      using errcode = '55000';
+  end if;
+
+  if p_success then
+    update public.ahmv_takatak_control_jobs
+    set
+      status = 'succeeded',
+      completed_at = p_now,
+      last_error_code = null,
+      external_reference = p_external_reference,
+      updated_at = p_now
+    where ahmv_takatak_control_jobs.id = p_job_id;
+  else
+    update public.ahmv_takatak_control_jobs
+    set
+      status = 'failed',
+      last_error_code = left(coalesce(p_error_code, 'unknown_error'), 160),
+      external_reference = p_external_reference,
+      available_at =
+        case
+          when v_job.attempts < v_job.max_attempts
+            then p_now + make_interval(secs => p_retry_delay_seconds)
+          else v_job.available_at
+        end,
+      completed_at =
+        case
+          when v_job.attempts >= v_job.max_attempts then p_now
+          else null
+        end,
+      updated_at = p_now
+    where ahmv_takatak_control_jobs.id = p_job_id;
+  end if;
+
+  return query
+    select
+      j.id,
+      j.status,
+      j.attempts,
+      j.max_attempts,
+      j.available_at,
+      j.completed_at
+    from public.ahmv_takatak_control_jobs j
+    where j.id = p_job_id;
+end;
+$$;
+
+revoke all on function public.ahmv_claim_takatak_control_job(timestamptz)
+  from public, anon, authenticated;
+revoke all on function public.ahmv_finish_takatak_control_job(
+  uuid,boolean,text,text,integer,timestamptz
+) from public, anon, authenticated;
+
+grant execute on function public.ahmv_claim_takatak_control_job(timestamptz)
+  to service_role;
+grant execute on function public.ahmv_finish_takatak_control_job(
+  uuid,boolean,text,text,integer,timestamptz
+) to service_role;
+
+comment on function public.ahmv_claim_takatak_control_job(timestamptz) is
+  'Atomically claims one eligible control-plane job using SKIP LOCKED so multiple workers cannot execute the same job concurrently.';
+comment on function public.ahmv_finish_takatak_control_job(
+  uuid,boolean,text,text,integer,timestamptz
+) is
+  'Completes or schedules retry for a claimed TAKATAK AHMV control-plane job without exposing provider credentials.';
