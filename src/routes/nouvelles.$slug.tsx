@@ -91,18 +91,18 @@ function ArticlePage() {
                 </span>
               </div>
             </div>
-            <div className="mt-0 grid gap-px border-x border-b border-navy/12 bg-navy/12 sm:grid-cols-3">
-              <div className="bg-background p-4">
-                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{lang === "fr" ? "Publication" : "Published"}</p>
-                <p className="mt-1 font-display text-xl font-bold uppercase text-navy">{newsDateLabel(a, lang)}</p>
+            <div className="mt-0 grid gap-px border-x border-b border-white/12 bg-white/10 sm:grid-cols-3">
+              <div className="bg-competition p-4 text-white">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{lang === "fr" ? "Publication" : "Published"}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{newsDateLabel(a, lang)}</p>
               </div>
-              <div className="bg-background p-4">
-                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{t("article.author")}</p>
-                <p className="mt-1 font-display text-xl font-bold uppercase text-navy">{a.author}</p>
+              <div className="bg-competition p-4 text-white">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{t("article.author")}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{a.author}</p>
               </div>
-              <div className="bg-background p-4">
-                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-muted-foreground">{lang === "fr" ? "Saison" : "Season"}</p>
-                <p className="mt-1 font-display text-xl font-bold uppercase text-navy">{a.season}</p>
+              <div className="bg-competition p-4 text-white">
+                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{lang === "fr" ? "Saison" : "Season"}</p>
+                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{a.season}</p>
               </div>
             </div>
             {lang === "en" && !a.body.en && (
@@ -110,7 +110,7 @@ function ArticlePage() {
                 {t("article.noEnglish")}
               </div>
             )}
-            <div className="mt-8 border-t-2 border-navy pt-7">
+            <div className="mt-8 border-t-2 border-sport/70 pt-7">
               <p className="eyebrow text-sport">{lang === "fr" ? "Le communiqué" : "The update"}</p>
               <div className="mt-5 space-y-5 text-base leading-[1.78] text-foreground/90 md:text-lg">
                 {body.map((p, i) => (
