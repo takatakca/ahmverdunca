@@ -93,6 +93,9 @@ export async function executeTakatakAhmvControlCommand(
 
   if (command.action === "publish" || command.action === "delete") {
     if (!existing) throw new Error("control_record_not_found");
+    if (command.action === "publish" && existing.status === "archived") {
+      throw new Error("cannot_publish_archived_control_record");
+    }
     assertExpectedRevision(existing.revision, command.expectedRevision);
   }
 
