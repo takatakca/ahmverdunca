@@ -85,7 +85,9 @@ const ROADMAP = [
 ] as const;
 
 export function TeamParentPremium({ team, lang }: Props) {
-  const demoMode = !PARENT_PREMIUM.visible || !PARENT_PREMIUM.launchEnabled;
+  if (!PARENT_PREMIUM.visible) return null;
+
+  const demoMode = !PARENT_PREMIUM.launchEnabled;
 
   const signupUrl = parentPremiumSignupUrl(team.legacyScheduleTeamId);
   const price = PARENT_PREMIUM.weeklyPriceCad.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA", {
