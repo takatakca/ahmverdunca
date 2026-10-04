@@ -49,6 +49,9 @@ jobs:
       - name: AHMV phone and SMS security tests
         run: bun run test:phone
 
+      - name: TAKATAK AHMV backend control-plane tests
+        run: bun run test:takatak-ahmv-backend
+
       - name: GROUPE TAKATAK team feed security tests
         run: bun run test:team-feed
 
