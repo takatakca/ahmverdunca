@@ -28,6 +28,60 @@ create table if not exists public.ahmv_takatak_control_records (
 create index if not exists idx_ahmv_takatak_control_records_org_service
   on public.ahmv_takatak_control_records(organization_id, service, updated_at desc);
 
+
+create table if not exists public.ahmv_takatak_control_record_versions (
+  id uuid primary key default gen_random_uuid(),
+  control_record_id uuid not null
+    references public.ahmv_takatak_control_records(id) on delete cascade,
+  revision bigint not null check (revision >= 1),
+  status text not null check (status in ('draft','queued','active','archived')),
+  payload jsonb not null default '{}'::jsonb,
+  actor_id text not null,
+  created_at timestamptz not null default now(),
+  unique (control_record_id, revision)
+);
+
+create index if not exists idx_ahmv_takatak_control_versions_record
+  on public.ahmv_takatak_control_record_versions(control_record_id, revision desc);
+
+create or replace function public.capture_ahmv_takatak_control_record_version()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  insert into public.ahmv_takatak_control_record_versions (
+    control_record_id,
+    revision,
+    status,
+    payload,
+    actor_id,
+    created_at
+  )
+  values (
+    new.id,
+    new.revision,
+    new.status,
+    new.payload,
+    new.updated_by,
+    new.updated_at
+  )
+  on conflict (control_record_id, revision) do nothing;
+
+  return new;
+end;
+$;
+
+drop trigger if exists trg_ahmv_takatak_control_record_version
+  on public.ahmv_takatak_control_records;
+
+create trigger trg_ahmv_takatak_control_record_version
+after insert or update of revision, status, payload
+on public.ahmv_takatak_control_records
+for each row
+execute function public.capture_ahmv_takatak_control_record_version();
+
 create table if not exists public.ahmv_takatak_control_jobs (
   id uuid primary key default gen_random_uuid(),
   tenant text not null default 'ahmverdun' check (tenant = 'ahmverdun'),
@@ -89,19 +143,24 @@ create index if not exists idx_ahmv_takatak_control_audit_resource
   );
 
 alter table public.ahmv_takatak_control_records enable row level security;
+alter table public.ahmv_takatak_control_record_versions enable row level security;
 alter table public.ahmv_takatak_control_jobs enable row level security;
 alter table public.ahmv_takatak_control_audit enable row level security;
 
 revoke all on table public.ahmv_takatak_control_records from public, anon, authenticated;
+revoke all on table public.ahmv_takatak_control_record_versions from public, anon, authenticated;
 revoke all on table public.ahmv_takatak_control_jobs from public, anon, authenticated;
 revoke all on table public.ahmv_takatak_control_audit from public, anon, authenticated;
 
 grant all on table public.ahmv_takatak_control_records to service_role;
+grant all on table public.ahmv_takatak_control_record_versions to service_role;
 grant all on table public.ahmv_takatak_control_jobs to service_role;
 grant all on table public.ahmv_takatak_control_audit to service_role;
 
 comment on table public.ahmv_takatak_control_records is
   'Detachable AHMV-side control-plane records managed server-to-server by authorized TAKATAK services. Never a billing source of truth.';
+comment on table public.ahmv_takatak_control_record_versions is
+  'Immutable revision snapshots for conflict-safe history/restore workflows. Contains sanitized control payloads, never provider secrets.';
 comment on table public.ahmv_takatak_control_jobs is
   'Idempotent asynchronous managed-service jobs. Provider secrets and raw credentials must never be stored in job rows.';
 comment on table public.ahmv_takatak_control_audit is
@@ -268,12 +327,16 @@ begin
 end;
 $$;
 
+revoke all on function public.capture_ahmv_takatak_control_record_version()
+  from public, anon, authenticated;
 revoke all on function public.ahmv_claim_takatak_control_job(timestamptz)
   from public, anon, authenticated;
 revoke all on function public.ahmv_finish_takatak_control_job(
   uuid,boolean,text,text,integer,timestamptz
 ) from public, anon, authenticated;
 
+grant execute on function public.capture_ahmv_takatak_control_record_version()
+  to service_role;
 grant execute on function public.ahmv_claim_takatak_control_job(timestamptz)
   to service_role;
 grant execute on function public.ahmv_finish_takatak_control_job(
