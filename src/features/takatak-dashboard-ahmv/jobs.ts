@@ -37,5 +37,9 @@ export type TakatakAhmvControlJob = {
 };
 
 export function canRetryControlJob(job: TakatakAhmvControlJob) {
-  return job.status === "failed" && job.attempts < job.maxAttempts;
+  return (
+    job.status === "failed" &&
+    job.completedAt === null &&
+    job.attempts < job.maxAttempts
+  );
 }
