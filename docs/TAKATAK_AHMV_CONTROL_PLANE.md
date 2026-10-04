@@ -160,3 +160,16 @@ Website and SEO publication uses revision-level moderation.
 - publish commands are rejected until the exact revision has an approved review.
 
 The moderation queue is server-only and does not expose or mount dashboard UI by itself.
+
+
+## Scheduled publication
+
+Approved website/SEO revisions can be scheduled server-side.
+
+- schedule times must include an explicit timezone offset;
+- the scheduled revision must already be approved;
+- the worker re-checks the exact current revision before enqueueing publication;
+- if a newer draft exists, the schedule becomes stale instead of publishing the wrong content;
+- claims use PostgreSQL `FOR UPDATE SKIP LOCKED` so parallel workers cannot claim the same schedule;
+- optional expiry is evaluated from AHMV's published snapshot, allowing time-bounded content to disappear without a live TAKATAK round trip;
+- only still-scheduled work can be cancelled.
