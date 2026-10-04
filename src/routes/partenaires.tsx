@@ -22,7 +22,6 @@ import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { OfficialSponsorShowcase, SponsorIdentityNotice } from "@/components/official-sponsor-showcase";
 import { HOUSE_SPONSORS } from "@/data/house-sponsors";
-import { RUNWAY_AD_CREATIVES } from "@/data/runway-ad-creatives";
 
 export const Route = createFileRoute("/partenaires")({
   head: () => ({
@@ -231,12 +230,12 @@ function PartnersPage() {
               {lang === "fr" ? "Promotion maison · distincte des commanditaires" : "House promotion · separate from sponsors"}
             </p>
             <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy sm:text-5xl">
-              {lang === "fr" ? "Galerie des créatives publicitaires" : "Advertising creative gallery"}
+              {lang === "fr" ? "Réseau de promotions locales" : "Local promotion network"}
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
-                ? "Ces créatives servent de remplissage publicitaire tant qu’un espace n’est pas attribué à AdSense ou à une commandite officielle. Elles ne sont pas présentées comme des commanditaires AHMV."
-                : "These creatives fill advertising inventory until a placement is assigned to AdSense or an official sponsorship. They are not presented as AHMV sponsors."}
+                ? "Ces entreprises apparaissent dans un inventaire promotionnel distinct des commanditaires officiels. Aucun faux logo n’est utilisé : le nom et le lien public sont affichés jusqu’à ce qu’un fichier de marque officiel soit vérifié."
+                : "These businesses appear in promotional inventory separate from official sponsors. No simulated logo is used: the name and public link are shown until an official brand file is verified."}
             </p>
           </div>
 
@@ -248,20 +247,18 @@ function PartnersPage() {
                 key={sponsor.id}
                 className="group overflow-hidden border border-navy/12 bg-background"
               >
-                <div className="relative aspect-[16/9] overflow-hidden bg-ice">
-                  {sponsor.creative ? (
-                    <img
-                      src={sponsor.creative}
-                      alt={sponsor.name}
-                      loading="lazy"
-                      decoding="async"
-                      className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.015]"
-                    />
-                  ) : (
-                    <div className="flex size-full items-center justify-center bg-navy text-white">
-                      <span className="font-display text-4xl font-extrabold uppercase">{sponsor.short}</span>
-                    </div>
-                  )}
+                <div className="relative flex min-h-36 items-end overflow-hidden bg-competition p-5 text-white">
+                  <span className="pointer-events-none absolute -right-3 -top-8 font-display text-[7rem] font-extrabold uppercase leading-none text-white/[0.035]" aria-hidden>
+                    {sponsor.short}
+                  </span>
+                  <div className="relative">
+                    <p className="text-[8px] font-bold uppercase tracking-[0.17em] text-sport-foreground">
+                      {lang === "fr" ? "Promotion locale" : "Local promotion"}
+                    </p>
+                    <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white">
+                      {sponsor.name}
+                    </p>
+                  </div>
                 </div>
                 <div className="border-t border-navy/10 p-4">
                   <div className="flex items-start justify-between gap-3">
@@ -293,51 +290,6 @@ function PartnersPage() {
                   )}
                 </div>
               </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="space-y-6">
-          <div>
-            <p className="eyebrow text-sport">
-              {lang === "fr" ? "Laboratoire créatif · 16:9" : "Creative lab · 16:9"}
-            </p>
-            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy sm:text-5xl">
-              {lang === "fr" ? "54 créatives prêtes à classer" : "54 creatives ready to classify"}
-            </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-              {lang === "fr"
-                ? "Ces visuels proviennent des six planches Runway confirmées. Ils ont été découpés en fichiers 16:9 permanents. Tant que le logo, le lien et l’entreprise n’ont pas été recoupés, ils restent des aperçus non cliquables et ne sont pas présentés comme des commanditaires officiels."
-                : "These visuals come from the six confirmed Runway contact sheets. They were split into permanent 16:9 files. Until each logo, link and business is cross-checked, they remain non-clickable previews and are not presented as official sponsors."}
-            </p>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {RUNWAY_AD_CREATIVES.map((creative, index) => (
-              <figure
-                key={creative.id}
-                className="overflow-hidden border border-navy/12 bg-background"
-              >
-                <div className="aspect-video overflow-hidden bg-ice">
-                  <img
-                    src={creative.path}
-                    alt={lang === "fr"
-                      ? `Aperçu créatif publicitaire ${index + 1}`
-                      : `Advertising creative preview ${index + 1}`}
-                    loading="lazy"
-                    decoding="async"
-                    className="size-full object-cover"
-                  />
-                </div>
-                <figcaption className="flex items-center justify-between gap-3 border-t border-navy/10 px-3 py-2">
-                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                    {String(index + 1).padStart(2, "0")} · {creative.ratio}
-                  </span>
-                  <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-sport">
-                    {creative.placement}
-                  </span>
-                </figcaption>
-              </figure>
             ))}
           </div>
         </section>
