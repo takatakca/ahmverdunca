@@ -14,6 +14,9 @@ function mapRecord(row: Record<string, unknown>): ControlRecord<unknown> {
     id: String(row["id"]),
     tenant: "ahmverdun",
     organizationId: String(row["organization_id"]),
+    service: String(row["service"]),
+    resourceType: String(row["resource_type"]),
+    resourceId: String(row["resource_id"]),
     status: row["status"] as ControlRecordStatus,
     revision: Number(row["revision"]),
     publishedRevision: row["published_revision"] === null || row["published_revision"] === undefined ? null : Number(row["published_revision"]),
@@ -213,4 +216,40 @@ export async function markControlRevisionPublished(input: {
 
   if (updated.error) throw updated.error;
   return mapRecord(updated.data);
+}
+
+
+export async function listControlRecords(input: {
+  organizationId: string;
+  service?: TakatakAhmvService | undefined;
+  status?: ControlRecordStatus | undefined;
+  resourceType?: string | undefined;
+  search?: string | undefined;
+  limit?: number | undefined;
+}) {
+  let query = db()
+    .from("ahmv_takatak_control_records")
+    .select("*")
+    .eq("tenant", "ahmverdun")
+    .eq("organization_id", input.organizationId);
+
+  if (input.service) query = query.eq("service", input.service);
+  if (input.status) query = query.eq("status", input.status);
+  if (input.resourceType) query = query.eq("resource_type", input.resourceType);
+
+  const search = input.search?.trim();
+  if (search) {
+    if (!/^[A-Za-z0-9._:@/-]{1,80}$/.test(search)) {
+      throw new Error("invalid_control_record_search");
+    }
+    query = query.ilike("resource_id", `%${search}%`);
+  }
+
+  const limit = Math.max(1, Math.min(100, input.limit ?? 25));
+  const result = await query
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+
+  if (result.error) throw result.error;
+  return (result.data ?? []).map(mapRecord);
 }
