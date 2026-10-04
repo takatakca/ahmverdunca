@@ -117,6 +117,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.png", type: "image/png" },
       { rel: "apple-touch-icon", href: "/branding/ahmv-logo-gallery-2026.png", type: "image/png" },
       { rel: "apple-touch-startup-image", href: "/branding/ahmv-app-splash-2026.webp", type: "image/webp" },
+      { rel: "preload", href: "/branding/ahmv-app-splash-2026.webp", as: "image", type: "image/webp", media: "(display-mode: standalone)" },
     ],
   }),
   shellComponent: RootShell,
