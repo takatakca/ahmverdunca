@@ -1247,7 +1247,7 @@ export const NEWS: NewsArticle[] = [
   "contentPending": false
 },
 {
-  "slug": "hockey-feminin-portes-ouvertes-2026",
+  "slug": "hockey-feminin-m9f-m12f-m15f-2026-2027",
   "title": {
     "fr": "Hockey féminin — joueuses de tout niveau bienvenues",
     "en": "Girls hockey — players of all levels welcome"
