@@ -8,6 +8,8 @@ import {
 } from "./contracts";
 import { commandFingerprint, normalizeIdempotencyKey } from "./idempotency";
 import { assertSafeControlPayload } from "./payload-security";
+import { parseWebsiteControlPayload } from "./website-content";
+import { parseSeoControlPayload } from "./seo-content";
 
 const safeId = z
   .string()
@@ -51,6 +53,13 @@ export function parseTakatakAhmvCommand(input: unknown): TakatakAhmvCommand {
   if (!idempotencyKey) throw new Error("invalid_idempotency_key");
   assertSafeControlPayload(parsed.payload);
 
+  const normalizedPayload =
+    parsed.action === "save_draft" && parsed.service === "website"
+      ? parseWebsiteControlPayload(parsed.resourceType, parsed.payload)
+      : parsed.action === "save_draft" && parsed.service === "seo"
+        ? parseSeoControlPayload(parsed.resourceType, parsed.payload)
+        : (parsed.payload ?? {});
+
   const fingerprint = commandFingerprint({
     tenant: parsed.tenant,
     organizationId: parsed.organizationId,
@@ -60,12 +69,12 @@ export function parseTakatakAhmvCommand(input: unknown): TakatakAhmvCommand {
     resourceType: parsed.resourceType,
     resourceId: parsed.resourceId,
     expectedRevision: parsed.expectedRevision ?? null,
-    payload: parsed.payload,
+    payload: normalizedPayload,
   });
 
   return {
     ...parsed,
-    payload: parsed.payload ?? {},
+    payload: normalizedPayload,
     idempotencyKey,
     fingerprint,
   };
