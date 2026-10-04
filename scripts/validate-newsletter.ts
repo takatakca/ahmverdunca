@@ -14,5 +14,7 @@ assert.match(env, /VITE_TAKATAK_NEWSLETTER_URL=/);
 assert.doesNotMatch(component, /<input[^>]+type=["']email["']/i);
 assert.doesNotMatch(component + contract, /localStorage|sessionStorage|document\.cookie/);
 assert.match(component, /Consentement centralisé|Centralized consent/);
+assert.match(component, /if \(!signupUrl\) return null/);
+assert.doesNotMatch(component, /Connexion TAKATAK en préparation|TAKATAK connection being prepared/);
 
 console.log("AHMV newsletter frontend contract passed.");
