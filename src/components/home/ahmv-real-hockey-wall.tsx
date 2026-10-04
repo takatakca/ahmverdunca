@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, BookOpen, ChevronRight, Images, Users } from "lucide-react";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { useI18n } from "@/lib/i18n";
+import { MediaLuxuryViewer } from "@/components/media/media-luxury-viewer";
 
 const MEDIA = [
   uploadedAhmvMediaById(35),
@@ -12,6 +14,8 @@ const MEDIA = [
 
 export function AhmvRealHockeyWall() {
   const { lang, l } = useI18n();
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
 
   const actions = [
     {
@@ -111,19 +115,26 @@ export function AhmvRealHockeyWall() {
 
           <div className="scrollbar-none flex min-h-[370px] snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain scroll-px-3 sm:grid sm:min-h-[600px] sm:grid-cols-2 sm:grid-rows-2 sm:overflow-visible lg:min-h-[650px]">
             {MEDIA.map((media, index) => (
-              <a
+              <button
                 key={media.url}
-                href={media.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`group relative min-w-[84vw] snap-start overflow-hidden bg-navy sm:min-w-0 ${index === 0 ? "sm:row-span-2" : ""}`}
+                type="button"
+                onClick={() => {
+                  setViewerIndex(index);
+                  setViewerOpen(true);
+                }}
+                className={`group relative min-w-[84vw] snap-start overflow-hidden bg-navy text-left sm:min-w-0 ${index === 0 ? "sm:row-span-2" : ""}`}
+                aria-label={
+                  lang === "fr"
+                    ? `Agrandir ${media.label.fr}`
+                    : `Enlarge ${media.label.en}`
+                }
               >
                 <img
                   src={media.url}
                   alt={lang === "fr" ? media.alt.fr : media.alt.en}
                   loading={index === 0 ? "eager" : "lazy"}
                   decoding="async"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.035]"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.045]"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(7,16,43,0.80)_100%)]" />
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
@@ -131,10 +142,10 @@ export function AhmvRealHockeyWall() {
                     {l(media.categoryLabel)} · {lang === "fr" ? "Photo réelle AHMV" : "Real AHMV photo"}
                   </p>
                   <span className="mt-2 inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
-                    {l(media.label)} <ArrowRight className="size-3.5" />
+                    {l(media.label)} <Images className="size-3.5" />
                   </span>
                 </div>
-              </a>
+              </button>
             ))}
           </div>
         </div>
@@ -163,6 +174,13 @@ export function AhmvRealHockeyWall() {
           </div>
         </div>
       </div>
+      <MediaLuxuryViewer
+        items={MEDIA}
+        open={viewerOpen}
+        initialIndex={viewerIndex}
+        lang={lang}
+        onOpenChange={setViewerOpen}
+      />
     </section>
   );
 }
