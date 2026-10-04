@@ -70,7 +70,7 @@ export function TeamGameDayPanel({
             >
               <CalendarDays className="size-4 text-sport-foreground" />
               <span className="font-display text-base font-extrabold uppercase leading-none">
-                {lang === "fr" ? "Horaire" : "Schedule"}
+                {lang === "fr" ? "Source officielle" : "Official source"}
               </span>
             </a>
             <a
