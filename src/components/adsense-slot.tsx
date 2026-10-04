@@ -58,5 +58,5 @@ export function AdSenseSlot({
 
   if (!TAKATAK_ADS_CONFIG.enabled) return fallback;
 
-  return <TakatakAdSlot placement={placement} className={className} fallback={fallback} />;
+  return <TakatakAdSlot placement={placement} className={className} fallback={fallback} requireImage />;
 }

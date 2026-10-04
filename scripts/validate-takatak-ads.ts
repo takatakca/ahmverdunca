@@ -33,6 +33,12 @@ if (!house.includes("RUNWAY_AD_CREATIVES")) {
 if (!component.includes("if (!ad) return <>{fallback}</>")) {
   failures.push("TAKATAK ADS must render local fallback inventory whenever no valid network ad is available.");
 }
+if (!component.includes("requireImage && !normalized?.imageUrl")) {
+  failures.push("Text-only network ads must not suppress visual AHMV fallback inventory.");
+}
+if (!house.includes("requireImage")) {
+  failures.push("AHMV house sponsor slots must require a network image before replacing Runway creatives.");
+}
 
 for (const forbidden of ["document.cookie", "localStorage", "sessionStorage", "navigator.geolocation"]) {
   if (component.includes(forbidden)) failures.push(`TAKATAK ADS publisher must not use ${forbidden}.`);

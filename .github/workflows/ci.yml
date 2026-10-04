@@ -76,6 +76,9 @@ jobs:
       - name: Validate mobile navigation contract
         run: bun run check:mobile-nav
 
+      - name: Validate PWA launch splash
+        run: bun run check:pwa-splash
+
       - name: Validate Supabase public-key safety
         run: bun run check:supabase-key-safety
 

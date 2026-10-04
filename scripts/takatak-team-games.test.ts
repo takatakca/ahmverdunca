@@ -72,6 +72,7 @@ test("active upstream data is reduced to approved public fields", async () => {
     assert.match(requestUrl, new RegExp(`teamId=${validTeamId}`));
     const headers = new Headers(init?.headers);
     assert.equal(headers.get("authorization"), "Bearer server-only-test-token");
+    assert.equal(headers.get("x-ahmv-tenant"), "ahmverdun");
     assert.equal(headers.get("x-ahmv-team-id"), validTeamId);
 
     return new Response(

@@ -153,6 +153,7 @@ export async function handleTakatakTeamGames(
       headers: {
         accept: "application/json",
         authorization: `Bearer ${token}`,
+        "x-ahmv-tenant": "ahmverdun",
         "x-ahmv-team-id": team.legacyScheduleTeamId,
       },
       signal: controller.signal,

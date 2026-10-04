@@ -113,11 +113,13 @@ export function TakatakAdSlot({
   className = "",
   compact = false,
   fallback = null,
+  requireImage = false,
 }: {
   placement: string;
   className?: string;
   compact?: boolean;
   fallback?: ReactNode;
+  requireImage?: boolean;
 }) {
   const { lang } = useI18n();
   const rootRef = useRef<HTMLElement | null>(null);
@@ -152,7 +154,8 @@ export function TakatakAdSlot({
         return (await response.json()) as ServeResponse;
       })
       .then((payload) => {
-        setAd(payload.filled ? normalizeAd(payload.ad) : null);
+        const normalized = payload.filled ? normalizeAd(payload.ad) : null;
+        setAd(requireImage && !normalized?.imageUrl ? null : normalized);
       })
       .catch((error: unknown) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
@@ -160,7 +163,7 @@ export function TakatakAdSlot({
       });
 
     return () => controller.abort();
-  }, [lang, placementCode]);
+  }, [lang, placementCode, requireImage]);
 
   useEffect(() => {
     if (!ad || !rootRef.current || !("IntersectionObserver" in window)) return;

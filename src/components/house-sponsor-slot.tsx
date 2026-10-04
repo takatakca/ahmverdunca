@@ -272,6 +272,7 @@ export function HouseSponsorSlot({
       className={className}
       compact={compact}
       fallback={fallback}
+      requireImage
     />
   );
 }
