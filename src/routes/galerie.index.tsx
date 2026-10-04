@@ -9,6 +9,7 @@ import { UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
+import { MediaLuxuryViewer } from "@/components/media/media-luxury-viewer";
 
 export const Route = createFileRoute("/galerie/")({
   head: () => ({
@@ -27,6 +28,9 @@ function GalleryPage() {
   const { l, lang } = useI18n();
   const [season, setSeason] = useState("all");
   const [eventType, setEventType] = useState("all");
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const featuredMedia = useMemo(() => UPLOADED_AHMV_MEDIA.filter((_, index) => [0, 3, 34, 49].includes(index)), []);
   const seasons = useMemo(
     () => Array.from(new Set(ALBUMS.map((album) => album.season))).sort().reverse(),
     [],
@@ -59,28 +63,39 @@ function GalleryPage() {
         <HouseSponsorSlot placement="gallery" compact className="mb-8" />
         <section className="mb-8 overflow-hidden border border-navy/12 bg-navy md:mb-10">
           <div className="grid h-[320px] grid-cols-2 grid-rows-2 gap-px bg-white/10 sm:h-[420px] lg:grid-cols-4 lg:grid-rows-1">
-            {UPLOADED_AHMV_MEDIA.filter((_, index) => [0, 3, 34, 49].includes(index)).map((media, index) => (
-              <a
+            {featuredMedia.map((media, index) => (
+              <button
                 key={media.url}
-                href={media.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="interactive-surface group relative overflow-hidden bg-navy"
+                type="button"
+                onClick={() => {
+                  setViewerIndex(index);
+                  setViewerOpen(true);
+                }}
+                className="interactive-surface group relative overflow-hidden bg-navy text-left"
+                aria-label={
+                  lang === "fr"
+                    ? `Agrandir ${media.label.fr}`
+                    : `Enlarge ${media.label.en}`
+                }
               >
                 <img
                   src={media.url}
                   alt={lang === "fr" ? media.alt.fr : media.alt.en}
                   loading={index === 0 ? "eager" : "lazy"}
                   decoding="async"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.045]"
                 />
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_48%,rgba(7,16,43,0.72)_100%)]" />
-                {index === 0 && (
-                  <span className="absolute bottom-4 left-4 bg-navy/78 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
-                    {lang === "fr" ? "Photos réelles AHMV" : "Real AHMV photography"}
-                  </span>
-                )}
-              </a>
+                <span className="absolute bottom-4 left-4 bg-navy/78 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur">
+                  {index === 0
+                    ? lang === "fr"
+                      ? "Photos réelles AHMV · toucher pour agrandir"
+                      : "Real AHMV photography · tap to enlarge"
+                    : lang === "fr"
+                      ? "Agrandir"
+                      : "Enlarge"}
+                </span>
+              </button>
             ))}
           </div>
         </section>
@@ -298,6 +313,14 @@ function GalleryPage() {
         </div>
         </div>
       </div>
+
+      <MediaLuxuryViewer
+        items={featuredMedia}
+        open={viewerOpen}
+        initialIndex={viewerIndex}
+        lang={lang}
+        onOpenChange={setViewerOpen}
+      />
     </>
   );
 }
