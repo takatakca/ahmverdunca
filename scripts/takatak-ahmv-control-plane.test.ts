@@ -24,6 +24,7 @@ import {
 } from "../src/features/takatak-dashboard-ahmv/connectors.ts";
 import { createTakatakUsageEvent } from "../src/features/takatak-dashboard-ahmv/usage-metering.ts";
 import { retryDelaySeconds, safeWorkerErrorCode } from "../src/features/takatak-dashboard-ahmv/job-policy.ts";
+import { parseControlProvenance } from "../src/features/takatak-dashboard-ahmv/provenance.ts";
 
 function request(headers: Record<string, string> = {}) {
   return new Request("https://ahmverdun.ca/internal/takatak/ahmv", { headers });
@@ -388,5 +389,57 @@ test("website control rejects unknown resource types instead of accepting arbitr
         payload: { anything: true },
       }),
     /unsupported_website_control_resource_type/,
+  );
+});
+
+
+test("verified provenance requires a source reference and verification timestamp", () => {
+  assert.throws(
+    () =>
+      parseControlProvenance({
+        sourceKind: "official",
+        verificationStatus: "verified",
+      }),
+    /requires_source_and_timestamp/,
+  );
+
+  const provenance = parseControlProvenance({
+    sourceKind: "official",
+    verificationStatus: "verified",
+    sourceRef: "https://www.ahmverdun.com/news/39",
+    verifiedAt: "2026-10-04T16:00:00-04:00",
+  });
+
+  assert.equal(provenance.verificationStatus, "verified");
+  assert.equal(provenance.sourceKind, "official");
+});
+
+test("website drafts keep verification metadata separate from editable payload", () => {
+  const command = parseTakatakAhmvCommand({
+    tenant: "ahmverdun",
+    organizationId: "org_123",
+    actorId: "user_123",
+    requestId: "req_web_prov_1",
+    idempotencyKey: "cmd_web_prov_12345",
+    service: "website",
+    action: "save_draft",
+    resourceType: "arena_info",
+    resourceId: "jacques-lemaire",
+    provenance: {
+      sourceKind: "official",
+      verificationStatus: "verified",
+      sourceRef: "https://montreal.ca/lieux/arena-jacques-lemaire",
+      verifiedAt: "2026-10-04T16:00:00-04:00",
+    },
+    payload: {
+      address: "8681, boulevard Champlain, Montréal (Québec) H8P 1B8",
+      addressVerified: true,
+    },
+  });
+
+  assert.equal(command.provenance?.verificationStatus, "verified");
+  assert.equal(
+    (command.payload as { addressVerified?: boolean }).addressVerified,
+    true,
   );
 });
