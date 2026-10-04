@@ -154,12 +154,12 @@ function PartnersPage() {
           />
           <div className="mt-7 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3">
             {placements.map(({ Icon, fr, en, frText, enText }) => (
-              <article key={fr} className="bg-background p-5 md:p-6">
-                <Icon className="size-5 text-sport" aria-hidden />
-                <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-none text-navy">
+              <article key={fr} className="bg-competition p-5 text-white md:p-6">
+                <Icon className="size-5 text-sport-foreground" aria-hidden />
+                <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-none text-white">
                   {lang === "fr" ? fr : en}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-3 text-sm leading-relaxed text-white/56">
                   {lang === "fr" ? frText : enText}
                 </p>
               </article>
@@ -189,24 +189,24 @@ function PartnersPage() {
         </section>
 
         <section className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="bg-ice p-6 md:p-8">
-            <ShieldCheck className="size-7 text-sport" aria-hidden />
-            <p className="eyebrow mt-6 text-sport">{lang === "fr" ? "Transparence" : "Transparency"}</p>
-            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy">
+          <div className="bg-navy-deep p-6 text-white md:p-8">
+            <ShieldCheck className="size-7 text-sport-foreground" aria-hidden />
+            <p className="eyebrow mt-6 text-sport-foreground">{lang === "fr" ? "Transparence" : "Transparency"}</p>
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-white">
               {lang === "fr" ? "Pas de chiffres inventés." : "No invented numbers."}
             </h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-4 text-sm leading-relaxed text-white/58">
               {lang === "fr"
                 ? "Nous ne publions pas de nombre de visiteurs, impressions, clics ou taux de conversion avant que ces données soient réellement collectées et vérifiables."
                 : "We do not publish visitor, impression, click or conversion numbers until those metrics are actually collected and verifiable."}
             </p>
           </div>
-          <div className="bg-background p-6 md:p-8">
-            <p className="eyebrow text-sport">{lang === "fr" ? "Demande commanditaire" : "Sponsor inquiry"}</p>
+          <div className="bg-competition p-6 text-white md:p-8">
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Demande commanditaire" : "Sponsor inquiry"}</p>
             <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy">
               {lang === "fr" ? "Quel espace vous intéresse?" : "Which placement interests you?"}
             </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/58">
               {lang === "fr"
                 ? "Indiquez votre entreprise, le type de visibilité recherché et la période souhaitée dans le formulaire de contact. L’équipe pourra ensuite confirmer ce qui est réellement disponible."
                 : "Use the contact form to share your business, preferred visibility type and desired period. The team can then confirm what is actually available."}
@@ -217,7 +217,7 @@ function PartnersPage() {
                   {lang === "fr" ? "Envoyer une demande" : "Send an inquiry"} <ArrowRight className="size-4" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg">
+              <Button asChild variant="outline-light" size="lg">
                 <Link to="/">{lang === "fr" ? "Voir le portail" : "View the portal"}</Link>
               </Button>
             </div>
@@ -245,7 +245,7 @@ function PartnersPage() {
             {HOUSE_SPONSORS.map((sponsor) => (
               <article
                 key={sponsor.id}
-                className="group overflow-hidden border border-navy/12 bg-background"
+                className="group overflow-hidden border border-white/12 bg-navy-deep text-white"
               >
                 <div className="relative flex min-h-36 items-end overflow-hidden bg-competition p-5 text-white">
                   <span className="pointer-events-none absolute -right-3 -top-8 font-display text-[7rem] font-extrabold uppercase leading-none text-white/[0.035]" aria-hidden>
@@ -260,17 +260,17 @@ function PartnersPage() {
                     </p>
                   </div>
                 </div>
-                <div className="border-t border-navy/10 p-4">
+                <div className="border-t border-white/10 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="font-display text-2xl font-extrabold uppercase leading-none text-navy">
+                      <p className="font-display text-2xl font-extrabold uppercase leading-none text-white">
                         {sponsor.name}
                       </p>
-                      <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                      <p className="mt-2 text-xs leading-relaxed text-white/55">
                         {lang === "fr" ? sponsor.tagline.fr : sponsor.tagline.en}
                       </p>
                     </div>
-                    <span className="shrink-0 border border-navy/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                    <span className="shrink-0 border border-white/12 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white/42">
                       {lang === "fr" ? "Maison" : "House"}
                     </span>
                   </div>
@@ -279,12 +279,12 @@ function PartnersPage() {
                       href={sponsor.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.1em] text-sport hover:underline"
+                      className="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.1em] text-sport-foreground hover:underline"
                     >
                       {lang === "fr" ? "Visiter" : "Visit"} <ArrowRight className="size-3.5" />
                     </a>
                   ) : (
-                    <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                    <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-white/42">
                       {lang === "fr" ? "Lien public à confirmer" : "Public link to confirm"}
                     </p>
                   )}
@@ -294,7 +294,7 @@ function PartnersPage() {
           </div>
         </section>
 
-        <section className="border border-navy/12 bg-ice p-6 md:p-8">
+        <section className="border border-white/12 bg-competition p-6 text-white md:p-8">
           <SectionHeading
             eyebrow={lang === "fr" ? "Gestion partenaire" : "Partner management"}
             title={lang === "fr" ? "Une commandite plus simple à gérer" : "Simpler sponsorship management"}
@@ -328,10 +328,10 @@ function PartnersPage() {
                 enText: "Website and other channels only when authorized.",
               },
             ].map(({ Icon, fr, en, frText, enText }) => (
-              <div key={fr} className="border border-navy/10 bg-background p-5">
-                <Icon className="size-6 text-sport" aria-hidden />
-                <h3 className="mt-5 font-display text-2xl font-bold uppercase text-navy">{lang === "fr" ? fr : en}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{lang === "fr" ? frText : enText}</p>
+              <div key={fr} className="border border-white/10 bg-navy-deep p-5">
+                <Icon className="size-6 text-sport-foreground" aria-hidden />
+                <h3 className="mt-5 font-display text-2xl font-bold uppercase text-white">{lang === "fr" ? fr : en}</h3>
+                <p className="mt-2 text-sm text-white/55">{lang === "fr" ? frText : enText}</p>
               </div>
             ))}
           </div>
