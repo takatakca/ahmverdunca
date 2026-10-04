@@ -19,6 +19,8 @@ import { newsVisualForCategory } from "@/data/news-visuals";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { cn } from "@/lib/utils";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
 
 const FEED_URL =
   import.meta.env["VITE_TAKATAK_PUBLIC_API_ORIGIN"]?.trim()
@@ -186,6 +188,7 @@ export function NewsCentre() {
   const [filters, setFilters] = useState<SavedFilters>(DEFAULT_FILTERS);
   const [filterOpen, setFilterOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const contentRegistry = useContentOverlayRegistry();
 
   useEffect(() => {
     setFilters(readSavedFilters());
@@ -224,7 +227,7 @@ export function NewsCentre() {
       const title = l(article.title);
       const text = l(article.excerpt);
       const url = article.sourceUrl ?? null;
-      return {
+      const base: NewsFeedItem = {
         id: `archive:${article.slug}`,
         kind: "official",
         network: classifyNetwork(url),
@@ -237,8 +240,17 @@ export function NewsCentre() {
         imageUrl: article.image ?? newsVisualForCategory(article.category)?.url ?? null,
         internalSlug: article.slug,
         teamSlugs: article.teamSlugs,
+        searchable: "",
+      };
+      const patched = contentRegistry.apply(
+        "news",
+        `news:${article.slug}`,
+        base as unknown as Record<string, unknown>,
+      ) as unknown as NewsFeedItem;
+      return {
+        ...patched,
         searchable: normalize(
-          ["AHM Verdun", title, text, article.author, article.category, ...article.teamSlugs].join(" "),
+          ["AHM Verdun", patched.title, patched.text, article.author, article.category, ...article.teamSlugs].join(" "),
         ),
       };
     });
@@ -248,7 +260,7 @@ export function NewsCentre() {
       const inferred = inferTeamSlugs(text);
       const teamSlugs = Array.from(new Set([...(item.teamSlugs ?? []), ...inferred]));
       const network = item.network ?? "facebook";
-      return {
+      const base: NewsFeedItem = {
         id: `live:${item.id}`,
         kind: item.source,
         network,
@@ -275,12 +287,27 @@ export function NewsCentre() {
         imageUrl: item.imageUrl,
         internalSlug: null,
         teamSlugs,
-        searchable: normalize([item.association?.trim() || "AHM Verdun", text, network, ...teamSlugs].join(" ")),
+        searchable: "",
+      };
+      const patched = contentRegistry.apply(
+        "post",
+        `post:${item.id}`,
+        base as unknown as Record<string, unknown>,
+      ) as unknown as NewsFeedItem;
+      return {
+        ...patched,
+        searchable: normalize([
+          patched.association,
+          patched.title,
+          patched.text,
+          patched.network,
+          ...teamSlugs,
+        ].join(" ")),
       };
     });
 
     return [...socialItems, ...archiveItems];
-  }, [lang, l, liveItems]);
+  }, [contentRegistry.overlays, lang, l, liveItems]);
 
   const visibleItems = useMemo(() => {
     const now = Date.now();
@@ -560,6 +587,17 @@ export function NewsCentre() {
           <div className="divide-y divide-white/10">
             {visibleItems.map((item) => {
               const Icon = sourceIcon(item.network);
+              const contributionType = item.internalSlug ? "news" : "post";
+              const contributionKey = item.internalSlug
+                ? `news:${item.internalSlug}`
+                : `post:${item.id.replace(/^live:/, "")}`;
+              const contributionFields = [
+                { key: "title", label: { fr: "Titre", en: "Title" }, kind: "text" as const, current: item.title },
+                { key: "text", label: { fr: "Texte / résumé", en: "Text / summary" }, kind: "textarea" as const, current: item.text },
+                { key: "imageUrl", label: { fr: "Image", en: "Image" }, kind: "image-url" as const, current: item.imageUrl },
+                { key: "url", label: { fr: "Lien source", en: "Source link" }, kind: "url" as const, current: item.url },
+                { key: "publishedAt", label: { fr: "Date / heure publiée", en: "Published date / time" }, kind: "text" as const, current: item.publishedAt },
+              ];
               const inner = (
                 <>
                   <div className="relative h-48 overflow-hidden bg-navy-deep sm:h-auto sm:min-h-48">
@@ -635,9 +673,8 @@ export function NewsCentre() {
                 </>
               );
 
-              return item.internalSlug ? (
+              const card = item.internalSlug ? (
                 <Link
-                  key={item.id}
                   to="/nouvelles/$slug"
                   params={{ slug: item.internalSlug }}
                   className="group grid bg-competition transition-colors hover:bg-white/[0.03] sm:grid-cols-[16rem_minmax(0,1fr)]"
@@ -646,7 +683,6 @@ export function NewsCentre() {
                 </Link>
               ) : item.url ? (
                 <a
-                  key={item.id}
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -655,12 +691,24 @@ export function NewsCentre() {
                   {inner}
                 </a>
               ) : (
-                <article
-                  key={item.id}
-                  className="group grid bg-competition sm:grid-cols-[16rem_minmax(0,1fr)]"
-                >
+                <article className="group grid bg-competition sm:grid-cols-[16rem_minmax(0,1fr)]">
                   {inner}
                 </article>
+              );
+
+              return (
+                <div key={item.id} className="relative">
+                  <ContentContributionButton
+                    resourceType={contributionType}
+                    resourceKey={contributionKey}
+                    title={item.title}
+                    snapshot={item as unknown as Record<string, unknown>}
+                    fields={contributionFields}
+                    appearance="menu"
+                    className="absolute right-3 top-3 z-20"
+                  />
+                  {card}
+                </div>
               );
             })}
           </div>
