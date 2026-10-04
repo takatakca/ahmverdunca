@@ -22,7 +22,7 @@ export function ParentQuickPanel() {
   return (
     <aside className="fixed bottom-6 right-6 z-40 hidden lg:block">
       {open && (
-        <section className="mb-3 w-[360px] overflow-hidden border border-navy/12 bg-background shadow-[0_28px_80px_-34px_rgba(7,16,43,0.48)]">
+        <section className="mb-3 w-[360px] overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_28px_80px_-34px_rgba(0,0,0,0.72)]">
           <div className="competition-panel flex items-start justify-between gap-4 p-5 text-white">
             <div>
               <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Accès parent" : "Parent access"}</p>
@@ -51,10 +51,10 @@ export function ParentQuickPanel() {
                 href={href}
                 target={external ? "_blank" : undefined}
                 rel={external ? "noopener noreferrer" : undefined}
-                className="group flex min-h-24 flex-col justify-between bg-background p-4 hover:bg-ice"
+                className="group flex min-h-24 flex-col justify-between bg-competition p-4 text-white hover:bg-white/[0.04]"
               >
-                <Icon className="size-4 text-sport" />
-                <span className="flex items-center justify-between gap-2 font-display text-lg font-extrabold uppercase text-navy">
+                <Icon className="size-4 text-sport-foreground" />
+                <span className="flex items-center justify-between gap-2 font-display text-lg font-extrabold uppercase text-white">
                   {lang === "fr" ? labelFr : labelEn}
                   <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
                 </span>
@@ -64,15 +64,15 @@ export function ParentQuickPanel() {
 
           <a
             href="/membership"
-            className="flex min-h-12 items-center justify-between border-t border-navy/10 bg-ice px-4 text-[9px] font-bold uppercase tracking-[0.12em] text-navy"
+            className="flex min-h-12 items-center justify-between border-t border-white/10 bg-white/[0.04] px-4 text-[9px] font-bold uppercase tracking-[0.12em] text-white/72"
           >
             <span className="flex items-center gap-2">
-              <ShieldCheck className="size-4 text-sport" />
+              <ShieldCheck className="size-4 text-sport-foreground" />
               {isDemoMember
                 ? (lang === "fr" ? "AHMV Member · aperçu actif" : "AHMV Member · preview active")
                 : (lang === "fr" ? "Voir AHMV Member" : "View AHMV Member")}
             </span>
-            <ChevronRight className="size-3.5 text-sport" />
+            <ChevronRight className="size-3.5 text-sport-foreground" />
           </a>
         </section>
       )}
