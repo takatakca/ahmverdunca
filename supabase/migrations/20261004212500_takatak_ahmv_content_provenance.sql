@@ -41,3 +41,54 @@ comment on column public.ahmv_takatak_control_records.source_ref is
   'Non-secret source URL/path/provider reference used to justify the managed content.';
 comment on column public.ahmv_takatak_control_records.source_verified_at is
   'Timestamp of the last explicit verification when verification_status=verified.';
+
+
+alter table public.ahmv_takatak_control_record_versions
+  add column if not exists source_kind text not null default 'unknown'
+    check (source_kind in ('official','association','social','provider','manual','unknown')),
+  add column if not exists verification_status text not null default 'unverified'
+    check (verification_status in ('unverified','verified','disputed','stale')),
+  add column if not exists source_ref text,
+  add column if not exists source_verified_at timestamptz;
+
+create or replace function public.capture_ahmv_takatak_control_record_version()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  insert into public.ahmv_takatak_control_record_versions (
+    control_record_id,
+    revision,
+    status,
+    payload,
+    actor_id,
+    source_kind,
+    verification_status,
+    source_ref,
+    source_verified_at,
+    created_at
+  )
+  values (
+    new.id,
+    new.revision,
+    new.status,
+    new.payload,
+    new.updated_by,
+    new.source_kind,
+    new.verification_status,
+    new.source_ref,
+    new.source_verified_at,
+    new.updated_at
+  )
+  on conflict (control_record_id, revision) do nothing;
+
+  return new;
+end;
+$$;
+
+revoke all on function public.capture_ahmv_takatak_control_record_version()
+  from public, anon, authenticated;
+grant execute on function public.capture_ahmv_takatak_control_record_version()
+  to service_role;
