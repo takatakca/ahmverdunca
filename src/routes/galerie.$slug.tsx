@@ -11,6 +11,8 @@ import { getAlbum } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+import { useContentOverlayRegistry } from "@/lib/community-content";
 
 export const Route = createFileRoute("/galerie/$slug")({
   loader: ({ params }) => {
@@ -39,9 +41,32 @@ export const Route = createFileRoute("/galerie/$slug")({
 function AlbumPage() {
   const { slug } = Route.useLoaderData();
   const { t, l, lang } = useI18n();
-  const al = getAlbum(slug)!;
-  const photos = al.photos ?? [];
+  const contentRegistry = useContentOverlayRegistry();
+  const baseAlbum = getAlbum(slug)!;
+  const al = contentRegistry.apply(
+    "gallery",
+    `gallery:${slug}`,
+    baseAlbum as unknown as Record<string, unknown>,
+  ) as unknown as typeof baseAlbum;
+  const photos = useMemo(
+    () =>
+      (al.photos ?? []).map((media, index) =>
+        contentRegistry.apply(
+          "photo",
+          `photo:${slug}:${index}`,
+          media as unknown as Record<string, unknown>,
+        ) as unknown as typeof media,
+      ),
+    [al.photos, contentRegistry.overlays, slug],
+  );
   const previewPhotos = photos.slice(0, 6);
+  const albumFields = [
+    { key: `title.${lang}`, label: { fr: "Titre de l’album", en: "Album title" }, kind: "text" as const, current: al.title[lang] },
+    { key: `description.${lang}`, label: { fr: "Description", en: "Description" }, kind: "textarea" as const, current: al.description[lang] },
+    { key: "date", label: { fr: "Date", en: "Date" }, kind: "date" as const, current: al.date },
+    { key: "coverUrl", label: { fr: "Image de couverture", en: "Cover image" }, kind: "image-url" as const, current: al.coverUrl },
+    { key: "sourceUrl", label: { fr: "Lien source", en: "Source link" }, kind: "url" as const, current: al.sourceUrl },
+  ];
   const [category, setCategory] = useState("all");
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewerIndex, setViewerIndex] = useState(0);
@@ -67,6 +92,16 @@ function AlbumPage() {
         eyebrow={`${l(al.eventType)} · ${formatDate(al.date, lang)}`}
         title={l(al.title)}
         description={l(al.description)}
+        actions={
+          <ContentContributionButton
+            resourceType="gallery"
+            resourceKey={`gallery:${al.slug}`}
+            title={l(al.title)}
+            snapshot={al as unknown as Record<string, unknown>}
+            fields={albumFields}
+            appearance="menu"
+          />
+        }
       />
 
       <div className="container-site py-8 md:py-12">
@@ -275,32 +310,97 @@ function AlbumPage() {
               <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3">
                 {visiblePhotos.map((media, index) => {
                   const fullIndex = photos.findIndex((photo) => photo.url === media.url);
+                  const photoFields = [
+                    { key: "url", label: { fr: "Image", en: "Image" }, kind: "image-url" as const, current: media.url },
+                    { key: `alt.${lang}`, label: { fr: "Texte alternatif", en: "Alternative text" }, kind: "text" as const, current: media.alt[lang] },
+                    { key: `label.${lang}`, label: { fr: "Légende", en: "Caption" }, kind: "text" as const, current: media.label?.[lang] },
+                    { key: "sourceUrl", label: { fr: "Lien source", en: "Source link" }, kind: "url" as const, current: media.sourceUrl },
+                  ];
                   return (
+                    <div key={`${media.url}-mobile`} className="relative w-[82vw] max-w-[22rem] shrink-0 snap-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setViewerIndex(Math.max(fullIndex, 0));
+                          setViewerOpen(true);
+                        }}
+                        className="interactive-surface group w-full overflow-hidden border border-white/10 bg-competition text-left"
+                      >
+                        <figure>
+                          <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
+                            <img
+                              src={media.url}
+                              alt={lang === "fr" ? media.alt.fr : media.alt.en}
+                              loading={index < 3 ? "eager" : "lazy"}
+                              decoding="async"
+                              className="size-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
+                            />
+                            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.76)_100%)]" />
+                            {media.categoryLabel && (
+                              <span className="absolute left-3 top-3 bg-navy/82 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
+                                {l(media.categoryLabel)}
+                              </span>
+                            )}
+                            <span className="absolute bottom-3 right-3 inline-flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur">
+                              <ZoomIn className="size-4" />
+                            </span>
+                          </div>
+                          <figcaption className="min-h-16 p-3">
+                            <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white/78">
+                              {media.label ? l(media.label) : lang === "fr" ? "Média AHMV" : "AHMV media"}
+                            </p>
+                          </figcaption>
+                        </figure>
+                      </button>
+                      <ContentContributionButton
+                        resourceType="photo"
+                        resourceKey={`photo:${slug}:${Math.max(fullIndex, 0)}`}
+                        title={media.label ? l(media.label) : l(al.title)}
+                        snapshot={media as unknown as Record<string, unknown>}
+                        fields={photoFields}
+                        appearance="menu"
+                        className="absolute right-3 top-3 z-20"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-6 hidden grid-cols-2 gap-2 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {visiblePhotos.map((media, index) => {
+                const fullIndex = photos.findIndex((photo) => photo.url === media.url);
+                const photoFields = [
+                  { key: "url", label: { fr: "Image", en: "Image" }, kind: "image-url" as const, current: media.url },
+                  { key: `alt.${lang}`, label: { fr: "Texte alternatif", en: "Alternative text" }, kind: "text" as const, current: media.alt[lang] },
+                  { key: `label.${lang}`, label: { fr: "Légende", en: "Caption" }, kind: "text" as const, current: media.label?.[lang] },
+                  { key: "sourceUrl", label: { fr: "Lien source", en: "Source link" }, kind: "url" as const, current: media.sourceUrl },
+                ];
+                return (
+                  <div key={`${media.url}-desktop`} className="relative">
                     <button
-                      key={media.url}
                       type="button"
                       onClick={() => {
                         setViewerIndex(Math.max(fullIndex, 0));
                         setViewerOpen(true);
                       }}
-                      className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center overflow-hidden border border-white/10 bg-competition text-left"
+                      className="interactive-surface group size-full overflow-hidden border border-white/10 bg-competition text-left"
                     >
                       <figure>
                         <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
                           <img
                             src={media.url}
                             alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                            loading={index < 3 ? "eager" : "lazy"}
+                            loading={index < 4 ? "eager" : "lazy"}
                             decoding="async"
-                            className="size-full object-cover transition-transform duration-500 group-active:scale-[1.02]"
+                            className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                           />
-                          <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_58%,rgba(7,16,43,0.76)_100%)]" />
                           {media.categoryLabel && (
-                            <span className="absolute left-3 top-3 bg-navy/82 px-2.5 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
+                            <span className="absolute left-2 top-2 bg-navy/82 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
                               {l(media.categoryLabel)}
                             </span>
                           )}
-                          <span className="absolute bottom-3 right-3 inline-flex size-9 items-center justify-center border border-white/20 bg-navy-deep/72 text-white backdrop-blur">
+                          <span className="absolute bottom-2 right-2 inline-flex size-8 items-center justify-center border border-white/20 bg-navy-deep/70 text-white backdrop-blur">
                             <ZoomIn className="size-4" />
                           </span>
                         </div>
@@ -311,49 +411,16 @@ function AlbumPage() {
                         </figcaption>
                       </figure>
                     </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="mt-6 hidden grid-cols-2 gap-2 sm:grid sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {visiblePhotos.map((media, index) => {
-                const fullIndex = photos.findIndex((photo) => photo.url === media.url);
-                return (
-                  <button
-                    key={media.url}
-                    type="button"
-                    onClick={() => {
-                      setViewerIndex(Math.max(fullIndex, 0));
-                      setViewerOpen(true);
-                    }}
-                    className="interactive-surface group overflow-hidden border border-white/10 bg-competition text-left"
-                  >
-                    <figure>
-                      <div className="relative aspect-[4/3] overflow-hidden bg-navy-deep">
-                        <img
-                          src={media.url}
-                          alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                          loading={index < 4 ? "eager" : "lazy"}
-                          decoding="async"
-                          className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                        />
-                        {media.categoryLabel && (
-                          <span className="absolute left-2 top-2 bg-navy/82 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white backdrop-blur">
-                            {l(media.categoryLabel)}
-                          </span>
-                        )}
-                        <span className="absolute right-2 top-2 inline-flex size-8 items-center justify-center border border-white/20 bg-navy-deep/70 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
-                          <ZoomIn className="size-4" />
-                        </span>
-                      </div>
-                      <figcaption className="min-h-16 p-3">
-                        <p className="text-[10px] font-bold uppercase leading-tight tracking-[0.08em] text-white/78">
-                          {media.label ? l(media.label) : lang === "fr" ? "Média AHMV" : "AHMV media"}
-                        </p>
-                      </figcaption>
-                    </figure>
-                  </button>
+                    <ContentContributionButton
+                      resourceType="photo"
+                      resourceKey={`photo:${slug}:${Math.max(fullIndex, 0)}`}
+                      title={media.label ? l(media.label) : l(al.title)}
+                      snapshot={media as unknown as Record<string, unknown>}
+                      fields={photoFields}
+                      appearance="menu"
+                      className="absolute right-2 top-2 z-20"
+                    />
+                  </div>
                 );
               })}
             </div>
