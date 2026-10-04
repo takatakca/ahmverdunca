@@ -42,7 +42,7 @@ export const REQUIRED_PUBLIC_ALBUM_COUNT = 5;
 export const REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT = 24;
 
 export const LEGACY_CONTENT_AUDIT = {
-  checkedAt: "2026-10-02",
+  checkedAt: "2026-10-04",
   shellContactShownByLegacyPlatform: "info@hockeycms.ca",
   teamNotifications: "https://icescheduling.ca/team-notifications/register",
   legacyFaqDocuments: {
