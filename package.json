@@ -38,12 +38,13 @@
     "test:deploy-smoke": "bun test scripts/deploy-production-http-smoke.test.ts",
     "test:team-games": "bun test scripts/takatak-team-games.test.ts",
     "check:pwa-splash": "bun scripts/validate-pwa-splash.ts",
-    "test:schedule-normalizer": "bun test scripts/weekly-schedule-normalizer.test.ts",
+    "test:schedule-normalizer": "bun test scripts/weekly-schedule-normalizer.test.ts scripts/official-week-snapshot.test.ts",
     "check:newsletter": "bun scripts/validate-newsletter.ts",
     "check:community-editability": "bun scripts/validate-community-editability.ts",
     "check:deploy-concurrency": "bun scripts/validate-deployment-concurrency.ts",
     "check:production-config": "bun scripts/validate-production-config-inventory.ts",
-    "report:production-readiness": "bun scripts/production-readiness-report.ts"
+    "report:production-readiness": "bun scripts/production-readiness-report.ts",
+    "publish:official-week": "bun scripts/publish-official-week-to-takatak.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
