@@ -33,6 +33,9 @@ if (!uploadedMedia.includes("filter((asset) => !asset.containsMinors)")) {
 if (!galleryData.includes("PUBLIC_UPLOADED_AHMV_MEDIA")) {
   failures.push("gallery data does not consume the consent-safe public media collection.");
 }
+if (!galleryData.includes('pendingReason: "consent"')) {
+  failures.push("gallery data does not mark consent-blocked imported albums explicitly.");
+}
 if (galleryData.includes('import { UPLOADED_AHMV_MEDIA }')) {
   failures.push("gallery data imports raw uploaded media instead of the public collection.");
 }
