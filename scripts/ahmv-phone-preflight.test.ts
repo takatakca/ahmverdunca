@@ -29,6 +29,29 @@ test("preflight requires Twilio credentials when phone integration is enabled", 
   assert.equal(checks.find((check) => check.id === "twilio-auth")?.ok, false);
 });
 
+test("phone activation requires explicit Twilio carrier attestation", () => {
+  const base = {
+    AHMV_PHONE_ENABLED: "true",
+    AHMV_PHONE_PUBLIC: "false",
+    AHMV_PUBLIC_PHONE: "+15816666246",
+    AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
+    AHMV_PHONE_TRIAL_DAYS: "30",
+    TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    TWILIO_ACCOUNT_SID: "ACexample",
+    TWILIO_AUTH_TOKEN: "secret",
+  };
+
+  const missing = phonePreflight(base);
+  assert.equal(missing.find((check) => check.id === "twilio-carrier")?.ok, false);
+  assert.equal(missing.find((check) => check.id === "twilio-carrier")?.required, true);
+
+  const wrong = phonePreflight({ ...base, AHMV_PHONE_CARRIER: "numberbarn" });
+  assert.equal(wrong.find((check) => check.id === "twilio-carrier")?.ok, false);
+
+  const confirmed = phonePreflight({ ...base, AHMV_PHONE_CARRIER: "twilio" });
+  assert.equal(confirmed.find((check) => check.id === "twilio-carrier")?.ok, true);
+});
+
 test("public flag cannot pass while phone integration is disabled", () => {
   const checks = phonePreflight({
     AHMV_PHONE_ENABLED: "false",
@@ -81,6 +104,7 @@ test("lifecycle mode passes its safety gates with provider and cron configuratio
     AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
     AHMV_PHONE_TRIAL_DAYS: "30",
     TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    AHMV_PHONE_CARRIER: "twilio",
     TWILIO_ACCOUNT_SID: "ACexample",
     TWILIO_AUTH_TOKEN: "secret",
     LOVABLE_CRON_SECRET: "cron-secret",
@@ -117,6 +141,7 @@ test("reminder worker safety gates pass with explicit mapping and provider confi
     AHMV_PHONE_TRIAL_DAYS: "30",
     TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
     AHMV_REMINDER_TEAM_MAP_JSON: '{"Junior":"2025191400035011"}',
+    AHMV_PHONE_CARRIER: "twilio",
     TWILIO_ACCOUNT_SID: "ACexample",
     TWILIO_AUTH_TOKEN: "secret",
     LOVABLE_CRON_SECRET: "cron-secret",
@@ -240,6 +265,7 @@ test("commercial campaigns require phone provider service token cron secret and 
     TAKATAK_AHMV_SERVICE_TOKEN: "service-secret",
     LOVABLE_CRON_SECRET: "cron-secret",
     TAKATAK_SMS_CEM_INFO_URL: "https://takatak.ca/sms-info",
+    AHMV_PHONE_CARRIER: "twilio",
     TWILIO_ACCOUNT_SID: "ACexample",
     TWILIO_AUTH_TOKEN: "twilio-secret",
   });
@@ -291,6 +317,7 @@ test("database-backed phone features reject a wrong Supabase project and accept 
     AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
     AHMV_PHONE_TRIAL_DAYS: "30",
     TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    AHMV_PHONE_CARRIER: "twilio",
     TWILIO_ACCOUNT_SID: "ACexample",
     TWILIO_AUTH_TOKEN: "secret",
     AHMV_SUPABASE_PROJECT_REF: "utuvzrqvivqyziibobvu",
@@ -305,6 +332,7 @@ test("database-backed phone features reject a wrong Supabase project and accept 
     AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
     AHMV_PHONE_TRIAL_DAYS: "30",
     TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    AHMV_PHONE_CARRIER: "twilio",
     TWILIO_ACCOUNT_SID: "ACexample",
     TWILIO_AUTH_TOKEN: "secret",
     AHMV_SUPABASE_PROJECT_REF: "bqflllsjxmhqsvemhhwv",
@@ -321,6 +349,7 @@ test("public phone cannot launch without the authenticated live schedule source"
     AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
     AHMV_PHONE_TRIAL_DAYS: "30",
     TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    AHMV_PHONE_CARRIER: "twilio",
     TWILIO_ACCOUNT_SID: "ACexample",
     TWILIO_AUTH_TOKEN: "secret",
     AHMV_SUPABASE_PROJECT_REF: "bqflllsjxmhqsvemhhwv",
@@ -335,6 +364,7 @@ test("public phone cannot launch without the authenticated live schedule source"
     AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
     AHMV_PHONE_TRIAL_DAYS: "30",
     TAKATAK_AHMV_MEMBER_URL: "https://takatak.ca/login?next=%2Fdashboard%2Fhockey",
+    AHMV_PHONE_CARRIER: "twilio",
     TWILIO_ACCOUNT_SID: "ACexample",
     TWILIO_AUTH_TOKEN: "secret",
     AHMV_SUPABASE_PROJECT_REF: "bqflllsjxmhqsvemhhwv",
