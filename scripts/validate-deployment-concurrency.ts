@@ -17,8 +17,13 @@ assert.doesNotMatch(auto, /AHMV_SSH_MAX_ATTEMPTS=8 ahmv-ssh/);
 assert.equal((auto.match(/group: ahmverdun-production-auto/g) ?? []).length, 1);
 
 assert.match(auto, /VITE_AHMV_BUILD_SHA:\s*\$\{\{ github\.event\.workflow_run\.head_sha \}\}/);
-assert.match(auto, /AHMV_APP_ROOT\/current\/tmp\/restart\.txt/);
+assert.match(auto, /RESTART_COMMAND:\s*\$\{\{ secrets\.AHMV_PRODUCTION_RESTART_COMMAND \}\}/);
+assert.match(auto, /AHMV_PRODUCTION_URL\s*\\\n\s*RESTART_COMMAND/);
+assert.match(auto, /ahmv-ssh "\$RESTART_COMMAND"/);
+assert.doesNotMatch(auto, /AHMV_APP_ROOT\/current\/tmp\/restart\.txt/);
 assert.doesNotMatch(auto, /AHMV_APP_ROOT\/tmp\/restart\.txt/);
+assert.match(auto, /SFTP access is available, but production activation requires/);
+assert.match(auto, /Refusing to upload or activate a release that cannot be restarted and runtime-certified/);
 assert.match(auto, /Passenger is not serving the compiled release SHA/);
 assert.match(sftp, /current\/tmp\/restart\.txt/);
 assert.doesNotMatch(sftp, /"%s\/tmp\/restart\.txt"/);

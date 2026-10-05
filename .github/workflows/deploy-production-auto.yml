@@ -32,6 +32,7 @@ jobs:
       AHMV_USER: ${{ secrets.AHMV_PRODUCTION_USER }}
       AHMV_APP_ROOT: ${{ secrets.AHMV_PRODUCTION_APP_ROOT }}
       AHMV_PRODUCTION_URL: ${{ secrets.AHMV_PRODUCTION_URL }}
+      RESTART_COMMAND: ${{ secrets.AHMV_PRODUCTION_RESTART_COMMAND }}
       VITE_PUBLIC_INDEXING: ${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}
 
     steps:
@@ -99,7 +100,8 @@ jobs:
             AHMV_PORT \
             AHMV_USER \
             AHMV_APP_ROOT \
-            AHMV_PRODUCTION_URL
+            AHMV_PRODUCTION_URL \
+            RESTART_COMMAND
           do
             test -n "${!name:-}" || {
               echo "ERROR: Missing required value: $name"
@@ -298,12 +300,14 @@ jobs:
           fi
 
           echo "SSH command and shell channels are unavailable."
-          echo "Testing SFTP subsystem as a fail-closed fallback..."
+          echo "Testing SFTP subsystem for diagnostics only..."
 
           AHMV_SFTP_MAX_ATTEMPTS=4 scripts/deploy-production-sftp.sh test
 
-          echo "AHMV_DEPLOY_TRANSPORT=sftp" >> "$GITHUB_ENV"
-          echo "Production transport: SFTP-only fallback."
+          echo "ERROR: SFTP access is available, but production activation requires"
+          echo "the approved cPanel/Passenger restart command over an SSH command channel."
+          echo "Refusing to upload or activate a release that cannot be restarted and runtime-certified."
+          exit 1
 
       - name: Create immutable release package
         run: |
@@ -534,15 +538,14 @@ jobs:
 
           echo "Requesting Passenger restart..."
 
-          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
-            scripts/deploy-production-sftp.sh restart
-          else
-            ahmv-ssh \
-              "mkdir -p '$AHMV_APP_ROOT/current/tmp' &&
-               touch '$AHMV_APP_ROOT/current/tmp/restart.txt'"
-          fi
+          test "$AHMV_DEPLOY_TRANSPORT" = "ssh" || {
+            echo "ERROR: Production runtime restart requires the SSH command channel."
+            exit 1
+          }
 
-          echo "Passenger restart requested."
+          ahmv-ssh "$RESTART_COMMAND"
+
+          echo "Approved cPanel/Passenger restart command completed."
 
       - name: Verify health
         run: |
@@ -750,24 +753,22 @@ jobs:
           echo "Rolling back to previous release:"
           echo "$previous_release"
 
-          if [ "$AHMV_DEPLOY_TRANSPORT" = "sftp" ]; then
-            if [ -z "${PREVIOUS_RELEASE_KEY:-}" ]; then
-              echo "No previous SFTP release key is available for rollback."
-              exit 0
-            fi
-            scripts/deploy-production-sftp.sh rollback
-          else
-            ahmv-ssh \
-              "set -e
-               test -e '$previous_release'
-               rm -f '$AHMV_APP_ROOT/current.new'
-               ln -s '$previous_release' '$AHMV_APP_ROOT/current.new'
-               mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'
-               mkdir -p '$AHMV_APP_ROOT/current/tmp'
-               touch '$AHMV_APP_ROOT/current/tmp/restart.txt'"
+          if [ "${AHMV_DEPLOY_TRANSPORT:-}" != "ssh" ]; then
+            echo "No certified SSH command channel was established."
+            echo "No production activation should have occurred; skipping remote rollback."
+            exit 0
           fi
 
-          echo "Previous release restored."
+          ahmv-ssh \
+            "set -e
+             test -e '$previous_release'
+             rm -f '$AHMV_APP_ROOT/current.new'
+             ln -s '$previous_release' '$AHMV_APP_ROOT/current.new'
+             mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'"
+
+          ahmv-ssh "$RESTART_COMMAND"
+
+          echo "Previous release restored and approved cPanel/Passenger restart completed."
           echo "Waiting for Passenger restart..."
           sleep 5
 
