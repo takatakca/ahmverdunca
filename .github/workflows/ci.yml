@@ -85,6 +85,9 @@ jobs:
       - name: Validate Parent Premium contract
         run: bun run check:parent-premium
 
+      - name: AHMV Family Experience session and entitlement tests
+        run: bun run test:experience
+
       - name: Validate newsletter frontend contract
         run: bun run check:newsletter
 
