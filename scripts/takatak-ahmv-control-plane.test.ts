@@ -24,6 +24,18 @@ import {
 } from "../src/features/takatak-dashboard-ahmv/connectors.ts";
 import { createTakatakUsageEvent } from "../src/features/takatak-dashboard-ahmv/usage-metering.ts";
 import { retryDelaySeconds, safeWorkerErrorCode } from "../src/features/takatak-dashboard-ahmv/job-policy.ts";
+import { parseControlProvenance } from "../src/features/takatak-dashboard-ahmv/provenance.ts";
+import { hasUnpublishedChanges, publishedRevisionForRecord } from "../src/features/takatak-dashboard-ahmv/published.ts";
+import { buildPortableControlBundle } from "../src/features/takatak-dashboard-ahmv/portability.ts";
+import {
+  normalizePublicationSchedule,
+  publicationWindowVisible,
+} from "../src/features/takatak-dashboard-ahmv/schedule-policy.ts";
+import {
+  assertCanRequestControlReview,
+  assertCanResolveControlReview,
+  requiresControlReview,
+} from "../src/features/takatak-dashboard-ahmv/review-policy.ts";
 
 function request(headers: Record<string, string> = {}) {
   return new Request("https://ahmverdun.ca/internal/takatak/ahmv", { headers });
@@ -171,9 +183,9 @@ test("command parsing requires safe scoped and idempotent input", () => {
     idempotencyKey: "cmd_12345678",
     service: "seo",
     action: "save_draft",
-    resourceType: "page",
+    resourceType: "page_meta",
     resourceId: "home",
-    payload: { title: "Accueil" },
+    payload: { title: { fr: "Accueil", en: "Home" } },
   });
 
   assert.equal(command.service, "seo");
@@ -326,5 +338,331 @@ test("worker retry policy backs off and sanitizes errors", () => {
   assert.equal(
     safeWorkerErrorCode(new Error("provider_unavailable")),
     "provider_unavailable",
+  );
+});
+
+
+test("website draft schemas allow content corrections but protect structural identifiers", () => {
+  const command = parseTakatakAhmvCommand({
+    tenant: "ahmverdun",
+    organizationId: "org_123",
+    actorId: "user_123",
+    requestId: "req_web_123",
+    idempotencyKey: "cmd_web_12345678",
+    service: "website",
+    action: "save_draft",
+    resourceType: "news_post",
+    resourceId: "annulations-22-26-septembre-2026",
+    payload: {
+      title: { fr: "Annulations mises à jour", en: "Updated cancellations" },
+      sourceUrl: "https://www.ahmverdun.com/news/39",
+      contentPending: false,
+    },
+  });
+
+  assert.equal(command.service, "website");
+  assert.equal(command.resourceType, "news_post");
+
+  assert.throws(
+    () =>
+      parseTakatakAhmvCommand({
+        tenant: "ahmverdun",
+        organizationId: "org_123",
+        actorId: "user_123",
+        requestId: "req_web_124",
+        idempotencyKey: "cmd_web_87654321",
+        service: "website",
+        action: "save_draft",
+        resourceType: "news_post",
+        resourceId: "annulations-22-26-septembre-2026",
+        payload: {
+          slug: "attempt-to-change-identity",
+          title: { fr: "Titre" },
+        },
+      }),
+    /invalid_website_control_payload/,
+  );
+});
+
+test("website control rejects unknown resource types instead of accepting arbitrary JSON", () => {
+  assert.throws(
+    () =>
+      parseTakatakAhmvCommand({
+        tenant: "ahmverdun",
+        organizationId: "org_123",
+        actorId: "user_123",
+        requestId: "req_web_125",
+        idempotencyKey: "cmd_web_11223344",
+        service: "website",
+        action: "save_draft",
+        resourceType: "unknown_blob",
+        resourceId: "anything",
+        payload: { anything: true },
+      }),
+    /unsupported_website_control_resource_type/,
+  );
+});
+
+
+test("verified provenance requires a source reference and verification timestamp", () => {
+  assert.throws(
+    () =>
+      parseControlProvenance({
+        sourceKind: "official",
+        verificationStatus: "verified",
+      }),
+    /requires_source_and_timestamp/,
+  );
+
+  const provenance = parseControlProvenance({
+    sourceKind: "official",
+    verificationStatus: "verified",
+    sourceRef: "https://www.ahmverdun.com/news/39",
+    verifiedAt: "2026-10-04T16:00:00-04:00",
+  });
+
+  assert.equal(provenance.verificationStatus, "verified");
+  assert.equal(provenance.sourceKind, "official");
+});
+
+test("website drafts keep verification metadata separate from editable payload", () => {
+  const command = parseTakatakAhmvCommand({
+    tenant: "ahmverdun",
+    organizationId: "org_123",
+    actorId: "user_123",
+    requestId: "req_web_prov_1",
+    idempotencyKey: "cmd_web_prov_12345",
+    service: "website",
+    action: "save_draft",
+    resourceType: "arena_info",
+    resourceId: "jacques-lemaire",
+    provenance: {
+      sourceKind: "official",
+      verificationStatus: "verified",
+      sourceRef: "https://montreal.ca/lieux/arena-jacques-lemaire",
+      verifiedAt: "2026-10-04T16:00:00-04:00",
+    },
+    payload: {
+      address: "8681, boulevard Champlain, Montréal (Québec) H8P 1B8",
+      addressVerified: true,
+    },
+  });
+
+  assert.equal(command.provenance?.verificationStatus, "verified");
+  assert.equal(
+    (command.payload as { addressVerified?: boolean }).addressVerified,
+    true,
+  );
+});
+
+
+test("published snapshots stay pinned while a newer draft exists", () => {
+  const record = {
+    id: "record_1",
+    tenant: "ahmverdun" as const,
+    organizationId: "org_123",
+    service: "website",
+    resourceType: "news_post",
+    resourceId: "news_1",
+    status: "draft" as const,
+    revision: 4,
+    publishedRevision: 3,
+    lastPublishedAt: "2026-10-04T20:00:00.000Z",
+    payload: { title: "new draft" },
+    provenance: parseControlProvenance({
+      sourceKind: "association",
+      verificationStatus: "unverified",
+    }),
+    createdAt: "2026-10-04T18:00:00.000Z",
+    updatedAt: "2026-10-04T21:00:00.000Z",
+    archivedAt: null,
+  };
+
+  assert.equal(publishedRevisionForRecord(record), 3);
+  assert.equal(hasUnpublishedChanges(record), true);
+  assert.equal(
+    publishedRevisionForRecord({ ...record, status: "archived" }),
+    null,
+  );
+});
+
+
+test("portable AHMV export excludes TAKATAK commercial and operator internals", () => {
+  const provenance = parseControlProvenance({
+    sourceKind: "association",
+    verificationStatus: "verified",
+    sourceRef: "https://www.ahmverdun.com/news/39",
+    verifiedAt: "2026-10-04T20:00:00.000Z",
+  });
+
+  const bundle = buildPortableControlBundle({
+    organizationId: "org_123",
+    generatedAt: new Date("2026-10-04T21:00:00.000Z"),
+    records: [
+      {
+        id: "record_1",
+        tenant: "ahmverdun",
+        organizationId: "org_123",
+        service: "website",
+        resourceType: "news_post",
+        resourceId: "news_1",
+        status: "active",
+        revision: 2,
+        publishedRevision: 2,
+        lastPublishedAt: "2026-10-04T20:30:00.000Z",
+        payload: { title: { fr: "Nouvelle" } },
+        provenance,
+        createdAt: "2026-10-04T19:00:00.000Z",
+        updatedAt: "2026-10-04T20:30:00.000Z",
+        archivedAt: null,
+      },
+    ],
+    versions: [
+      {
+        id: "version_1",
+        controlRecordId: "record_1",
+        revision: 2,
+        status: "draft",
+        payload: { title: { fr: "Nouvelle" } },
+        provenance,
+        actorId: "internal_operator_should_not_export",
+        createdAt: "2026-10-04T20:00:00.000Z",
+      },
+    ],
+  });
+
+  const serialized = JSON.stringify(bundle);
+  assert.equal(bundle.excluded.billing, true);
+  assert.equal(bundle.excluded.connectorCredentials, true);
+  assert.doesNotMatch(serialized, /internal_operator_should_not_export/);
+  assert.equal("idempotencyKey" in (bundle.records[0] ?? {}), false);
+  assert.equal("subscriptionId" in bundle, false);
+  assert.equal("providerSecret" in bundle, false);
+  assert.equal("actorId" in (bundle.versions[0] ?? {}), false);
+  assert.equal(bundle.records[0]?.recordKey, "website:news_post:news_1");
+});
+
+
+test("website and SEO publishing require revision review", () => {
+  assert.equal(requiresControlReview("website"), true);
+  assert.equal(requiresControlReview("seo"), true);
+  assert.equal(requiresControlReview("sms"), false);
+  assert.equal(requiresControlReview("voice"), false);
+});
+
+test("review policy separates author and approver by default", () => {
+  const manager = {
+    actorId: "author_1",
+    organizationId: "org_123",
+    role: "manager" as const,
+    enabledServices: ["website"] as const,
+  };
+  assert.doesNotThrow(() =>
+    assertCanRequestControlReview(manager, "website"),
+  );
+
+  const admin = {
+    actorId: "reviewer_1",
+    organizationId: "org_123",
+    role: "admin" as const,
+    enabledServices: ["website"] as const,
+  };
+  assert.doesNotThrow(() =>
+    assertCanResolveControlReview({
+      principal: admin,
+      service: "website",
+      requestedBy: "author_1",
+    }),
+  );
+
+  assert.throws(
+    () =>
+      assertCanResolveControlReview({
+        principal: { ...admin, actorId: "author_1" },
+        service: "website",
+        requestedBy: "author_1",
+      }),
+    /self_approval_forbidden/,
+  );
+});
+
+test("owner self-review requires an explicit meaningful override reason", () => {
+  const owner = {
+    actorId: "owner_1",
+    organizationId: "org_123",
+    role: "owner" as const,
+    enabledServices: ["website"] as const,
+  };
+
+  assert.throws(
+    () =>
+      assertCanResolveControlReview({
+        principal: owner,
+        service: "website",
+        requestedBy: "owner_1",
+        ownerOverrideReason: "short",
+      }),
+    /self_approval_forbidden/,
+  );
+
+  assert.doesNotThrow(() =>
+    assertCanResolveControlReview({
+      principal: owner,
+      service: "website",
+      requestedBy: "owner_1",
+      ownerOverrideReason: "Emergency owner review override",
+    }),
+  );
+});
+
+
+test("scheduled publication requires explicit timezone and future time", () => {
+  const now = new Date("2026-10-04T16:00:00-04:00");
+
+  assert.throws(
+    () =>
+      normalizePublicationSchedule({
+        publishAt: "2026-10-05T10:00:00",
+        now,
+      }),
+    /timezone_required/,
+  );
+
+  assert.throws(
+    () =>
+      normalizePublicationSchedule({
+        publishAt: "2026-10-04T15:59:00-04:00",
+        now,
+      }),
+    /must_be_future/,
+  );
+
+  const window = normalizePublicationSchedule({
+    publishAt: "2026-10-05T10:00:00-04:00",
+    expiresAt: "2026-10-06T10:00:00-04:00",
+    now,
+  });
+
+  assert.equal(window.publishAt, "2026-10-05T14:00:00.000Z");
+  assert.equal(window.expiresAt, "2026-10-06T14:00:00.000Z");
+});
+
+test("publication windows expire locally without a TAKATAK round trip", () => {
+  const window = {
+    publishAt: "2026-10-05T14:00:00.000Z",
+    expiresAt: "2026-10-06T14:00:00.000Z",
+  };
+
+  assert.equal(
+    publicationWindowVisible(window, new Date("2026-10-05T13:59:59.000Z")),
+    false,
+  );
+  assert.equal(
+    publicationWindowVisible(window, new Date("2026-10-05T14:00:00.000Z")),
+    true,
+  );
+  assert.equal(
+    publicationWindowVisible(window, new Date("2026-10-06T14:00:00.000Z")),
+    false,
   );
 });

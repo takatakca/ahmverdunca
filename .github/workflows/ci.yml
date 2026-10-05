@@ -58,6 +58,9 @@ jobs:
       - name: Enforce TAKATAK AHMV backend-only boundary
         run: bun run check:takatak-ahmv-backend-boundary
 
+      - name: Validate TAKATAK AHMV backend migrations
+        run: bun run check:takatak-ahmv-migrations
+
       - name: GROUPE TAKATAK team feed security tests
         run: bun run test:team-feed
 

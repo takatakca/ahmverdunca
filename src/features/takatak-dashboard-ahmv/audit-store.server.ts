@@ -30,3 +30,34 @@ export async function appendControlAudit(event: TakatakAhmvAuditEvent) {
 
   if (result.error) throw result.error;
 }
+
+
+export async function listControlAudit(input: {
+  organizationId: string;
+  service?: string | undefined;
+  action?: string | undefined;
+  resourceType?: string | undefined;
+  resourceId?: string | undefined;
+  limit?: number | undefined;
+}) {
+  let query = db()
+    .from("ahmv_takatak_control_audit")
+    .select(
+      "id,organization_id,actor_id,request_id,idempotency_key,service,action,resource_type,resource_id,outcome,payload_fingerprint,previous_revision,next_revision,previous_status,next_status,occurred_at",
+    )
+    .eq("tenant", "ahmverdun")
+    .eq("organization_id", input.organizationId);
+
+  if (input.service) query = query.eq("service", input.service);
+  if (input.action) query = query.eq("action", input.action);
+  if (input.resourceType) query = query.eq("resource_type", input.resourceType);
+  if (input.resourceId) query = query.eq("resource_id", input.resourceId);
+
+  const limit = Math.max(1, Math.min(200, input.limit ?? 50));
+  const result = await query
+    .order("occurred_at", { ascending: false })
+    .limit(limit);
+
+  if (result.error) throw result.error;
+  return result.data ?? [];
+}

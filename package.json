@@ -20,6 +20,7 @@
     "test:phone": "bun test scripts/ahmv-phone.test.ts scripts/ahmv-phone-status.test.ts scripts/ahmv-phone-v2.test.ts scripts/ahmv-phone-demo.test.ts scripts/ahmv-phone-preflight.test.ts scripts/ahmv-phone-lifecycle.test.ts scripts/ahmv-phone-ops.test.ts scripts/ahmv-phone-takatak-events.test.ts scripts/ahmv-phone-event-changes.test.ts scripts/ahmv-phone-privacy-health.test.ts scripts/ahmv-phone-reminder-worker.test.ts scripts/ahmv-phone-calendar.test.ts scripts/ahmv-phone-departure.test.ts scripts/ahmv-phone-membership.test.ts scripts/ahmv-phone-marketing.test.ts scripts/ahmv-phone-spanish.test.ts scripts/ahmv-voice-integration.test.ts scripts/ahmv-phone-live-schedule.test.ts",
     "test:takatak-ahmv-backend": "bun test scripts/takatak-ahmv-control-plane.test.ts",
     "check:takatak-ahmv-backend-boundary": "bun scripts/validate-takatak-ahmv-backend-boundary.ts",
+    "check:takatak-ahmv-migrations": "bun scripts/validate-takatak-ahmv-migrations.ts",
     "test:team-feed": "bun test scripts/takatak-team-feed.test.ts",
     "test:assistant": "bun test scripts/ahmv-assistant.test.ts scripts/ahmv-knowledge.test.ts",
     "check:canonical": "bun scripts/validate-canonical-seo.ts",

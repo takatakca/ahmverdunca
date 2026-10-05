@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "../../integrations/supabase/client.server";
 import type { TakatakAhmvService } from "./contracts";
 import { getControlRecord, saveControlDraft } from "./record-store.server";
+import { normalizeControlProvenance, type ControlProvenance } from "./provenance";
 
 function db(): SupabaseClient {
   return supabaseAdmin as unknown as SupabaseClient;
@@ -13,6 +14,7 @@ export type ControlRecordVersion = {
   revision: number;
   status: "draft" | "queued" | "active" | "archived";
   payload: unknown;
+  provenance: ControlProvenance;
   actorId: string;
   createdAt: string;
 };
@@ -24,6 +26,12 @@ function mapVersion(row: Record<string, unknown>): ControlRecordVersion {
     revision: Number(row["revision"]),
     status: row["status"] as ControlRecordVersion["status"],
     payload: row["payload"],
+    provenance: normalizeControlProvenance({
+      sourceKind: row["source_kind"] as ControlProvenance["sourceKind"] | undefined,
+      verificationStatus: row["verification_status"] as ControlProvenance["verificationStatus"] | undefined,
+      sourceRef: row["source_ref"] ? String(row["source_ref"]) : null,
+      verifiedAt: row["source_verified_at"] ? String(row["source_verified_at"]) : null,
+    }),
     actorId: String(row["actor_id"]),
     createdAt: String(row["created_at"]),
   };
@@ -99,5 +107,6 @@ export async function restoreControlRecordVersion(input: {
     resourceId: input.resourceId,
     expectedRevision: input.expectedCurrentRevision,
     payload: historical.payload,
+    provenance: historical.provenance,
   });
 }
