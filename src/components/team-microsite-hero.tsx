@@ -4,10 +4,10 @@ import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-direc
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
-import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
+import { officialWeekActivityMatchesTeam } from "@/lib/official-week-team";
 import { ContentContributionButton } from "@/components/content-contribution-button";
 import { useContentOverlay } from "@/lib/community-content";
-import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
+import { officialWeekActivityMatchesTeam } from "@/lib/official-schedule-team";
 
 type Lang = "fr" | "en";
 
@@ -163,7 +163,7 @@ export function TeamMicrositeHero({
   const publishedPracticeRows: CalendarRow[] = OFFICIAL_WEEK_ACTIVITIES
     .filter((activity) => {
       const scope = `${activity.group} ${activity.activity}`.toUpperCase();
-      return officialWeekActivityMatchesPublicTeam(activity, team) && /PRATIQUE|HOCKEY SUR MESURE|WLLV/.test(scope);
+      return officialWeekActivityMatchesTeam(activity, team) && /PRATIQUE|HOCKEY SUR MESURE|WLLV/.test(scope);
     })
     .slice(0, 3)
     .map((activity, index) => ({
