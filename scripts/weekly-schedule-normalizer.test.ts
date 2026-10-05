@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeExtractedScheduleRows } from "../src/lib/weekly-schedule-normalizer.ts";
-import { officialWeekActivityMatchesTeam } from "../src/lib/official-week-team.ts";
+import { officialWeekActivityMatchesPublicTeam } from "../src/lib/official-schedule-team.ts";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory.ts";
 
 const context = {
@@ -106,8 +106,8 @@ test("team pages never infer a colour-only group as an exact team", () => {
   );
   assert.ok(leafsM15);
 
-  assert.equal(officialWeekActivityMatchesTeam(namedLeafs, leafsM13), true);
-  assert.equal(officialWeekActivityMatchesTeam(namedLeafs, bulldogsM13), false);
-  assert.equal(officialWeekActivityMatchesTeam(unnamedWhite, bulldogsM13), false);
-  assert.equal(officialWeekActivityMatchesTeam(genericM15, leafsM15), true);
+  assert.equal(officialWeekActivityMatchesPublicTeam(namedLeafs, leafsM13), true);
+  assert.equal(officialWeekActivityMatchesPublicTeam(namedLeafs, bulldogsM13), false);
+  assert.equal(officialWeekActivityMatchesPublicTeam(unnamedWhite, bulldogsM13), false);
+  assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, leafsM15), true);
 });
