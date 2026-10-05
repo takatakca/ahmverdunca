@@ -4,6 +4,7 @@ import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-direc
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
+import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
 import { ContentContributionButton } from "@/components/content-contribution-button";
 import { useContentOverlay } from "@/lib/community-content";
 import { officialWeekActivityMatchesTeam } from "@/lib/official-week-team";
