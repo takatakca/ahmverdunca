@@ -17,6 +17,7 @@ import { EXTERNAL_LINKS, MAIN_NAV, MORE_NAV, SITE } from "../src/lib/site";
 import { AHMV_SOCIAL_ARCHIVE_REFERENCES, HOCKEY_HERITAGE } from "../src/data/heritage";
 import { TEAM_COMMUNITY_POSTS, TEAM_DOCUMENTS, TEAM_FUNDRAISING_CAMPAIGNS, TEAM_VOLUNTEER_NEEDS } from "../src/data/team-community";
 import { UPLOADED_AHMV_MEDIA } from "../src/data/uploaded-media";
+import { FACEBOOK_TEAM_ALBUM_MANIFEST } from "../src/data/facebook-team-albums";
 
 const errors: string[] = [];
 
@@ -73,6 +74,9 @@ requireUnique("NEWS.slug", NEWS.map((article) => article.slug));
 requireUnique("NEWS.legacyId", NEWS.flatMap((article) => article.legacyId === undefined ? [] : [String(article.legacyId)]));
 requireUnique("PUBLIC_TEAM_DIRECTORY.legacyScheduleTeamId", PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
 requireUnique("PUBLIC_TEAM_DIRECTORY.hubUrl", PUBLIC_TEAM_DIRECTORY.map(publicTeamHubUrl));
+requireUnique("FACEBOOK_TEAM_ALBUM_MANIFEST.publicTeamId", FACEBOOK_TEAM_ALBUM_MANIFEST.map((item) => item.publicTeamId));
+requireUnique("FACEBOOK_TEAM_ALBUM_MANIFEST.reconciliationKey", FACEBOOK_TEAM_ALBUM_MANIFEST.map((item) => item.reconciliationKey));
+requireUnique("FACEBOOK_TEAM_ALBUM_MANIFEST.expectedAlbumName", FACEBOOK_TEAM_ALBUM_MANIFEST.map((item) => item.expectedAlbumName));
 requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
 requireUnique("UPLOADED_AHMV_MEDIA.id", UPLOADED_AHMV_MEDIA.map((asset) => String(asset.id)));
 requireUnique("UPLOADED_AHMV_MEDIA.url", UPLOADED_AHMV_MEDIA.map((asset) => asset.url));
@@ -280,6 +284,40 @@ if (ALBUMS.length !== REQUIRED_PUBLIC_ALBUM_COUNT) {
 if (PUBLIC_TEAM_DIRECTORY.length !== REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT) {
   errors.push(`Expected ${REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT} mirrored public team entries, found ${PUBLIC_TEAM_DIRECTORY.length}.`);
 }
+
+if (FACEBOOK_TEAM_ALBUM_MANIFEST.length !== PUBLIC_TEAM_DIRECTORY.length) {
+  errors.push(
+    `Facebook team album manifest must contain exactly one entry per public team: expected ${PUBLIC_TEAM_DIRECTORY.length}, found ${FACEBOOK_TEAM_ALBUM_MANIFEST.length}.`,
+  );
+}
+
+for (const album of FACEBOOK_TEAM_ALBUM_MANIFEST) {
+  const team = PUBLIC_TEAM_DIRECTORY.find((entry) => entry.legacyScheduleTeamId === album.publicTeamId);
+  if (!team) {
+    errors.push(`Facebook team album manifest references unknown public team ID "${album.publicTeamId}".`);
+    continue;
+  }
+  if (
+    album.categorySlug !== team.categorySlug ||
+    album.level !== team.level ||
+    album.teamName !== team.name
+  ) {
+    errors.push(`Facebook team album manifest metadata does not match public team "${album.publicTeamId}".`);
+  }
+  if (album.season !== SITE.season) {
+    errors.push(`Facebook team album manifest season must match SITE.season for "${album.publicTeamId}".`);
+  }
+  if (album.reconciliationKey !== `ahmv:facebook:team:${album.publicTeamId}`) {
+    errors.push(`Facebook reconciliation key is invalid for "${album.publicTeamId}".`);
+  }
+  if (!album.expectedAlbumName.includes(team.name) || !album.expectedAlbumName.includes(SITE.season)) {
+    errors.push(`Facebook album name must contain the exact team name and current season for "${album.publicTeamId}".`);
+  }
+  if (!album.expectedDescription.fr.trim() || !album.expectedDescription.en.trim()) {
+    errors.push(`Facebook album description is missing FR/EN copy for "${album.publicTeamId}".`);
+  }
+}
+
 const mirroredScheduleIds = new Set(PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
 
 for (const post of TEAM_COMMUNITY_POSTS) {
