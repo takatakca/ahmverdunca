@@ -158,11 +158,11 @@ The live TAKATAK product catalog confirms:
 - `parent_premium`: 30 CAD/week, planned, non-self-serve;
 - `smart_departure` is a Premium entitlement and not an Essential entitlement.
 
-The remaining Family/Product gate is live launch/exchange/introspection/session behavior, including revoke/restore E2E. It is not a missing catalog/schema issue.
+The Family Experience session contract is now covered by CI for signed cookies, launch exchange, live entitlement introspection, expiry/tamper rejection, revoke, restore and same-origin logout. The remaining gate is production service configuration plus one real provider-backed launch/introspection/revoke/restore acceptance smoke before the public Family gate is enabled. It is not a missing catalog/schema issue.
 
 ## 11. Phone / Voice status
 
-Phone/SMS and Voice source, CI and security gates exist, but public routing remains fail-closed.
+Phone/SMS and Voice source, CI and security gates exist, but public routing remains fail-closed. The website now additionally requires server-only `AHMV_PHONE_CARRIER=twilio`; blank or `numberbarn` cannot expose public click-to-call even if other Phone flags are accidentally enabled.
 
 The Voice source line now contains a guarded production-host workflow that requires:
 
@@ -174,9 +174,9 @@ The Voice source line now contains a guarded production-host workflow that requi
 - rollback capture;
 - host smoke and website bridge smoke.
 
-No production Voice host acceptance has yet proven current TLS/WSS/runtime credentials, and public Twilio routing is unchanged.
+No production Voice host acceptance has yet proven current TLS/WSS/runtime credentials. The public number remains treated as NumberBarn-controlled until ownership/routing to the intended Twilio account is actually proven; no source or deployment state may override that carrier fact.
 
-Real provider acceptance still requires current Twilio credentials, signed webhook verification, consent/STOP/START behavior, callback/retry behavior, Voice TLS/WSS, bridge readiness, FR/EN/ES real calls and verified rollback.
+Real provider acceptance still requires actual Twilio ownership/routing proof, then `AHMV_PHONE_CARRIER=twilio`, current Twilio credentials, signed webhook verification, consent/STOP/START behavior, callback/retry behavior, Voice TLS/WSS, bridge readiness, FR/EN/ES real calls and verified rollback.
 
 ## 12. Remaining release-owner / external gates
 
@@ -208,6 +208,8 @@ These are not code defects and must not be fabricated:
 10. Re-run AHMV health/public-route/robots/sitemap smoke after production-affecting deploys.
 11. Record exact SHA and rollback target.
 12. Enable public indexing only after the release owner accepts remaining public/legal/provider gates.
+
+Historical branch reconciliation is recorded in `docs/WEBSITE_PRODUCTION_BRANCH_RECONCILIATION.md`.
 
 ## 14. Operating rule
 
