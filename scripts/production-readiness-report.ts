@@ -3,8 +3,7 @@ type State = "ready" | "blocked" | "disabled" | "manual";
 type Check = {
   name: string;
   required: string[];
-  enabled?: string;
-  enabledWhen?: string;
+  enabled?: string[];
   manual?: boolean;
   note: string;
 };
@@ -31,14 +30,25 @@ const checks: Check[] = [
     note: "continuous authoritative schedule feed",
   },
   {
-    name: "teamFeed",
+    name: "teamGames",
     required: [
       "TAKATAK_TEAM_GAMES_ORIGIN",
       "TAKATAK_AHMV_SERVICE_TOKEN",
     ],
-    enabled: "TAKATAK_TEAM_GAMES_ENABLED",
-    enabledWhen: "true",
-    note: "exact-team games/feed connector",
+    enabled: ["TAKATAK_TEAM_GAMES_ENABLED"],
+    note: "exact-team games/results connector",
+  },
+  {
+    name: "teamFeed",
+    required: [
+      "TAKATAK_TEAM_FEED_ORIGIN",
+      "TAKATAK_TEAM_FEED_TOKEN",
+    ],
+    enabled: [
+      "TAKATAK_TEAM_FEED_ENABLED",
+      "VITE_TAKATAK_TEAM_FEED_ENABLED",
+    ],
+    note: "exact-team social/news Team Feed bridge and public UI",
   },
   {
     name: "ads",
@@ -46,8 +56,7 @@ const checks: Check[] = [
       "VITE_TAKATAK_ADS_ORIGIN",
       "VITE_TAKATAK_ADS_PUBLISHER",
     ],
-    enabled: "VITE_TAKATAK_ADS_ENABLED",
-    enabledWhen: "true",
+    enabled: ["VITE_TAKATAK_ADS_ENABLED"],
     note: "TAKATAK ADS publisher delivery",
   },
   {
@@ -59,8 +68,7 @@ const checks: Check[] = [
       "TAKATAK_AHMV_SERVICE_TOKEN",
       "AHMV_EXPERIENCE_SESSION_SECRET",
     ],
-    enabled: "AHMV_EXPERIENCE_ENABLED",
-    enabledWhen: "true",
+    enabled: ["AHMV_EXPERIENCE_ENABLED"],
     note: "independent AHMV Family Experience",
   },
   {
@@ -69,8 +77,7 @@ const checks: Check[] = [
       "TAKATAK_CONTENT_ORIGIN",
       "TAKATAK_AHMV_CONTENT_TOKEN",
     ],
-    enabled: "TAKATAK_CONTENT_CONTRIBUTIONS_ENABLED",
-    enabledWhen: "true",
+    enabled: ["TAKATAK_CONTENT_CONTRIBUTIONS_ENABLED"],
     note: "community corrections/moderation bridge",
   },
   {
@@ -81,9 +88,8 @@ const checks: Check[] = [
       "AHMV_WEBHOOK_ORIGIN",
       "AHMV_PUBLIC_PHONE",
     ],
-    enabled: "AHMV_PHONE_ENABLED",
-    enabledWhen: "true",
-    note: "website Phone/SMS provider edge",
+    enabled: ["AHMV_PHONE_ENABLED", "AHMV_PHONE_PUBLIC"],
+    note: "public website Phone/SMS provider edge",
   },
   {
     name: "voiceBridge",
@@ -97,8 +103,7 @@ const checks: Check[] = [
   {
     name: "publicIndexing",
     required: [],
-    enabled: "VITE_PUBLIC_INDEXING",
-    enabledWhen: "true",
+    enabled: ["VITE_PUBLIC_INDEXING"],
     manual: true,
     note: "SEO indexing requires explicit human release acceptance",
   },
@@ -124,14 +129,15 @@ function flag(name: string) {
 
 function evaluate(check: Check): { state: State; missing: string[] } {
   const missing = check.required.filter((name) => !present(name));
-  if (check.enabled) {
-    const actual = flag(check.enabled);
-    const expected = check.enabledWhen ?? "true";
-    if (actual !== expected) {
-      if (requiredNames.has(check.name)) return { state: "blocked", missing: [check.enabled, ...missing] };
-      return { state: "disabled", missing };
+  const disabledGates = (check.enabled ?? []).filter((name) => flag(name) !== "true");
+
+  if (disabledGates.length > 0) {
+    if (requiredNames.has(check.name)) {
+      return { state: "blocked", missing: [...disabledGates, ...missing] };
     }
+    return { state: "disabled", missing };
   }
+
   if (missing.length > 0) return { state: "blocked", missing };
   if (check.manual) return { state: "manual", missing: [] };
   return { state: "ready", missing: [] };

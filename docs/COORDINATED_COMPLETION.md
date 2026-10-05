@@ -1,7 +1,8 @@
 # AHMVERDUN.CA — Coordinated completion queue
 
 Checkpoint: 2026-10-05, America/Toronto.  
-Canonical AHMV main at checkpoint: `cc7618651806f2b9fcc78c9e97b4d8f7395fd24a`.
+Canonical AHMV main at checkpoint: `a4528e555da243daff14e1cff1cab911c6c71d04`.
+Deployed production baseline last independently verified: `cc7618651806f2b9fcc78c9e97b4d8f7395fd24a`.
 
 This file separates **merged source**, **deployed production**, and **external live acceptance**. Never treat a missing credential/provider approval as a reason to fabricate data.
 
@@ -15,7 +16,7 @@ This file separates **merged source**, **deployed production**, and **external l
 
 ## Current integrated baseline
 
-Current main includes the community/editability control plane, exact-team games/feed connectors, TAKATAK ADS publisher client/fallback, Family Experience boundary, phone/SMS v2, Voice runtime/bridge, schedule freshness/provenance guards, deployment safeguards and the full AHM Verdun CI.
+Current main includes the community/editability control plane, exact-team games/results connector, separately gated Team Feed bridge, TAKATAK ADS publisher client/fallback, Family Experience boundary, phone/SMS v2, Voice runtime/bridge, schedule freshness/provenance guards, deployment safeguards and the full AHM Verdun CI.
 
 Recent coordination cleanup is complete:
 
@@ -42,17 +43,18 @@ Recent coordination cleanup is complete:
 | --- | --- | --- | --- |
 | A01 | Current-source authority | Complete | Keep `main` as sole release authority |
 | A02 | Teams | Exact 24-team contract/data complete | Ready |
-| A03 | TAKATAK ADS | Publisher + six placements + routes complete | Ready for final live serve/event smoke before browser gate |
-| A04 | Continuous official schedule | Adapters, provenance/freshness guards, Voice fallback complete | **Blocked:** approved authoritative source + live freshness/provenance |
-| A05 | Team Feed / unified news-social | UI, filters, attribution/fallback contracts present | **Blocked:** authorized social/provider connectors |
-| A06 | Gallery ↔ exact teams/seasons | Provenance and duplicate guards complete | Live permission/mobile review |
-| A07 | Facebook team album reconciliation | Deterministic 24-team manifest complete | Authorized Facebook Page access and real provider IDs |
-| A08 | Family/Product | Contract/schema/plan semantics present | Final launch/exchange/introspection + revoke/restore E2E |
-| A09 | Phone/SMS | Source and security CI present | Real Twilio signatures, consent, STOP/START, callbacks/retries |
-| A10 | Voice | Runtime/source/CI/Guardian present | Runtime credentials, TLS/WSS, bridge, FR/EN/ES real-call smoke |
-| A11 | Production release | MochaHost `cc761865…` core HTTP smoke green | Re-run smoke after any new merge/deploy |
-| A12 | Public indexing | Fail-closed gate present | Manual release-owner approval |
-| A13 | Final handover | Non-secret inventory/runbooks present | Record final enabled gates, monitoring and rollback |
+| A03 | Team Games / results | Exact-team connector/source guards complete | Shared service credential + final live upstream exact-team smoke |
+| A04 | TAKATAK ADS | Publisher + six placements + routes complete | Ready for final live serve/event smoke before browser gate |
+| A05 | Continuous official schedule | Adapters, provenance/freshness guards, Voice fallback complete | **Blocked:** approved authoritative source + live freshness/provenance |
+| A06 | Team Feed / unified news-social | UI/proxy contract present; server/browser gates default OFF | **Blocked:** authorized social/provider connectors + Team Feed credential + attribution/fallback acceptance |
+| A07 | Gallery ↔ exact teams/seasons | Provenance and duplicate guards complete | Live permission/mobile review |
+| A08 | Facebook team album reconciliation | Deterministic 24-team manifest complete | Authorized Facebook Page access and real provider IDs |
+| A09 | Family/Product | Contract/schema/plan semantics present | Final launch/exchange/introspection + revoke/restore E2E |
+| A10 | Phone/SMS | Source and security CI present | Real Twilio signatures, consent, STOP/START, callbacks/retries |
+| A11 | Voice | Runtime/source/CI/Guardian present | Runtime credentials, TLS/WSS, bridge, FR/EN/ES real-call smoke |
+| A12 | Production release | MochaHost `cc761865…` core HTTP smoke green | Re-run smoke after any new merge/deploy |
+| A13 | Public indexing | Fail-closed gate present | Manual release-owner approval |
+| A14 | Final handover | Non-secret inventory/runbooks present | Record final enabled gates, monitoring and rollback |
 
 ## External walls that must remain fail-closed
 
@@ -74,10 +76,10 @@ bun run report:production-readiness
 For a release that intends to activate specific modules:
 
 ```bash
-bun run report:production-readiness --strict --require=core,schedule,teamFeed,ads
+bun run report:production-readiness --strict --require=core,schedule,teamGames,ads
 ```
 
-Only names and states are printed; secret values are never emitted.
+Only names and states are printed; secret values are never emitted. `teamGames` and `teamFeed` are intentionally distinct readiness targets.
 
 ## Cutover sequence
 

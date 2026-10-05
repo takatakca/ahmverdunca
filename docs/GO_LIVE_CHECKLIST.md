@@ -26,9 +26,10 @@ Current release baseline: GitHub `main` at `cc7618651806f2b9fcc78c9e97b4d8f7395f
 | Area | State | Next acceptance |
 | --- | --- | --- |
 | Public teams | Ready | Keep exact 24-team mapping regression-tested |
+| Team Games / results bridge | Source ready | Shared service credential + final live exact-team upstream smoke |
 | TAKATAK ADS backend/placements | Ready in data/source | Enable browser gate only after final live serve/event smoke |
 | Continuous official schedule | Blocked externally | Approved authoritative source + freshness/provenance smoke |
-| Team Feed / social delivery | Blocked externally | Authorized provider accounts/connectors + attribution/fallback smoke |
+| Team Feed / social delivery | Source contract ready; gates OFF | Authorized provider accounts/connectors + token + attribution/fallback smoke |
 | Phone/SMS | Source ready, live blocked | Real signed Twilio smoke + consent/STOP/START/callback checks |
 | Voice | Source/CI ready, live blocked | Runtime credentials, TLS/WSS, bridge readiness, FR/EN/ES real-call acceptance |
 | Family/Product | Contract/data present | Final launch/exchange/introspection and revoke/restore E2E before exposing gated UX |
@@ -43,10 +44,10 @@ bun run report:production-readiness
 For a target cutover, require only the modules intended to go live, for example:
 
 ```bash
-bun run report:production-readiness --strict --require=core,schedule,teamFeed,ads
+bun run report:production-readiness --strict --require=core,schedule,teamGames,ads
 ```
 
-The command reports only configuration names/states, never secret values.
+The command reports only configuration names/states, never secret values. Add `teamFeed` only when the social/news bridge itself is intended to go live.
 
 ## External / association approvals still required
 
