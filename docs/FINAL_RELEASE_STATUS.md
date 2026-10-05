@@ -149,7 +149,7 @@ Therefore TAKATAK ADS is **publisher-ready but not inventory-ready**. The AHMV b
 
 No fake advertiser, campaign, creative, spend or conversion data may be inserted to make this module appear complete.
 
-## 9. Family/Product status
+## 10. Family/Product status
 
 The live TAKATAK product catalog confirms:
 
@@ -160,7 +160,7 @@ The live TAKATAK product catalog confirms:
 
 The remaining Family/Product gate is live launch/exchange/introspection/session behavior, including revoke/restore E2E. It is not a missing catalog/schema issue.
 
-## 10. Phone / Voice status
+## 11. Phone / Voice status
 
 Phone/SMS and Voice source, CI and security gates exist, but public routing remains fail-closed.
 
@@ -178,7 +178,7 @@ No production Voice host acceptance has yet proven current TLS/WSS/runtime crede
 
 Real provider acceptance still requires current Twilio credentials, signed webhook verification, consent/STOP/START behavior, callback/retry behavior, Voice TLS/WSS, bridge readiness, FR/EN/ES real calls and verified rollback.
 
-## 11. Remaining release-owner / external gates
+## 12. Remaining release-owner / external gates
 
 These are not code defects and must not be fabricated:
 
@@ -194,7 +194,7 @@ These are not code defects and must not be fabricated:
 - approved analytics/Search Console/Google Business/social integrations;
 - explicit public-indexing acceptance.
 
-## 12. Safe completion sequence
+## 13. Safe completion sequence
 
 1. Keep every unfinished external integration gate OFF.
 2. Require current backend CI to be green.
@@ -209,7 +209,7 @@ These are not code defects and must not be fabricated:
 11. Record exact SHA and rollback target.
 12. Enable public indexing only after the release owner accepts remaining public/legal/provider gates.
 
-## 13. Operating rule
+## 14. Operating rule
 
 Families should always receive either a verified current answer or an explicit official destination. Never trade provenance, privacy, billing authority, provider authorization or rollback safety for a cosmetic “ready” state.
 
