@@ -59,7 +59,7 @@ jobs:
             -v "$PWD/services/ahmv-voice-ai:/app" \
             -w /app \
             node:22-bookworm-slim \
-            sh -lc 'npm ci --ignore-scripts --no-audit --no-fund && npm run check && npm ls --all'
+            sh -lc 'npm ci --ignore-scripts --no-audit --no-fund && npm run verify && npm ls --all'
 
       - name: Production dependency audit
         run: |
