@@ -13,6 +13,10 @@ const forbidden = [
 ];
 
 const forbiddenRuntimePatterns = ["/__l5e/", ".asset.json"];
+const forbiddenPublicPlaceholderCopy = [
+  "Photo officielle à intégrer",
+  "Official photo to be added",
+];
 
 const failures: string[] = [];
 
@@ -37,6 +41,14 @@ function visit(directory: string) {
       if (source.includes(pattern)) {
         failures.push(
           `${relative(process.cwd(), path)} references production-incompatible runtime asset pattern ${pattern}.`,
+        );
+      }
+    }
+
+    for (const copy of forbiddenPublicPlaceholderCopy) {
+      if (source.includes(copy)) {
+        failures.push(
+          `${relative(process.cwd(), path)} exposes internal placeholder copy: ${copy}.`,
         );
       }
     }
