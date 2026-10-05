@@ -23,6 +23,7 @@ const failures: string[] = [];
 const uploadedMedia = readFileSync(join(process.cwd(), "src/data/uploaded-media.ts"), "utf8");
 const galleryData = readFileSync(join(process.cwd(), "src/data/gallery.ts"), "utf8");
 const galleryIndex = readFileSync(join(process.cwd(), "src/routes/galerie.index.tsx"), "utf8");
+const galleryAlbum = readFileSync(join(process.cwd(), "src/routes/galerie.$slug.tsx"), "utf8");
 
 if (!uploadedMedia.includes("PUBLIC_UPLOADED_AHMV_MEDIA")) {
   failures.push("uploaded media registry is missing the public fail-closed collection.");
@@ -44,6 +45,12 @@ if (!galleryIndex.includes("publicUploadedAhmvMediaById")) {
 }
 if (galleryIndex.includes("UPLOADED_AHMV_MEDIA[")) {
   failures.push("gallery highlights index directly into the raw uploaded media collection.");
+}
+if (!galleryAlbum.includes('al.pendingReason === "consent"')) {
+  failures.push("gallery album route does not render an explicit consent-blocked state.");
+}
+if (!galleryAlbum.includes("Publication consent pending")) {
+  failures.push("gallery album route is missing consent-pending public copy.");
 }
 
 function visit(directory: string) {
