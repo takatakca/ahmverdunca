@@ -156,13 +156,15 @@ for (const result of results) {
 
 const blocked = results.filter((result) => result.state === "blocked");
 const requiredNotReady = results.filter(
-  (result) => requiredNames.has(result.name) && result.state !== "ready" && result.state !== "manual",
+  (result) => requiredNames.has(result.name) && result.state !== "ready",
 );
+const targetMode = requiredNames.size > 0;
+const ok = targetMode ? requiredNotReady.length === 0 : blocked.length === 0;
 
 console.log("");
 console.log(
   JSON.stringify({
-    ok: blocked.length === 0 && requiredNotReady.length === 0,
+    ok,
     strict,
     blocked: blocked.map((item) => item.name),
     requiredNotReady: requiredNotReady.map((item) => item.name),
@@ -171,6 +173,6 @@ console.log(
   }),
 );
 
-if (strict && (blocked.length > 0 || requiredNotReady.length > 0)) {
+if (strict && !ok) {
   process.exit(1);
 }
