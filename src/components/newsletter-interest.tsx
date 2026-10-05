@@ -19,6 +19,8 @@ export function NewsletterInterest({
     teamId,
   });
 
+  if (!signupUrl) return null;
+
   return (
     <section className={compact
       ? "border border-white/12 bg-white/[0.025] p-4"
@@ -79,20 +81,13 @@ export function NewsletterInterest({
       </div>
 
       <div className={compact ? "mt-4" : "border-t border-white/10 bg-competition p-5 md:px-8"}>
-        {signupUrl ? (
-          <a
-            href={signupUrl}
-            className="premium-control inline-flex min-h-11 items-center gap-3 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground"
-          >
-            {lang === "fr" ? "Choisir mes communications" : "Choose my communications"}
-            <ArrowRight className="size-4" />
-          </a>
-        ) : (
-          <div className="inline-flex min-h-11 items-center gap-3 border border-white/12 px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white/55">
-            <Mail className="size-4 text-sport-foreground" />
-            {lang === "fr" ? "Connexion TAKATAK en préparation" : "TAKATAK connection being prepared"}
-          </div>
-        )}
+        <a
+          href={signupUrl}
+          className="premium-control inline-flex min-h-11 items-center gap-3 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground"
+        >
+          {lang === "fr" ? "Choisir mes communications" : "Choose my communications"}
+          <ArrowRight className="size-4" />
+        </a>
       </div>
     </section>
   );
