@@ -25,6 +25,7 @@ export interface Album {
     categoryLabel?: { fr: string; en: string };
     kind?: string;
     containsMinors?: boolean;
+    teamSlugs?: readonly string[];
   }[];
   /** Public legacy AHMV album retained as the complete archive source. */
   sourceUrl?: string;
@@ -36,6 +37,10 @@ const uploadedMedia = (
   ...categories: Array<(typeof UPLOADED_AHMV_MEDIA)[number]["category"]>
 ) => UPLOADED_AHMV_MEDIA.filter((asset) => categories.includes(asset.category));
 
+const exactTeamSlugsForMedia = (
+  assets: readonly (typeof UPLOADED_AHMV_MEDIA)[number][],
+) => [...new Set(assets.flatMap((asset) => asset.teamSlugs ?? []))];
+
 export const ALBUMS: Album[] = [
   {
     slug: "mediatheque-ahmv-2026-2027",
@@ -46,7 +51,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-04",
     season: "2026-2027",
-    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    teamSlugs: exactTeamSlugsForMedia(UPLOADED_AHMV_MEDIA),
     eventType: { fr: "Médiathèque", en: "Media library" },
     coverUrl: UPLOADED_AHMV_MEDIA[0]!.url,
     photos: UPLOADED_AHMV_MEDIA,
@@ -62,7 +67,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-04",
     season: "2026-2027",
-    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    teamSlugs: exactTeamSlugsForMedia(uploadedMedia("training")),
     eventType: { fr: "Entraînements", en: "Practices" },
     coverUrl: uploadedMedia("training")[0]!.url,
     photos: uploadedMedia("training"),
@@ -78,7 +83,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-04",
     season: "2026-2027",
-    teamSlugs: ["feminin"],
+    teamSlugs: exactTeamSlugsForMedia(uploadedMedia("feminine")),
     eventType: { fr: "Hockey féminin", en: "Girls hockey" },
     coverUrl: uploadedMedia("feminine")[0]!.url,
     photos: uploadedMedia("feminine"),
@@ -94,7 +99,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-04",
     season: "2026-2027",
-    teamSlugs: ["m11", "feminin"],
+    teamSlugs: exactTeamSlugsForMedia(uploadedMedia("tournaments")),
     eventType: { fr: "Tournois", en: "Tournaments" },
     coverUrl: uploadedMedia("tournaments")[0]!.url,
     photos: uploadedMedia("tournaments"),
@@ -126,7 +131,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-04",
     season: "2026-2027",
-    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    teamSlugs: exactTeamSlugsForMedia(uploadedMedia("registration", "association", "news", "branding")),
     eventType: { fr: "Association", en: "Association" },
     coverUrl: uploadedMedia("registration", "association", "news", "branding")[0]!.url,
     photos: uploadedMedia("registration", "association", "news", "branding"),
@@ -142,7 +147,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-04",
     season: "2026-2027",
-    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "m17", "m19", "m22", "feminin"],
+    teamSlugs: exactTeamSlugsForMedia(uploadedMedia("schedules", "camps", "events")),
     eventType: { fr: "Horaires et camps", en: "Schedules and camps" },
     coverUrl: uploadedMedia("schedules", "camps", "events")[0]!.url,
     photos: uploadedMedia("schedules", "camps", "events"),
@@ -232,7 +237,7 @@ export const ALBUMS: Album[] = [
     },
     date: "2026-10-03",
     season: "2026-2027",
-    teamSlugs: ["m5", "m7", "m9", "m11", "m13", "m15", "feminin"],
+    teamSlugs: [],
     eventType: { fr: "Entraînement", en: "Practice" },
     coverUrl: OFFICIAL_MEDIA.practiceGroup.url,
     sourceUrl: OFFICIAL_MEDIA.practiceGroup.sourceUrl,
