@@ -374,6 +374,27 @@ for (const album of ALBUMS) {
       errors.push(`Album "${album.slug}" references unknown team "${teamSlug}".`);
     }
   }
+
+  for (const photo of album.photos ?? []) {
+    for (const teamSlug of photo.teamSlugs ?? []) {
+      if (!teamSlugs.has(teamSlug)) {
+        errors.push(`Album "${album.slug}" photo references unknown team "${teamSlug}".`);
+      }
+    }
+  }
+
+  const importedPhotos = (album.photos ?? []).filter((photo) =>
+    photo.url.includes("/imports/2026-10-04/public/"),
+  );
+  if (importedPhotos.length > 0 && importedPhotos.length === (album.photos?.length ?? 0)) {
+    const provenTeams = [...new Set(importedPhotos.flatMap((photo) => photo.teamSlugs ?? []))].sort();
+    const albumTeams = [...album.teamSlugs].sort();
+    if (JSON.stringify(provenTeams) !== JSON.stringify(albumTeams)) {
+      errors.push(
+        `Album "${album.slug}" team links must exactly match media provenance: expected [${provenTeams.join(", ")}], found [${albumTeams.join(", ")}].`,
+      );
+    }
+  }
 }
 
 for (const faq of FAQ) {
