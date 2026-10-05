@@ -19,25 +19,21 @@ Use these names exactly:
 
 Do not call the software "GROUPE TAKATAK Dashboard".
 
-## First paid experience
+## Parent product contract
 
-Initial planned offer: **CAD 10.00/week** for the season, configurable before launch.
+AHMV is an independent product experience. It is not a hockey mode inside the native TAKATAK Dashboard.
 
-The public site may describe the offer, but checkout and entitlement activation must not become active until TAKATAK Auth and TAKATAK Dashboard are connected and tested.
+TAKATAK is authoritative for identity, Product Catalog, plan names, prices, billing cadence, Stripe state and entitlements. AHMV must never hard-code or infer those commercial values in browser code.
 
-TAKATAK plan code: `hockey_member_weekly_10`.
+Canonical browser-safe identifiers:
 
-Entitlements for the CAD 10/week member plan:
+- product: `ahmv`
+- initial plan: `parent_essential`
+- access entitlement: `ahmv_access`
 
-1. `ad_free` — suppress approved AdSense placements on verified member surfaces.
-2. `ai_assistant` — unlock the full AHMV assistant experience.
-3. `game_reminders` — member reminder entitlement for official team events.
-4. `calendar_sync` — calendar synchronization after explicit consent.
-5. `team_community` — private, moderated team-community entitlement.
-6. `parent_messaging` — private parent communication without exposing contact details publicly.
-7. `parent_rideshare` — opt-in parent rideshare entitlement once the module is launched.
+Feature entitlements can include `ad_free`, `ai_assistant`, `game_reminders`, `calendar_sync`, `team_community`, `parent_messaging` and `parent_rideshare`.
 
-An entitlement in the billing catalog is not permission to claim an unfinished module is live. The AHMV interface must distinguish the paid right from the operational availability of each service.
+An entitlement is not permission to pretend an unfinished operational module is live. AHMV must distinguish the commercial right from actual service availability.
 
 ## Supporter thank-you credit
 
@@ -51,7 +47,7 @@ Recommended event contract:
 supporter.credit.granted
 identityId
 sourceProject = ahmverdun
-productCode = hockey_member_weekly_10
+productCode = ahmv
 creditType = premium_weeks
 quantity = 4
 reason = supporter_thank_you
@@ -170,29 +166,50 @@ This is the standing product rule for the Parent Premium roadmap.
 
 ## Tier direction
 
-Do not hard-code future prices until approved.
+Do not hard-code current or future prices in AHMV.
 
-Approved direction:
+TAKATAK Product Catalog owns:
+- plan names;
+- prices and billing cadence;
+- promotions and credits;
+- Stripe provider mappings;
+- entitlement activation/revocation.
 
-- free public AHMV team hub;
-- **AHMV Member — CAD 10/week** (`hockey_member_weekly_10`) — ad-free entitlement, premium assistant, reminders, calendar, community, messaging and rideshare entitlement;
-- **AHMV VIP — CAD 30/week** (`hockey_vip_weekly_30`) — planned only, not for sale until the travel/tournament and advanced family-live capabilities are actually delivered.
-
-TAKATAK Dashboard owns plan names, prices, promotions, billing state and entitlements so the AHMV frontend never becomes a billing source of truth.
+AHMV consumes only browser-safe product/plan identifiers for navigation and server-verified entitlement proof for access. The private Family Experience fails closed unless TAKATAK confirms an active `ahmv_access` entitlement.
 
 ## Current implementation state
 
-The team microsite now has a feature-gated Parent Premium presentation component.
+The public membership preview remains feature-gated and does not create an account, subscription or entitlement.
 
-Environment gates:
+The independent Family Experience is implemented behind server-only launch gates and remains disabled by default.
 
-- `VITE_PARENT_PREMIUM_VISIBLE`
-- `VITE_PARENT_PREMIUM_LAUNCH_ENABLED`
-- `VITE_PARENT_PREMIUM_WEEKLY_PRICE_CAD`
+Browser-safe presentation gates:
+- `VITE_PARENT_PREMIUM_VISIBLE=false`
+- `VITE_PARENT_PREMIUM_LAUNCH_ENABLED=false`
 - `VITE_TAKATAK_AUTH_START_URL`
 
-Recommended authenticated handoff once the backend is deployed:
+Server-only Family Experience gates:
+- `AHMV_EXPERIENCE_ENABLED=false`
+- `TAKATAK_AHMV_LAUNCH_URL`
+- `TAKATAK_AHMV_EXCHANGE_URL`
+- `TAKATAK_AHMV_INTROSPECT_URL`
+- `TAKATAK_AHMV_SERVICE_TOKEN`
+- `AHMV_EXPERIENCE_SESSION_SECRET`
 
-`https://takatak.ca/login?next=%2Fdashboard%2Fhockey`
+Access flow:
 
-Keep `VITE_PARENT_PREMIUM_LAUNCH_ENABLED=false` until the TAKATAK Hockey Membership migration, Stripe CAD 10/week Price, dedicated webhook, account handoff and entitlement verification have passed end-to-end tests. AHMV must never unlock premium from localStorage, a query parameter or a Stripe success redirect.
+```text
+TAKATAK Auth / Product Catalog
+  -> active subscription
+  -> ahmv_access entitlement
+  -> one-time launch code
+  -> AHMV server exchange
+  -> signed HttpOnly AHMV session
+  -> live TAKATAK entitlement introspection
+  -> /experience
+```
+
+`/experience` is private, `noindex`, `private, no-store`, and rendered outside the public SiteLayout. localStorage, query parameters, CSS visibility and Stripe success redirects are never access authority.
+
+Keep `AHMV_EXPERIENCE_ENABLED=false` until the TAKATAK launch/exchange/introspection endpoints, shared server token, AHMV session secret, database migration and full end-to-end entitlement revocation flow are verified.
+
