@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -144,15 +145,25 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useLocation();
+  const isExperience =
+    location.pathname === "/experience" ||
+    location.pathname.startsWith("/experience/");
 
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>
-        <AppLaunchSplash />
-        <SiteLayout>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        {isExperience ? (
           <Outlet />
-        </SiteLayout>
+        ) : (
+          <>
+            <AppLaunchSplash />
+            <SiteLayout>
+              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+            </SiteLayout>
+          </>
+        )}
       </I18nProvider>
     </QueryClientProvider>
   );
