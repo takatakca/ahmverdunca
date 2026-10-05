@@ -217,7 +217,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          curl --fail --silent --show-error --retry 5 --retry-delay 3             "$AHMV_PRODUCTION_URL/healthz"
+          HEALTH_BODY="$(curl --fail --silent --show-error --retry 5 --retry-delay 3 "$AHMV_PRODUCTION_URL/healthz")"
+          echo "$HEALTH_BODY"
+          printf '%s' "$HEALTH_BODY" | grep -Fq "\"release\":\"$RELEASE_SHA\"" || {
+            echo "Production Passenger is not serving compiled release $RELEASE_SHA"
+            exit 1
+          }
 
           ROOT_HEADERS="$(mktemp)"
           ROOT_BODY="$(mktemp)"

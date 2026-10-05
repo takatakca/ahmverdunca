@@ -29,5 +29,7 @@ assert.match(sftp, /current\/tmp\/restart\.txt/);
 assert.doesNotMatch(sftp, /"%s\/tmp\/restart\.txt"/);
 assert.match(server, /release:\s*BUILD_RELEASE_SHA/);
 assert.match(server, /VITE_AHMV_BUILD_SHA/);
+assert.match(manual, /Production Passenger is not serving compiled release \$RELEASE_SHA/);
+assert.match(pre, /Preproduction Passenger is not serving compiled release \$RELEASE_SHA/);
 
 console.log("AHM Verdun deployment concurrency contract passed.");
