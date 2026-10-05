@@ -16,15 +16,10 @@ import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-we
 import { ARENAS, arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
+import { officialWeekActivityMatchesTeam } from "@/lib/official-week-team";
 
 type Lang = "fr" | "en";
 type PanelId = "game" | "practice" | "arena" | "follow" | "partner";
-
-function categoryToken(team: PublicTeamDirectoryEntry) {
-  if (team.categorySlug === "feminin") return "M12";
-  if (team.categorySlug === "junior") return "JUNIOR";
-  return team.categorySlug.toUpperCase();
-}
 
 function googleDirections(destination: string) {
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
@@ -55,18 +50,9 @@ export function TeamParentDeck({
   const [active, setActive] = useState<PanelId>("game");
   const [follow, setFollow] = useState<string[]>([]);
 
-  const token = categoryToken(team);
   const matchingActivities = useMemo(
-    () =>
-      OFFICIAL_WEEK_ACTIVITIES.filter((item) => {
-        const haystack = `${item.group} ${item.activity}`.toUpperCase();
-        const teamWords = team.name
-          .toUpperCase()
-          .split(/\s+/)
-          .filter((word) => word.length > 4 && word !== "VERDUN");
-        return haystack.includes(token) || teamWords.some((word) => haystack.includes(word));
-      }),
-    [team.name, token],
+    () => OFFICIAL_WEEK_ACTIVITIES.filter((item) => officialWeekActivityMatchesTeam(item, team)),
+    [team],
   );
 
   const practice = matchingActivities.find((item) =>
