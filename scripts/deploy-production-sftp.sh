@@ -154,7 +154,7 @@ case "$ACTION" in
     marker="$RUNNER_TEMP/ahmv-passenger-restart.txt"
     printf '%s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$marker"
 
-    printf -- '-mkdir "%s/tmp"\nput "%s" "%s/tmp/restart.txt"\nquit\n'       "$AHMV_APP_ROOT" "$marker" "$AHMV_APP_ROOT" |
+    printf -- '-mkdir "%s/current/tmp"\nput "%s" "%s/current/tmp/restart.txt"\nquit\n'       "$AHMV_APP_ROOT" "$marker" "$AHMV_APP_ROOT" |
       sftp_batch
     ;;
 
