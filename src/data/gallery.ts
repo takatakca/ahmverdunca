@@ -26,6 +26,7 @@ export interface Album {
     kind?: string;
     containsMinors?: boolean;
     teamSlugs?: readonly string[];
+    season?: string;
   }[];
   /** Public legacy AHMV album retained as the complete archive source. */
   sourceUrl?: string;
@@ -41,16 +42,24 @@ const exactTeamSlugsForMedia = (
   assets: readonly (typeof UPLOADED_AHMV_MEDIA)[number][],
 ) => [...new Set(assets.flatMap((asset) => asset.teamSlugs ?? []))];
 
+const exactSeasonForMedia = (
+  assets: readonly (typeof UPLOADED_AHMV_MEDIA)[number][],
+) => {
+  if (assets.length === 0 || assets.some((asset) => !asset.season)) return "Archives";
+  const seasons = [...new Set(assets.map((asset) => asset.season))];
+  return seasons.length === 1 ? seasons[0]! : "Archives";
+};
+
 export const ALBUMS: Album[] = [
   {
     slug: "mediatheque-ahmv-2026-2027",
-    title: { fr: "Médiathèque AHMV — saison 2026-2027", en: "AHMV Media Library — 2026-2027 season" },
+    title: { fr: "Médiathèque AHMV", en: "AHMV Media Library" },
     description: {
       fr: "Collection de 54 photos, affiches, horaires, documents et souvenirs AHM Verdun fournis à l’association et regroupés par catégorie.",
       en: "Collection of 54 AHM Verdun photos, posters, schedules, documents and memories supplied to the association and grouped by category.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(UPLOADED_AHMV_MEDIA),
     teamSlugs: exactTeamSlugsForMedia(UPLOADED_AHMV_MEDIA),
     eventType: { fr: "Médiathèque", en: "Media library" },
     coverUrl: UPLOADED_AHMV_MEDIA[0]!.url,
@@ -60,13 +69,13 @@ export const ALBUMS: Album[] = [
   },
   {
     slug: "entrainements-2026-2027",
-    title: { fr: "Entraînements 2026-2027", en: "Practices 2026-2027" },
+    title: { fr: "Entraînements AHMV", en: "AHMV practices" },
     description: {
       fr: "Photos réelles des entraînements et du développement sur glace de l’AHM Verdun.",
       en: "Real photos from AHM Verdun practices and on-ice development.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(uploadedMedia("training")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("training")),
     eventType: { fr: "Entraînements", en: "Practices" },
     coverUrl: uploadedMedia("training")[0]!.url,
@@ -76,13 +85,13 @@ export const ALBUMS: Album[] = [
   },
   {
     slug: "hockey-feminin-2026-2027",
-    title: { fr: "Hockey féminin 2026-2027", en: "Girls hockey 2026-2027" },
+    title: { fr: "Hockey féminin AHMV", en: "AHMV girls hockey" },
     description: {
-      fr: "Affiches, équipes et moments du programme féminin AHMV pour la saison 2026-2027.",
-      en: "Posters, teams and moments from the AHMV girls hockey program for the 2026-2027 season.",
+      fr: "Affiches, équipes et moments du programme féminin AHMV issus des médias fournis.",
+      en: "Posters, teams and moments from the AHMV girls hockey program in the supplied media.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(uploadedMedia("feminine")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("feminine")),
     eventType: { fr: "Hockey féminin", en: "Girls hockey" },
     coverUrl: uploadedMedia("feminine")[0]!.url,
@@ -92,13 +101,13 @@ export const ALBUMS: Album[] = [
   },
   {
     slug: "tournois-honneurs-2026-2027",
-    title: { fr: "Tournois et honneurs 2026-2027", en: "Tournaments and honours 2026-2027" },
+    title: { fr: "Tournois et honneurs AHMV", en: "AHMV tournaments and honours" },
     description: {
       fr: "Tournois, célébrations et souvenirs compétitifs de l’AHM Verdun.",
       en: "AHM Verdun tournaments, celebrations and competitive memories.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(uploadedMedia("tournaments")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("tournaments")),
     eventType: { fr: "Tournois", en: "Tournaments" },
     coverUrl: uploadedMedia("tournaments")[0]!.url,
@@ -108,13 +117,13 @@ export const ALBUMS: Album[] = [
   },
   {
     slug: "communaute-verdun-2026-2027",
-    title: { fr: "Communauté de Verdun 2026-2027", en: "Verdun community 2026-2027" },
+    title: { fr: "Communauté de Verdun", en: "Verdun community" },
     description: {
       fr: "Événements communautaires, reconnaissances et rencontres autour du hockey à Verdun.",
       en: "Community events, recognition moments and gatherings around hockey in Verdun.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(uploadedMedia("community")),
     teamSlugs: [],
     eventType: { fr: "Communauté", en: "Community" },
     coverUrl: uploadedMedia("community")[0]!.url,
@@ -126,11 +135,11 @@ export const ALBUMS: Album[] = [
     slug: "inscriptions-vie-associative-2026-2027",
     title: { fr: "Inscriptions et vie associative", en: "Registration and association life" },
     description: {
-      fr: "Inscriptions, bénévolat, communications et identité de l’association pour 2026-2027.",
-      en: "Registration, volunteering, communications and association identity for 2026-2027.",
+      fr: "Inscriptions, bénévolat, communications et identité de l’association issus des médias fournis.",
+      en: "Registration, volunteering, communications and association identity from the supplied media.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(uploadedMedia("registration", "association", "news", "branding")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("registration", "association", "news", "branding")),
     eventType: { fr: "Association", en: "Association" },
     coverUrl: uploadedMedia("registration", "association", "news", "branding")[0]!.url,
@@ -140,13 +149,13 @@ export const ALBUMS: Album[] = [
   },
   {
     slug: "horaires-camps-2026-2027",
-    title: { fr: "Horaires et camps 2026-2027", en: "Schedules and camps 2026-2027" },
+    title: { fr: "Horaires et camps AHMV", en: "AHMV schedules and camps" },
     description: {
       fr: "Horaires hebdomadaires, camps, cliniques et documents de planification pour la saison.",
       en: "Weekly schedules, camps, clinics and planning documents for the season.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(uploadedMedia("schedules", "camps", "events")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("schedules", "camps", "events")),
     eventType: { fr: "Horaires et camps", en: "Schedules and camps" },
     coverUrl: uploadedMedia("schedules", "camps", "events")[0]!.url,
@@ -156,13 +165,13 @@ export const ALBUMS: Album[] = [
   },
   {
     slug: "presse-partenaires-2026-2027",
-    title: { fr: "Presse et partenaires 2026-2027", en: "Press and partners 2026-2027" },
+    title: { fr: "Presse et partenaires AHMV", en: "AHMV press and partners" },
     description: {
       fr: "Articles, documents de partenaires et matériel de référence lié à l’AHM Verdun.",
       en: "Articles, partner documents and reference material related to AHM Verdun.",
     },
     date: "2026-10-04",
-    season: "2026-2027",
+    season: exactSeasonForMedia(uploadedMedia("press", "partners")),
     teamSlugs: [],
     eventType: { fr: "Presse et partenaires", en: "Press and partners" },
     coverUrl: uploadedMedia("press", "partners")[0]!.url,
