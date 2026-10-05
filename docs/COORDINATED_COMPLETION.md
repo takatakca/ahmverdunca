@@ -46,8 +46,8 @@ The same source line adds the guarded Voice production-host deployment gate from
 - ADS delivery inventory is still intentionally empty: zero ADS subscriptions, campaigns, creatives and events. Browser ADS remains OFF/no-fill until real commercial inventory exists.
 - AHMV Parent Experience is active. Essential is 10 CAD/week and self-serve. Premium is 30 CAD/week, planned and non-self-serve. `smart_departure` belongs to Premium only.
 - TAKATAK #102 is merged and preserves a reviewed official weekly AHMV document through its bounded covered week without rewriting its real source timestamp.
-- TAKATAK #103 is merged at `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`; its post-merge CI #492 is the current final backend verification run.
-- PR #100's staging-history reconciler remains the only approved Prisma-history reconciliation path. No ad-hoc write to `_prisma_migrations` is permitted.
+- TAKATAK #103 is merged at `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`; post-merge CI #492 completed successfully.
+- PR #100's staging-history reconciler remains the only approved Prisma-history reconciliation path. Reconciler run #28 for `8adfa23…` failed at its protected configuration gate because `TAKATAK_STAGING_DATABASE_URL` was empty; staging deployment #31 correctly skipped. No ad-hoc write to `_prisma_migrations` is permitted.
 
 ## Readiness matrix
 
