@@ -75,11 +75,25 @@ if (!articleRoute.includes("canonicalUrl(`/nouvelles/${slug}`)")) {
 if (!articleRoute.includes('"@type": "SportsOrganization"')) {
   errors.push("NewsArticle structured data must identify AHMV as the publisher");
 }
-if (/newsJsonLd[\s\S]{0,1200}\bauthor\s*:/.test(articleRoute)) {
-  errors.push("NewsArticle structured data must not synthesize an author");
-}
-if (/newsJsonLd[\s\S]{0,1200}\bimage\s*:/.test(articleRoute)) {
-  errors.push("NewsArticle structured data must not synthesize an image");
+const newsJsonLdStart = articleRoute.indexOf("const newsJsonLd = JSON.stringify({");
+const newsJsonLdEnd =
+  newsJsonLdStart >= 0
+    ? articleRoute.indexOf("\n  });", newsJsonLdStart)
+    : -1;
+const newsJsonLdBlock =
+  newsJsonLdStart >= 0 && newsJsonLdEnd > newsJsonLdStart
+    ? articleRoute.slice(newsJsonLdStart, newsJsonLdEnd)
+    : "";
+
+if (!newsJsonLdBlock) {
+  errors.push("NewsArticle structured data block could not be isolated for safety validation");
+} else {
+  if (/\bauthor\s*:/.test(newsJsonLdBlock)) {
+    errors.push("NewsArticle structured data must not synthesize an author");
+  }
+  if (/\bimage\s*:/.test(newsJsonLdBlock)) {
+    errors.push("NewsArticle structured data must not synthesize an image");
+  }
 }
 
 if (errors.length > 0) {
