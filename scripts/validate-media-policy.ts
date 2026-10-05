@@ -20,6 +20,29 @@ const forbiddenPublicPlaceholderCopy = [
 
 const failures: string[] = [];
 
+const uploadedMedia = readFileSync(join(process.cwd(), "src/data/uploaded-media.ts"), "utf8");
+const galleryData = readFileSync(join(process.cwd(), "src/data/gallery.ts"), "utf8");
+const galleryIndex = readFileSync(join(process.cwd(), "src/routes/galerie.index.tsx"), "utf8");
+
+if (!uploadedMedia.includes("PUBLIC_UPLOADED_AHMV_MEDIA")) {
+  failures.push("uploaded media registry is missing the public fail-closed collection.");
+}
+if (!uploadedMedia.includes("filter((asset) => !asset.containsMinors)")) {
+  failures.push("uploaded youth media is not excluded from the public collection by default.");
+}
+if (!galleryData.includes("PUBLIC_UPLOADED_AHMV_MEDIA")) {
+  failures.push("gallery data does not consume the consent-safe public media collection.");
+}
+if (galleryData.includes('import { UPLOADED_AHMV_MEDIA }')) {
+  failures.push("gallery data imports raw uploaded media instead of the public collection.");
+}
+if (!galleryIndex.includes("publicUploadedAhmvMediaById")) {
+  failures.push("gallery highlights do not use the consent-safe media lookup.");
+}
+if (galleryIndex.includes("UPLOADED_AHMV_MEDIA[")) {
+  failures.push("gallery highlights index directly into the raw uploaded media collection.");
+}
+
 function visit(directory: string) {
   for (const name of readdirSync(directory)) {
     const path = join(directory, name);
