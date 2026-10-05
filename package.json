@@ -42,7 +42,8 @@
     "check:newsletter": "bun scripts/validate-newsletter.ts",
     "check:community-editability": "bun scripts/validate-community-editability.ts",
     "check:deploy-concurrency": "bun scripts/validate-deployment-concurrency.ts",
-    "check:production-config": "bun scripts/validate-production-config-inventory.ts"
+    "check:production-config": "bun scripts/validate-production-config-inventory.ts",
+    "report:production-readiness": "bun scripts/production-readiness-report.ts"
   },
   "overrides": {
     "rolldown": "1.2.1"
