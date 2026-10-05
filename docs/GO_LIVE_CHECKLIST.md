@@ -55,7 +55,7 @@ The successful deployment verified the immutable release marker, Passenger resta
 | TAKATAK staging Prisma history | #100 merged; not certified reconciled | Add protected `TAKATAK_STAGING_DATABASE_URL`; guarded workflow must succeed |
 | Public indexing | Manual gate, currently fail-closed | Enable only after release owner accepts public/legal/provider items |
 
-The current TAKATAK backend authority after #103 is `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`. Its post-merge CI #492 is the final verification run for this checkpoint and must be green before final backend sign-off.
+The current TAKATAK backend authority after #103 is `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`. Post-merge CI #492 completed successfully. Automatic staging reconciler #28 then failed safely because protected `TAKATAK_STAGING_DATABASE_URL` was empty; staging deployment #31 correctly skipped.
 
 Run:
 
