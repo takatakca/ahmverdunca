@@ -71,9 +71,9 @@ test("Denis Savard venue resolves to a verified destination and navigation links
 });
 
 test("shared schedule service returns event metadata and directions", () => {
-  const result = nextEventService("Junior", "fr", {}, new Date("2026-09-28T16:00:00Z"));
+  const result = nextEventService("M15", "fr", {}, new Date("2026-10-06T12:00:00Z"));
   assert.equal(result.outcome, "scheduled");
-  assert.equal(result.event?.group, "Junior");
+  assert.equal(result.event?.group, "M15");
   assert.ok(result.directions?.googleMaps);
   assert.match(result.smsText, /Itinéraire:/);
 });
@@ -98,25 +98,26 @@ test("member SMS commands parse in French and English", () => {
 
 test("weekly range answer lists only the requested exact group", () => {
   const result = scheduleRangeAnswer(
-    "Junior",
+    "M15",
     "week",
     "fr",
     undefined,
-    new Date("2026-09-28T16:00:00Z"),
+    new Date("2026-10-06T12:00:00Z"),
   );
   assert.equal(result.outcome, "scheduled");
-  assert.equal(result.group, "Junior");
-  assert.equal(result.events.length, 1);
+  assert.equal(result.group, "M15");
+  assert.ok(result.events.length > 0);
+  assert.ok(result.events.every((event) => event.group === "M15"));
   assert.match(result.text, /Cette semaine/);
 });
 
 test("tomorrow range does not invent unpublished activities", () => {
   const result = scheduleRangeAnswer(
-    "Junior",
+    "M15",
     "tomorrow",
     "fr",
     undefined,
-    new Date("2026-09-28T16:00:00Z"),
+    new Date("2026-10-06T12:00:00Z"),
   );
   assert.equal(result.outcome, "empty");
   assert.equal(result.events.length, 0);
