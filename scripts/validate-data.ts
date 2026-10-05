@@ -16,6 +16,7 @@ import { TEAM_SOCIAL_LINKS } from "../src/data/team-social";
 import { EXTERNAL_LINKS, MAIN_NAV, MORE_NAV, SITE } from "../src/lib/site";
 import { AHMV_SOCIAL_ARCHIVE_REFERENCES, HOCKEY_HERITAGE } from "../src/data/heritage";
 import { TEAM_COMMUNITY_POSTS, TEAM_DOCUMENTS, TEAM_FUNDRAISING_CAMPAIGNS, TEAM_VOLUNTEER_NEEDS } from "../src/data/team-community";
+import { UPLOADED_AHMV_MEDIA } from "../src/data/uploaded-media";
 
 const errors: string[] = [];
 
@@ -73,6 +74,9 @@ requireUnique("NEWS.legacyId", NEWS.flatMap((article) => article.legacyId === un
 requireUnique("PUBLIC_TEAM_DIRECTORY.legacyScheduleTeamId", PUBLIC_TEAM_DIRECTORY.map((entry) => entry.legacyScheduleTeamId));
 requireUnique("PUBLIC_TEAM_DIRECTORY.hubUrl", PUBLIC_TEAM_DIRECTORY.map(publicTeamHubUrl));
 requireUnique("ALBUMS.slug", ALBUMS.map((album) => album.slug));
+requireUnique("UPLOADED_AHMV_MEDIA.id", UPLOADED_AHMV_MEDIA.map((asset) => String(asset.id)));
+requireUnique("UPLOADED_AHMV_MEDIA.url", UPLOADED_AHMV_MEDIA.map((asset) => asset.url));
+requireUnique("UPLOADED_AHMV_MEDIA.sourceUrl", UPLOADED_AHMV_MEDIA.map((asset) => asset.sourceUrl));
 requireUnique("SCHEDULE.id", SCHEDULE.map((event) => event.id));
 requireUnique("OFFICIAL_WEEK_ACTIVITIES.id", OFFICIAL_WEEK_ACTIVITIES.map((event) => event.id));
 requireUnique("ALERTS.id", ALERTS.map((alert) => alert.id));
@@ -375,7 +379,20 @@ for (const album of ALBUMS) {
     }
   }
 
-  for (const photo of album.photos ?? []) {
+  const albumPhotos = album.photos ?? [];
+  requireUnique(`Album "${album.slug}" photo URLs`, albumPhotos.map((photo) => photo.url));
+
+  if (!album.photosPending && album.photoCount !== undefined && album.photoCount !== albumPhotos.length) {
+    errors.push(
+      `Album "${album.slug}" photoCount ${album.photoCount} does not match rendered photos ${albumPhotos.length}.`,
+    );
+  }
+
+  if (!album.photosPending && album.coverUrl && albumPhotos.length > 0 && !albumPhotos.some((photo) => photo.url === album.coverUrl)) {
+    errors.push(`Album "${album.slug}" coverUrl must reference one of its rendered photos.`);
+  }
+
+  for (const photo of albumPhotos) {
     if (photo.season && !/^\d{4}-\d{4}$/.test(photo.season)) {
       errors.push(`Album "${album.slug}" photo has invalid season provenance "${photo.season}".`);
     }
