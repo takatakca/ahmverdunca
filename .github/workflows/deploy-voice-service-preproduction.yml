@@ -152,6 +152,26 @@ jobs:
           node services/ahmv-voice-ai/scripts/post-deploy-smoke.mjs "$VOICE_PREVIEW_URL"
           node services/ahmv-voice-ai/scripts/bridge-smoke.mjs "$AHM_PUBLIC_ORIGIN"
 
+      - name: Create preproduction release attestation
+        if: success()
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/voice-preprod-attestation"
+          printf '%s\n' "$RELEASE_SHA" > "$RUNNER_TEMP/voice-preprod-attestation/RELEASE_SHA"
+          printf '%s\n' "$VOICE_PREVIEW_URL" > "$RUNNER_TEMP/voice-preprod-attestation/VOICE_PREVIEW_URL"
+          printf '%s\n' "$GITHUB_RUN_ID" > "$RUNNER_TEMP/voice-preprod-attestation/PREPRODUCTION_RUN_ID"
+
+      - name: Upload preproduction release attestation
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ahmv-voice-preprod-${{ inputs.release_sha }}
+          path: ${{ runner.temp }}/voice-preprod-attestation
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Roll back failed Voice service activation
         if: failure() && env.previous_release != ''
         env:
