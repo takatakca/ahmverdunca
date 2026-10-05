@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeExtractedScheduleRows } from "../src/lib/weekly-schedule-normalizer.ts";
+import { officialWeekActivityMatchesTeam } from "../src/lib/official-week-team.ts";
+import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory.ts";
 
 const context = {
   week: 5,
@@ -66,4 +68,46 @@ test("invalid rows are rejected rather than inferred", () => {
 
   assert.equal(result.activities.length, 0);
   assert.equal(result.errors.length, 1);
+});
+
+
+test("team pages never infer a colour-only group as an exact team", () => {
+  const leafsM13 = PUBLIC_TEAM_DIRECTORY.find(
+    (team) => team.categorySlug === "m13" && team.name === "LEAFS VERDUN",
+  );
+  const bulldogsM13 = PUBLIC_TEAM_DIRECTORY.find(
+    (team) => team.categorySlug === "m13" && team.name === "BULLDOGS VERDUN",
+  );
+  assert.ok(leafsM13);
+  assert.ok(bulldogsM13);
+
+  const namedLeafs = {
+    id: "named-leafs",
+    date: "2026-10-10",
+    start: "18:00",
+    end: "19:00",
+    venue: "Aréna Denis Savard",
+    activity: "Activité",
+    group: "M13 bleu (Leafs)",
+    status: "scheduled" as const,
+  };
+  const unnamedWhite = {
+    ...namedLeafs,
+    id: "white-group",
+    group: "M13 groupe blanc",
+  };
+  const genericM15 = {
+    ...namedLeafs,
+    id: "generic-m15",
+    group: "M15",
+  };
+  const leafsM15 = PUBLIC_TEAM_DIRECTORY.find(
+    (team) => team.categorySlug === "m15" && team.name === "LEAFS VERDUN",
+  );
+  assert.ok(leafsM15);
+
+  assert.equal(officialWeekActivityMatchesTeam(namedLeafs, leafsM13), true);
+  assert.equal(officialWeekActivityMatchesTeam(namedLeafs, bulldogsM13), false);
+  assert.equal(officialWeekActivityMatchesTeam(unnamedWhite, bulldogsM13), false);
+  assert.equal(officialWeekActivityMatchesTeam(genericM15, leafsM15), true);
 });
