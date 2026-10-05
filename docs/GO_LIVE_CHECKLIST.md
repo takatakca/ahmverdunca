@@ -1,8 +1,10 @@
 # AHM Verdun — Go-live checklist
 
-Current release baseline: GitHub `main` at `cc7618651806f2b9fcc78c9e97b4d8f7395fd24a` is deployed on MochaHost. Core Passenger/HTTP health, homepage, public routes, robots and sitemap have passed the current production smoke. This does **not** make external providers automatically ready.
+Current verified release baseline: GitHub `main` at `4330086ca292c8f149c42865d04e9ba9fdae62d9` is deployed on MochaHost. AHM Verdun CI #1020 and production deploy #788 both succeeded.
 
-## Technical release gate — completed in code / production baseline
+The deploy verified the immutable release marker, Passenger restart, `/healthz`, homepage, core public routes, search noindex behavior, `robots.txt` and `sitemap.xml`. This does **not** make external providers automatically ready.
+
+## Technical release gate — completed
 
 - [x] Runtime `.env` files are excluded from Git and rejected by CI.
 - [x] TypeScript, content validation, SEO validation, lint and production build run in CI.
@@ -15,24 +17,28 @@ Current release baseline: GitHub `main` at `cc7618651806f2b9fcc78c9e97b4d8f7395f
 - [x] Official hockey systems remain external sources of truth.
 - [x] Legacy same-domain routes are redirected to current destinations.
 - [x] Production deployment is pinned to the intended green `main` SHA with rollback safeguards.
-- [x] Current MochaHost release `cc761865…` passed core HTTP deployment smoke.
+- [x] MochaHost release `4330086…` passed the full current production deployment smoke.
 - [x] TAKATAK AHMV/Family/Product/ADS/Moderation database schema is present in production and staging.
 - [x] 24 exact public teams are present in both TAKATAK environments.
 - [x] AHMV ADS publisher plus six placements are present in both TAKATAK environments.
 - [x] Essential remains 10 CAD/week and active/self-serve; Premium remains 30 CAD/week and non-vendable/planned; Smart Departure remains Premium-only.
+- [x] TAKATAK #100 migration-history reconciler is merged and CI-validated before merge.
+- [x] AHMV Team Feed and Team Games now have separate, fail-closed production configuration contracts.
 
 ## Readiness right now
 
 | Area | State | Next acceptance |
 | --- | --- | --- |
-| Public teams | Ready | Keep exact 24-team mapping regression-tested |
+| AHMV core production | **Ready** | Keep `4330086…` as current verified baseline until next deploy |
+| Public teams | **Ready** | Keep exact 24-team mapping regression-tested |
 | Team Games / results bridge | Source ready | Shared service credential + final live exact-team upstream smoke |
-| TAKATAK ADS backend/placements | Ready in data/source | Enable browser gate only after final live serve/event smoke |
-| Continuous official schedule | Blocked externally | Approved authoritative source + freshness/provenance smoke |
-| Team Feed / social delivery | Source contract ready; gates OFF | Authorized provider accounts/connectors + token + attribution/fallback smoke |
-| Phone/SMS | Source ready, live blocked | Real signed Twilio smoke + consent/STOP/START/callback checks |
-| Voice | Source/CI ready, live blocked | Runtime credentials, TLS/WSS, bridge readiness, FR/EN/ES real-call acceptance |
+| TAKATAK ADS backend/placements | Data/backend ready | Final live serve/event smoke, then intentionally enable browser gate |
+| Continuous official schedule | Backend ready; source not live | Approved current authoritative source + freshness/provenance smoke |
+| Team Feed / social delivery | Contract ready; gates OFF | Accept/authorize provider account, configure server credential, verify attribution/fallback |
+| Phone/SMS | Source ready; live OFF | Real signed Twilio smoke + consent/STOP/START/callback checks |
+| Voice | Source/CI ready; live OFF | Runtime credentials, TLS/WSS, bridge readiness, FR/EN/ES real-call acceptance |
 | Family/Product | Contract/data present | Final launch/exchange/introspection and revoke/restore E2E before exposing gated UX |
+| TAKATAK staging Prisma history | #100 merged; not certified reconciled | Add protected `TAKATAK_STAGING_DATABASE_URL`; guarded workflow must succeed |
 | Public indexing | Manual gate | Enable only after release owner accepts remaining public/legal/provider items |
 
 Run:
@@ -49,12 +55,14 @@ bun run report:production-readiness --strict --require=core,schedule,teamGames,a
 
 The command reports only configuration names/states, never secret values. Add `teamFeed` only when the social/news bridge itself is intended to go live.
 
-## External / association approvals still required
+## External / association acceptance still required
 
-- [ ] Provide/verify the approved continuous schedule source and update cadence.
-- [ ] Authorize the social accounts/connectors used for Team Feed and Facebook reconciliation.
+- [ ] Configure the protected TAKATAK staging database URL so #100 can complete the guarded Prisma-history reconciliation automatically.
+- [ ] Provide/verify the current authoritative continuous schedule source and update cadence.
+- [ ] Accept/authorize the AHM Verdun Meta Business portfolio and connect only approved Page/Instagram assets.
+- [ ] Configure current Team Feed provider credentials server-side and verify attribution/unavailable-provider fallback.
 - [ ] Complete real Twilio provider acceptance before changing public phone routing.
-- [ ] Verify the standalone Voice runtime with real credentials, TLS/WSS, bridge readiness and rollback.
+- [ ] Verify the standalone Voice runtime with current credentials, TLS/WSS, bridge readiness and rollback.
 - [ ] Validate public photo/video permissions involving minors.
 - [ ] Confirm final privacy/legal/public-contact details required by the association.
 - [ ] Approve analytics/Search Console/Google Business/social integrations before enabling them.
@@ -62,6 +70,6 @@ The command reports only configuration names/states, never secret values. Add `t
 
 ## Operational rule
 
-Never compensate for a missing provider credential, official source, or authorization by inventing data or weakening a fail-closed gate. Keep that module disabled and ship the rest of the verified site.
+Never compensate for a missing provider credential, official source, authorization or protected database secret by inventing data, writing migration history by hand, or weakening a fail-closed gate. Keep that module disabled and ship the rest of the verified site.
 
 See `docs/FINAL_RELEASE_STATUS.md`, `docs/PRODUCTION_CONFIGURATION_INVENTORY.md` and `docs/COORDINATED_COMPLETION.md` for the release dossier.
