@@ -16,12 +16,6 @@ export function ArenaMemberTools({ arena, lang }: { arena: Arena; lang: "fr" | "
   const signupUrl = parentPremiumContextUrl("ahmv-arena", { arena: arena.slug });
   const launchReady = Boolean(signupUrl) && PARENT_PREMIUM.visible && PARENT_PREMIUM.launchEnabled;
 
-  const price = PARENT_PREMIUM.weeklyPriceCad.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA", {
-    style: "currency",
-    currency: "CAD",
-    minimumFractionDigits: 2,
-  });
-
   const features = [
     {
       icon: Navigation,
@@ -76,9 +70,8 @@ export function ArenaMemberTools({ arena, lang }: { arena: Arena; lang: "fr" | "
             <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/48">
               {lang === "fr" ? "Forfait membre prévu" : "Planned member plan"}
             </p>
-            <p className="mt-1 font-display text-3xl font-extrabold uppercase text-white">
-              {price}
-              <span className="ml-2 text-xs text-white/50">{lang === "fr" ? "/ semaine" : "/ week"}</span>
+            <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-tight text-white">
+              {lang === "fr" ? "Tarification gérée dans TAKATAK" : "Pricing managed in TAKATAK"}
             </p>
           </div>
 
