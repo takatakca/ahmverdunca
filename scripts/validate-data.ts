@@ -382,13 +382,13 @@ for (const album of ALBUMS) {
   const albumPhotos = album.photos ?? [];
   requireUnique(`Album "${album.slug}" photo URLs`, albumPhotos.map((photo) => photo.url));
 
-  if (album.photoCount !== undefined && album.photoCount !== albumPhotos.length) {
+  if (!album.photosPending && album.photoCount !== undefined && album.photoCount !== albumPhotos.length) {
     errors.push(
       `Album "${album.slug}" photoCount ${album.photoCount} does not match rendered photos ${albumPhotos.length}.`,
     );
   }
 
-  if (album.coverUrl && albumPhotos.length > 0 && !albumPhotos.some((photo) => photo.url === album.coverUrl)) {
+  if (!album.photosPending && album.coverUrl && albumPhotos.length > 0 && !albumPhotos.some((photo) => photo.url === album.coverUrl)) {
     errors.push(`Album "${album.slug}" coverUrl must reference one of its rendered photos.`);
   }
 
