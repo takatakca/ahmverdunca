@@ -96,7 +96,7 @@ as $$
   from claimed c
   join public.ahmv_takatak_control_records r
     on r.id = c.control_record_id;
-$;
+$$;
 
 create or replace function public.ahmv_finish_takatak_publication_schedule(
   p_schedule_id uuid,
