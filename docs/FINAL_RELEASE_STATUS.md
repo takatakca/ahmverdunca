@@ -4,13 +4,13 @@
 **Project:** AHM Verdun 2026–2027  
 **Digital delivery:** GROUPE TAKATAK  
 **Production domain:** https://ahmverdun.ca  
-**Verified AHMV production SHA:** `4330086ca292c8f149c42865d04e9ba9fdae62d9`
+**Verified AHMV production SHA:** `9d190d6e018c867cee6a8f55be7221704b48bd9c`
 
 ## 1. Current status
 
 The AHMV public application is live on MochaHost at the verified SHA above.
 
-AHM Verdun CI #1020 succeeded and production deployment #788 completed successfully. The release workflow verified its immutable release marker, restarted Passenger and passed live health, homepage, core public-route, search-noindex, `robots.txt` and `sitemap.xml` checks. Automatic rollback was not needed.
+AHM Verdun CI #1033 succeeded and production deployment #801 completed successfully. The release workflow verified its immutable release marker, restarted Passenger and passed live health, homepage, core public-route, search-noindex, `robots.txt` and `sitemap.xml` checks. Automatic rollback was not needed.
 
 The public application remains intentionally conservative around unfinished provider integrations. A provider-backed feature is not called live merely because its source code exists.
 
@@ -41,6 +41,9 @@ Public indexing remains an explicit release-owner gate through `VITE_PUBLIC_INDE
 - Phone/SMS v2 source and security boundary
 - Standalone Voice service source/bridge boundary
 - Non-secret production-readiness reporter
+- Official AHMV Week 5 structured schedule for October 5–11
+- Fail-closed exact-team matching for colour-only weekly groups
+- Resilient PWA install prompt with iOS/iPad manual install guidance
 
 ## 3. Verified production safeguards
 
@@ -83,13 +86,21 @@ The staging database itself is healthy and the reviewed AHMV/ADS SQL is present 
 
 ## 5. Schedule status
 
-The normalized backend schedule bridge is ready. It accepts only reviewed authoritative snapshots with source provenance and freshness metadata and refuses stale/unavailable data.
+The official AHMV Week 5 publication covering October 5–11 is integrated as the current bounded structured schedule. The website and the bounded Phone/Calendar fallback now read those published activities with the official source URL and publication date preserved. Published colour groups are not guessed onto an exact public team unless the source itself names the team.
 
-A continuous current upstream source is not yet certified. Current association communication indicated the full game calendar was expected around the week of October 6. Until a current reviewed official export/API/calendar source is available, exact-team pages retain official-provider fallbacks and the continuous feed remains fail-closed.
+The normalized backend continuous-schedule bridge is also ready. It accepts only reviewed authoritative snapshots with source provenance and freshness metadata and refuses stale/unavailable data.
+
+A continuous automatically refreshed upstream export/API/calendar source is not yet certified. Until that source is connected, exact-team pages retain official-provider fallbacks beyond the bounded weekly publication and the continuous feed remains fail-closed.
 
 No weekly PDF or historical schedule may be stamped with a new timestamp to simulate freshness.
 
-## 6. Social / Team Feed status
+## 6. Install / PWA status
+
+The AHMV install prompt is active in the current production source. It now retries after competing navigation/assistant surfaces close, uses a 14-day dismissal TTL rather than disappearing permanently, listens for successful installation, and provides iPhone/iPad instructions through the Share → Add to Home Screen flow when the browser does not expose a native install prompt.
+
+The prompt remains browser-capability dependent; its absence alone is not treated as a rollback of the public application.
+
+## 7. Social / Team Feed status
 
 The AHMV Team Feed browser/server contract is complete and disabled by default.
 
@@ -97,7 +108,7 @@ An AHM Verdun Meta Business portfolio invitation exists and remains an interacti
 
 Provider OAuth/access tokens remain in TAKATAK and must never be exposed to browser code.
 
-## 7. Phone / Voice status
+## 8. Phone / Voice status
 
 Phone/SMS and Voice source, tests and security gates exist, but public routing remains fail-closed.
 
@@ -114,12 +125,12 @@ Real current provider acceptance still requires:
 
 Historical account material is not a substitute for a current runtime acceptance test.
 
-## 8. Remaining release-owner / external gates
+## 9. Remaining release-owner / external gates
 
 These are not code defects and must not be fabricated:
 
 - protected TAKATAK staging database URL for guarded Prisma-history reconciliation;
-- current authoritative continuous schedule source;
+- continuous authoritative export/API/calendar source for automatic refresh beyond the integrated Week 5 publication;
 - interactive Meta/provider authorization;
 - current Team Feed server credentials;
 - current Twilio/Voice runtime credentials and provider acceptance;
@@ -128,7 +139,7 @@ These are not code defects and must not be fabricated:
 - approved analytics/Search Console/Google Business/social integrations;
 - explicit public-indexing acceptance.
 
-## 9. Safe completion sequence
+## 10. Safe completion sequence
 
 1. Keep every unfinished external integration gate OFF.
 2. Complete TAKATAK staging migration-history reconciliation through the guarded workflow only.
@@ -141,7 +152,7 @@ These are not code defects and must not be fabricated:
 9. Record exact SHA and rollback target.
 10. Enable public indexing only after the release owner accepts the remaining public/legal/provider gates.
 
-## 10. Operating rule
+## 11. Operating rule
 
 Families should always receive either a verified current answer or an explicit official destination. Never trade provenance, privacy, authorization or rollback safety for a cosmetic “ready” state.
 
