@@ -1,6 +1,6 @@
 import type { Localized } from "@/lib/i18n";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
-import { UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
+import { PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
 
 export interface Album {
   slug: string;
@@ -35,15 +35,30 @@ export interface Album {
 }
 
 const uploadedMedia = (
-  ...categories: Array<(typeof UPLOADED_AHMV_MEDIA)[number]["category"]>
-) => UPLOADED_AHMV_MEDIA.filter((asset) => categories.includes(asset.category));
+  ...categories: Array<(typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number]["category"]>
+) =>
+  categories.length === 0
+    ? PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA
+    : PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA.filter((asset) => categories.includes(asset.category));
+
+const uploadedAlbumState = (
+  ...categories: Array<(typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number]["category"]>
+) => {
+  const assets = uploadedMedia(...categories);
+  return {
+    ...(assets[0] ? { coverUrl: assets[0].url } : {}),
+    photos: assets,
+    photoCount: assets.length,
+    photosPending: assets.length === 0,
+  };
+};
 
 const exactTeamSlugsForMedia = (
-  assets: readonly (typeof UPLOADED_AHMV_MEDIA)[number][],
+  assets: readonly (typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number][],
 ) => [...new Set(assets.flatMap((asset) => asset.teamSlugs ?? []))];
 
 const exactSeasonForMedia = (
-  assets: readonly (typeof UPLOADED_AHMV_MEDIA)[number][],
+  assets: readonly (typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number][],
 ) => {
   if (assets.length === 0 || assets.some((asset) => !asset.season)) return "Archives";
   const seasons = [...new Set(assets.map((asset) => asset.season))];
@@ -55,17 +70,14 @@ export const ALBUMS: Album[] = [
     slug: "mediatheque-ahmv-2026-2027",
     title: { fr: "Médiathèque AHMV", en: "AHMV Media Library" },
     description: {
-      fr: "Collection de 54 photos, affiches, horaires, documents et souvenirs AHM Verdun fournis à l’association et regroupés par catégorie.",
-      en: "Collection of 54 AHM Verdun photos, posters, schedules, documents and memories supplied to the association and grouped by category.",
+      fr: `Collection publique de ${PUBLIC_UPLOADED_AHMV_MEDIA.length} médias AHM Verdun admissibles, regroupés par catégorie.`,
+      en: `Public collection of ${PUBLIC_UPLOADED_AHMV_MEDIA.length} eligible AHM Verdun media items, grouped by category.`,
     },
     date: "2026-10-04",
-    season: exactSeasonForMedia(UPLOADED_AHMV_MEDIA),
-    teamSlugs: exactTeamSlugsForMedia(UPLOADED_AHMV_MEDIA),
+    season: exactSeasonForMedia(PUBLIC_UPLOADED_AHMV_MEDIA),
+    teamSlugs: exactTeamSlugsForMedia(PUBLIC_UPLOADED_AHMV_MEDIA),
     eventType: { fr: "Médiathèque", en: "Media library" },
-    coverUrl: UPLOADED_AHMV_MEDIA[0]!.url,
-    photos: UPLOADED_AHMV_MEDIA,
-    photoCount: UPLOADED_AHMV_MEDIA.length,
-    photosPending: false,
+    ...uploadedAlbumState(),
   },
   {
     slug: "entrainements-2026-2027",
@@ -78,10 +90,7 @@ export const ALBUMS: Album[] = [
     season: exactSeasonForMedia(uploadedMedia("training")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("training")),
     eventType: { fr: "Entraînements", en: "Practices" },
-    coverUrl: uploadedMedia("training")[0]!.url,
-    photos: uploadedMedia("training"),
-    photoCount: uploadedMedia("training").length,
-    photosPending: false,
+    ...uploadedAlbumState("training"),
   },
   {
     slug: "hockey-feminin-2026-2027",
@@ -94,10 +103,7 @@ export const ALBUMS: Album[] = [
     season: exactSeasonForMedia(uploadedMedia("feminine")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("feminine")),
     eventType: { fr: "Hockey féminin", en: "Girls hockey" },
-    coverUrl: uploadedMedia("feminine")[0]!.url,
-    photos: uploadedMedia("feminine"),
-    photoCount: uploadedMedia("feminine").length,
-    photosPending: false,
+    ...uploadedAlbumState("feminine"),
   },
   {
     slug: "tournois-honneurs-2026-2027",
@@ -110,10 +116,7 @@ export const ALBUMS: Album[] = [
     season: exactSeasonForMedia(uploadedMedia("tournaments")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("tournaments")),
     eventType: { fr: "Tournois", en: "Tournaments" },
-    coverUrl: uploadedMedia("tournaments")[0]!.url,
-    photos: uploadedMedia("tournaments"),
-    photoCount: uploadedMedia("tournaments").length,
-    photosPending: false,
+    ...uploadedAlbumState("tournaments"),
   },
   {
     slug: "communaute-verdun-2026-2027",
@@ -126,10 +129,7 @@ export const ALBUMS: Album[] = [
     season: exactSeasonForMedia(uploadedMedia("community")),
     teamSlugs: [],
     eventType: { fr: "Communauté", en: "Community" },
-    coverUrl: uploadedMedia("community")[0]!.url,
-    photos: uploadedMedia("community"),
-    photoCount: uploadedMedia("community").length,
-    photosPending: false,
+    ...uploadedAlbumState("community"),
   },
   {
     slug: "inscriptions-vie-associative-2026-2027",
@@ -142,10 +142,7 @@ export const ALBUMS: Album[] = [
     season: exactSeasonForMedia(uploadedMedia("registration", "association", "news", "branding")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("registration", "association", "news", "branding")),
     eventType: { fr: "Association", en: "Association" },
-    coverUrl: uploadedMedia("registration", "association", "news", "branding")[0]!.url,
-    photos: uploadedMedia("registration", "association", "news", "branding"),
-    photoCount: uploadedMedia("registration", "association", "news", "branding").length,
-    photosPending: false,
+    ...uploadedAlbumState("registration", "association", "news", "branding"),
   },
   {
     slug: "horaires-camps-2026-2027",
@@ -158,10 +155,7 @@ export const ALBUMS: Album[] = [
     season: exactSeasonForMedia(uploadedMedia("schedules", "camps", "events")),
     teamSlugs: exactTeamSlugsForMedia(uploadedMedia("schedules", "camps", "events")),
     eventType: { fr: "Horaires et camps", en: "Schedules and camps" },
-    coverUrl: uploadedMedia("schedules", "camps", "events")[0]!.url,
-    photos: uploadedMedia("schedules", "camps", "events"),
-    photoCount: uploadedMedia("schedules", "camps", "events").length,
-    photosPending: false,
+    ...uploadedAlbumState("schedules", "camps", "events"),
   },
   {
     slug: "presse-partenaires-2026-2027",
@@ -174,10 +168,7 @@ export const ALBUMS: Album[] = [
     season: exactSeasonForMedia(uploadedMedia("press", "partners")),
     teamSlugs: [],
     eventType: { fr: "Presse et partenaires", en: "Press and partners" },
-    coverUrl: uploadedMedia("press", "partners")[0]!.url,
-    photos: uploadedMedia("press", "partners"),
-    photoCount: uploadedMedia("press", "partners").length,
-    photosPending: false,
+    ...uploadedAlbumState("press", "partners"),
   },
   {
     slug: "fete-fin-annee-2025-2026",
