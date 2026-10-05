@@ -39,6 +39,7 @@
     "check:pwa-splash": "bun scripts/validate-pwa-splash.ts",
     "test:schedule-normalizer": "bun test scripts/weekly-schedule-normalizer.test.ts",
     "check:newsletter": "bun scripts/validate-newsletter.ts",
+    "check:community-editability": "bun scripts/validate-community-editability.ts",
     "check:deploy-concurrency": "bun scripts/validate-deployment-concurrency.ts"
   },
   "overrides": {
