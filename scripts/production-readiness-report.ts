@@ -5,6 +5,7 @@ type Check = {
   required: string[];
   enabled?: string[];
   manual?: boolean;
+  exact?: Record<string, string>;
   note: string;
 };
 
@@ -87,8 +88,10 @@ const checks: Check[] = [
       "TWILIO_AUTH_TOKEN",
       "AHMV_WEBHOOK_ORIGIN",
       "AHMV_PUBLIC_PHONE",
+      "AHMV_PHONE_CARRIER",
     ],
     enabled: ["AHMV_PHONE_ENABLED", "AHMV_PHONE_PUBLIC"],
+    exact: { AHMV_PHONE_CARRIER: "twilio" },
     note: "public website Phone/SMS provider edge",
   },
   {
@@ -129,16 +132,20 @@ function flag(name: string) {
 
 function evaluate(check: Check): { state: State; missing: string[] } {
   const missing = check.required.filter((name) => !present(name));
+  const invalidExact = Object.entries(check.exact ?? {})
+    .filter(([name, expected]) => flag(name) !== expected)
+    .map(([name]) => name);
+  const unmet = [...new Set([...missing, ...invalidExact])];
   const disabledGates = (check.enabled ?? []).filter((name) => flag(name) !== "true");
 
   if (disabledGates.length > 0) {
     if (requiredNames.has(check.name)) {
-      return { state: "blocked", missing: [...disabledGates, ...missing] };
+      return { state: "blocked", missing: [...new Set([...disabledGates, ...unmet])] };
     }
-    return { state: "disabled", missing };
+    return { state: "disabled", missing: unmet };
   }
 
-  if (missing.length > 0) return { state: "blocked", missing };
+  if (unmet.length > 0) return { state: "blocked", missing: unmet };
   if (check.manual) return { state: "manual", missing: [] };
   return { state: "ready", missing: [] };
 }
