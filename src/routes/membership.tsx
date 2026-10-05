@@ -1,5 +1,5 @@
 import { canonicalLink } from "@/lib/seo";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Bell, CalendarDays, Check, ShieldCheck, Sparkles, Trophy, Users } from "lucide-react";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { DemoMemberSwitch } from "@/components/demo-member-switch";
@@ -7,6 +7,9 @@ import { PARENT_PREMIUM } from "@/lib/parent-premium";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/membership")({
+  beforeLoad: () => {
+    if (!PARENT_PREMIUM.visible) throw notFound();
+  },
   head: () => ({
     links: canonicalLink("/membership"),
     meta: [
