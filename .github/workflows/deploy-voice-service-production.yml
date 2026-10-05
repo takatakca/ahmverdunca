@@ -1,0 +1,233 @@
+name: Deploy AHM Verdun Voice service production host
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_sha:
+        description: "Exact merged green Voice service commit SHA"
+        required: true
+        type: string
+      preproduction_run_id:
+        description: "Successful Voice service preproduction workflow run ID for the same SHA"
+        required: true
+        type: string
+      confirmation:
+        description: "Type AHMV-VOICE-HOST-PRODUCTION"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ahmverdun-voice-service-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: voice-production
+    timeout-minutes: 30
+
+    env:
+      VOICE_HOST: ${{ secrets.AHMV_VOICE_HOST }}
+      VOICE_PORT: ${{ secrets.AHMV_VOICE_SSH_PORT }}
+      VOICE_USER: ${{ secrets.AHMV_VOICE_SSH_USER }}
+      VOICE_APP_ROOT: ${{ secrets.AHMV_VOICE_APP_ROOT }}
+      VOICE_PRODUCTION_URL: ${{ secrets.AHMV_VOICE_PRODUCTION_URL }}
+      AHM_PUBLIC_ORIGIN: ${{ secrets.AHMV_PRODUCTION_URL }}
+      AHM_VOICE_BRIDGE_TOKEN: ${{ secrets.AHMV_VOICE_BRIDGE_TOKEN }}
+
+    steps:
+      - name: Validate requested production release
+        env:
+          REQUESTED_SHA: ${{ inputs.release_sha }}
+          PREPROD_RUN_ID: ${{ inputs.preproduction_run_id }}
+          CONFIRMATION: ${{ inputs.confirmation }}
+        run: |
+          set -euo pipefail
+          test "$CONFIRMATION" = "AHMV-VOICE-HOST-PRODUCTION" || {
+            echo "Exact confirmation AHMV-VOICE-HOST-PRODUCTION is required."
+            exit 1
+          }
+          [[ "$REQUESTED_SHA" =~ ^[0-9a-f]{40}$ ]] || {
+            echo "release_sha must be a full lowercase 40-character SHA"
+            exit 1
+          }
+          [[ "$PREPROD_RUN_ID" =~ ^[0-9]+$ ]] || {
+            echo "preproduction_run_id must be numeric"
+            exit 1
+          }
+
+      - name: Checkout exact Voice service release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ inputs.release_sha }}
+          fetch-depth: 0
+
+      - name: Verify release is merged and all Voice gates are green
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          git fetch origin main --depth=300
+          git merge-base --is-ancestor "$REQUESTED_SHA" origin/main || {
+            echo "Refusing Voice release that is not merged into main."
+            exit 1
+          }
+          for workflow in voice-service-ci.yml voice-guardian.yml ci.yml; do
+            count="$(
+              gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/$workflow/runs?head_sha=$REQUESTED_SHA&status=success&per_page=20" --jq '.workflow_runs | length'
+            )"
+            test "$count" -gt 0 || {
+              echo "No successful $workflow run exists for $REQUESTED_SHA"
+              exit 1
+            }
+          done
+
+      - name: Verify exact preproduction attestation
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REQUESTED_SHA: ${{ inputs.release_sha }}
+          PREPROD_RUN_ID: ${{ inputs.preproduction_run_id }}
+        run: |
+          set -euo pipefail
+
+          workflow_path="$(
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$PREPROD_RUN_ID" --jq '.path'
+          )"
+          conclusion="$(
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$PREPROD_RUN_ID" --jq '.conclusion'
+          )"
+
+          test "$workflow_path" = ".github/workflows/deploy-voice-service-preproduction.yml" || {
+            echo "Run $PREPROD_RUN_ID is not the Voice service preproduction workflow."
+            exit 1
+          }
+          test "$conclusion" = "success" || {
+            echo "Preproduction run $PREPROD_RUN_ID is not successful."
+            exit 1
+          }
+
+          artifact_name="ahmv-voice-preprod-$REQUESTED_SHA"
+          count="$(
+            gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$PREPROD_RUN_ID/artifacts"               --jq "[.artifacts[] | select(.name == \"$artifact_name\" and .expired == false)] | length"
+          )"
+          test "$count" -eq 1 || {
+            echo "Exact non-expired preproduction attestation artifact is required."
+            exit 1
+          }
+
+          mkdir -p "$RUNNER_TEMP/preprod-attestation"
+          gh run download "$PREPROD_RUN_ID"             --repo "$GITHUB_REPOSITORY"             --name "$artifact_name"             --dir "$RUNNER_TEMP/preprod-attestation"
+
+          test "$(tr -d '\r\n' < "$RUNNER_TEMP/preprod-attestation/RELEASE_SHA")" = "$REQUESTED_SHA" || {
+            echo "Preproduction attestation SHA mismatch."
+            exit 1
+          }
+
+      - name: Verify service source and locked dependency graph
+        working-directory: services/ahmv-voice-ai
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run verify
+          npm audit --omit=dev --audit-level=high
+
+      - name: Validate production host configuration
+        run: |
+          set -euo pipefail
+          for name in VOICE_HOST VOICE_PORT VOICE_USER VOICE_APP_ROOT VOICE_PRODUCTION_URL AHM_PUBLIC_ORIGIN AHM_VOICE_BRIDGE_TOKEN; do
+            test -n "${!name:-}" || { echo "Missing required secret-backed value: $name"; exit 1; }
+          done
+          [[ "$VOICE_PORT" =~ ^[0-9]+$ ]] || { echo "SSH port must be numeric"; exit 1; }
+          [[ "$VOICE_APP_ROOT" = /* ]] || { echo "Voice app root must be absolute"; exit 1; }
+          test "$VOICE_PRODUCTION_URL" = "https://voice.ahmverdun.ca" || {
+            echo "Production Voice URL must be exactly https://voice.ahmverdun.ca"
+            exit 1
+          }
+          test "$AHM_PUBLIC_ORIGIN" = "https://ahmverdun.ca" || {
+            echo "Production AHMV origin must be exactly https://ahmverdun.ca"
+            exit 1
+          }
+          test "${#AHM_VOICE_BRIDGE_TOKEN}" -ge 24 || { echo "Voice bridge token is too short"; exit 1; }
+
+      - name: Configure production SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AHMV_VOICE_SSH_PRIVATE_KEY }}
+          KNOWN_HOSTS: ${{ secrets.AHMV_VOICE_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$SSH_PRIVATE_KEY"
+          test -n "$KNOWN_HOSTS"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Package immutable Voice service release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          tar -C services/ahmv-voice-ai             --exclude=node_modules             -czf "ahmv-voice-service-$RELEASE_SHA.tar.gz" .
+
+      - name: Capture previous Voice production release
+        run: |
+          set -euo pipefail
+          PREVIOUS="$(ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "readlink '$VOICE_APP_ROOT/current' 2>/dev/null || true")"
+          echo "previous_release=$PREVIOUS" >> "$GITHUB_ENV"
+
+      - name: Upload and activate Voice production host release
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+        run: |
+          set -euo pipefail
+          RELEASE_DIR="$VOICE_APP_ROOT/releases/$RELEASE_SHA"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "mkdir -p '$RELEASE_DIR'"
+          scp -P "$VOICE_PORT" "ahmv-voice-service-$RELEASE_SHA.tar.gz"             "$VOICE_USER@$VOICE_HOST:$RELEASE_DIR/release.tar.gz"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST"             "set -euo pipefail; cd '$RELEASE_DIR'; tar -xzf release.tar.gz; rm release.tar.gz; npm ci --omit=dev --ignore-scripts --no-audit --no-fund; npm run verify; ln -sfn '$RELEASE_DIR' '$VOICE_APP_ROOT/current'"
+
+      - name: Restart Voice production service
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_VOICE_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          test -n "$RESTART_COMMAND" || { echo "Missing AHMV_VOICE_RESTART_COMMAND"; exit 1; }
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "$RESTART_COMMAND"
+
+      - name: Smoke Voice production host and website bridge
+        run: |
+          set -euo pipefail
+          sleep 5
+          node services/ahmv-voice-ai/scripts/post-deploy-smoke.mjs "$VOICE_PRODUCTION_URL"
+          node services/ahmv-voice-ai/scripts/bridge-smoke.mjs "$AHM_PUBLIC_ORIGIN"
+
+      - name: Roll back failed Voice production host activation
+        if: failure() && env.previous_release != ''
+        env:
+          RESTART_COMMAND: ${{ secrets.AHMV_VOICE_RESTART_COMMAND }}
+        run: |
+          set -euo pipefail
+          echo "Restoring previous Voice production release."
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "ln -sfn '$previous_release' '$VOICE_APP_ROOT/current'"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "$RESTART_COMMAND"
+
+      - name: Production host summary
+        if: success()
+        env:
+          RELEASE_SHA: ${{ inputs.release_sha }}
+          PREPROD_RUN_ID: ${{ inputs.preproduction_run_id }}
+        run: |
+          {
+            echo "## AHM Verdun Voice production host"
+            echo
+            echo "- Release SHA: `$RELEASE_SHA`"
+            echo "- Verified preproduction run: `$PREPROD_RUN_ID`"
+            echo "- Host smoke: passed"
+            echo "- Website bridge smoke: passed"
+            echo "- Twilio public-number routing: unchanged"
+          } >> "$GITHUB_STEP_SUMMARY"
