@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const read = (p) => readFile(path.join(root, p), "utf8");
 
 const [
-  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env, usage, metrics, turnController
+  pkgRaw, lockRaw, config, agent, store, bridge, security, twiml, nginx, service, env, usage, metrics, turnController, accessPolicy
 ] = await Promise.all([
   read("package.json"),
   read("package-lock.json"),
@@ -23,6 +23,7 @@ const [
   read("src/usage.js"),
   read("src/metrics.js"),
   read("src/turn-controller.js"),
+  read("src/access-policy.js"),
 ]);
 
 const pkg = JSON.parse(pkgRaw);
@@ -61,6 +62,12 @@ assert.match(agent, /find_schedule/);
 assert.match(agent, /find_arena/);
 assert.match(agent, /request_human_handoff/);
 assert.match(agent, /featureHumanHandoff/);
+assert.match(agent, /scheduleCapability\(session\.access\)/);
+assert.match(agent, /matches\.slice\(0, 1\)/);
+assert.match(agent, /accessLimited/);
+assert.match(accessPolicy, /base_next_event/);
+assert.match(accessPolicy, /tier === 'blocked'/);
+assert.match(accessPolicy, /weeklySchedule/);
 assert.match(bridge, /requestHumanHandoff/);
 assert.match(bridge, /handoff/);
 assert.match(store, /handoffRequested/);
@@ -146,5 +153,7 @@ console.log(JSON.stringify({
     singleInstanceGuard: true,
     immutableReleaseSystemd: true,
     websocketProxy: true,
+    baseNextEventBoundary: true,
+    blockedCallerIsolation: true,
   }
 }, null, 2));
