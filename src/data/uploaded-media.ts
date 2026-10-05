@@ -120,5 +120,20 @@ export const UPLOADED_AHMV_MEDIA: readonly UploadedAhmvMedia[] = META.map((item)
   categoryLabel: AHMV_MEDIA_CATEGORY_LABELS[item.category],
 }));
 
+/**
+ * Public imported media must fail closed for youth privacy.
+ *
+ * Supabase tracks consent separately from this static migration manifest. Until
+ * a server-side consent lookup is wired into the public gallery, imported
+ * assets known to contain minors are never included in the public collection.
+ * Official media that was already publicly published by AHMV is maintained in
+ * the separate official-media registry and is not governed by this fallback.
+ */
+export const PUBLIC_UPLOADED_AHMV_MEDIA: readonly UploadedAhmvMedia[] =
+  UPLOADED_AHMV_MEDIA.filter((asset) => !asset.containsMinors);
+
 export const uploadedAhmvMediaById = (id: number) =>
   UPLOADED_AHMV_MEDIA.find((asset) => asset.id === id);
+
+export const publicUploadedAhmvMediaById = (id: number) =>
+  PUBLIC_UPLOADED_AHMV_MEDIA.find((asset) => asset.id === id);

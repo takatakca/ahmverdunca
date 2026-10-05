@@ -5,7 +5,7 @@ import { ArrowRight, CalendarDays, Images } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { SportArtwork } from "@/components/sport-artwork";
 import { ALBUMS } from "@/data/gallery";
-import { UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
+import { publicUploadedAhmvMediaById } from "@/data/uploaded-media";
 import { formatShortDate, useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
@@ -44,13 +44,14 @@ function GalleryPage() {
       ),
     [contentRegistry.overlays],
   );
-  const featuredIndices = [0, 3, 34, 49] as const;
+  const featuredMediaIds = [7, 17, 26, 43] as const;
   const featuredMedia = useMemo(
     () =>
-      featuredIndices
-        .map((sourceIndex) => {
-          const media = UPLOADED_AHMV_MEDIA[sourceIndex];
+      featuredMediaIds
+        .map((mediaId) => {
+          const media = publicUploadedAhmvMediaById(mediaId);
           if (!media) return null;
+          const sourceIndex = media.id - 1;
           const patched = contentRegistry.apply(
             "photo",
             `photo:mediatheque-ahmv-2026-2027:${sourceIndex}`,
