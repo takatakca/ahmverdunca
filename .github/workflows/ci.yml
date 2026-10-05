@@ -43,6 +43,9 @@ jobs:
       - name: Validate deployment concurrency
         run: bun scripts/validate-deployment-concurrency.ts
 
+      - name: Validate production configuration inventory
+        run: bun run check:production-config
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
