@@ -1,132 +1,150 @@
 # AHM Verdun — Final release status
 
-**Date:** 2026-10-02  
+**Date:** 2026-10-05  
 **Project:** AHM Verdun 2026–2027  
 **Digital delivery:** GROUPE TAKATAK  
-**Target domain:** https://ahmverdun.ca
+**Production domain:** https://ahmverdun.ca  
+**Verified AHMV production SHA:** `4330086ca292c8f149c42865d04e9ba9fdae62d9`
 
 ## 1. Current status
 
-The public-site code is feature-complete for the approved public-information scope.
+The AHMV public application is live on MochaHost at the verified SHA above.
 
-The application is intentionally safe in pre-production by default. It does not become indexable until the production environment explicitly sets `VITE_PUBLIC_INDEXING=true`.
+AHM Verdun CI #1020 succeeded and production deployment #788 completed successfully. The release workflow verified its immutable release marker, restarted Passenger and passed live health, homepage, core public-route, search-noindex, `robots.txt` and `sitemap.xml` checks. Automatic rollback was not needed.
 
-The current public architecture does **not** recreate hockey operations. Spordle, WLLV, official tournament systems and league/schedule systems remain authoritative for registration, standings, results and other hockey operations.
+The public application remains intentionally conservative around unfinished provider integrations. A provider-backed feature is not called live merely because its source code exists.
 
-## 2. Completed public sections
+Public indexing remains an explicit release-owner gate through `VITE_PUBLIC_INDEXING`.
+
+## 2. Completed public/product foundation
 
 - Home / parent quick-access hub
-- Weekly schedules and official schedule gateways
-- Team/category directory: M5, M7, M9, M11, M13, M15, M18, Junior and girls' hockey
-- Individual team/category pages
-- Registration guidance and official Spordle handoff
-- WLLV AA/BB gateway
-- M11 tournament gateway
-- News centre
-- Photo/video archive with official AHMV album fallbacks
+- Team/category directory and exact 24-team mapping
+- Individual team/category pages and exact-team match centre
+- Registration guidance and official-provider handoffs
+- WLLV / tournament gateways
+- News centre and Team Feed UI contract
+- Photo/video archive with provenance/fallback rules
 - Coach and volunteer resources
-- Arena directory and individual arena pages, including current Saint-Charles schedule coverage
+- Arena directory and verified address handling
 - FAQ and local site search
 - Hockey resources and financial-assistance links
-- Partners and sponsorship presentation
-- Contact and operations/volunteering contact
-- Privacy page
+- Partners / sponsorship presentation
+- Contact and volunteering surfaces
+- Privacy surface
 - FR/EN interface
 - Mobile quick navigation and saved preferred team
-- Voice-assisted local search when the browser supports it
+- Voice-assisted local search when supported
 - 404 and catastrophic SSR error handling
+- TAKATAK ADS publisher/placement integration contract
+- Family/Product entitlement boundary
+- Phone/SMS v2 source and security boundary
+- Standalone Voice service source/bridge boundary
+- Non-secret production-readiness reporter
 
-## 3. Production safeguards already implemented
+## 3. Verified production safeguards
 
-- Runtime `.env` files are not tracked.
-- CI rejects committed runtime environment files.
+- Runtime `.env` files are not tracked and CI rejects committed runtime environment files.
 - Server-only secrets are separated from public `VITE_` variables.
-- HTML defaults to `noindex, nofollow` until explicit launch approval.
-- Matching `X-Robots-Tag` headers are applied server-side; intentionally noindex search and HTML error responses remain noindex even after global indexing is enabled.
+- Public indexing remains fail-closed until explicit acceptance.
+- Matching server-side indexing policy and noindex exceptions are validated.
 - Baseline browser hardening headers are enabled.
-- Sitemap is generated from the current content model.
-- CI validates `robots.txt`, canonical sitemap domain, duplicate URLs and required public routes.
-- CI validates content integrity, references, dates, times and HTTPS links.
-- CI requires every venue in the integrated official weekly schedule to resolve to a verified arena address.
-- CI pins the mirrored public team-directory count so a team cannot disappear silently.
-- Demo/illustrative media cannot silently become public production media.
-- Unapproved team social accounts are hidden.
-- Planned newsletter/voice-service messaging is preview-only.
-- Protected photo albums retain official AHMV source references without copying media involving minors; same-domain legacy source links stay hidden on the indexed replacement site.
-- Legacy AHMV home, schedules, news and album paths are redirected during domain cutover so existing bookmarks/search results do not become dead ends.
-- The reserved AHMV phone remains hidden from indexed production until carrier/system activation is explicitly confirmed.
-- Empty public filter categories are hidden instead of showing dead/empty states.
-- FAQ answers awaiting official validation remain available for pre-production review but are excluded from the indexed public FAQ and public search.
-- Critical filter state is exposed to assistive technologies.
+- Sitemap, robots, canonical domain and required public routes are CI-validated.
+- Content integrity, references, dates, times and HTTPS links are validated.
+- Demo/illustrative media cannot silently become approved public media.
+- Protected photo provenance is preserved.
+- Exact public team-directory cardinality is pinned.
+- Team Games and Team Feed are separate, independently gated systems.
+- Team Feed server/browser gates default OFF.
+- Phone/Voice public routing remains OFF until real provider acceptance.
+- Schedule consumers fail closed on unavailable, stale or provenance-free data.
+- Deployment uses immutable releases, a stale-main refusal and rollback capture.
 
-## 4. Current verified public sources
+## 4. TAKATAK shared-services status
 
-The project currently uses or links to these authoritative/public sources as appropriate:
+The active backend authority is `takatakca/takatak-v1`.
 
-- AHM Verdun legacy/public site for migrated public news, albums and weekly published information.
-- Spordle for hockey registration and official member services.
-- WLLV for AA/BB hockey.
-- Official M11 tournament website for tournament registration/rules.
-- Official schedule/standings providers for hockey schedule data.
-- Municipal/institutional arena pages for addresses and facilities.
-- Hockey Québec, Hockey Canada and named assistance programs for external resources.
+Verified shared-service state includes:
 
-The site must continue to treat those operational systems as sources of truth rather than duplicating their authority.
+- AHMV/Family/Product/ADS/Moderation schema in production and staging;
+- exact 24-team data in both environments;
+- AHMV ADS publisher `ahmverdun.ca` plus six placements;
+- Essential at 10 CAD/week, active/self-serve;
+- Premium at 30 CAD/week, planned/non-vendable;
+- Smart Departure restricted to Premium;
+- authoritative schedule snapshot storage and authenticated ingestion/read APIs;
+- exact-team games bridge;
+- separately gated Team Feed bridge;
+- operational readiness diagnostics.
 
-## 5. CI release gate
+TAKATAK PR #100 is merged at backend main `d86d3bde5ef159400e962fd98c1a21ae10cb7878`. The reconciler verifies canonical SQL before it can record externally-applied Supabase migrations in Prisma history.
 
-Every pull request and push to `main` runs:
+The staging database itself is healthy and the reviewed AHMV/ADS SQL is present in Supabase migration history. The Prisma-history reconciliation is **not yet certified complete** because the latest observed automatic reconcile run stopped safely when the protected `TAKATAK_STAGING_DATABASE_URL` was absent.
 
-1. Repository hygiene
-2. Dependency installation
-3. TypeScript type check
-4. Content/data integrity validation
-5. Public SEO/sitemap validation
-6. Runtime response-policy validation
-7. Supabase public-key safety validation
-8. No-synthetic-media policy validation
-9. Canonical SEO coverage validation
-10. External-link safety validation
-11. ESLint
-12. Production build
-13. Production release-artifact validation
+## 5. Schedule status
 
-A release candidate should not be merged when any gate fails.
+The normalized backend schedule bridge is ready. It accepts only reviewed authoritative snapshots with source provenance and freshness metadata and refuses stale/unavailable data.
 
-## 6. What still requires external approval or access
+A continuous current upstream source is not yet certified. Current association communication indicated the full game calendar was expected around the week of October 6. Until a current reviewed official export/API/calendar source is available, exact-team pages retain official-provider fallbacks and the continuous feed remains fail-closed.
+
+No weekly PDF or historical schedule may be stamped with a new timestamp to simulate freshness.
+
+## 6. Social / Team Feed status
+
+The AHMV Team Feed browser/server contract is complete and disabled by default.
+
+An AHM Verdun Meta Business portfolio invitation exists and remains an interactive authorization step. Provider access must be accepted through the authorized Meta account, then the corresponding Page/Instagram connection, server credential, exact-team mapping, attribution and unavailable-provider fallback must pass live acceptance before Team Feed is enabled.
+
+Provider OAuth/access tokens remain in TAKATAK and must never be exposed to browser code.
+
+## 7. Phone / Voice status
+
+Phone/SMS and Voice source, tests and security gates exist, but public routing remains fail-closed.
+
+Real current provider acceptance still requires:
+
+- current Twilio runtime credentials;
+- signed webhook verification;
+- consent and STOP/START behavior;
+- callback/retry behavior;
+- Voice TLS/WSS;
+- AHMV bridge readiness;
+- FR/EN/ES real-call smoke;
+- verified rollback before public-number routing changes.
+
+Historical account material is not a substitute for a current runtime acceptance test.
+
+## 8. Remaining release-owner / external gates
 
 These are not code defects and must not be fabricated:
 
-- official general AHM Verdun email address;
-- official mailing address;
-- final association approval of the privacy policy;
-- approved sponsor logos and visibility levels;
-- approved official hero/news/gallery media and permissions involving minors;
-- authorization for analytics, Search Console, Google Business Profile and social integrations;
-- authorization/credentials for newsletter, voice or other future communication services;
-- production hosting/DNS cutover from the current site to the new application;
-- final production-hostname mobile/desktop smoke test (interactive browser automation was not available in this repository session).
+- protected TAKATAK staging database URL for guarded Prisma-history reconciliation;
+- current authoritative continuous schedule source;
+- interactive Meta/provider authorization;
+- current Team Feed server credentials;
+- current Twilio/Voice runtime credentials and provider acceptance;
+- final public photo/video permissions where minors are involved;
+- final privacy/legal/public-contact approvals required by the association;
+- approved analytics/Search Console/Google Business/social integrations;
+- explicit public-indexing acceptance.
 
-Until those approvals exist, the code intentionally uses safe fallbacks.
+## 9. Safe completion sequence
 
-## 7. Production cutover sequence
+1. Keep every unfinished external integration gate OFF.
+2. Complete TAKATAK staging migration-history reconciliation through the guarded workflow only.
+3. Onboard one current authoritative schedule source and prove freshness/provenance.
+4. Accept/connect approved Meta assets and prove Team Feed attribution/fallback.
+5. Complete Twilio Phone/SMS live acceptance.
+6. Complete standalone Voice TLS/WSS/bridge/real-call acceptance.
+7. Enable only the subsystem that passed its own acceptance.
+8. Re-run AHMV health/public-route/robots/sitemap smoke after every production-affecting deploy.
+9. Record exact SHA and rollback target.
+10. Enable public indexing only after the release owner accepts the remaining public/legal/provider gates.
 
-1. Deploy the current `main` build to the approved production hosting environment with `VITE_PUBLIC_INDEXING=false`.
-2. Test the production hostname privately: home, schedules, teams, registration, arenas, news, gallery, search, FR/EN, mobile navigation and external gateways.
-3. Confirm the final public media, privacy approval, sponsor assets and association contact details.
-4. Confirm the current weekly schedule source/update process.
-5. Perform the approved hosting/DNS cutover for `ahmverdun.ca`.
-6. Verify HTTPS, legacy redirects, `/robots.txt`, `/sitemap.xml`, 404 behavior, `/recherche` noindex behavior and server headers on the actual production domain.
-7. Set `VITE_PUBLIC_INDEXING=true` only after the new production domain is confirmed correct.
-8. Rebuild/redeploy and verify the HTML robots meta plus `X-Robots-Tag`.
-9. Set `AHMV_PHONE_PUBLIC=true` only after the reserved number is active and a real inbound-call test succeeds; then connect only analytics/social/search tools explicitly authorized by the association.
-10. Submit/refresh the sitemap in the approved search-console account.
+## 10. Operating rule
 
-## 8. Operating rule after launch
+Families should always receive either a verified current answer or an explicit official destination. Never trade provenance, privacy, authorization or rollback safety for a cosmetic “ready” state.
 
-Families should always be able to find the correct answer or official destination quickly.
-
-Do not add a feature merely because it is technically possible. New functionality must improve a real parent, volunteer, coach, sponsor or association workflow and preserve the separation between public digital experience and hockey operations.
-
-For architectural boundaries, see `docs/TAKATAK_INTEGRATION_BOUNDARY.md`.
-For launch approvals, see `docs/GO_LIVE_CHECKLIST.md`.
+For architectural boundaries, see `docs/TAKATAK_INTEGRATION_BOUNDARY.md`.  
+For launch gates, see `docs/GO_LIVE_CHECKLIST.md`.  
+For the live work queue, see `docs/COORDINATED_COMPLETION.md`.
