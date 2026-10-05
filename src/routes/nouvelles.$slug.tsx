@@ -1,4 +1,4 @@
-import { canonicalLink } from "@/lib/seo";
+import { canonicalLink, canonicalUrl } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -7,6 +7,7 @@ import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 import { getTeam } from "@/data/teams";
 import { useI18n } from "@/lib/i18n";
+import { SITE } from "@/lib/site";
 import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
@@ -62,6 +63,26 @@ function ArticlePage() {
         timeZone: "America/Toronto",
       }).format(publishedOverride)
     : newsDateLabel(a, lang);
+  const articleUrl = canonicalUrl(`/nouvelles/${slug}`);
+  const publishedSchemaDate =
+    publishedOverride && Number.isFinite(publishedOverride.getTime())
+      ? publishedOverride.toISOString()
+      : a.date || undefined;
+  const newsJsonLd = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: displayTitle,
+    description: displayExcerpt,
+    mainEntityOfPage: articleUrl,
+    url: articleUrl,
+    inLanguage: lang === "fr" ? "fr-CA" : "en-CA",
+    ...(publishedSchemaDate ? { datePublished: publishedSchemaDate } : {}),
+    publisher: {
+      "@type": "SportsOrganization",
+      name: SITE.name.fr,
+      url: SITE.domain,
+    },
+  });
   const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
   const teams = a.teamSlugs.map(getTeam).filter(Boolean);
   const storyMedia =
@@ -87,6 +108,7 @@ function ArticlePage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: newsJsonLd }} />
       <PageHeader
         eyebrow={`${category ? l(category.label) : ""} · ${displayDate}`}
         title={displayTitle}

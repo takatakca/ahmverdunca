@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { SITE } from "../src/lib/site";
 
-const [robots, sitemap] = await Promise.all([
+const [robots, sitemap, articleRoute] = await Promise.all([
   readFile("public/robots.txt", "utf8"),
   readFile("public/sitemap.xml", "utf8"),
+  readFile("src/routes/nouvelles.$slug.tsx", "utf8"),
 ]);
 
 const errors: string[] = [];
@@ -62,6 +63,36 @@ for (const route of noindexRoutes) {
   const excluded = SITE.domain + route;
   if (locations.includes(excluded)) {
     errors.push(`sitemap.xml must not include noindex route: ${route}`);
+  }
+}
+
+if (!articleRoute.includes('"@type": "NewsArticle"')) {
+  errors.push("news article route must emit NewsArticle structured data");
+}
+if (!articleRoute.includes("canonicalUrl(`/nouvelles/${slug}`)")) {
+  errors.push("NewsArticle structured data must use the canonical article URL");
+}
+if (!articleRoute.includes('"@type": "SportsOrganization"')) {
+  errors.push("NewsArticle structured data must identify AHMV as the publisher");
+}
+const newsJsonLdStart = articleRoute.indexOf("const newsJsonLd = JSON.stringify({");
+const newsJsonLdEnd =
+  newsJsonLdStart >= 0
+    ? articleRoute.indexOf("\n  });", newsJsonLdStart)
+    : -1;
+const newsJsonLdBlock =
+  newsJsonLdStart >= 0 && newsJsonLdEnd > newsJsonLdStart
+    ? articleRoute.slice(newsJsonLdStart, newsJsonLdEnd)
+    : "";
+
+if (!newsJsonLdBlock) {
+  errors.push("NewsArticle structured data block could not be isolated for safety validation");
+} else {
+  if (/\bauthor\s*:/.test(newsJsonLdBlock)) {
+    errors.push("NewsArticle structured data must not synthesize an author");
+  }
+  if (/\bimage\s*:/.test(newsJsonLdBlock)) {
+    errors.push("NewsArticle structured data must not synthesize an image");
   }
 }
 
