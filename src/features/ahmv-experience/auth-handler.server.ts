@@ -17,6 +17,8 @@ type ExchangeResponse = {
   };
 };
 
+type ExchangeSession = NonNullable<ExchangeResponse["session"]>;
+
 function enabled() {
   return process.env["AHMV_EXPERIENCE_ENABLED"] === "true";
 }
@@ -39,7 +41,7 @@ function noStoreRedirect(url: URL | string, status = 303) {
   });
 }
 
-async function exchangeLaunchCode(code: string): Promise<ExchangeResponse["session"]> {
+async function exchangeLaunchCode(code: string): Promise<ExchangeSession | null> {
   const token = process.env["TAKATAK_AHMV_SERVICE_TOKEN"]?.trim() ?? "";
   if (token.length < 32) throw new Error("TAKATAK_AHMV_SERVICE_TOKEN is not configured.");
 
