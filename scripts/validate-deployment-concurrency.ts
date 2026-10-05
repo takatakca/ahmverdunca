@@ -9,8 +9,8 @@ assert.match(auto, /concurrency:\s*\n\s*group: ahmverdun-production-auto\s*\n\s*
 assert.match(manual, /concurrency:\s*\n\s*group: ahmverdun-production-auto\s*\n\s*cancel-in-progress: true/);
 assert.match(pre, /concurrency:\s*\n\s*group: ahmverdun-preproduction\s*\n\s*cancel-in-progress: true/);
 
-assert.match(auto, /AHMV_SSH_MAX_ATTEMPTS=3 ahmv-ssh/);
-assert.match(auto, /AHMV_SFTP_MAX_ATTEMPTS=2 scripts\/deploy-production-sftp\.sh test/);
+assert.match(auto, /AHMV_SSH_MAX_ATTEMPTS=6 ahmv-ssh/);
+assert.match(auto, /AHMV_SFTP_MAX_ATTEMPTS=4 scripts\/deploy-production-sftp\.sh test/);
 assert.doesNotMatch(auto, /AHMV_SSH_MAX_ATTEMPTS=8 ahmv-ssh/);
 assert.equal((auto.match(/group: ahmverdun-production-auto/g) ?? []).length, 1);
 
