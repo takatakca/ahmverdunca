@@ -133,7 +133,7 @@ function AhmvExperiencePage() {
 
   const firstName = useMemo(() => {
     const value = data?.session.displayName?.trim();
-    return value ? value.split(/\s+/)[0] : null;
+    return value ? (value.split(/\s+/)[0] ?? null) : null;
   }, [data?.session.displayName]);
 
   async function toggleAutopilot(key: keyof Autopilot) {
