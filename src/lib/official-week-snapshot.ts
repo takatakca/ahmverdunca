@@ -54,8 +54,22 @@ export function torontoLocalToIso(date: string, time: string) {
     throw new Error("Invalid Toronto local date/time.");
   }
 
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
+  const dateMatch = date.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const timeMatch = time.match(/^(\d{2}):(\d{2})$/);
+  if (!dateMatch || !timeMatch) {
+    throw new Error("Invalid Toronto local date/time.");
+  }
+
+  const year = Number(dateMatch[1]);
+  const month = Number(dateMatch[2]);
+  const day = Number(dateMatch[3]);
+  const hour = Number(timeMatch[1]);
+  const minute = Number(timeMatch[2]);
+
+  if (![year, month, day, hour, minute].every(Number.isFinite)) {
+    throw new Error("Invalid Toronto local date/time.");
+  }
+
   const desiredAsUtc = Date.UTC(year, month - 1, day, hour, minute, 0);
   let candidate = desiredAsUtc;
 
