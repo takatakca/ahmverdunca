@@ -89,9 +89,9 @@ Verified shared-service state includes:
 - exact-team games bridge;
 - operational readiness diagnostics.
 
-TAKATAK #102 and #103 are merged. The post-merge CI #492 for `8adfa23…` is the final current backend verification run and must be green before the backend checkpoint is called fully certified.
+TAKATAK #102 and #103 are merged. Post-merge CI #492 for `8adfa23…` completed successfully, including RLS/PostgREST checks, tenant isolation, build, production artifact audit and clean artifact startup.
 
-The staging database is healthy and the reviewed schema/data are present, but Prisma-history reconciliation is **not yet certified complete**. The guarded #100 reconciler still requires the protected `TAKATAK_STAGING_DATABASE_URL`; no manual `_prisma_migrations` write is an acceptable substitute.
+The staging database is healthy and the reviewed schema/data are present, but Prisma-history reconciliation is **not yet certified complete**. Reconciler run #28 for `8adfa23…` failed safely because protected `TAKATAK_STAGING_DATABASE_URL` was empty, and staging deployment #31 correctly skipped. No manual `_prisma_migrations` write is an acceptable substitute.
 
 ## 5. Schedule status
 
