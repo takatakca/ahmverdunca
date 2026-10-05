@@ -95,8 +95,8 @@ export async function handleAhmvExperienceApi(
       body &&
       typeof body === "object" &&
       !Array.isArray(body) &&
-      typeof (body as Record<string, unknown>).displayName === "string"
-        ? ((body as Record<string, unknown>).displayName as string).trim()
+      typeof (body as Record<string, unknown>)["displayName"] === "string"
+        ? ((body as Record<string, unknown>)["displayName"] as string).trim()
         : "";
 
     if (name.length < 2 || name.length > 80) {
