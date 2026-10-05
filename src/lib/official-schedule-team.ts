@@ -20,7 +20,6 @@ export function officialScheduleQueryForTeam(team: Team | undefined) {
   return officialScheduleTermsForTeam(team)[0] ?? "";
 }
 
-
 const EXPLICIT_TEAM_NAMES = [
   "LEAFS",
   "BULLDOGS",
