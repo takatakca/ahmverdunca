@@ -1,7 +1,7 @@
 # AHMVERDUN.CA — Coordinated completion queue
 
 Checkpoint: 2026-10-05, America/Toronto.  
-Canonical AHMV main and verified production release: `04663346d6c9c3bceb436938e02face629972b94`.  
+Canonical AHMV main and verified production release: `b33f45adeb3a482c323725a8d07a184977e4c752`.  
 Canonical TAKATAK backend repository: `takatakca/takatak-v1`.  
 Current TAKATAK main after AHMV readiness/Team Feed merge #103: `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`.
 
@@ -18,15 +18,15 @@ This file separates **merged source**, **deployed production**, **database state
 
 ## Current AHMV production baseline
 
-AHMV production on MochaHost is verified at `04663346d6c9c3bceb436938e02face629972b94`.
+AHMV production on MochaHost is verified at `b33f45adeb3a482c323725a8d07a184977e4c752`.
 
-AHM Verdun CI #1046 succeeded. Production deployment #814 initially stopped safely before upload because MochaHost closed all bounded SSH/SFTP transport attempts. The failed deployment changed no production release. Failed-job retry attempt 2 then completed successfully and passed:
+AHM Verdun CI #1066 and Voice Guardian #50 succeeded. Production deployment #835 completed successfully and passed:
 
 - exact-green-release checkout and stale-main refusal;
 - full release gate and deployment-configuration validation;
 - immutable release upload/activation;
-- Passenger restart;
-- `/healthz`;
+- approved cPanel/Passenger restart command;
+- exact compiled runtime SHA verification through `/healthz.release`;
 - production homepage;
 - core public routes;
 - search noindex policy;
@@ -34,7 +34,9 @@ AHM Verdun CI #1046 succeeded. Production deployment #814 initially stopped safe
 - `sitemap.xml`;
 - deployment summary.
 
-The same source line adds the guarded Voice production-host deployment gate from #350. It does **not** change the public Twilio number routing.
+This closes the previously proven stale-Passenger failure mode: an active symlink or disk marker is no longer accepted as proof that the live Node process is serving the new build.
+
+The current source also keeps the guarded Voice production-host deployment gate and the explicit Phone carrier proof. It does **not** change the public NumberBarn/Twilio routing.
 
 ## Current TAKATAK / database baseline
 
@@ -47,24 +49,24 @@ The same source line adds the guarded Voice production-host deployment gate from
 - AHMV Parent Experience is active. Essential is 10 CAD/week and self-serve. Premium is 30 CAD/week, planned and non-self-serve. `smart_departure` belongs to Premium only.
 - TAKATAK #102 is merged and preserves a reviewed official weekly AHMV document through its bounded covered week without rewriting its real source timestamp.
 - TAKATAK #103 is merged at `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`; post-merge CI #492 completed successfully.
-- PR #100's staging-history reconciler remains the only approved Prisma-history reconciliation path. Reconciler run #28 for `8adfa23…` failed at its protected configuration gate because `TAKATAK_STAGING_DATABASE_URL` was empty; staging deployment #31 correctly skipped. No ad-hoc write to `_prisma_migrations` is permitted.
+- PR #100's staging-history reconciler remains the only approved Prisma-history reconciliation path. Reconciler run #28 for `8adfa23…` failed at its protected configuration gate because `TAKATAK_STAGING_DATABASE_URL` was empty; the later rerun never received a runner and the dependent staging deploy remained skipped. Read-only comparison confirms the 102 repo migrations are represented by 87 Prisma-applied plus 15 Supabase-history migrations with canonical SQL matches and zero mismatches. The guarded workflow must still certify that state; no ad-hoc write to `_prisma_migrations` is permitted.
 
 ## Readiness matrix
 
 | ID | Area | Source/data state | Live state / remaining dependency |
 | --- | --- | --- | --- |
-| A01 | Current-source authority | AHMV `04663346…`; TAKATAK `8adfa23…` | Current authority pinned |
-| A02 | AHMV production | CI + immutable deploy + live HTTP smoke | **Ready** at `04663346…` |
+| A01 | Current-source authority | AHMV `b33f45a…`; TAKATAK `8adfa23…` | Current authority pinned |
+| A02 | AHMV production | CI + Voice Guardian + immutable deploy + cPanel restart + compiled-SHA live HTTP proof | **Ready** at `b33f45a…` |
 | A03 | Teams | Exact 24-team contract/data complete | **Ready** |
 | A04 | Team Games / results | Exact-team connector/source guards complete | Shared service credential + live exact-team upstream smoke |
 | A05 | TAKATAK ADS | Publisher + six placements complete | **No real sellable inventory yet:** 0 subscription/campaign/creative/event; browser gate stays OFF |
 | A06 | Weekly official schedule | Official Week 5, October 5–11, structured with provenance | **Ready for the bounded current week**; colour-only groups stay fail-closed |
 | A07 | Continuous official schedule | Snapshot store/read/ingest + bounded weekly freshness complete | No snapshot is fabricated: exact source timestamp / approved continuous feed still required |
 | A08 | Team Feed / unified news-social | 24-team production mapping provisioned, service `planned`, provider null | Social subscription is `social_unsubscribed`; Meta OAuth/provider/content still required |
-| A09 | Gallery ↔ exact teams/seasons | Provenance and duplicate guards complete | Final permission/mobile review |
+| A09 | Gallery ↔ exact teams/seasons | Provenance/duplicate guards + public youth-media fail-closed complete | Imported assets with pending minor consent remain hidden; final permissions can be approved without exposing them first |
 | A10 | Facebook / Meta | Invitation located; TAKATAK Facebook connection flow exists | Interactive invitation acceptance + approved Page/Instagram OAuth required |
-| A11 | Family/Product | Live catalog/prices/entitlements verified | Final launch/exchange/introspection + revoke/restore E2E |
-| A12 | Phone/SMS | Source/security CI present | Current Twilio credentials + signed-request/consent/STOP/START/callback smoke |
+| A11 | Family/Product | Live catalog/prices/entitlements + local session/exchange/introspection/revoke/restore contract verified | Production service configuration + live provider-backed launch smoke before public enablement |
+| A12 | Phone/SMS | Source/security CI + explicit carrier-proof gate present | Public number still must actually route through intended Twilio account; set `AHMV_PHONE_CARRIER=twilio` only after proof, then complete signed-request/consent/STOP/START/callback smoke |
 | A13 | Voice | Runtime/source/CI/Guardian + guarded production-host deploy workflow present | Preprod attestation, host TLS/WSS/credentials, bridge + FR/EN/ES calls still required |
 | A14 | TAKATAK staging Prisma history | #100 reconciler merged and guarded | Protected `TAKATAK_STAGING_DATABASE_URL` still required |
 | A15 | Public indexing | Fail-closed gate present and production remains noindex | Manual release-owner acceptance after public/legal/provider gates |
@@ -88,6 +90,16 @@ The internal backend preparation is now materially complete without pretending p
 6. production has zero AHMV social accounts and zero synchronized social content.
 
 The Meta Business invitation for AHM Verdun exists and remains an interactive user/provider authorization step. No OAuth token belongs in Git, browser configuration or release documentation.
+
+## Historical website-production branch reconciliation
+
+The historical `website-production-*` build train has been compared against the current AHMV production line. Sixty-nine branches were inventoried. Most are fully contained by current `main`; the branches that still report unique historical commits were inspected semantically rather than merged wholesale.
+
+Current `main` already contains the intended outcomes for revenue actions, sponsor conversion, Game Day departure, coach command centre, Gallery event filters, related-news relevance, NewsArticle structured data, dark arena/event surfaces, assistant voice discoverability, attention orchestration, compact mobile navigation/team finder, accessible flip cards, authentic media/community rails, house creative gallery, mobile sponsor swipe, official logo assets, Runway creative assets/classification manifest and the touch-snap hockey wall.
+
+Diverged historical alternatives are not deployment authority. Older ungated popups, superseded visual experiments, and one-time import/cleanup commits must not be merged over the current certified production source.
+
+See `docs/WEBSITE_PRODUCTION_BRANCH_RECONCILIATION.md` for the reconciliation record.
 
 ## External walls that remain fail-closed
 
