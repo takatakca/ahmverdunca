@@ -96,10 +96,11 @@ No provider secret belongs in browser variables.
 
 ## Phone / SMS
 
-Keep public routing OFF until a real signed Twilio smoke succeeds:
+Keep public routing OFF until carrier ownership/routing is explicitly attested and a real signed Twilio smoke succeeds:
 
 - `AHMV_PHONE_ENABLED=false`
 - `AHMV_PHONE_PUBLIC=false`
+- `AHMV_PHONE_CARRIER` — non-secret carrier proof; leave blank while NumberBarn controls the number and set exactly `twilio` only after ownership/routing is verified
 - `TWILIO_ACCOUNT_SID` — server credential
 - `TWILIO_AUTH_TOKEN` — server secret
 - `AHMV_WEBHOOK_ORIGIN`
