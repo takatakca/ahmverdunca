@@ -91,6 +91,8 @@ const editableSurfaces = [
   "src/routes/galerie.$slug.tsx",
   "src/routes/galerie.index.tsx",
   "src/routes/faq.tsx",
+  "src/components/news/news-centre.tsx",
+  "src/components/team-microsite-hero.tsx",
   "src/components/official-sponsor-showcase.tsx",
   "src/components/house-sponsor-slot.tsx",
 ] as const;
@@ -112,6 +114,8 @@ for (const path of [
   "src/routes/galerie.$slug.tsx",
   "src/routes/galerie.index.tsx",
   "src/routes/faq.tsx",
+  "src/components/news/news-centre.tsx",
+  "src/components/team-microsite-hero.tsx",
   "src/components/official-sponsor-showcase.tsx",
   "src/components/house-sponsor-slot.tsx",
 ] as const) {
