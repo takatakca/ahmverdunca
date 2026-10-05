@@ -143,6 +143,17 @@ Important secret classes include:
 
 Do not copy Voice host secrets into the AHMV website environment unless the website contract explicitly uses the same named secret.
 
+## Non-secret readiness command
+
+Run the production readiness reporter from the environment being inspected:
+
+```bash
+bun run report:production-readiness
+bun run report:production-readiness --strict --require=core,schedule,teamFeed,ads
+```
+
+The reporter prints variable **names and states only**. It never prints configured values. A gated subsystem that is intentionally OFF is reported as `disabled`; a required subsystem with missing configuration is `blocked`. Add only the subsystems intended for that cutover to `--require=`.
+
 ## cPanel verification procedure
 
 For each production variable:
