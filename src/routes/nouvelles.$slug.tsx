@@ -83,7 +83,18 @@ function ArticlePage() {
       url: SITE.domain,
     },
   });
-  const related = NEWS.filter((n) => n.slug !== a.slug).slice(0, 2);
+  const related = NEWS
+    .filter((article) => article.slug !== a.slug)
+    .map((article, index) => ({
+      article,
+      index,
+      relevance:
+        (article.category === a.category ? 2 : 0) +
+        (article.teamSlugs.some((teamSlug) => a.teamSlugs.includes(teamSlug)) ? 1 : 0),
+    }))
+    .sort((left, right) => right.relevance - left.relevance || left.index - right.index)
+    .slice(0, 2)
+    .map(({ article }) => article);
   const teams = a.teamSlugs.map(getTeam).filter(Boolean);
   const storyMedia =
     a.slug === "30e-tournoi-atome-m11-verdun-2027"
