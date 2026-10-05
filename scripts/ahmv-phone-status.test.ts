@@ -8,6 +8,7 @@ import {
 const completeSettings = {
   AHMV_PHONE_ENABLED: "true",
   AHMV_PHONE_PUBLIC: "true",
+  AHMV_PHONE_CARRIER: "twilio",
   TWILIO_AUTH_TOKEN: "placeholder",
   TWILIO_ACCOUNT_SID: "account-placeholder",
   AHMV_WEBHOOK_ORIGIN: "https://ahmverdun.ca",
@@ -28,6 +29,17 @@ test("verified phone requires complete secure server configuration", () => {
   assert.equal(getAhmvPhonePublicStatus(completeSettings).public, true);
   assert.equal(
     getAhmvPhonePublicStatus({ ...completeSettings, TWILIO_AUTH_TOKEN: "" }).public,
+    false,
+  );
+  assert.equal(
+    getAhmvPhonePublicStatus({
+      ...completeSettings,
+      AHMV_PHONE_CARRIER: "numberbarn",
+    }).public,
+    false,
+  );
+  assert.equal(
+    getAhmvPhonePublicStatus({ ...completeSettings, AHMV_PHONE_CARRIER: "" }).public,
     false,
   );
   assert.equal(
