@@ -35,6 +35,27 @@ The project ref is not a secret and is intentionally hard-coded to:
 
 The workflow is non-mutating: it runs `migration list --linked` and `db push --linked --dry-run` only.
 
+## GitHub environment: voice-production
+
+Required by `.github/workflows/deploy-voice-service-production.yml`. This environment deploys the realtime host only; it does **not** change the Twilio public-number webhook.
+
+| Secret | Purpose |
+| --- | --- |
+| `AHMV_VOICE_HOST` | SSH host for the dedicated Voice production server |
+| `AHMV_VOICE_SSH_PORT` | SSH port |
+| `AHMV_VOICE_SSH_USER` | restricted deployment user |
+| `AHMV_VOICE_APP_ROOT` | immutable release root; expected to contain `releases/` and `current` |
+| `AHMV_VOICE_PRODUCTION_URL` | must be exactly `https://voice.ahmverdun.ca` |
+| `AHMV_PRODUCTION_URL` | must be exactly `https://ahmverdun.ca` |
+| `AHMV_VOICE_SSH_PRIVATE_KEY` | deployment SSH private key |
+| `AHMV_VOICE_KNOWN_HOSTS` | pinned production Voice host key |
+| `AHMV_VOICE_RESTART_COMMAND` | approved systemd restart/status command wrapper |
+| `AHMV_VOICE_BRIDGE_TOKEN` | shared private website↔Voice bearer secret |
+
+Production deployment additionally requires the numeric successful preproduction run ID for the same release SHA. The preproduction workflow uploads a 14-day attestation artifact; production refuses a missing, expired, failed, mismatched or wrong-workflow attestation.
+
+The production-host workflow deliberately contains no Twilio phone-number routing mutation. Public-number cutover remains a separate acceptance step after the production host and website bridge smoke pass.
+
 ## AHMV website runtime — server-side only
 
 These belong in the server environment for `ahmverdun.ca` / approved preproduction, never in `VITE_*` variables:
