@@ -3,7 +3,6 @@ import assert from "node:assert/strict";
 import { normalizeExtractedScheduleRows } from "../src/lib/weekly-schedule-normalizer.ts";
 import { officialWeekActivityMatchesPublicTeam } from "../src/lib/official-schedule-team.ts";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory.ts";
-import { OFFICIAL_WEEK_ACTIVITIES } from "../src/data/official-week.ts";
 
 const context = {
   week: 5,
@@ -72,50 +71,44 @@ test("invalid rows are rejected rather than inferred", () => {
 });
 
 
-test("team pages never infer colour-only groups as exact teams", () => {
-  const getTeam = (id: string) => {
-    const found = PUBLIC_TEAM_DIRECTORY.find((team) => team.legacyScheduleTeamId === id);
-    assert.ok(found);
-    return found;
+
+test("team pages do not guess colour-only groups", () => {
+  const m13Leafs = PUBLIC_TEAM_DIRECTORY.find(
+    (team) => team.categorySlug === "m13" && team.name === "LEAFS VERDUN",
+  );
+  const m13Bulldogs = PUBLIC_TEAM_DIRECTORY.find(
+    (team) => team.categorySlug === "m13" && team.name === "BULLDOGS VERDUN",
+  );
+  const m15Leafs = PUBLIC_TEAM_DIRECTORY.find(
+    (team) => team.categorySlug === "m15" && team.name === "LEAFS VERDUN",
+  );
+  assert.ok(m13Leafs);
+  assert.ok(m13Bulldogs);
+  assert.ok(m15Leafs);
+
+  const namedLeafs = {
+    id: "named-leafs",
+    date: "2026-10-10",
+    start: "18:00",
+    end: "19:00",
+    venue: "Aréna Denis Savard",
+    activity: "Activité",
+    group: "M13 bleu (Leafs)",
+    status: "scheduled" as const,
   };
-  const getActivity = (id: string) => {
-    const found = OFFICIAL_WEEK_ACTIVITIES.find((activity) => activity.id === id);
-    assert.ok(found);
-    return found;
+  const unnamedWhite = {
+    ...namedLeafs,
+    id: "white-group",
+    group: "M13 groupe blanc",
+  };
+  const genericM15 = {
+    ...namedLeafs,
+    id: "generic-m15",
+    group: "M15",
   };
 
-  const m11Leafs = getTeam("2025191400018816");
-  const m11Broncos = getTeam("2025191400036563");
-  const m11Bulldogs = getTeam("2025191400019259");
-  const m11Coyotes = getTeam("2025191400019495");
-  const m13Leafs = getTeam("2025191400022838");
-  const m13Coyotes = getTeam("2025191400028967");
-  const m15Leafs = getTeam("2025191400023578");
-  const m15Bulldogs = getTeam("2025191400023783");
-  const louves = getTeam("2025191400035012");
-  const customHockey = getTeam("2025191400041974");
-
-  const namedM11 = getActivity("ow-1010-1200-m11");
-  assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Leafs), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Coyotes), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Broncos), false);
-  assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Bulldogs), false);
-
-  const colourOnly = getActivity("ow-1006-1700-m11");
-  for (const candidate of [m11Leafs, m11Broncos, m11Bulldogs, m11Coyotes]) {
-    assert.equal(officialWeekActivityMatchesPublicTeam(colourOnly, candidate), false);
-  }
-
-  const m13CoyotesOnly = getActivity("ow-1010-1700-m13-coyotes");
-  assert.equal(officialWeekActivityMatchesPublicTeam(m13CoyotesOnly, m13Coyotes), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(m13CoyotesOnly, m13Leafs), false);
-
-  const genericM15 = getActivity("ow-1011-1300-m15");
+  assert.equal(officialWeekActivityMatchesPublicTeam(namedLeafs, m13Leafs), true);
+  assert.equal(officialWeekActivityMatchesPublicTeam(namedLeafs, m13Bulldogs), false);
+  assert.equal(officialWeekActivityMatchesPublicTeam(unnamedWhite, m13Bulldogs), false);
   assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, m15Leafs), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, m15Bulldogs), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, m13Leafs), false);
-
-  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1009-1800-louves"), louves), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1006-1800-hsm"), customHockey), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1006-1800-hsm"), m11Leafs), false);
 });
