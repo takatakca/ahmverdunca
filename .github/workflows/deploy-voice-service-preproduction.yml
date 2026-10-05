@@ -85,7 +85,7 @@ jobs:
         run: |
           set -euo pipefail
           npm ci --ignore-scripts --no-audit --no-fund
-          npm run check
+          npm run verify
           npm audit --omit=dev --audit-level=high
 
       - name: Validate preproduction deployment configuration
@@ -135,7 +135,7 @@ jobs:
           RELEASE_DIR="$VOICE_APP_ROOT/releases/$RELEASE_SHA"
           ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST" "mkdir -p '$RELEASE_DIR'"
           scp -P "$VOICE_PORT" "ahmv-voice-service-$RELEASE_SHA.tar.gz"             "$VOICE_USER@$VOICE_HOST:$RELEASE_DIR/release.tar.gz"
-          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST"             "set -euo pipefail; cd '$RELEASE_DIR'; tar -xzf release.tar.gz; rm release.tar.gz; npm ci --omit=dev --ignore-scripts --no-audit --no-fund; npm run check; ln -sfn '$RELEASE_DIR' '$VOICE_APP_ROOT/current'"
+          ssh -p "$VOICE_PORT" "$VOICE_USER@$VOICE_HOST"             "set -euo pipefail; cd '$RELEASE_DIR'; tar -xzf release.tar.gz; rm release.tar.gz; npm ci --omit=dev --ignore-scripts --no-audit --no-fund; npm run verify; ln -sfn '$RELEASE_DIR' '$VOICE_APP_ROOT/current'"
 
       - name: Restart Voice service
         env:
