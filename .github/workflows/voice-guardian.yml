@@ -52,6 +52,25 @@ jobs:
             node:22-bookworm-slim \
             sh -lc 'npm ci --ignore-scripts --no-audit --no-fund && npm run verify'
 
+      - name: Validate Voice deployment workflow safety
+        run: |
+          set -euo pipefail
+          PREPROD=".github/workflows/deploy-voice-service-preproduction.yml"
+          PROD=".github/workflows/deploy-voice-service-production.yml"
+
+          test -f "$PREPROD"
+          test -f "$PROD"
+          grep -q 'Upload preproduction release attestation' "$PREPROD"
+          grep -q 'Verify exact preproduction attestation' "$PROD"
+          grep -q 'AHMV-VOICE-HOST-PRODUCTION' "$PROD"
+          grep -q 'https://voice.ahmverdun.ca' "$PROD"
+          grep -q 'Twilio public-number routing: unchanged' "$PROD"
+
+          ! grep -Eqi 'IncomingPhoneNumbers|incoming_phone_numbers|api\.twilio\.com.*PhoneNumbers|voice_url[[:space:]]*=' "$PROD"
+          ! grep -Eqi 'IncomingPhoneNumbers|incoming_phone_numbers|api\.twilio\.com.*PhoneNumbers|voice_url[[:space:]]*=' "$PREPROD"
+
+          echo "Voice deployment workflows preserve preproduction proof and do not mutate Twilio number routing."
+
       - name: Production dependency audit
         run: |
           set -euo pipefail
