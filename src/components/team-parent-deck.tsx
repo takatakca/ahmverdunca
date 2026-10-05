@@ -17,7 +17,7 @@ import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-t
 import { ARENAS, arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
-import { officialWeekActivityMatchesTeam } from "@/lib/official-week-team";
+import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
 
 type Lang = "fr" | "en";
 type PanelId = "game" | "practice" | "arena" | "follow" | "partner";
@@ -52,7 +52,7 @@ export function TeamParentDeck({
   const [follow, setFollow] = useState<string[]>([]);
 
   const matchingActivities = useMemo(
-    () => OFFICIAL_WEEK_ACTIVITIES.filter((item) => officialWeekActivityMatchesTeam(item, team)),
+    () => OFFICIAL_WEEK_ACTIVITIES.filter((item) => officialWeekActivityMatchesPublicTeam(item, team)),
     [team],
   );
 
