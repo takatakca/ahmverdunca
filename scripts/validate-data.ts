@@ -376,6 +376,9 @@ for (const album of ALBUMS) {
   }
 
   for (const photo of album.photos ?? []) {
+    if (photo.season && !/^\d{4}-\d{4}$/.test(photo.season)) {
+      errors.push(`Album "${album.slug}" photo has invalid season provenance "${photo.season}".`);
+    }
     for (const teamSlug of photo.teamSlugs ?? []) {
       if (!teamSlugs.has(teamSlug)) {
         errors.push(`Album "${album.slug}" photo references unknown team "${teamSlug}".`);
@@ -392,6 +395,32 @@ for (const album of ALBUMS) {
     if (JSON.stringify(provenTeams) !== JSON.stringify(albumTeams)) {
       errors.push(
         `Album "${album.slug}" team links must exactly match media provenance: expected [${provenTeams.join(", ")}], found [${albumTeams.join(", ")}].`,
+      );
+    }
+
+    const provenSeasons = [...new Set(importedPhotos.flatMap((photo) => photo.season ? [photo.season] : []))];
+    const everyPhotoHasSeason = importedPhotos.every((photo) => Boolean(photo.season));
+    const exactImportedSeason =
+      everyPhotoHasSeason && provenSeasons.length === 1 ? provenSeasons[0] : undefined;
+
+    if (exactImportedSeason) {
+      if (album.season !== exactImportedSeason) {
+        errors.push(
+          `Album "${album.slug}" season must match media provenance: expected "${exactImportedSeason}", found "${album.season}".`,
+        );
+      }
+    } else if (album.season !== "Archives") {
+      errors.push(
+        `Album "${album.slug}" must use season "Archives" until every imported photo proves the same season.`,
+      );
+    }
+
+    if (
+      album.season === "Archives" &&
+      /2026[-–]2027/.test(`${album.title.fr} ${album.title.en} ${album.description.fr} ${album.description.en}`)
+    ) {
+      errors.push(
+        `Album "${album.slug}" must not advertise 2026-2027 in public copy while its imported media season is mixed or unknown.`,
       );
     }
   }
