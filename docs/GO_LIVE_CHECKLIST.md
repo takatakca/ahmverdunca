@@ -1,8 +1,8 @@
 # AHM Verdun — Go-live checklist
 
-Current verified AHMV production baseline: GitHub `main` at `04663346d6c9c3bceb436938e02face629972b94` is deployed on MochaHost. AHM Verdun CI #1046 succeeded and production deploy #814 succeeded on failed-job retry attempt 2 after the first attempt stopped safely at the hosting transport gate.
+Current verified AHMV production baseline: GitHub `main` at `b33f45adeb3a482c323725a8d07a184977e4c752` is deployed on MochaHost. AHM Verdun CI #1066 succeeded, Voice Guardian #50 succeeded and production deploy #835 completed successfully.
 
-The successful deployment verified the immutable release marker, Passenger restart, `/healthz`, homepage, core public routes, search noindex behavior, `robots.txt` and `sitemap.xml`. This does **not** make external providers automatically ready.
+The successful deployment verified immutable release activation, the approved cPanel/Passenger restart command, exact compiled runtime SHA through `/healthz.release`, homepage, core public routes, search noindex behavior, `robots.txt` and `sitemap.xml`. This does **not** make external providers automatically ready.
 
 ## Technical release gate — completed
 
@@ -17,7 +17,7 @@ The successful deployment verified the immutable release marker, Passenger resta
 - [x] Official hockey systems remain external sources of truth.
 - [x] Legacy same-domain routes are redirected to current destinations.
 - [x] Production deployment is pinned to the intended green `main` SHA with rollback safeguards.
-- [x] MochaHost release `04663346…` passed the full production smoke.
+- [x] MochaHost release `b33f45a…` passed the full production smoke with compiled runtime SHA proof.
 - [x] Bounded MochaHost SSH/SFTP retry handling is present; a transport-only failure cannot masquerade as an application release.
 - [x] Docs-only main commits no longer consume a production deployment window.
 - [x] TAKATAK AHMV/Family/Product/ADS/Moderation schema is present in production and staging.
@@ -34,12 +34,17 @@ The successful deployment verified the immutable release marker, Passenger resta
 - [x] Colour-only schedule groups fail closed instead of being guessed onto exact teams.
 - [x] Voice production-host promotion requires exact-SHA preproduction attestation and leaves public Twilio routing unchanged.
 - [x] The install prompt is resilient to competing overlays, has a 14-day dismissal TTL and provides iPhone/iPad Add-to-Home-Screen guidance.
+- [x] Family Experience session/exchange/introspection/revoke/restore behavior is covered by CI.
+- [x] News Centre and team-microsite correction/editability surfaces are protected by CI regression checks.
+- [x] Imported media containing minors fails closed from the public gallery while consent is pending.
+- [x] Public Phone/SMS cannot become public without exact server-side `AHMV_PHONE_CARRIER=twilio` proof.
+- [x] Historical `website-production-*` branches were reconciled against current `main`; active features were verified in current source and stale alternatives were not blindly merged.
 
 ## Readiness right now
 
 | Area | State | Next acceptance |
 | --- | --- | --- |
-| AHMV core production | **Ready** | Keep `04663346…` as verified baseline until a later production-affecting deploy |
+| AHMV core production | **Ready** | Current certified baseline `b33f45a…`; every later deploy must prove its compiled runtime SHA |
 | Public teams | **Ready** | Keep exact 24-team mapping regression-tested |
 | Team Games / results bridge | Source ready | Shared service credential + final live exact-team upstream smoke |
 | TAKATAK ADS publisher | **Ready** | Six active placements exist |
@@ -49,13 +54,13 @@ The successful deployment verified the immutable release marker, Passenger resta
 | Team Feed mapping | **Provisioned, fail-closed** | One planned service, 24 team IDs, provider null |
 | Team Feed subscription | **Not entitled** | AHMV client is `free / social_unsubscribed`; make legitimate subscription decision before provider connection |
 | Meta / social delivery | Gates OFF | Accept Meta invitation, authorize approved Page/Instagram, configure provider/server state, sync/tag content, verify fallback |
-| Phone/SMS | Source ready; live OFF | Real signed Twilio smoke + consent/STOP/START/callback checks |
+| Phone/SMS | Source ready; live OFF; carrier proof fail-closed | Number must actually route through intended Twilio account, then set `AHMV_PHONE_CARRIER=twilio`, run signed Twilio/consent/STOP/START/callback acceptance, and only then enable public Phone |
 | Voice | Source/CI/deploy gate ready; live OFF | Exact preprod attestation, production host TLS/WSS/credentials, bridge readiness, FR/EN/ES real-call acceptance |
-| Family/Product | Live catalog/prices/entitlements verified | Final launch/exchange/introspection and revoke/restore E2E |
+| Family/Product | Catalog/prices/entitlements + local session/exchange/introspection/revoke/restore contract verified | Production service configuration + live provider-backed launch smoke before enabling the public Family gate |
 | TAKATAK staging Prisma history | #100 merged; not certified reconciled | Add protected `TAKATAK_STAGING_DATABASE_URL`; guarded workflow must succeed |
 | Public indexing | Manual gate, currently fail-closed | Enable only after release owner accepts public/legal/provider items |
 
-The current TAKATAK backend authority after #103 is `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`. Post-merge CI #492 completed successfully. Automatic staging reconciler #28 then failed safely because protected `TAKATAK_STAGING_DATABASE_URL` was empty; staging deployment #31 correctly skipped.
+The current TAKATAK backend authority after #103 is `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`. Post-merge CI #492 completed successfully. Staging reconciler #28 failed safely at its protected secret gate because `TAKATAK_STAGING_DATABASE_URL` was empty. A read-only audit confirms all 102 repo migrations are already represented by 87 Prisma-applied plus 15 matching Supabase-history migrations with zero canonical SQL mismatches; the guarded workflow still must certify that state.
 
 Run:
 
