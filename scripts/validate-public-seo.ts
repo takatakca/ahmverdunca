@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { SITE } from "../src/lib/site";
 
-const [robots, sitemap] = await Promise.all([
+const [robots, sitemap, articleRoute] = await Promise.all([
   readFile("public/robots.txt", "utf8"),
   readFile("public/sitemap.xml", "utf8"),
+  readFile("src/routes/nouvelles.$slug.tsx", "utf8"),
 ]);
 
 const errors: string[] = [];
@@ -63,6 +64,22 @@ for (const route of noindexRoutes) {
   if (locations.includes(excluded)) {
     errors.push(`sitemap.xml must not include noindex route: ${route}`);
   }
+}
+
+if (!articleRoute.includes('"@type": "NewsArticle"')) {
+  errors.push("news article route must emit NewsArticle structured data");
+}
+if (!articleRoute.includes("canonicalUrl(`/nouvelles/${slug}`)")) {
+  errors.push("NewsArticle structured data must use the canonical article URL");
+}
+if (!articleRoute.includes('"@type": "SportsOrganization"')) {
+  errors.push("NewsArticle structured data must identify AHMV as the publisher");
+}
+if (/newsJsonLd[\s\S]{0,1200}\bauthor\s*:/.test(articleRoute)) {
+  errors.push("NewsArticle structured data must not synthesize an author");
+}
+if (/newsJsonLd[\s\S]{0,1200}\bimage\s*:/.test(articleRoute)) {
+  errors.push("NewsArticle structured data must not synthesize an image");
 }
 
 if (errors.length > 0) {
