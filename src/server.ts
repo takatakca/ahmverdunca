@@ -165,11 +165,12 @@ export default {
           release: BUILD_RELEASE_SHA,
         }),
         {
-        status: 200,
-        headers: {
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "X-Robots-Tag": "noindex, nofollow",
+          status: 200,
+          headers: {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "no-store",
+            "X-Robots-Tag": "noindex, nofollow",
+          },
         },
       );
     }
