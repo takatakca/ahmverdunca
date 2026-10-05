@@ -1,7 +1,7 @@
 # AHMVERDUN.CA — Coordinated completion queue
 
 Checkpoint: 2026-10-04, America/Toronto.  
-Canonical AHMV main at checkpoint: `1e10ff61a87a68a2dead3048f24924637c491ba6`.
+Canonical AHMV main at checkpoint: `c04f33430e00b38f0d29cee50f178f6455e3c0cc`.
 
 This file is an execution checkpoint, not proof that hosting/provider configuration is live. Source, CI and live acceptance are tracked separately.
 
@@ -26,6 +26,7 @@ Current main includes:
 - exact-team TAKATAK games/feed connectors;
 - TAKATAK ADS publisher client with local fallback, disabled by default;
 - current News Centre and verified NewsArticle structured data;
+- gallery provenance hardening: exact team links from media evidence, exact season only when every imported photo proves it, neutral Archives fallback otherwise, uploaded-media uniqueness and fully imported album count/cover guards;
 - independent private Family Experience at `/experience`, disabled by default;
 - TAKATAK-owned Family product contract:
   - product `ahmv`
@@ -44,7 +45,7 @@ Status: open, draft/stale, non-mergeable at last inspection.
 
 Rules:
 
-1. Rebuild from current main `1e10ff61a87a68a2dead3048f24924637c491ba6` or newer.
+1. Rebuild from current main `c04f33430e00b38f0d29cee50f178f6455e3c0cc` or newer.
 2. Keep backend-only.
 3. Fix its publication-schedule SQL dollar-quote defect before merge.
 4. Preserve all current front/Family/editability contracts.
@@ -86,7 +87,7 @@ Rebuild from current TAKATAK main before merge. Do not restore native hockey das
 | A03 | Retire obsolete Voice generations | Completed; old #139/#162 closed | None; use current v0.9 |
 | A04 | Continuous official schedule | Source adapters/guards present | Approved live feed, provenance, freshness, expired-feed failure, exact-team checks |
 | A05 | Unified news feed | UI/filters/archive present | Real connector delivery, source attribution, unavailable-provider fallback |
-| A06 | Authentic gallery ↔ exact teams/seasons | Pending/partial | Asset inventory, permission/provenance, duplicate and mobile review |
+| A06 | Authentic gallery ↔ exact teams/seasons | Source completed: exact team + season provenance; mixed/unknown media use Archives; duplicate/media inventory guards enforced in CI | Live asset inventory/permission review and mobile acceptance |
 | A07 | Facebook team album reconciliation | Pending | Authorized Facebook access and exact official team mapping |
 | A08 | Separate AHMV product access through TAKATAK | AHMV source foundation merged (#325) | TAKATAK #74 rebuilt/deployed; launch/exchange/introspection; revoke/restore E2E |
 | A09 | Catalog/subscription/VIP behavior | AHMV no longer owns browser pricing | TAKATAK catalog, billing and entitlement acceptance |
