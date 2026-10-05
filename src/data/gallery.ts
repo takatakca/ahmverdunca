@@ -1,6 +1,6 @@
 import type { Localized } from "@/lib/i18n";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
-import { PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
+import { PUBLIC_UPLOADED_AHMV_MEDIA } from "@/data/uploaded-media";
 
 export interface Album {
   slug: string;
@@ -35,14 +35,14 @@ export interface Album {
 }
 
 const uploadedMedia = (
-  ...categories: Array<(typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number]["category"]>
+  ...categories: Array<(typeof PUBLIC_UPLOADED_AHMV_MEDIA)[number]["category"]>
 ) =>
   categories.length === 0
-    ? PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA
-    : PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA.filter((asset) => categories.includes(asset.category));
+    ? PUBLIC_UPLOADED_AHMV_MEDIA
+    : PUBLIC_UPLOADED_AHMV_MEDIA.filter((asset) => categories.includes(asset.category));
 
 const uploadedAlbumState = (
-  ...categories: Array<(typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number]["category"]>
+  ...categories: Array<(typeof PUBLIC_UPLOADED_AHMV_MEDIA)[number]["category"]>
 ) => {
   const assets = uploadedMedia(...categories);
   return {
@@ -54,11 +54,11 @@ const uploadedAlbumState = (
 };
 
 const exactTeamSlugsForMedia = (
-  assets: readonly (typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number][],
+  assets: readonly (typeof PUBLIC_UPLOADED_AHMV_MEDIA)[number][],
 ) => [...new Set(assets.flatMap((asset) => asset.teamSlugs ?? []))];
 
 const exactSeasonForMedia = (
-  assets: readonly (typeof PUBLIC_PUBLIC_UPLOADED_AHMV_MEDIA)[number][],
+  assets: readonly (typeof PUBLIC_UPLOADED_AHMV_MEDIA)[number][],
 ) => {
   if (assets.length === 0 || assets.some((asset) => !asset.season)) return "Archives";
   const seasons = [...new Set(assets.map((asset) => asset.season))];
