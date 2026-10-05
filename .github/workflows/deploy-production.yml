@@ -33,6 +33,7 @@ jobs:
 
     env:
       VITE_PUBLIC_INDEXING: ${{ inputs.public_indexing && 'true' || 'false' }}
+      VITE_AHMV_BUILD_SHA: ${{ inputs.release_sha }}
       AHMV_HOST: ${{ secrets.AHMV_PRODUCTION_HOST }}
       AHMV_PORT: ${{ secrets.AHMV_PRODUCTION_SSH_PORT }}
       AHMV_USER: ${{ secrets.AHMV_PRODUCTION_USER }}

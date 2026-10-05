@@ -26,6 +26,7 @@ jobs:
 
     env:
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      VITE_AHMV_BUILD_SHA: ${{ github.event.workflow_run.head_sha }}
       AHMV_HOST: ${{ secrets.AHMV_PRODUCTION_HOST }}
       AHMV_PORT: ${{ secrets.AHMV_PRODUCTION_SSH_PORT }}
       AHMV_USER: ${{ secrets.AHMV_PRODUCTION_USER }}
@@ -537,8 +538,8 @@ jobs:
             scripts/deploy-production-sftp.sh restart
           else
             ahmv-ssh \
-              "mkdir -p '$AHMV_APP_ROOT/tmp' &&
-               touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+              "mkdir -p '$AHMV_APP_ROOT/current/tmp' &&
+               touch '$AHMV_APP_ROOT/current/tmp/restart.txt'"
           fi
 
           echo "Passenger restart requested."
@@ -571,7 +572,14 @@ jobs:
               exit 1
             }
 
-          echo "Production health check passed."
+          printf '%s' "$HEALTH_BODY" |
+            grep -Fq "\"release\":\"$RELEASE_SHA\"" || {
+              echo "ERROR: Passenger is not serving the compiled release SHA $RELEASE_SHA."
+              echo "The active symlink may have changed while an older server process remained resident."
+              exit 1
+            }
+
+          echo "Production health check passed for compiled release $RELEASE_SHA."
 
       - name: Verify production homepage
         run: |
@@ -755,8 +763,8 @@ jobs:
                rm -f '$AHMV_APP_ROOT/current.new'
                ln -s '$previous_release' '$AHMV_APP_ROOT/current.new'
                mv -Tf '$AHMV_APP_ROOT/current.new' '$AHMV_APP_ROOT/current'
-               mkdir -p '$AHMV_APP_ROOT/tmp'
-               touch '$AHMV_APP_ROOT/tmp/restart.txt'"
+               mkdir -p '$AHMV_APP_ROOT/current/tmp'
+               touch '$AHMV_APP_ROOT/current/tmp/restart.txt'"
           fi
 
           echo "Previous release restored."
