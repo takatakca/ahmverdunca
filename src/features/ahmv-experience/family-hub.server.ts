@@ -40,7 +40,7 @@ export async function ensureAhmvFamilyHub(input: {
     owner_takatak_identity_id: input.identityId,
     updated_at: now,
   };
-  if (input.displayName) familyPayload.display_name = input.displayName;
+  if (input.displayName) familyPayload["display_name"] = input.displayName;
 
   const familyResult = await client
     .from("ahmv_families")
