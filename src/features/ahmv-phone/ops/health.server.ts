@@ -55,6 +55,8 @@ export async function getAhmvPhoneInternalHealth(
       numberConfigured: settings["AHMV_PUBLIC_PHONE"] === "+15816666246",
       webhookOriginConfigured:
         settings["AHMV_WEBHOOK_ORIGIN"] === "https://ahmverdun.ca",
+      carrierConfirmed:
+        settings["AHMV_PHONE_CARRIER"]?.trim().toLowerCase() === "twilio",
     },
     twilio: {
       accountConfigured: Boolean(settings["TWILIO_ACCOUNT_SID"]?.trim()),

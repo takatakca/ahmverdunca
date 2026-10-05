@@ -23,8 +23,8 @@ The current source covers September 28–October 4, 2026 and only contains Monda
 ## Activation prerequisites
 
 1. Merge after CI validation and deploy the server build, not just static assets.
-2. Store `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` in server environment settings, never in source code, browser variables or chat. Configure `AHMV_WEBHOOK_ORIGIN=https://ahmverdun.ca` with no trailing slash and `AHMV_PUBLIC_PHONE=+15816666246`.
-3. Verify that the number belongs to the expected Twilio account and supports incoming Voice and SMS. If NumberBarn still controls routing, confirm that routing/porting separately. This implementation does not assume porting is complete.
+2. Store `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN` in server environment settings, never in source code, browser variables or chat. Configure `AHMV_WEBHOOK_ORIGIN=https://ahmverdun.ca` with no trailing slash and `AHMV_PUBLIC_PHONE=+15816666246`. Keep `AHMV_PHONE_CARRIER` blank until carrier ownership/routing is verified.
+3. Verify that the number belongs to the expected Twilio account and supports incoming Voice and SMS. If NumberBarn still controls routing, confirm that routing/porting separately and leave the carrier proof unset. Only after the intended Twilio account owns/routes the public number and real inbound routing is accepted, set server-only `AHMV_PHONE_CARRIER=twilio`. This implementation does not assume porting is complete.
 4. Set the incoming Voice webhook to `https://ahmverdun.ca/api/ahmv/twilio/voice`, method POST. Set incoming Messaging webhook to `https://ahmverdun.ca/api/ahmv/twilio/sms`, method POST. If a Messaging Service owns the number, configure its incoming routing and Advanced Opt-Out there. Status callback, when supported by the selected Twilio configuration: `https://ahmverdun.ca/api/ahmv/twilio/status`, POST.
 5. Enable `AHMV_PHONE_ENABLED=true` only with the credentials configured. Test invalid signatures (403), valid signed webhooks, live French/English calls, silence, invalid keypad selection, team recognition, HELP, M12B, EN M12B, missing/pending data, cancelled events and urgent bulletin expiry. Confirm carrier delivery and Twilio request logs.
 6. Confirm the deployment does not cache webhook POST responses and the proxy preserves the exact path and query. Run `bun test scripts/ahmv-phone.test.ts`, TypeScript, lint and build in CI.
@@ -40,4 +40,4 @@ This is an implementation awaiting configuration and real-channel QA. A successf
 References: https://www.twilio.com/docs/usage/webhooks/webhooks-security and https://www.twilio.com/docs/voice/twiml/gather.
 
 
-Public website activation: after a successful real inbound call confirms carrier/Twilio routing, set server-only `AHMV_PHONE_PUBLIC=true`. The website reads `/api/ahmv/phone-status` and enables click-to-call automatically. Keep it false before that validation.
+Public website activation: after a successful real inbound call confirms carrier/Twilio routing, set server-only `AHMV_PHONE_CARRIER=twilio` and then `AHMV_PHONE_PUBLIC=true`. The website reads `/api/ahmv/phone-status` and enables click-to-call automatically. Keep it false before that validation.

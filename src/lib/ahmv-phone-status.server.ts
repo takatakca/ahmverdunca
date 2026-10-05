@@ -24,6 +24,7 @@ export function getAhmvPhonePublicStatus(
   const configured =
     settings["AHMV_PHONE_ENABLED"] === "true" &&
     settings["AHMV_PHONE_PUBLIC"] === "true" &&
+    settings["AHMV_PHONE_CARRIER"]?.trim().toLowerCase() === "twilio" &&
     Boolean(settings["TWILIO_ACCOUNT_SID"]?.trim()) &&
     Boolean(settings["TWILIO_AUTH_TOKEN"]?.trim()) &&
     validWebhookOrigin(settings["AHMV_WEBHOOK_ORIGIN"]) &&

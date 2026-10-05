@@ -60,6 +60,7 @@ const websiteCriticalNames = [
   "TWILIO_AUTH_TOKEN",
   "AHMV_WEBHOOK_ORIGIN",
   "AHMV_PUBLIC_PHONE",
+  "AHMV_PHONE_CARRIER",
   "AHMV_VOICE_BRIDGE_TOKEN",
 ] as const;
 
