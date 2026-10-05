@@ -124,7 +124,16 @@ Do not route the public phone number to Voice until TLS/WSS, bridge readiness, s
 
 ## Separate Voice host
 
-Use `services/ahmv-voice-ai/.env.example` as the exact contract for `voice.ahmverdun.ca`. Important secret classes include:
+Use `services/ahmv-voice-ai/.env.example` as the exact contract for `voice.ahmverdun.ca`.
+
+Required endpoint/identity names include:
+
+- `PUBLIC_BASE_URL`
+- `PUBLIC_WSS_URL`
+- `TWILIO_PHONE_NUMBER`
+- `AHM_VOICE_BRIDGE_URL`
+
+Important secret classes include:
 
 - `TWILIO_ACCOUNT_SID`
 - `TWILIO_AUTH_TOKEN`
