@@ -31,7 +31,7 @@ const dict = {
   "common.demoData": { fr: "Données de démonstration", en: "Demo data" },
   "common.toConnect": { fr: "À connecter plus tard", en: "To be connected later" },
   "common.toValidate": { fr: "À valider par l'association", en: "To be validated by the association" },
-  "common.placeholderImage": { fr: "Photo officielle à intégrer", en: "Official photo to be added" },
+  "common.placeholderImage": { fr: "Aucune image officielle publiée", en: "No official image published" },
   "common.logoSlot": { fr: "Emplacement du logo officiel AHMV", en: "Official AHMV logo slot" },
   "common.season": { fr: "Saison", en: "Season" },
   "common.directions": { fr: "Itinéraire", en: "Directions" },
