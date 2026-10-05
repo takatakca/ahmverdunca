@@ -4,13 +4,15 @@
 **Project:** AHM Verdun 2026–2027  
 **Digital delivery:** GROUPE TAKATAK  
 **Production domain:** https://ahmverdun.ca  
-**Verified AHMV production SHA:** `04663346d6c9c3bceb436938e02face629972b94`
+**Verified AHMV production SHA:** `b33f45adeb3a482c323725a8d07a184977e4c752`
 
 ## 1. Current status
 
 The AHMV public application is live on MochaHost at the verified SHA above.
 
-AHM Verdun CI #1046 succeeded. Production deployment #814 initially failed safely before any upload because MochaHost closed the bounded SSH/SFTP transport attempts. Failed-job retry attempt 2 then completed successfully. The release workflow verified its immutable release marker, restarted Passenger and passed live health, homepage, core public-route, search-noindex, `robots.txt` and `sitemap.xml` checks.
+AHM Verdun CI #1066 succeeded, Voice Guardian #50 succeeded and production deployment #835 completed successfully. The deployment used the approved cPanel/Passenger restart command and then proved that `/healthz.release` matched the exact compiled SHA `b33f45adeb3a482c323725a8d07a184977e4c752`. Homepage, core public routes, search-noindex policy, `robots.txt` and `sitemap.xml` also passed.
+
+The earlier stale-Passenger failure is closed: production acceptance now requires the compiled runtime SHA, not merely the active symlink or release marker.
 
 The public application remains intentionally conservative around unfinished provider integrations. A provider-backed feature is not presented as live merely because source code exists.
 
@@ -48,6 +50,14 @@ Public indexing remains an explicit release-owner gate through `VITE_PUBLIC_INDE
 - Fail-closed exact-team matching for colour-only weekly groups
 - Resilient PWA install prompt with iOS/iPad manual install guidance
 - Docs-only main commits excluded from the production release train
+- Compiled runtime SHA exposed by `/healthz` and verified during every automatic production release
+- Approved cPanel/Passenger restart command required before runtime acceptance
+- Weekly schedule metadata locked to the newest official weekly document
+- Family Experience session/exchange/introspection/revoke/restore contract covered by CI
+- News Centre and team-microsite editability protected by regression checks
+- Imported youth media fail closed from the public gallery while consent is pending
+- Public Phone/SMS additionally requires explicit `AHMV_PHONE_CARRIER=twilio` carrier proof
+- Historical `website-production-*` branch train reconciled against current `main`
 
 ## 3. Verified production safeguards
 
@@ -65,7 +75,7 @@ Public indexing remains an explicit release-owner gate through `VITE_PUBLIC_INDE
 - Phone/Voice public routing remains OFF until real provider acceptance.
 - Schedule consumers fail closed on unavailable, stale or provenance-free data.
 - Weekly schedule ingestion refuses to infer the real publication time.
-- Deployment uses immutable releases, stale-main refusal, rollback capture and bounded resilient transport retries.
+- Deployment uses immutable releases, stale-main refusal, rollback capture, bounded resilient transport retries, the approved cPanel/Passenger restart command and exact compiled-SHA runtime proof.
 - Voice host promotion requires a successful exact-SHA preproduction attestation and leaves Twilio routing unchanged.
 
 ## 4. TAKATAK shared-services status
@@ -91,7 +101,7 @@ Verified shared-service state includes:
 
 TAKATAK #102 and #103 are merged. Post-merge CI #492 for `8adfa23…` completed successfully, including RLS/PostgREST checks, tenant isolation, build, production artifact audit and clean artifact startup.
 
-The staging database is healthy and the reviewed schema/data are present, but Prisma-history reconciliation is **not yet certified complete**. Reconciler run #28 for `8adfa23…` failed safely because protected `TAKATAK_STAGING_DATABASE_URL` was empty, and staging deployment #31 correctly skipped. No manual `_prisma_migrations` write is an acceptable substitute.
+The staging database is healthy and the reviewed schema/data are present, but Prisma-history reconciliation is **not yet certified complete**. Reconciler run #28 for `8adfa23…` failed safely at the protected configuration gate because `TAKATAK_STAGING_DATABASE_URL` was empty; the subsequent rerun never received a runner and the dependent staging deployment correctly skipped. Read-only reconciliation audit confirms all 102 repo migrations are already represented by 87 Prisma-applied migrations plus 15 matching Supabase-history migrations, with zero canonical SQL mismatches. No manual `_prisma_migrations` write is an acceptable substitute.
 
 ## 5. Schedule status
 
@@ -103,13 +113,19 @@ The trusted TAKATAK production schedule snapshot is still intentionally absent. 
 
 No weekly PDF or historical schedule may be stamped with a new timestamp to simulate freshness.
 
-## 6. Install / PWA status
+## 6. Media / consent status
+
+The public gallery now fails closed for imported youth media. Staging currently contains 55 media assets; 29 are marked as containing minors with consent still pending. Those imported youth assets are no longer rendered publicly through the static gallery fallback. Consent state itself was not changed or fabricated.
+
+Albums blocked by consent render an explicit protected-media state instead of unrelated generic fallback imagery. Existing official public media remains a separate source path.
+
+## 7. Install / PWA status
 
 The AHMV install prompt is active in current production source. It retries after competing navigation/assistant surfaces clear, uses a 14-day dismissal TTL, listens for successful installation and provides iPhone/iPad Share → Add to Home Screen guidance when no native install prompt is exposed.
 
 The prompt remains browser-capability dependent; its absence alone is not a rollback condition.
 
-## 7. Social / Team Feed status
+## 8. Social / Team Feed status
 
 The Team Feed contract is no longer only theoretical. Production now has one fail-closed AHMV `social_media` service in `planned` state with all 24 exact public team IDs.
 
@@ -125,7 +141,7 @@ An AHM Verdun Meta Business portfolio invitation is present in the authorized TA
 
 Provider OAuth/access tokens remain server-side and must never be exposed to AHMV browser code or release documentation.
 
-## 8. ADS status
+## 9. ADS status
 
 The AHMV publisher and six placements are present and active. However production currently has zero ADS subscriptions, zero campaigns, zero creatives and zero ad events.
 
@@ -133,7 +149,7 @@ Therefore TAKATAK ADS is **publisher-ready but not inventory-ready**. The AHMV b
 
 No fake advertiser, campaign, creative, spend or conversion data may be inserted to make this module appear complete.
 
-## 9. Family/Product status
+## 10. Family/Product status
 
 The live TAKATAK product catalog confirms:
 
@@ -142,11 +158,11 @@ The live TAKATAK product catalog confirms:
 - `parent_premium`: 30 CAD/week, planned, non-self-serve;
 - `smart_departure` is a Premium entitlement and not an Essential entitlement.
 
-The remaining Family/Product gate is live launch/exchange/introspection/session behavior, including revoke/restore E2E. It is not a missing catalog/schema issue.
+The Family Experience session contract is now covered by CI for signed cookies, launch exchange, live entitlement introspection, expiry/tamper rejection, revoke, restore and same-origin logout. The remaining gate is production service configuration plus one real provider-backed launch/introspection/revoke/restore acceptance smoke before the public Family gate is enabled. It is not a missing catalog/schema issue.
 
-## 10. Phone / Voice status
+## 11. Phone / Voice status
 
-Phone/SMS and Voice source, CI and security gates exist, but public routing remains fail-closed.
+Phone/SMS and Voice source, CI and security gates exist, but public routing remains fail-closed. The website now additionally requires server-only `AHMV_PHONE_CARRIER=twilio`; blank or `numberbarn` cannot expose public click-to-call even if other Phone flags are accidentally enabled.
 
 The Voice source line now contains a guarded production-host workflow that requires:
 
@@ -158,11 +174,11 @@ The Voice source line now contains a guarded production-host workflow that requi
 - rollback capture;
 - host smoke and website bridge smoke.
 
-No production Voice host acceptance has yet proven current TLS/WSS/runtime credentials, and public Twilio routing is unchanged.
+No production Voice host acceptance has yet proven current TLS/WSS/runtime credentials. The public number remains treated as NumberBarn-controlled until ownership/routing to the intended Twilio account is actually proven; no source or deployment state may override that carrier fact.
 
-Real provider acceptance still requires current Twilio credentials, signed webhook verification, consent/STOP/START behavior, callback/retry behavior, Voice TLS/WSS, bridge readiness, FR/EN/ES real calls and verified rollback.
+Real provider acceptance still requires actual Twilio ownership/routing proof, then `AHMV_PHONE_CARRIER=twilio`, current Twilio credentials, signed webhook verification, consent/STOP/START behavior, callback/retry behavior, Voice TLS/WSS, bridge readiness, FR/EN/ES real calls and verified rollback.
 
-## 11. Remaining release-owner / external gates
+## 12. Remaining release-owner / external gates
 
 These are not code defects and must not be fabricated:
 
@@ -178,7 +194,7 @@ These are not code defects and must not be fabricated:
 - approved analytics/Search Console/Google Business/social integrations;
 - explicit public-indexing acceptance.
 
-## 12. Safe completion sequence
+## 13. Safe completion sequence
 
 1. Keep every unfinished external integration gate OFF.
 2. Require current backend CI to be green.
@@ -193,7 +209,9 @@ These are not code defects and must not be fabricated:
 11. Record exact SHA and rollback target.
 12. Enable public indexing only after the release owner accepts remaining public/legal/provider gates.
 
-## 13. Operating rule
+Historical branch reconciliation is recorded in `docs/WEBSITE_PRODUCTION_BRANCH_RECONCILIATION.md`.
+
+## 14. Operating rule
 
 Families should always receive either a verified current answer or an explicit official destination. Never trade provenance, privacy, billing authority, provider authorization or rollback safety for a cosmetic “ready” state.
 
