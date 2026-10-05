@@ -529,6 +529,7 @@ function normalizeVenueName(value: string) {
 const VENUE_ALIASES: Record<string, string> = {
   "a denis": "auditorium-de-verdun",
   "denis savard": "auditorium-de-verdun",
+  "arena denis savard": "auditorium-de-verdun",
   "espace denis savard": "auditorium-de-verdun",
   "auditorium verdun": "auditorium-de-verdun",
   "arena st charles": "saint-charles",
