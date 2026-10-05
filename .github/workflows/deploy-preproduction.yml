@@ -145,7 +145,12 @@ jobs:
         run: |
           set -euo pipefail
           sleep 5
-          curl --fail --silent --show-error --retry 5 --retry-delay 3 "$AHMV_PREVIEW_URL/healthz"
+          HEALTH_BODY="$(curl --fail --silent --show-error --retry 5 --retry-delay 3 "$AHMV_PREVIEW_URL/healthz")"
+          echo "$HEALTH_BODY"
+          printf '%s' "$HEALTH_BODY" | grep -Fq "\"release\":\"$RELEASE_SHA\"" || {
+            echo "Preproduction Passenger is not serving compiled release $RELEASE_SHA"
+            exit 1
+          }
           HEADERS="$(mktemp)"
           curl --fail --silent --show-error --retry 5 --retry-delay 3 -D "$HEADERS" -o /dev/null "$AHMV_PREVIEW_URL/"
           grep -qi '^x-robots-tag: noindex, nofollow' "$HEADERS" || {
