@@ -114,6 +114,19 @@ export function phonePreflight(settings: Settings = process.env): PhonePreflight
       detail: "Webhook origin must be exactly https://ahmverdun.ca.",
     },
     {
+      id: "twilio-carrier",
+      ok:
+        settings["AHMV_PHONE_CARRIER"]?.trim().toLowerCase() === "twilio",
+      required:
+        phoneEnabled ||
+        publicEnabled ||
+        lifecycleEnabled ||
+        remindersEnabled ||
+        campaignsEnabled,
+      detail:
+        "AHMV public-number carrier/routing must be explicitly attested as Twilio before Phone/SMS activation.",
+    },
+    {
       id: "twilio-account",
       ok: present(settings["TWILIO_ACCOUNT_SID"]),
       required: phoneEnabled || publicEnabled || lifecycleEnabled || remindersEnabled || campaignsEnabled,
