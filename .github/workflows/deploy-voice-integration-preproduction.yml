@@ -28,6 +28,7 @@ jobs:
 
     env:
       VITE_PUBLIC_INDEXING: "false"
+      VITE_AHMV_BUILD_SHA: ${{ inputs.release_sha }}
       AHMV_HOST: ${{ secrets.AHMV_MOCHAHOST_HOST }}
       AHMV_PORT: ${{ secrets.AHMV_MOCHAHOST_SSH_PORT }}
       AHMV_USER: ${{ secrets.AHMV_MOCHAHOST_USER }}
