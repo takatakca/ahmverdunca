@@ -24,18 +24,14 @@ function httpsUrl(value: string) {
   }
 }
 
-function weeklyPrice() {
-  const value = Number(import.meta.env["VITE_PARENT_PREMIUM_WEEKLY_PRICE_CAD"] || "10");
-  return Number.isFinite(value) && value > 0 ? value : 10;
-}
-
 export const PARENT_PREMIUM = {
-  /** Must match GROUPE TAKATAK Hockey Membership catalog. */
-  productCode: "hockey_member_weekly_10",
-  planName: "AHMV Member",
+  /** Browser-safe identifiers only. Price and billing cadence live in TAKATAK. */
+  productCode: "ahmv",
+  planCode: "parent_essential",
+  entitlementCode: "ahmv_access",
+  planName: "AHMV Parent Essential",
   visible: import.meta.env["VITE_PARENT_PREMIUM_VISIBLE"] === "true",
   launchEnabled: import.meta.env["VITE_PARENT_PREMIUM_LAUNCH_ENABLED"] === "true",
-  weeklyPriceCad: weeklyPrice(),
   supporterThankYouWeeks: 4,
   authStartUrl: import.meta.env["VITE_TAKATAK_AUTH_START_URL"] || "",
   activeCapabilities: [

@@ -23,6 +23,9 @@ import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 import { handleTakatakTeamGames } from "./lib/takatak-team-games.server";
 import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
 import { handleTakatakContentContributions } from "./lib/takatak-content-contributions.server";
+import { handleAhmvExperienceAuth } from "./features/ahmv-experience/auth-handler.server";
+import { handleAhmvExperienceApi } from "./features/ahmv-experience/api-handler.server";
+import { gateAhmvExperience } from "./features/ahmv-experience/gate.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -106,6 +109,12 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
+    const experienceAuthResponse = await handleAhmvExperienceAuth(request);
+    if (experienceAuthResponse) return experienceAuthResponse;
+    const experienceApiResponse = await handleAhmvExperienceApi(request);
+    if (experienceApiResponse) return experienceApiResponse;
+    const experienceGateResponse = await gateAhmvExperience(request);
+    if (experienceGateResponse) return experienceGateResponse;
     const phoneStatusResponse = handleAhmvPhoneStatus(request);
     if (phoneStatusResponse) return phoneStatusResponse;
     const calendarResponse = handleAhmvCalendarLink(request);

@@ -90,12 +90,6 @@ export function TeamParentPremium({ team, lang }: Props) {
   const demoMode = !PARENT_PREMIUM.launchEnabled;
 
   const signupUrl = parentPremiumSignupUrl(team.legacyScheduleTeamId);
-  const price = PARENT_PREMIUM.weeklyPriceCad.toLocaleString(lang === "fr" ? "fr-CA" : "en-CA", {
-    style: "currency",
-    currency: "CAD",
-    minimumFractionDigits: 2,
-  });
-
   return (
     <section
       id="parent-premium"
@@ -127,11 +121,8 @@ export function TeamParentPremium({ team, lang }: Props) {
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/48">
               {lang === "fr" ? "Forfait de lancement prévu" : "Planned launch plan"}
             </p>
-            <p className="mt-1 font-display text-4xl font-extrabold uppercase text-white">
-              {price}
-              <span className="ml-2 text-sm font-bold tracking-normal text-white/55">
-                {lang === "fr" ? "/ semaine" : "/ week"}
-              </span>
+            <p className="mt-1 font-display text-3xl font-extrabold uppercase leading-tight text-white">
+              {lang === "fr" ? "Plan et prix configurés dans TAKATAK" : "Plan and pricing configured in TAKATAK"}
             </p>
             <p className="mt-2 text-xs leading-relaxed text-white/55">
               {lang === "fr"

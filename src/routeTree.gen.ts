@@ -23,6 +23,7 @@ import { Route as RessourcesRouteImport } from './routes/ressources'
 import { Route as TournoisRouteImport } from './routes/tournois'
 import { Route as WllvRouteImport } from './routes/wllv'
 import { Route as MembershipRouteImport } from './routes/membership'
+import { Route as ExperienceRouteImport } from './routes/experience'
 import { Route as EquipeEventIdRouteImport } from './routes/equipe-event.$id'
 import { Route as ArenasIndexRouteImport } from './routes/arenas.index'
 import { Route as ArenasSlugRouteImport } from './routes/arenas.$slug'
@@ -103,6 +104,11 @@ const MembershipRoute = MembershipRouteImport.update({
   path: '/membership',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExperienceRoute = ExperienceRouteImport.update({
+  id: '/experience',
+  path: '/experience',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EquipeEventIdRoute = EquipeEventIdRouteImport.update({
   id: '/equipe-event/$id',
   path: '/equipe-event/$id',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
   '/membership': typeof MembershipRoute
+  '/experience': typeof ExperienceRoute
   '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
@@ -189,6 +196,7 @@ export interface FileRoutesByTo {
   '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
   '/membership': typeof MembershipRoute
+  '/experience': typeof ExperienceRoute
   '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
@@ -215,6 +223,7 @@ export interface FileRoutesById {
   '/tournois': typeof TournoisRoute
   '/wllv': typeof WllvRoute
   '/membership': typeof MembershipRoute
+  '/experience': typeof ExperienceRoute
   '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
@@ -242,6 +251,7 @@ export interface FileRouteTypes {
     | '/tournois'
     | '/wllv'
     | '/membership'
+    | '/experience'
     | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/tournois'
     | '/wllv'
     | '/membership'
+    | '/experience'
     | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/tournois'
     | '/wllv'
     | '/membership'
+    | '/experience'
     | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
@@ -318,6 +330,7 @@ export interface RootRouteChildren {
   TournoisRoute: typeof TournoisRoute
   WllvRoute: typeof WllvRoute
   MembershipRoute: typeof MembershipRoute
+  ExperienceRoute: typeof ExperienceRoute
   EquipeEventIdRoute: typeof EquipeEventIdRoute
   ArenasSlugRoute: typeof ArenasSlugRoute
   EquipesSlugRoute: typeof EquipesSlugRoute
@@ -429,6 +442,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MembershipRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/experience': {
+      id: '/experience'
+      path: '/experience'
+      fullPath: '/experience'
+      preLoaderRoute: typeof ExperienceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/equipe-event/$id': {
       id: '/equipe-event/$id'
       path: '/equipe-event/$id'
@@ -510,6 +530,7 @@ const rootRouteChildren: RootRouteChildren = {
   TournoisRoute: TournoisRoute,
   WllvRoute: WllvRoute,
   MembershipRoute: MembershipRoute,
+  ExperienceRoute: ExperienceRoute,
   EquipeEventIdRoute: EquipeEventIdRoute,
   ArenasSlugRoute: ArenasSlugRoute,
   EquipesSlugRoute: EquipesSlugRoute,
