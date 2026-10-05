@@ -67,8 +67,11 @@ TAKATAK remains pricing, billing and entitlement authority. AHMV never receives 
 - `TAKATAK_AHMV_SERVICE_TOKEN` — shared server credential
 - `TAKATAK_AHMV_SCHEDULE_URL`
 - `AHMV_LIVE_SCHEDULE_MAX_AGE_MINUTES`
+- `TAKATAK_AHMV_SCHEDULE_INGEST_URL` — operator-only HTTPS ingest endpoint
+- `TAKATAK_AHMV_INGEST_TOKEN` — server-only write credential; separate from the read token
+- `AHMV_WEEKLY_SOURCE_UPDATED_AT` — operator-supplied offset-aware timestamp from the reviewed official weekly source
 
-Official hockey providers remain authoritative. A stale or provenance-free schedule feed must fail closed.
+The weekly publisher is dry-run by default. Apply mode is allowed only with the real source timestamp, the dedicated ingest token and an explicit `--apply`. Official hockey providers remain authoritative. A stale or provenance-free schedule feed must fail closed.
 
 ## Team Feed / social-news bridge
 
