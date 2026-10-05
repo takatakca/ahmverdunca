@@ -1,7 +1,8 @@
 # AHMVERDUN.CA — Coordinated completion queue
 
 Checkpoint: 2026-10-05, America/Toronto.  
-Canonical AHMV main and verified production release: `b33f45adeb3a482c323725a8d07a184977e4c752`.  
+Canonical AHMV source authority: `takatakca/ahmverdunca:main`.  
+Verified deployed AHMV production release: `b33f45adeb3a482c323725a8d07a184977e4c752`.  
 Canonical TAKATAK backend repository: `takatakca/takatak-v1`.  
 Current TAKATAK main after AHMV readiness/Team Feed merge #103: `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`.
 
@@ -55,7 +56,7 @@ The current source also keeps the guarded Voice production-host deployment gate 
 
 | ID | Area | Source/data state | Live state / remaining dependency |
 | --- | --- | --- | --- |
-| A01 | Current-source authority | AHMV `b33f45a…`; TAKATAK `8adfa23…` | Current authority pinned |
+| A01 | Current-source authority | AHMV `main`; TAKATAK `8adfa23…` | `main` is source authority; docs-only commits may advance without changing deployed runtime |
 | A02 | AHMV production | CI + Voice Guardian + immutable deploy + cPanel restart + compiled-SHA live HTTP proof | **Ready** at `b33f45a…` |
 | A03 | Teams | Exact 24-team contract/data complete | **Ready** |
 | A04 | Team Games / results | Exact-team connector/source guards complete | Shared service credential + live exact-team upstream smoke |
