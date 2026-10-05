@@ -6,6 +6,7 @@ import { teamVisualForCategory } from "@/data/team-visuals";
 import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-week";
 import { ContentContributionButton } from "@/components/content-contribution-button";
 import { useContentOverlay } from "@/lib/community-content";
+import { officialWeekActivityMatchesTeam } from "@/lib/official-week-team";
 
 type Lang = "fr" | "en";
 
@@ -158,16 +159,10 @@ export function TeamMicrositeHero({
     { key: "resultsUrl", label: { fr: "Lien de résultats officiels", en: "Official results link" }, kind: "url" as const, current: resultsUrl },
   ];
 
-  const categoryToken = team.categorySlug === "feminin"
-    ? "M12"
-    : team.categorySlug === "junior"
-      ? "JUNIOR"
-      : team.categorySlug.toUpperCase();
-
   const publishedPracticeRows: CalendarRow[] = OFFICIAL_WEEK_ACTIVITIES
     .filter((activity) => {
       const scope = `${activity.group} ${activity.activity}`.toUpperCase();
-      return scope.includes(categoryToken) && /PRATIQUE|HOCKEY SUR MESURE|WLLV/.test(scope);
+      return officialWeekActivityMatchesTeam(activity, team) && /PRATIQUE|HOCKEY SUR MESURE|WLLV/.test(scope);
     })
     .slice(0, 3)
     .map((activity, index) => ({
