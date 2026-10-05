@@ -1,49 +1,66 @@
 # AHM Verdun — Go-live checklist
 
-This project is intentionally safe for proposal/pre-production use by default.
+Current release baseline: GitHub `main` at `cc7618651806f2b9fcc78c9e97b4d8f7395fd24a` is deployed on MochaHost. Core Passenger/HTTP health, homepage, public routes, robots and sitemap have passed the current production smoke. This does **not** make external providers automatically ready.
 
-## Technical release gate — completed in code
+## Technical release gate — completed in code / production baseline
 
 - [x] Runtime `.env` files are excluded from Git and rejected by CI.
 - [x] TypeScript, content validation, SEO validation, lint and production build run in CI.
 - [x] Required public routes are validated in the generated sitemap.
 - [x] `robots.txt` is validated against the canonical sitemap URL.
-- [x] Preview builds default to `noindex, nofollow`.
-- [x] Server responses apply matching `X-Robots-Tag` behavior, including permanent noindex handling for Search and HTML error responses.
-- [x] Baseline browser security headers are enabled and runtime response policy is regression-tested in CI.
-- [x] A lightweight `/healthz` endpoint is available for production health monitoring without invoking hockey operations.
+- [x] Server responses apply the configured indexing policy and baseline security headers.
+- [x] A lightweight `/healthz` endpoint is available for production monitoring.
 - [x] Demo/illustrative media are prevented from silently appearing as approved public media.
-- [x] Unapproved team social accounts and inactive communication services are hidden from public launch mode.
-- [x] Public gallery records with protected media require an official source URL.
-- [x] Spordle, WLLV, standings/results and other hockey-operation systems remain external sources of truth.
-- [x] Legacy same-domain routes are redirected to current destinations for domain cutover.
-- [x] The reserved phone is hidden from indexed production until explicitly activated.
-- [x] Production deployment is manual, environment-protected, pinned to the exact current green `main` SHA and has automatic rollback on failed activation.
+- [x] Public gallery records with protected media require provenance.
+- [x] Official hockey systems remain external sources of truth.
+- [x] Legacy same-domain routes are redirected to current destinations.
+- [x] Production deployment is pinned to the intended green `main` SHA with rollback safeguards.
+- [x] Current MochaHost release `cc761865…` passed core HTTP deployment smoke.
+- [x] TAKATAK AHMV/Family/Product/ADS/Moderation database schema is present in production and staging.
+- [x] 24 exact public teams are present in both TAKATAK environments.
+- [x] AHMV ADS publisher plus six placements are present in both TAKATAK environments.
+- [x] Essential remains 10 CAD/week and active/self-serve; Premium remains 30 CAD/week and non-vendable/planned; Smart Departure remains Premium-only.
 
-## Association / production approvals still required before indexing
+## Readiness right now
 
-- [ ] Configure and protect the GitHub `production` environment plus the AHMV-specific production deployment secrets documented in `MOCHAHOST_PRODUCTION.md`.
+| Area | State | Next acceptance |
+| --- | --- | --- |
+| Public teams | Ready | Keep exact 24-team mapping regression-tested |
+| TAKATAK ADS backend/placements | Ready in data/source | Enable browser gate only after final live serve/event smoke |
+| Continuous official schedule | Blocked externally | Approved authoritative source + freshness/provenance smoke |
+| Team Feed / social delivery | Blocked externally | Authorized provider accounts/connectors + attribution/fallback smoke |
+| Phone/SMS | Source ready, live blocked | Real signed Twilio smoke + consent/STOP/START/callback checks |
+| Voice | Source/CI ready, live blocked | Runtime credentials, TLS/WSS, bridge readiness, FR/EN/ES real-call acceptance |
+| Family/Product | Contract/data present | Final launch/exchange/introspection and revoke/restore E2E before exposing gated UX |
+| Public indexing | Manual gate | Enable only after release owner accepts remaining public/legal/provider items |
 
-- [ ] Confirm the official AHM Verdun general email.
-- [ ] Confirm the official mailing address.
-- [ ] Approve the final privacy policy with the association.
-- [ ] Confirm authorized sponsor logos and visibility levels.
-- [ ] Confirm the current weekly schedule ingestion source and update cadence.
-- [ ] Validate all public photo/video permissions involving minors.
-- [ ] Approve any analytics, Search Console, Google Business Profile and social integrations.
-- [ ] Complete the approved production hosting/DNS cutover for `ahmverdun.ca`.
-- [ ] Activate and test the reserved phone with a real inbound call, then set `AHMV_PHONE_PUBLIC=true`.
-- [ ] Verify `/healthz`, `/robots.txt`, `/sitemap.xml`, `/recherche` noindex headers, title/meta previews, legacy redirects and social sharing on the actual new production deployment.
-- [ ] Run the full CI workflow and perform the final mobile/desktop smoke test against the production hostname.
-- [ ] Set `VITE_PUBLIC_INDEXING=true` only after every item above that affects public release is approved.
+Run:
 
-## Indexing behavior
+```bash
+bun run report:production-readiness
+```
 
-- Default / preview builds: `noindex, nofollow`
-- Production before approval: keep `VITE_PUBLIC_INDEXING=false`
-- Approved public production: set `VITE_PUBLIC_INDEXING=true` and redeploy
-- The server sends a matching `X-Robots-Tag` header for HTML responses.
+For a target cutover, require only the modules intended to go live, for example:
 
-This makes go-live a deliberate release decision rather than a side effect of deployment.
+```bash
+bun run report:production-readiness --strict --require=core,schedule,teamFeed,ads
+```
 
-See `docs/FINAL_RELEASE_STATUS.md` for the complete release dossier.
+The command reports only configuration names/states, never secret values.
+
+## External / association approvals still required
+
+- [ ] Provide/verify the approved continuous schedule source and update cadence.
+- [ ] Authorize the social accounts/connectors used for Team Feed and Facebook reconciliation.
+- [ ] Complete real Twilio provider acceptance before changing public phone routing.
+- [ ] Verify the standalone Voice runtime with real credentials, TLS/WSS, bridge readiness and rollback.
+- [ ] Validate public photo/video permissions involving minors.
+- [ ] Confirm final privacy/legal/public-contact details required by the association.
+- [ ] Approve analytics/Search Console/Google Business/social integrations before enabling them.
+- [ ] Set `VITE_PUBLIC_INDEXING=true` only after the release owner accepts every item that affects public indexing.
+
+## Operational rule
+
+Never compensate for a missing provider credential, official source, or authorization by inventing data or weakening a fail-closed gate. Keep that module disabled and ship the rest of the verified site.
+
+See `docs/FINAL_RELEASE_STATUS.md`, `docs/PRODUCTION_CONFIGURATION_INVENTORY.md` and `docs/COORDINATED_COMPLETION.md` for the release dossier.

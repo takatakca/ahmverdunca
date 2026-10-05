@@ -1,145 +1,103 @@
 # AHMVERDUN.CA — Coordinated completion queue
 
-Checkpoint: 2026-10-04, America/Toronto.  
-Canonical AHMV main at checkpoint: `36ff75dd689a2131a512c2c9582941e1b3fc1548`.
+Checkpoint: 2026-10-05, America/Toronto.  
+Canonical AHMV main at checkpoint: `cc7618651806f2b9fcc78c9e97b4d8f7395fd24a`.
 
-This file is an execution checkpoint, not proof that hosting/provider configuration is live. Source, CI and live acceptance are tracked separately.
+This file separates **merged source**, **deployed production**, and **external live acceptance**. Never treat a missing credential/provider approval as a reason to fabricate data.
 
 ## Source authority
 
-- `origin/main` is the only integration authority.
-- Create fresh task branches from the current fast-forwarded `main`.
-- Do not merge stale historical Voice/preproduction/backend branches into current main.
-- Do not rewrite published history; this repository is connected to Lovable.
-- AHMV remains an independent product. TAKATAK shared services stay server-side and do not auto-mount a hockey dashboard into AHMV.
-- Official hockey providers remain authoritative for schedules, scores, standings, registration and other official hockey facts.
-- TAKATAK remains authoritative for identity, Product Catalog, pricing, billing, Stripe and entitlements.
+- `origin/main` is the only AHMV integration authority.
+- Create fresh task branches from current `main`; do not revive stale Voice/backend branches.
+- AHMV remains an independent product. TAKATAK provides shared server-side services without auto-mounting a hockey dashboard into AHMV.
+- Official hockey providers remain authoritative for schedules, scores, standings and registration.
+- TAKATAK remains authoritative for Product Catalog, pricing, billing and entitlements.
 
-## Current integrated source baseline
+## Current integrated baseline
 
-Current main includes:
+Current main includes the community/editability control plane, exact-team games/feed connectors, TAKATAK ADS publisher client/fallback, Family Experience boundary, phone/SMS v2, Voice runtime/bridge, schedule freshness/provenance guards, deployment safeguards and the full AHM Verdun CI.
 
-- community correction/overlay system with fail-closed production gates;
-- CI-enforced editability coverage for arenas, schedule, news, teams, gallery, FAQ and sponsor inventory;
-- schedule corrections requiring evidence;
-- detachable TAKATAK ↔ AHMV managed-services control-plane foundation;
-- exact-team TAKATAK games/feed connectors;
-- TAKATAK ADS publisher client with local fallback, disabled by default;
-- current News Centre and verified NewsArticle structured data;
-- gallery provenance hardening: exact team links from media evidence, exact season only when every imported photo proves it, neutral Archives fallback otherwise, uploaded-media uniqueness and fully imported album count/cover guards;
-- independent private Family Experience at `/experience`, disabled by default;
-- TAKATAK-owned Family product contract:
-  - product `ahmv`
-  - initial plan `parent_essential`
-  - access entitlement `ahmv_access`
-- no browser-owned AHMV price/cadence authority;
-- private/noindex Family Experience and hidden membership preview excluded from the public sitemap;
-- Voice v0.9 runtime, package lock, bridge, production runbooks and current-main activation authority;
-- full AHM Verdun CI covering TypeScript, phone/SMS, TAKATAK boundaries, schedules, assistant, monetization, Family contract, community editability, SEO/runtime/privacy, media, deployment smoke, Voice runtime, build and release artifact.
+Recent coordination cleanup is complete:
 
-## Active branch coordination
+- backend control-plane work from former #307 is integrated in current main;
+- stale Voice work from former #215 is superseded by current-main consolidation #338;
+- #339 corrected the SMS XML-injection regression test without changing runtime behavior;
+- no stale historical branch is release authority.
 
-### AHMV PR #307 — backend control-plane continuation
+## Production baseline
 
-Status: open, draft/stale, non-mergeable at last inspection.
+- AHMV is deployed on MochaHost at `cc7618651806f2b9fcc78c9e97b4d8f7395fd24a`.
+- Passenger/health/homepage/public routes/robots/sitemap are green for that release.
+- TAKATAK production and staging contain the AHMV/Family/Product/ADS/Moderation schema.
+- Both databases contain the exact 24 public teams.
+- Both databases contain publisher `ahmverdun.ca` and six AHMV ADS placements.
+- Essential: 10 CAD/week, active/self-serve.
+- Premium: 30 CAD/week, planned/non-vendable.
+- Smart Departure: Premium-only.
+- Applied staging migrations match the Git SQL set at the last verified checkpoint.
 
-Rules:
+## Readiness matrix
 
-1. Rebuild from current main `c04f33430e00b38f0d29cee50f178f6455e3c0cc` or newer.
-2. Keep backend-only.
-3. Fix its publication-schedule SQL dollar-quote defect before merge.
-4. Preserve all current front/Family/editability contracts.
-5. Require `behind=0` and full AHM Verdun CI green before merge.
-
-### AHMV PR #215 — Voice/SMS hardening
-
-Status: historically green but stale/non-mergeable at last inspection.
-
-Rules:
-
-1. Rebuild only still-missing VIP/release-gate changes from current main.
-2. Preserve current Voice v0.9 runtime and current-main activation authority.
-3. Re-run AHM Verdun CI + Voice service CI + Voice Guardian.
-4. Do not make live Twilio-number writes until real provider smoke and rollback readiness are proven.
-
-### TAKATAK PR #74 — AHMV Product Catalog / entitlement gate
-
-Status: historical CI green but stale/non-mergeable at last inspection.
-
-Expected contract:
-
-- product `ahmv`
-- initial plan `parent_essential`
-- entitlement `ahmv_access`
-- one-time launch endpoint
-- launch-code exchange endpoint
-- live entitlement introspection endpoint
-- server-to-server `TAKATAK_AHMV_SERVICE_TOKEN`
-
-Rebuild from current TAKATAK main before merge. Do not restore native hockey dashboard navigation or browser-owned pricing.
-
-## Ordered remaining work
-
-| ID | Task | Source state | Live acceptance needed |
+| ID | Area | Source/data state | Live state / remaining dependency |
 | --- | --- | --- | --- |
-| A01 | Current-source baseline and agent authority | Completed | Keep main as sole authority |
-| A02 | Team preference clear/sync behavior | Source implemented | Browser acceptance on deployed release |
-| A03 | Retire obsolete Voice generations | Completed; old #139/#162 closed | None; use current v0.9 |
-| A04 | Continuous official schedule | Source adapters/guards present | Approved live feed, provenance, freshness, expired-feed failure, exact-team checks |
-| A05 | Unified news feed | UI/filters/archive present | Real connector delivery, source attribution, unavailable-provider fallback |
-| A06 | Authentic gallery ↔ exact teams/seasons | Source completed: exact team + season provenance; mixed/unknown media use Archives; duplicate/media inventory guards enforced in CI | Live asset inventory/permission review and mobile acceptance |
-| A07 | Facebook team album reconciliation | Source manifest completed: 24 public teams, unique expected album names, stable reconciliation keys, no fake provider IDs | Authorized Facebook Page access; create/match albums; store real provider IDs in TAKATAK; verify 1:1 mapping |
-| A08 | Separate AHMV product access through TAKATAK | AHMV source foundation merged (#325) | TAKATAK #74 rebuilt/deployed; launch/exchange/introspection; revoke/restore E2E |
-| A09 | Catalog/subscription/VIP behavior | AHMV no longer owns browser pricing | TAKATAK catalog, billing and entitlement acceptance |
-| A10 | Phone/SMS v2 | Source/CI present | Real Twilio signatures, consent, STOP/START, callbacks, retries and duplicate protection |
-| A11 | Voice v0.9 | Runtime/source/CI present | Server boot, TLS/WSS, FR/EN/ES calls, interruption/reconnect, bridge readiness, recap and rollback |
-| A12 | Real production release validation | Deployment automation/source present | Exact deployed SHA, public HTTPS health, routes, FR/EN/mobile, schedules/news/gallery, robots/sitemap, rollback |
-| A13 | Enable release-ready integrations/indexing | Gates default OFF | Enable one integration at a time only after its live acceptance |
-| A14 | Final handover | Pending | Deployed SHA, non-secret configuration inventory, monitoring, rollback and known limitations |
+| A01 | Current-source authority | Complete | Keep `main` as sole release authority |
+| A02 | Teams | Exact 24-team contract/data complete | Ready |
+| A03 | TAKATAK ADS | Publisher + six placements + routes complete | Ready for final live serve/event smoke before browser gate |
+| A04 | Continuous official schedule | Adapters, provenance/freshness guards, Voice fallback complete | **Blocked:** approved authoritative source + live freshness/provenance |
+| A05 | Team Feed / unified news-social | UI, filters, attribution/fallback contracts present | **Blocked:** authorized social/provider connectors |
+| A06 | Gallery ↔ exact teams/seasons | Provenance and duplicate guards complete | Live permission/mobile review |
+| A07 | Facebook team album reconciliation | Deterministic 24-team manifest complete | Authorized Facebook Page access and real provider IDs |
+| A08 | Family/Product | Contract/schema/plan semantics present | Final launch/exchange/introspection + revoke/restore E2E |
+| A09 | Phone/SMS | Source and security CI present | Real Twilio signatures, consent, STOP/START, callbacks/retries |
+| A10 | Voice | Runtime/source/CI/Guardian present | Runtime credentials, TLS/WSS, bridge, FR/EN/ES real-call smoke |
+| A11 | Production release | MochaHost `cc761865…` core HTTP smoke green | Re-run smoke after any new merge/deploy |
+| A12 | Public indexing | Fail-closed gate present | Manual release-owner approval |
+| A13 | Final handover | Non-secret inventory/runbooks present | Record final enabled gates, monitoring and rollback |
 
-## Production cutover dependencies
+## External walls that must remain fail-closed
 
-Do not enable the following merely because source is merged:
+1. MochaHost/TAKATAK staging database or SSH credentials when a live environment mutation is required.
+2. Approved authoritative schedule source.
+3. Authorized social/Facebook provider accounts.
+4. Twilio + Voice runtime credentials/provider state.
 
-### Community content corrections
+These are dependencies, not code defects. Do not replace them with synthetic values.
 
-Keep disabled until TAKATAK moderation is deployed, migration is applied and the shared token is configured on both services:
+## Operator readiness command
 
-- `VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE=false`
-- `TAKATAK_CONTENT_CONTRIBUTIONS_ENABLED=false`
+Use the environment-local non-secret reporter:
 
-Then run the TAKATAK read-only AHMV content production smoke before exposing the correction UI.
+```bash
+bun run report:production-readiness
+```
 
-### Family Experience
+For a release that intends to activate specific modules:
 
-Keep:
+```bash
+bun run report:production-readiness --strict --require=core,schedule,teamFeed,ads
+```
 
-`AHMV_EXPERIENCE_ENABLED=false`
+Only names and states are printed; secret values are never emitted.
 
-until TAKATAK launch/exchange/introspection, the shared service token, AHMV session secret, Family migration and entitlement revoke/restore flow are verified end to end.
+## Cutover sequence
 
-### TAKATAK ADS
-
-Keep:
-
-`VITE_TAKATAK_ADS_ENABLED=false`
-
-until the TAKATAK ADS backend, event signing secret and AHMV publisher seed are deployed and tested.
-
-### Voice / Phone
-
-Do not route the public number or enable public phone/Voice flags until live Twilio/TLS/WSS/bridge tests and rollback snapshot/readiness pass.
+1. Keep all unaccepted feature gates OFF.
+2. Verify core production at the exact candidate SHA.
+3. Configure one external dependency at a time.
+4. Run that subsystem's read-only/live smoke.
+5. Enable only that subsystem's release gate.
+6. Re-run health/routes/robots/sitemap plus the affected feature smoke.
+7. Record exact deployed SHA and rollback target.
+8. Never change the public Twilio number routing until Voice/Phone live acceptance and rollback snapshot are green.
 
 ## Done means
 
-A task is not complete because code exists or an old CI run was green.
-
-For production-affecting work, “done” requires:
+A production-affecting task is done only when all applicable layers are true:
 
 1. current-main source;
 2. current CI green;
-3. correct production configuration without exposing secrets;
-4. required database migration applied to the correct project;
-5. live smoke/acceptance against the actual hostname/provider;
+3. correct non-secret configuration state;
+4. required migration applied to the correct project;
+5. live smoke against the actual hostname/provider;
 6. rollback path verified;
 7. deployed SHA recorded.
