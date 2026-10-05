@@ -41,6 +41,7 @@ requireFragment(".env.example", env, "TAKATAK_AHMV_INTROSPECT_URL=", "TAKATAK en
 requireFragment(".env.example", env, "AHMV_EXPERIENCE_SESSION_SECRET=", "server-only session signing secret");
 
 requireFragment("src/routes/experience.tsx", experience, 'createFileRoute("/experience")', "independent Family Experience route");
+requireFragment("src/routes/membership.tsx", membership, "if (!PARENT_PREMIUM.visible) throw notFound()", "membership preview route visibility gate");
 requireFragment("src/server.ts", server, "handleAhmvExperienceAuth", "Family Experience auth handler");
 requireFragment("src/server.ts", server, "gateAhmvExperience", "Family Experience server gate");
 requireFragment("supabase/migrations/20261003154500_ahmv_family_experience.sql", migration, "enable row level security", "family RLS");
