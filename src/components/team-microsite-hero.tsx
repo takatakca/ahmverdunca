@@ -7,7 +7,7 @@ import { OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META } from "@/data/official-we
 import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
 import { ContentContributionButton } from "@/components/content-contribution-button";
 import { useContentOverlay } from "@/lib/community-content";
-import { officialWeekActivityMatchesTeam } from "@/lib/official-week-team";
+import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
 
 type Lang = "fr" | "en";
 
@@ -163,7 +163,7 @@ export function TeamMicrositeHero({
   const publishedPracticeRows: CalendarRow[] = OFFICIAL_WEEK_ACTIVITIES
     .filter((activity) => {
       const scope = `${activity.group} ${activity.activity}`.toUpperCase();
-      return officialWeekActivityMatchesTeam(activity, team) && /PRATIQUE|HOCKEY SUR MESURE|WLLV/.test(scope);
+      return officialWeekActivityMatchesPublicTeam(activity, team) && /PRATIQUE|HOCKEY SUR MESURE|WLLV/.test(scope);
     })
     .slice(0, 3)
     .map((activity, index) => ({
