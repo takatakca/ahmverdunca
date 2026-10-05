@@ -1,7 +1,7 @@
 # AHMVERDUN.CA — Coordinated completion queue
 
 Checkpoint: 2026-10-04, America/Toronto.  
-Canonical AHMV main at checkpoint: `c04f33430e00b38f0d29cee50f178f6455e3c0cc`.
+Canonical AHMV main at checkpoint: `36ff75dd689a2131a512c2c9582941e1b3fc1548`.
 
 This file is an execution checkpoint, not proof that hosting/provider configuration is live. Source, CI and live acceptance are tracked separately.
 
@@ -88,7 +88,7 @@ Rebuild from current TAKATAK main before merge. Do not restore native hockey das
 | A04 | Continuous official schedule | Source adapters/guards present | Approved live feed, provenance, freshness, expired-feed failure, exact-team checks |
 | A05 | Unified news feed | UI/filters/archive present | Real connector delivery, source attribution, unavailable-provider fallback |
 | A06 | Authentic gallery ↔ exact teams/seasons | Source completed: exact team + season provenance; mixed/unknown media use Archives; duplicate/media inventory guards enforced in CI | Live asset inventory/permission review and mobile acceptance |
-| A07 | Facebook team album reconciliation | Pending | Authorized Facebook access and exact official team mapping |
+| A07 | Facebook team album reconciliation | Source manifest completed: 24 public teams, unique expected album names, stable reconciliation keys, no fake provider IDs | Authorized Facebook Page access; create/match albums; store real provider IDs in TAKATAK; verify 1:1 mapping |
 | A08 | Separate AHMV product access through TAKATAK | AHMV source foundation merged (#325) | TAKATAK #74 rebuilt/deployed; launch/exchange/introspection; revoke/restore E2E |
 | A09 | Catalog/subscription/VIP behavior | AHMV no longer owns browser pricing | TAKATAK catalog, billing and entitlement acceptance |
 | A10 | Phone/SMS v2 | Source/CI present | Real Twilio signatures, consent, STOP/START, callbacks, retries and duplicate protection |
