@@ -34,6 +34,8 @@ type ServerEntry = {
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 const PUBLIC_INDEXING_ENABLED = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
+const BUILD_RELEASE_SHA =
+  import.meta.env["VITE_AHMV_BUILD_SHA"]?.trim() || "unversioned";
 
 const LEGACY_REDIRECTS: Record<string, string> = {
   "/index": "/",
@@ -156,14 +158,20 @@ export default {
     const teamFeedResponse = await handleTakatakTeamFeed(request);
     if (teamFeedResponse) return teamFeedResponse;
     if (url.pathname === "/healthz") {
-      return new Response(JSON.stringify({ ok: true, service: "ahmverdun-web" }), {
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          service: "ahmverdun-web",
+          release: BUILD_RELEASE_SHA,
+        }),
+        {
         status: 200,
         headers: {
           "content-type": "application/json; charset=utf-8",
           "cache-control": "no-store",
           "X-Robots-Tag": "noindex, nofollow",
         },
-      });
+      );
     }
 
     const redirectResponse = legacyRedirect(request);
