@@ -155,14 +155,15 @@ test("trusted origin works behind internal proxy; response cannot be cached", as
   assert.equal(response?.headers.get("cache-control"), "no-store");
   assert.match(await response!.text(), /<Message>/);
 });
-test("SMS escaping prevents XML injection", async () => {
+test("SMS encoding prevents XML injection", async () => {
   const response = await handleAhmvTwilio(
     request(`${root}/sms`, { Body: "</Message><Message>attack" }),
     settings,
   );
   const body = await response!.text();
   assert.equal((body.match(/<Message>/g) ?? []).length, 1);
-  assert.match(body, /&lt;/);
+  assert.doesNotMatch(body, /<\/Message><Message>attack/);
+  assert.match(body, /%3C%2FMessage%3E%3CMessage%3Eattack/i);
 });
 test("STOP and Advanced Opt-Out never generate custom messages", async () => {
   for (const fields of [{ Body: "STOP" }, { Body: "anything", OptOutType: "STOP" }]) {
