@@ -66,7 +66,7 @@ The workflow deploys the standalone Nitro artifact to:
       server/
 ```
 
-The exact deployed SHA is written to `RELEASE_SHA` and verified after activation.
+The exact deployed SHA is written to `RELEASE_SHA` and verified after activation. The built runtime is also stamped with the exact Git SHA and `/healthz` must report that compiled SHA before the release is accepted. A filesystem marker alone is not sufficient proof that Passenger loaded the new server bundle.
 
 ## Release procedure
 
@@ -80,8 +80,17 @@ The exact deployed SHA is written to `RELEASE_SHA` and verified after activation
 8. Only after approval, rerun the same exact current green release with `public_indexing=true` and the required launch confirmation.
 9. Confirm the post-launch checks and search-indexing state.
 
+## Passenger restart and transport rule
+
+Production activation requires both:
+
+- a working SSH command channel; and
+- the environment-scoped `AHMV_PRODUCTION_RESTART_COMMAND`, which must be the exact approved cPanel/Passenger restart command.
+
+SFTP remains useful for transport diagnostics and recovery tooling, but SFTP-only access is **not** enough to certify a production activation because it cannot execute the approved Passenger restart command. The automatic production workflow therefore fails before upload/activation when the SSH command channel is unavailable.
+
 ## Rollback
 
-The workflow records the previous `current` release before activation. If restart or verification fails, it restores the previous symlink and restarts the application automatically.
+The workflow records the previous `current` release before activation. If restart or verification fails after activation, it restores the previous symlink, executes the same approved cPanel/Passenger restart command, and rechecks application health.
 
 DNS changes remain outside this workflow and must follow the production runbook.
