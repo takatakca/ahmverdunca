@@ -1,85 +1,103 @@
 # AHMVERDUN.CA — Coordinated completion queue
 
 Checkpoint: 2026-10-05, America/Toronto.  
-Canonical AHMV main and verified production release: `9d190d6e018c867cee6a8f55be7221704b48bd9c`.  
+Canonical AHMV main and verified production release: `04663346d6c9c3bceb436938e02face629972b94`.  
 Canonical TAKATAK backend repository: `takatakca/takatak-v1`.  
-TAKATAK main after migration-history reconciliation merge #100: `d86d3bde5ef159400e962fd98c1a21ae10cb7878`.
+Current TAKATAK main after AHMV readiness/Team Feed merge #103: `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`.
 
-This file separates **merged source**, **deployed production**, **database reconciliation**, and **external live acceptance**. Never treat a missing credential/provider approval as a reason to fabricate data.
+This file separates **merged source**, **deployed production**, **database state**, **provider authorization**, and **live acceptance**. Missing provider credentials or approvals must never be replaced with synthetic data or fake readiness.
 
 ## Source authority
 
 - `takatakca/ahmverdunca:main` is the only AHMV website integration authority.
-- `takatakca/takatak-v1:main` is the current TAKATAK backend authority for AHMV shared services.
-- Create fresh task branches from current `main`; do not revive stale Voice/backend branches.
-- AHMV remains an independent product. TAKATAK provides shared server-side services without auto-mounting a hockey dashboard into AHMV.
+- `takatakca/takatak-v1:main` is the TAKATAK backend authority for shared AHMV services.
+- AHMV remains an independent product. TAKATAK supplies server-side shared services without turning AHMV into a TAKATAK dashboard.
 - Official hockey providers remain authoritative for schedules, scores, standings and registration.
 - TAKATAK remains authoritative for Product Catalog, pricing, billing and entitlements.
+- Historical Voice/backend branches are not deployment authority.
 
 ## Current AHMV production baseline
 
-AHMV production on MochaHost is verified at `9d190d6e018c867cee6a8f55be7221704b48bd9c`.
+AHMV production on MochaHost is verified at `04663346d6c9c3bceb436938e02face629972b94`.
 
-GitHub Actions production release #801 completed successfully after AHM Verdun CI #1033. The production workflow passed:
+AHM Verdun CI #1046 succeeded. Production deployment #814 initially stopped safely before upload because MochaHost closed all bounded SSH/SFTP transport attempts. The failed deployment changed no production release. Failed-job retry attempt 2 then completed successfully and passed:
 
 - exact-green-release checkout and stale-main refusal;
 - full release gate and deployment-configuration validation;
-- immutable release packaging and previous-release capture;
-- upload, extraction, release-marker verification and atomic activation;
+- immutable release upload/activation;
 - Passenger restart;
-- live health check;
-- live homepage check;
-- core public-route smoke;
-- search noindex verification;
-- `robots.txt` verification;
-- `sitemap.xml` verification;
-- rollback was not required.
+- `/healthz`;
+- production homepage;
+- core public routes;
+- search noindex policy;
+- `robots.txt`;
+- `sitemap.xml`;
+- deployment summary.
 
-The deployment retained the newest five immutable releases.
+The same source line adds the guarded Voice production-host deployment gate from #350. It does **not** change the public Twilio number routing.
 
 ## Current TAKATAK / database baseline
 
-- TAKATAK production and staging contain the AHMV/Family/Product/ADS/Moderation schema.
-- Both databases contain the exact 24 public teams.
-- Both databases contain publisher `ahmverdun.ca` and six AHMV ADS placements.
-- Essential: 10 CAD/week, active/self-serve.
-- Premium: 30 CAD/week, planned/non-vendable.
-- Smart Departure: Premium-only.
-- TAKATAK PR #100 is merged. Its reconciler verifies exact canonical SQL before recording externally-applied Supabase migrations in Prisma history.
-- Direct read-only staging verification shows the staging project is healthy and the reviewed AHMV/ADS migrations are already represented in Supabase history.
-- **Prisma history reconciliation is not yet certified complete.** The latest observed automatic staging reconciler stopped at its protected configuration gate because `TAKATAK_STAGING_DATABASE_URL` was absent. No ad-hoc writes to `_prisma_migrations` are permitted as a workaround.
+- TAKATAK production and staging contain the AHMV/Family/Product/ADS/Moderation schema and the exact 24 public teams.
+- TAKATAK production contains the canonical active AHM Verdun brand. Staging currently does not contain that canonical brand, so Team Feed provisioning correctly refuses to write there.
+- Production AHMV Team Feed now has exactly one `social_media` service instance in `planned` state with the exact 24 public team IDs; provider remains null.
+- The AHMV client's social subscription remains `free / social_unsubscribed`. No paid social entitlement was fabricated.
+- Production contains the AHMV ADS publisher `ahmverdun.ca` plus six active placements.
+- ADS delivery inventory is still intentionally empty: zero ADS subscriptions, campaigns, creatives and events. Browser ADS remains OFF/no-fill until real commercial inventory exists.
+- AHMV Parent Experience is active. Essential is 10 CAD/week and self-serve. Premium is 30 CAD/week, planned and non-self-serve. `smart_departure` belongs to Premium only.
+- TAKATAK #102 is merged and preserves a reviewed official weekly AHMV document through its bounded covered week without rewriting its real source timestamp.
+- TAKATAK #103 is merged at `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`; post-merge CI #492 completed successfully.
+- PR #100's staging-history reconciler remains the only approved Prisma-history reconciliation path. Reconciler run #28 for `8adfa23…` failed at its protected configuration gate because `TAKATAK_STAGING_DATABASE_URL` was empty; staging deployment #31 correctly skipped. No ad-hoc write to `_prisma_migrations` is permitted.
 
 ## Readiness matrix
 
 | ID | Area | Source/data state | Live state / remaining dependency |
 | --- | --- | --- | --- |
-| A01 | Current-source authority | Complete | AHMV `9d190d6e…`; TAKATAK `d86d3bde…` |
-| A02 | AHMV production | CI + immutable deployment + live HTTP smoke complete | **Ready** at `9d190d6e…` |
+| A01 | Current-source authority | AHMV `04663346…`; TAKATAK `8adfa23…` | Current authority pinned |
+| A02 | AHMV production | CI + immutable deploy + live HTTP smoke | **Ready** at `04663346…` |
 | A03 | Teams | Exact 24-team contract/data complete | **Ready** |
-| A04 | Team Games / results | Exact-team connector/source guards complete | Shared service credential + final live upstream exact-team smoke |
-| A05 | TAKATAK ADS | Publisher + six placements + canonical routes complete | Backend/data ready; final live serve/event smoke before browser gate |
-| A06 | Weekly official schedule | Official AHMV Week 5 (October 5–11) is structured, provenance-pinned and live | **Ready for the current published week**; colour-only groups remain fail-closed for exact-team attribution |
-| A07 | Continuous official schedule | Snapshot store, ingestion/read APIs, provenance/freshness and Voice fallback complete | **Blocked externally:** reviewed continuous export/API/calendar source |
-| A08 | Team Feed / unified news-social | UI/proxy contract complete; server/browser gates default OFF | Meta/provider authorization + server credential + attribution/fallback acceptance |
+| A04 | Team Games / results | Exact-team connector/source guards complete | Shared service credential + live exact-team upstream smoke |
+| A05 | TAKATAK ADS | Publisher + six placements complete | **No real sellable inventory yet:** 0 subscription/campaign/creative/event; browser gate stays OFF |
+| A06 | Weekly official schedule | Official Week 5, October 5–11, structured with provenance | **Ready for the bounded current week**; colour-only groups stay fail-closed |
+| A07 | Continuous official schedule | Snapshot store/read/ingest + bounded weekly freshness complete | No snapshot is fabricated: exact source timestamp / approved continuous feed still required |
+| A08 | Team Feed / unified news-social | 24-team production mapping provisioned, service `planned`, provider null | Social subscription is `social_unsubscribed`; Meta OAuth/provider/content still required |
 | A09 | Gallery ↔ exact teams/seasons | Provenance and duplicate guards complete | Final permission/mobile review |
-| A10 | Facebook / Meta | Deterministic 24-team manifest complete | Meta Business invitation exists; interactive acceptance/provider connection still required |
-| A11 | Family/Product | Contract/schema/plan semantics present | Final launch/exchange/introspection + revoke/restore E2E |
-| A12 | Phone/SMS | Source/security CI present | Real current Twilio credentials, signed-request/consent/STOP/START/callback smoke |
-| A13 | Voice | Runtime/source/CI/Guardian present | Runtime credentials, TLS/WSS, bridge, FR/EN/ES real-call acceptance |
-| A14 | TAKATAK staging migration history | #100 merged; drift characterized and guarded | **Blocked:** protected `TAKATAK_STAGING_DATABASE_URL` must exist for automatic reconcile |
-| A15 | Public indexing | Fail-closed gate present | Manual release-owner acceptance; keep OFF until public/legal/provider items are accepted |
-| A16 | Final handover | Non-secret inventory/runbooks present | Record final enabled gates, monitoring and rollback |
+| A10 | Facebook / Meta | Invitation located; TAKATAK Facebook connection flow exists | Interactive invitation acceptance + approved Page/Instagram OAuth required |
+| A11 | Family/Product | Live catalog/prices/entitlements verified | Final launch/exchange/introspection + revoke/restore E2E |
+| A12 | Phone/SMS | Source/security CI present | Current Twilio credentials + signed-request/consent/STOP/START/callback smoke |
+| A13 | Voice | Runtime/source/CI/Guardian + guarded production-host deploy workflow present | Preprod attestation, host TLS/WSS/credentials, bridge + FR/EN/ES calls still required |
+| A14 | TAKATAK staging Prisma history | #100 reconciler merged and guarded | Protected `TAKATAK_STAGING_DATABASE_URL` still required |
+| A15 | Public indexing | Fail-closed gate present and production remains noindex | Manual release-owner acceptance after public/legal/provider gates |
+| A16 | Final handover | Runbooks + inventories present | Record final provider acceptances, enabled gates and rollback targets |
 
 ## Schedule reality for the October 6 start
 
-The official AHMV Week 5 PDF covering October 5–11 is now transcribed into the shared structured schedule used by the website and bounded Phone/Calendar fallback. Its source URL and publication date remain attached, and colour-only groups are not guessed onto exact teams. The separate continuous schedule bridge is still fail-closed until a reviewed current export/API/calendar source is connected; exact-team game/result links remain the official-provider fallback.
+The official AHMV Week 5 PDF covering October 5–11 is transcribed into the website's structured schedule with its source URL and publication date preserved. TAKATAK can now keep such a reviewed bounded weekly publication fresh through the activities it actually covers, subject to strict host/span/cap rules.
 
-## External walls that must remain fail-closed
+The trusted TAKATAK snapshot store remains empty because the exact offset-aware source publication timestamp has not been independently verified. The operator publisher deliberately refuses to invent that timestamp. A continuous upstream export/API/calendar also remains unapproved. Exact-team pages therefore retain official-provider fallbacks where the weekly source does not provide an exact team identity.
 
-1. Protected TAKATAK staging database URL and, separately, MochaHost staging transport configuration where a staging deployment is required.
-2. Continuous authoritative schedule source/export beyond the currently integrated official Week 5 publication.
-3. Interactive Meta/social authorization and provider credentials.
-4. Current Twilio + Voice runtime credentials/provider state.
+## Team Feed reality
+
+The internal backend preparation is now materially complete without pretending provider readiness:
+
+1. the exact 24 public teams are present;
+2. the canonical AHMV brand exists in TAKATAK production;
+3. one `planned` Team Feed service maps those 24 IDs;
+4. the service has no provider connection;
+5. the client remains `free / social_unsubscribed`;
+6. production has zero AHMV social accounts and zero synchronized social content.
+
+The Meta Business invitation for AHM Verdun exists and remains an interactive user/provider authorization step. No OAuth token belongs in Git, browser configuration or release documentation.
+
+## External walls that remain fail-closed
+
+1. Protected `TAKATAK_STAGING_DATABASE_URL` for guarded staging Prisma-history reconciliation.
+2. Exact authoritative timestamp/feed for trusted schedule snapshot ingestion and continuous refresh.
+3. Legitimate social subscription decision plus interactive Meta invitation/OAuth/Page/Instagram selection.
+4. Real paid ADS campaign/subscription/creative inventory.
+5. Current Twilio + Voice runtime credentials/provider acceptance.
+6. Team Games shared credential/live upstream acceptance.
+7. Association privacy/legal/media/public-indexing approvals.
 
 These are dependencies, not code defects. Do not replace them with synthetic values.
 
@@ -91,25 +109,26 @@ Use the environment-local non-secret reporter:
 bun run report:production-readiness
 ```
 
-For a release that intends to activate specific modules:
+For a cutover, require only the modules intentionally being enabled:
 
 ```bash
 bun run report:production-readiness --strict --require=core,schedule,teamGames,ads
 ```
 
-Only names and states are printed; secret values are never emitted. `teamGames` and `teamFeed` are intentionally distinct readiness targets.
+Only names and states are printed; secret values are never emitted. `teamGames` and `teamFeed` remain distinct readiness targets.
 
 ## Cutover sequence
 
-1. Keep all unaccepted feature gates OFF.
-2. Verify core production at the exact candidate SHA.
-3. Configure one external dependency at a time in its protected environment.
-4. Run that subsystem's read-only/live smoke.
-5. Enable only that subsystem's release gate.
-6. Re-run health/routes/robots/sitemap plus the affected feature smoke.
+1. Keep every unaccepted provider/browser gate OFF.
+2. Verify the exact current-main SHA and CI.
+3. Configure one protected external dependency at a time.
+4. Run that subsystem's guarded/live smoke.
+5. Enable only the subsystem that passed acceptance.
+6. Re-run AHMV health/routes/robots/sitemap plus the affected feature smoke.
 7. Record exact deployed SHA and rollback target.
-8. Never change public Twilio routing until Voice/Phone live acceptance and rollback snapshot are green.
-9. Never mark Prisma history reconciled merely because Supabase SQL exists; require the guarded reconciliation workflow to succeed.
+8. Never change public Twilio routing until Phone/Voice acceptance and rollback snapshot are green.
+9. Never mark Prisma history reconciled merely because equivalent SQL exists; require the guarded reconciliation workflow.
+10. Never stamp an old schedule with a new timestamp to make it appear fresh.
 
 ## Done means
 
@@ -119,6 +138,6 @@ A production-affecting task is done only when all applicable layers are true:
 2. current CI green;
 3. correct non-secret configuration state;
 4. required guarded migration/reconciliation completed on the correct project;
-5. live smoke against the actual hostname/provider;
+5. real provider/hostname smoke where applicable;
 6. rollback path verified;
 7. deployed SHA recorded.
