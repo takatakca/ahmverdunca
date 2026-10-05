@@ -68,7 +68,18 @@ TAKATAK remains pricing, billing and entitlement authority. AHMV never receives 
 - `TAKATAK_AHMV_SCHEDULE_URL`
 - `AHMV_LIVE_SCHEDULE_MAX_AGE_MINUTES`
 
-Official hockey providers remain authoritative. A stale or provenance-free feed must fail closed.
+Official hockey providers remain authoritative. A stale or provenance-free schedule feed must fail closed.
+
+## Team Feed / social-news bridge
+
+Keep both Team Feed gates OFF until TAKATAK has authorized provider connections, active subscription state, exact-team mapping, source attribution and unavailable-provider fallback verified:
+
+- `VITE_TAKATAK_TEAM_FEED_ENABLED=false` — browser visibility/fetch gate
+- `TAKATAK_TEAM_FEED_ENABLED=false` — server proxy gate
+- `TAKATAK_TEAM_FEED_ORIGIN` — approved TAKATAK HTTPS origin
+- `TAKATAK_TEAM_FEED_TOKEN` — server-only bearer credential
+
+Team Feed is separate from the official games/results connector. Provider OAuth/access tokens remain in TAKATAK and must never be exposed to AHMV browser code.
 
 ## TAKATAK ADS
 
@@ -149,10 +160,10 @@ Run the production readiness reporter from the environment being inspected:
 
 ```bash
 bun run report:production-readiness
-bun run report:production-readiness --strict --require=core,schedule,teamFeed,ads
+bun run report:production-readiness --strict --require=core,schedule,teamGames,ads
 ```
 
-The reporter prints variable **names and states only**. It never prints configured values. A gated subsystem that is intentionally OFF is reported as `disabled`; a required subsystem with missing configuration is `blocked`. Add only the subsystems intended for that cutover to `--require=`.
+The reporter prints variable **names and states only**. It never prints configured values. A gated subsystem that is intentionally OFF is reported as `disabled`; a required subsystem with missing configuration is `blocked`. Add only the subsystems intended for that cutover to `--require=`. Use `teamGames` for official games/results and `teamFeed` for the separately authorized social/news bridge.
 
 ## cPanel verification procedure
 
