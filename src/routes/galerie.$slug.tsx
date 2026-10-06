@@ -156,22 +156,6 @@ function AlbumPage() {
                 decoding="async"
                 className="absolute inset-0 size-full object-cover"
               />
-            ) : al.pendingReason === "consent" ? (
-              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-competition px-8 text-center text-white">
-                <span className="inline-flex size-14 items-center justify-center border border-white/15 bg-white/5">
-                  <Images className="size-6 text-sport-foreground" />
-                </span>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
-                    {lang === "fr" ? "Médias protégés" : "Protected media"}
-                  </p>
-                  <p className="mt-2 max-w-md text-sm leading-relaxed text-white/58">
-                    {lang === "fr"
-                      ? "Les images contenant des personnes mineures restent masquées tant que leur autorisation de diffusion n’est pas confirmée."
-                      : "Images containing minors remain hidden until publication consent is confirmed."}
-                  </p>
-                </div>
-              </div>
             ) : (
               <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-px bg-white/10">
                 {[OFFICIAL_MEDIA.tournamentM11Primary, OFFICIAL_MEDIA.tournamentM11Secondary, OFFICIAL_MEDIA.tournamentM11Tertiary].map((media, index) => (
@@ -198,13 +182,9 @@ function AlbumPage() {
                     ? lang === "fr"
                       ? "Aperçu provenant des archives publiques AHMV"
                       : "Preview from AHMV public archives"
-                    : al.pendingReason === "consent"
-                      ? lang === "fr"
-                        ? "Autorisation de diffusion en attente"
-                        : "Publication consent pending"
-                      : lang === "fr"
-                        ? "Montage d’archives AHMV · aperçu générique"
-                        : "AHMV archive montage · generic preview"}
+                    : lang === "fr"
+                      ? "Montage d’archives AHMV · aperçu générique"
+                      : "AHMV archive montage · generic preview"}
               </p>
               <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">
                 {l(al.title)}
@@ -218,13 +198,9 @@ function AlbumPage() {
                 ? lang === "fr"
                   ? "Médiathèque AHMV"
                   : "AHMV media library"
-                : al.pendingReason === "consent"
-                  ? lang === "fr"
-                    ? "Protection des médias"
-                    : "Media protection"
-                  : lang === "fr"
-                    ? "Archive AHMV"
-                    : "AHMV archive"}
+                : lang === "fr"
+                  ? "Archive AHMV"
+                  : "AHMV archive"}
             </p>
             <h2 className="heading-card mt-3 text-white">
               {photos.length
@@ -235,26 +211,18 @@ function AlbumPage() {
                   ? lang === "fr"
                     ? "Aperçu d’archive restauré"
                     : "Archive preview restored"
-                  : al.pendingReason === "consent"
-                    ? lang === "fr"
-                      ? "Publication temporairement masquée"
-                      : "Publication temporarily hidden"
-                    : lang === "fr"
-                      ? "Archive publique AHMV"
-                      : "Public AHMV archive"}
+                  : lang === "fr"
+                    ? "Archive publique AHMV"
+                    : "Public AHMV archive"}
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-white/56">
               {photos.length
                 ? lang === "fr"
                   ? "Les médias disponibles dans cette fiche sont maintenant hébergés et consultables directement dans l’expérience AHM Verdun. Utilisez les filtres plus bas pour naviguer par catégorie."
                   : "The media in this page are now hosted and viewable directly in the AHM Verdun experience. Use the filters below to browse by category."
-                : al.pendingReason === "consent"
-                  ? lang === "fr"
-                    ? "Ces médias importés contiennent des personnes mineures. Ils demeurent volontairement non publics jusqu’à confirmation explicite de l’autorisation de diffusion."
-                    : "These imported media items contain minors. They remain intentionally non-public until publication consent is explicitly confirmed."
-                  : lang === "fr"
-                    ? "Cette fiche conserve l’archive dans la nouvelle expérience AHMV. Utilisez le lien ci-dessous pour consulter l’album public d’origine et l’ensemble des photos disponibles."
-                    : "This page preserves the archive in the new AHMV experience. Use the link below to view the original public album and all available photos."}
+                : lang === "fr"
+                  ? "Cette fiche conserve l’archive dans la nouvelle expérience AHMV. Utilisez le lien ci-dessous pour consulter l’album public d’origine et l’ensemble des photos disponibles."
+                  : "This page preserves the archive in the new AHMV experience. Use the link below to view the original public album and all available photos."}
             </p>
 
             {al.sourceUrl && (

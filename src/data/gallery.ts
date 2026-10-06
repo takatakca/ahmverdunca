@@ -33,7 +33,7 @@ export interface Album {
   /** Full local migration is still incomplete even when a verified cover is available. */
   photosPending: boolean;
   /** Why photos are intentionally not rendered when pending. */
-  pendingReason?: "consent" | "source";
+  pendingReason?: "source";
 }
 
 const uploadedMedia = (
@@ -52,7 +52,7 @@ const uploadedAlbumState = (
     photos: assets,
     photoCount: assets.length,
     photosPending: assets.length === 0,
-    ...(assets.length === 0 ? { pendingReason: "consent" as const } : {}),
+    ...(assets.length === 0 ? { pendingReason: "source" as const } : {}),
   };
 };
 

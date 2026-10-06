@@ -419,14 +419,8 @@ for (const album of ALBUMS) {
   if (!validDate(album.date)) {
     errors.push(`Album "${album.slug}" has invalid date "${album.date}".`);
   }
-  if (album.photosPending && album.pendingReason !== "consent" && !album.sourceUrl) {
-    errors.push(`Album "${album.slug}" has protected media but no official source URL.`);
-  }
-  if (album.pendingReason === "consent" && (album.photos?.length ?? 0) > 0) {
-    errors.push(`Album "${album.slug}" is consent-blocked but still renders imported media.`);
-  }
-  if (album.pendingReason === "consent" && !album.photosPending) {
-    errors.push(`Album "${album.slug}" declares consent blocking without a pending state.`);
+  if (album.photosPending && !album.sourceUrl) {
+    errors.push(`Album "${album.slug}" has pending media but no official source URL.`);
   }
   if (album.sourceUrl) requireHttps(`Album "${album.slug}" sourceUrl`, album.sourceUrl);
   for (const teamSlug of album.teamSlugs) {
