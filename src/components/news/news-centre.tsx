@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from "react";
 import { NEWS, NEWS_CATEGORIES, newsDateLabel } from "@/data/news";
 import { CURRENT_TEAMS } from "@/data/teams";
 import { newsVisualForCategory } from "@/data/news-visuals";
+import { FittedImage } from "@/components/media/fitted-image";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { cn } from "@/lib/utils";
@@ -602,12 +603,10 @@ export function NewsCentre() {
                 <>
                   <div className="relative h-48 overflow-hidden bg-navy-deep sm:h-auto sm:min-h-48">
                     {item.imageUrl ? (
-                      <img
+                      <FittedImage
                         src={item.imageUrl}
                         alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                        imgClassName="transition-transform duration-500 group-hover:scale-[1.02]"
                       />
                     ) : (
                       <div className="flex size-full items-center justify-center">

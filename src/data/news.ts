@@ -272,8 +272,306 @@ export const NEWS: NewsArticle[] = [
     contentPending: false,
   },
   {
+    slug: "scotty-bowman-93-ans",
+    title: { fr: "Joyeux 93e anniversaire, Scotty Bowman!", en: "Happy 93rd birthday, Scotty Bowman!" },
+    excerpt: {
+      fr: "L’AHMV souhaite un joyeux anniversaire à Scotty Bowman, un des grands bâtisseurs du hockey à Verdun et à l’international.",
+      en: "AHMV wishes a happy birthday to Scotty Bowman, one of the great builders of hockey in Verdun and around the world.",
+    },
+    body: {
+      fr: [
+        "Aujourd’hui, nous désirons souhaiter un joyeux anniversaire à un des grands bâtisseurs du hockey à Verdun et à l’international.",
+        "Scotty Bowman, 93 ans! Merci Scotty!",
+      ],
+      en: [
+        "Today we want to wish a happy birthday to one of the great builders of hockey in Verdun and internationally.",
+        "Scotty Bowman, 93 years old! Thank you, Scotty!",
+      ],
+    },
+    date: "2026-09-18",
+    author: "AHM Verdun",
+    category: "association",
+    teamSlugs: [],
+    image: "/news-media/facebook/scotty-bowman-93-ans.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/photo/?fbid=1693042152831714&set=a.493518679450740",
+    contentPending: false,
+  },
+  {
+    slug: "benevoles-portes-ouvertes-hockey-feminin-septembre-2026",
+    title: { fr: "Bénévoles recherchés pour la journée portes ouvertes", en: "Volunteers needed for the open house" },
+    excerpt: {
+      fr: "Quatre bénévoles demandés dimanche : 2 à l’accueil et 2 pour distribuer l’équipement.",
+      en: "Four volunteers needed on Sunday: 2 at the welcome desk and 2 to hand out equipment.",
+    },
+    body: {
+      fr: [
+        "Nous avons besoins de quelques bénévoles ce dimanche pour que l’activité se déroule plus facilement.",
+        "Soit 2 personnes à l’accueil et 2 personnes pour aider à distribuer les équipements.",
+        "Si vous voulez nous aider, envoyer nous votre nom. Merci!",
+      ],
+      en: [
+        "We need a few volunteers this Sunday so the activity runs more smoothly.",
+        "Either 2 people at the welcome desk and 2 people to help hand out equipment.",
+        "If you would like to help, send us your name. Thank you!",
+      ],
+    },
+    date: "2026-09-11",
+    author: "AHM Verdun",
+    category: "feminine",
+    teamSlugs: ["feminin"],
+    image: "/news-media/facebook/portes-ouvertes-feminin-affiche.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid0RxSokHFqpj7p97suUB68G1PRewjvhbqMXpB8zusEKubstqEsT7PYCYJ4yqX2sWW2l",
+    contentPending: false,
+  },
+  {
+    slug: "rencontre-anthony-lapointe-arbitre-lnh",
+    title: { fr: "Rencontre avec Anthony Lapointe, arbitre dans la LNH", en: "Meeting Anthony Lapointe, NHL official" },
+    excerpt: {
+      fr: "Le président de l’AHMV a rencontré Anthony Lapointe, un petit gars de chez nous maintenant arbitre dans la LNH.",
+      en: "The AHMV president met Anthony Lapointe, a local kid who is now an NHL official.",
+    },
+    body: {
+      fr: [
+        "C’est un privilège en tant qu’arbitre pour la région du Lac St-Louis et Président de l’AMHV, de rencontrer ce matin Anthony Lapointe qui est maintenant rendu arbitre dans la LNH.",
+        "Un petit gars de chez nous avec un parcours inspirant. Bonne chance Anthony!",
+      ],
+      en: [
+        "As a referee for the Lac St-Louis region and President of AHMV, it was a privilege to meet Anthony Lapointe this morning, who is now an official in the NHL.",
+        "A local kid with an inspiring journey. Good luck, Anthony!",
+      ],
+    },
+    date: "2026-09-04",
+    author: "Jean-François Guay",
+    category: "association",
+    teamSlugs: [],
+    image: "/news-media/facebook/rencontre-anthony-lapointe.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid02LjAjfV6e9dCVkJTPPe9Vchx7wsr5JurKmdF8KgA5K5zV81czrxQKUeUbxJAH8ZPkl",
+    contentPending: false,
+  },
+  {
+    slug: "horaire-semaine-7-13-septembre-2026",
+    title: { fr: "Horaire de la semaine du 7 au 13 septembre publié", en: "Schedule for September 7–13 published" },
+    excerpt: {
+      fr: "L’horaire de la semaine du 7 au 13 septembre est publié.",
+      en: "The schedule for the week of September 7 to 13 is published.",
+    },
+    body: {
+      fr: ["L’horaire de la semaine du 7 au 13 septembre est publié. Rendez-vous sur la page des horaires pour les détails."],
+      en: ["The schedule for the week of September 7 to 13 is published. See the schedules page for details."],
+    },
+    date: "2026-08-27",
+    author: "AHM Verdun",
+    category: "association",
+    teamSlugs: [],
+    image: "/news-media/facebook/horaire-7-13-septembre.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/photo/?fbid=1670545451748051&set=a.493518682784073",
+    links: [{ label: { fr: "Voir les horaires", en: "View schedules" }, url: "https://ahmverdun.ca/horaires" }],
+    contentPending: false,
+  },
+  {
+    slug: "saison-debute-8-septembre-horaire-hebdomadaire",
+    title: { fr: "La saison devrait débuter le 8 septembre", en: "The season should start on September 8" },
+    excerpt: {
+      fr: "Consultez le site web pour l’horaire hebdomadaire; il sera mis à jour et publié dans les prochains jours.",
+      en: "Check the website for the weekly schedule; it will be updated and published in the coming days.",
+    },
+    body: {
+      fr: [
+        "Chers parents, à titre d'information, vous devez consulter notre site web pour l'horaire hebdomadaire.",
+        "La saison devrait débuter le 8 septembre.",
+        "Nous serons en mesure d'ici les prochains jours de mettre à jour l'horaire et de le publier. Merci.",
+      ],
+      en: [
+        "Dear parents, for your information, please check our website for the weekly schedule.",
+        "The season should start on September 8.",
+        "Within the next few days we will update and publish the schedule. Thank you.",
+      ],
+    },
+    date: "2026-08-26",
+    author: "AHM Verdun",
+    category: "association",
+    teamSlugs: [],
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid0UhZiVZuUTRrzSXBTRNKzz7opCLXncn5spWbkPkY2URK1QkeTKwUK6is6bod332bzl",
+    links: [{ label: { fr: "Voir les horaires", en: "View schedules" }, url: "https://ahmverdun.ca/horaires" }],
+    contentPending: false,
+  },
+  {
+    slug: "hockey-feminin-affiche-svp-partagez",
+    title: { fr: "Hockey féminin : joueuses de tout niveau bienvenues — partagez!", en: "Girls hockey: players of all levels welcome — please share!" },
+    excerpt: {
+      fr: "M9F, M12F et M15F : équipement prêté, journée portes ouvertes gratuite le 13 septembre. SVP partagez dans votre réseau!",
+      en: "U9F, U12F and U15F: equipment can be lent, free open house on September 13. Please share with your network!",
+    },
+    body: {
+      fr: [
+        "SVP partagez dans votre réseau!",
+        "Sur l’affiche : joueuses de tout niveau bienvenues — M9F (2018-2019), M12F (2015-2016-2017) et M15F (2012-2013-2014). L’équipement peut être prêté.",
+        "Viens essayer! Journée portes ouvertes le 13 septembre de 10 h à 12 h, gratuite, inscription requise.",
+        "Pour toute information : hockeyfeminin@ahmverdun.com",
+      ],
+      en: [
+        "Please share with your network!",
+        "On the poster: players of all levels welcome — U9F (2018-2019), U12F (2015-2016-2017) and U15F (2012-2013-2014). Equipment can be lent.",
+        "Come try it! Open house on September 13 from 10 a.m. to noon, free, registration required.",
+        "For any information: hockeyfeminin@ahmverdun.com",
+      ],
+    },
+    date: "2026-08-26",
+    author: "AHM Verdun",
+    category: "feminine",
+    teamSlugs: ["feminin"],
+    image: "/news-media/facebook/feminin-affiche-partage.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/photo/?fbid=1670185541784042&set=a.493518679450740",
+    contentPending: false,
+  },
+  {
+    slug: "offre-emploi-prepose-equipement-partenaire",
+    title: { fr: "Offre d’emploi : préposé à l’équipement", en: "Job offer: equipment attendant" },
+    excerpt: {
+      fr: "Un partenaire de l’AHMV cherche un préposé à l’équipement.",
+      en: "An AHMV partner is looking for an equipment attendant.",
+    },
+    body: {
+      fr: [
+        "Un de nos partenaires cherche un préposé à l'équipement. Voici l'offre d'emploi.",
+        "Les détails du poste figurent sur l’affiche.",
+      ],
+      en: [
+        "One of our partners is looking for an equipment attendant. Here is the job offer.",
+        "The job details are on the poster.",
+      ],
+    },
+    date: "2026-08-26",
+    author: "AHM Verdun",
+    category: "association",
+    teamSlugs: [],
+    image: "/news-media/facebook/offre-emploi-prepose-equipement.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid02Bc9wMmAM8EXh1CuKjEPSNBjBo1728C1yZSCfo1fw25nDPCXWUV9XEWbKr62612sul",
+    contentPending: false,
+  },
+  {
+    slug: "sheldon-hills-lefebvre-grenadiers-m17-aaa",
+    title: { fr: "Félicitations à Sheldon Hills Lefebvre!", en: "Congratulations to Sheldon Hills Lefebvre!" },
+    excerpt: {
+      fr: "Ancien gardien de but de l’AHMV, Sheldon Hills Lefebvre garde maintenant les buts des Grenadiers du Lac St-Louis M17-AAA.",
+      en: "Former AHMV goaltender Sheldon Hills Lefebvre now plays goal for the Lac St-Louis Grenadiers U17 AAA.",
+    },
+    body: {
+      fr: [
+        "Félicitations à Sheldon Hills Lefebvre, ancien gardien de but à l’AMHV, pour son poste de gardien de but au sein de l’équipe M17-AAA, Midget espoirs, chez les Grenadiers du Lac St-Louis.",
+        "Bonne saison!",
+      ],
+      en: [
+        "Congratulations to Sheldon Hills Lefebvre, a former AHMV goaltender, on earning a goaltender spot with the U17 AAA Midget Espoirs team of the Lac St-Louis Grenadiers.",
+        "Have a great season!",
+      ],
+    },
+    date: "2026-08-25",
+    author: "AHM Verdun",
+    category: "association",
+    teamSlugs: [],
+    image: "/news-media/facebook/sheldon-hills-lefebvre.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid0tckaK6BtSwtG5iu1di1J3zcki8d2cU6ThQmRnJwQ2hRMSzxfkc8qb1R2SbJ8paZcl",
+    contentPending: false,
+  },
+  {
+    slug: "saison-hockey-feminin-recrutement-m7-m18",
+    title: { fr: "La saison de hockey féminin arrive à grands pas!", en: "Girls hockey season is just around the corner!" },
+    excerpt: {
+      fr: "Recrutement de joueuses de M7 à M18 : objectif de former des équipes féminines M9, M12 et M15.",
+      en: "Recruiting players from U7 to U18, with the goal of forming U9, U12 and U15 girls teams.",
+    },
+    body: {
+      fr: [
+        "Hey les filles, venez en grand nombre! C’est le moment idéal de joindre une équipe, de développer vos habiletés, de créer des amitiés et surtout d’avoir du plaisir sur la glace!",
+        "Les inscriptions sont ouvertes et nous sommes en plein recrutement de joueuses de M7 à M18 pour la prochaine saison de hockey féminin à Verdun!",
+        "Notre grand objectif cette année : rassembler suffisamment de joueuses pour former des équipes féminines, avec de grands espoirs de créer des équipes M9, M12 et M15!",
+        "Détails pour les inscriptions : pour les joueuses M9F et M12F, l’inscription se fait directement dans la catégorie féminine.",
+        "Pour les joueuses des autres catégories, inscrivez-vous d’abord dans le hockey mixte selon votre année de naissance. Des équipes féminines seront ensuite formées selon le nombre d’inscriptions reçues.",
+        "Au plaisir de vous retrouver sur la glace très bientôt!",
+      ],
+      en: [
+        "Hey girls, come out in large numbers! It’s the perfect time to join a team, develop your skills, make friends and above all have fun on the ice!",
+        "Registration is open and we are recruiting players from U7 to U18 for the next girls hockey season in Verdun!",
+        "Our big goal this year: bring together enough players to form girls teams, with high hopes of creating U9, U12 and U15 teams!",
+        "Registration details: U9F and U12F players register directly in the girls category.",
+        "Players in other categories should first register in mixed hockey by birth year. Girls teams will then be formed based on the number of registrations.",
+        "Looking forward to seeing you on the ice very soon!",
+      ],
+    },
+    date: "2026-08-24",
+    author: "AHM Verdun",
+    category: "feminine",
+    teamSlugs: ["feminin"],
+    image: "/news-media/facebook/saison-hockey-feminin-recrutement.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid0fRBuR9rejkcvkEcYJ4hDp2VD7YLZRLmUZv5CsAXCbHzgCEgovhKnKzmifvwCK98al",
+    links: [{ label: { fr: "S’inscrire sur Spordle", en: "Register on Spordle" }, url: "https://page.spordle.com/fr/ahm-de-verdun/register" }],
+    contentPending: false,
+  },
+  {
+    slug: "horaire-camp-entrainement-chacals-2026",
+    title: { fr: "Horaire du camp d’entraînement des Chacals", en: "Chacals training camp schedule" },
+    excerpt: {
+      fr: "L’horaire du camp d’entraînement des Chacals, par catégorie. Début le 29 août.",
+      en: "The Chacals training camp schedule by category. Starts August 29.",
+    },
+    body: {
+      fr: ["Voici l'horaire pour les différentes catégories du camp d'entraînement pour les Chacals. Ça débute le 29 août."],
+      en: ["Here is the schedule for the different categories of the Chacals training camp. It starts on August 29."],
+    },
+    date: "2026-08-23",
+    author: "AHM Verdun",
+    category: "teams",
+    teamSlugs: [],
+    image: "/news-media/facebook/camp-chacals-horaire.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/photo/?fbid=1666841035451826&set=a.493518682784073",
+    contentPending: false,
+  },
+  {
+    slug: "inscriptions-vont-bien-2026-2027",
+    title: { fr: "Nos inscriptions vont bien pour 2026-2027!", en: "Registration for 2026-27 is going well!" },
+    excerpt: {
+      fr: "Les inscriptions avancent bien; certains programmes de subventions peuvent aider les familles.",
+      en: "Registration is going well; some subsidy programs can help families.",
+    },
+    body: {
+      fr: [
+        "Nos inscriptions vont bien pour la prochaine saison! N’hésitez pas! Certains programmes de subventions peuvent également aider. Visitez notre site web.",
+        "ALERTE INSCRIPTION 2026-27 — La prochaine saison approche à grands pas! Les inscriptions pour la saison 2026-2027 débuteront le 1er juillet.",
+        "Ne manquez pas votre chance d’assurer la place de votre enfant pour une autre saison de hockey, de plaisir et de développement!",
+        "Visitez notre site Web dès le 1er juillet et inscrivez-vous rapidement — les places sont limitées!",
+      ],
+      en: [
+        "Registration for next season is going well! Don’t hesitate! Some subsidy programs can also help. Visit our website.",
+        "REGISTRATION ALERT 2026–27 — A new season is just around the corner! Registration for the 2026–27 season opens on July 1st.",
+        "Don’t miss your chance to secure your child’s spot for another exciting season of hockey, fun, and development!",
+        "Visit our website on July 1st and register right away — spots are limited!",
+      ],
+    },
+    date: "2026-07-31",
+    author: "AHM Verdun",
+    category: "registration",
+    teamSlugs: [],
+    image: "/news-media/facebook/inscriptions-2026-2027-alerte.jpg",
+    season: "2026-2027",
+    sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid02RbFv1jwQHXvE5v5RquF8PvNkmgatfNWU7RuMhztWhaFrhGJanLngfJvzjT7EB346l",
+    links: [{ label: { fr: "Inscription", en: "Registration" }, url: "https://ahmverdun.ca/inscriptions" }],
+    contentPending: false,
+  },
+  {
     "legacyId": 39,
     "slug": "annulations-22-26-septembre-2026",
+    "image": "/news-media/facebook/annulations-greve-22-26-septembre.jpg",
     "title": {
       "fr": "Annulations d’activités les 22 et 26 septembre 2026",
       "en": "Activity cancellations on September 22 and 26, 2026"
@@ -303,6 +601,7 @@ export const NEWS: NewsArticle[] = [
   {
     "legacyId": 38,
     "slug": "debut-de-saison-m5-m7",
+    "image": "/news-media/facebook/debut-de-saison-m5-m7.jpg",
     "title": {
       "fr": "Début de saison pour les groupes M5 et M7",
       "en": "Season kickoff for U5 and U7 groups"
@@ -335,6 +634,7 @@ export const NEWS: NewsArticle[] = [
   {
     "legacyId": 37,
     "slug": "academie-ahmv-remise-des-bourses",
+    "image": "/news-media/facebook/academie-ahmv-bourses-2026.jpg",
     "title": {
       "fr": "Académie AHMV — Remise des bourses",
       "en": "AHMV Academy — Scholarship ceremony"
@@ -368,6 +668,7 @@ export const NEWS: NewsArticle[] = [
   {
     "legacyId": 36,
     "slug": "petition-facturation-heures-glace-verdun",
+    "image": "/news-media/facebook/petition-heures-de-glace.jpg",
     "title": {
       "fr": "Pétition sur la facturation des heures de glace à l’AHMV par l’arrondissement de Verdun",
       "en": "Petition concerning ice-time fees charged to AHMV by the Verdun borough"
@@ -500,6 +801,7 @@ export const NEWS: NewsArticle[] = [
   {
     "legacyId": 33,
     "slug": "hockey-feminin-portes-ouvertes-2026",
+    "image": "/news-media/facebook/feminin-affiche-partage.jpg",
     "title": {
       "fr": "Hockey féminin : journée portes ouvertes le 13 septembre et inscriptions ouvertes",
       "en": "Girls’ hockey: September 13 open house and registration"

@@ -43,6 +43,7 @@ import { cn } from "@/lib/utils";
 import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase";
 import { RevenueActionPanel } from "@/components/revenue-action-panel";
 import { ContentContributionButton } from "@/components/content-contribution-button";
+import { FittedImage } from "@/components/media/fitted-image";
 
 /** Top-right correction pen for a home news card, kept outside the card link. */
 function HomeNewsPen({ article, lang }: { article: (typeof NEWS)[number]; lang: "fr" | "en" }) {
@@ -73,8 +74,11 @@ function HomeNewsPen({ article, lang }: { article: (typeof NEWS)[number]; lang: 
 const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
 const HOME_TOURNAMENT_MEDIA = uploadedAhmvMediaById(26)!;
 
-function homeNewsMedia(category: (typeof NEWS)[number]["category"]) {
-  return newsVisualForCategory(category) ?? HOME_HERO_MEDIA;
+/** The post's own image when it has one (shown whole), otherwise the category visual. */
+function homeNewsMedia(article: (typeof NEWS)[number]) {
+  if (article.image) return { url: article.image, alt: article.title, own: true };
+  const visual = newsVisualForCategory(article.category) ?? HOME_HERO_MEDIA;
+  return { url: visual.url, alt: visual.alt, own: false };
 }
 
 export const Route = createFileRoute("/")({
@@ -100,6 +104,7 @@ function Home() {
   const today = montrealDateKey();
   const alerts = ALERTS.filter((alert) => !alert.archived && alert.expiresAt >= today);
   const news = NEWS.slice(0, 3);
+  const featuredMedia = news[0] ? homeNewsMedia(news[0]) : undefined;
   const featuredArena = ARENAS[0];
 
   return (
@@ -377,16 +382,26 @@ function Home() {
                 params={{ slug: news[0].slug }}
                 className="tactile group relative block h-full min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
-                <img
-                  src={homeNewsMedia(news[0].category).url}
-                  alt={lang === "fr" ? homeNewsMedia(news[0].category).alt.fr : homeNewsMedia(news[0].category).alt.en}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                />
+                {featuredMedia?.own ? (
+                  <FittedImage
+                    src={featuredMedia.url}
+                    alt={l(featuredMedia.alt)}
+                    imgClassName="transition-transform duration-700 group-hover:scale-[1.02]"
+                  />
+                ) : (
+                  <img
+                    src={featuredMedia?.url}
+                    alt={featuredMedia ? l(featuredMedia.alt) : ""}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                  />
+                )}
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.16)_0%,rgba(7,16,43,0.22)_40%,rgba(7,16,43,0.96)_100%)]" />
                 <span className="absolute left-5 top-5 border border-white/20 bg-navy/72 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur md:left-7 md:top-7">
-                  {lang === "fr" ? "Photo d’archive AHMV" : "AHMV archive photo"}
+                  {featuredMedia?.own
+                    ? lang === "fr" ? "Image de la publication" : "Post image"
+                    : lang === "fr" ? "Photo d’archive AHMV" : "AHMV archive photo"}
                 </span>
                 <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground md:p-9">
                   <div className="flex flex-wrap items-center gap-3">
@@ -411,7 +426,7 @@ function Home() {
 
               <div className="grid divide-y divide-white/10 bg-navy-deep">
                 {news.slice(1).map((article, index) => {
-                  const media = homeNewsMedia(article.category);
+                  const media = homeNewsMedia(article);
                   return (
                     <div key={article.slug} className="relative">
                     <Link
@@ -420,13 +435,21 @@ function Home() {
                       className="interactive-surface group grid h-full min-h-56 overflow-hidden bg-competition sm:grid-cols-[0.78fr_1.22fr] lg:grid-cols-1 xl:grid-cols-[0.78fr_1.22fr]"
                     >
                       <div className="relative min-h-40 overflow-hidden bg-navy sm:min-h-full lg:min-h-40 xl:min-h-full">
-                        <img
-                          src={media.url}
-                          alt={lang === "fr" ? media.alt.fr : media.alt.en}
-                          loading="lazy"
-                          decoding="async"
-                          className="absolute inset-0 size-full object-cover opacity-80 transition-[transform,opacity] duration-500 group-hover:scale-[1.035] group-hover:opacity-95"
-                        />
+                        {media.own ? (
+                          <FittedImage
+                            src={media.url}
+                            alt={l(media.alt)}
+                            imgClassName="transition-transform duration-500 group-hover:scale-[1.035]"
+                          />
+                        ) : (
+                          <img
+                            src={media.url}
+                            alt={l(media.alt)}
+                            loading="lazy"
+                            decoding="async"
+                            className="absolute inset-0 size-full object-cover opacity-80 transition-[transform,opacity] duration-500 group-hover:scale-[1.035] group-hover:opacity-95"
+                          />
+                        )}
                         <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_38%,rgba(7,16,43,0.78)_100%)]" />
                         <span className="absolute left-3 top-3 border border-white/15 bg-navy-deep/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/78 backdrop-blur">
                           {lang === "fr" ? "Photo AHMV" : "AHMV photo"}

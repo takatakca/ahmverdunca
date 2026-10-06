@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { ContentContributionButton } from "@/components/content-contribution-button";
+import { FittedImage } from "@/components/media/fitted-image";
 import { useContentOverlayRegistry } from "@/lib/community-content";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
@@ -106,7 +107,9 @@ function ArticlePage() {
           : a.category === "registration"
             ? uploadedAhmvMediaById(39)
             : OFFICIAL_MEDIA.tournamentM11Tertiary;
-  const displayImageUrl = typeof patch["imageUrl"] === "string" ? patch["imageUrl"] : storyMedia!.url;
+  // The post's own image (or an approved correction) is shown whole; generic visuals fill the frame.
+  const ownImageUrl = typeof patch["imageUrl"] === "string" ? patch["imageUrl"] : a.image;
+  const displayImageUrl = ownImageUrl ?? storyMedia!.url;
   const contributionFields = [
     { key: "title", label: { fr: "Titre", en: "Title" }, kind: "text" as const, current: displayTitle },
     { key: "text", label: { fr: "Résumé", en: "Summary" }, kind: "textarea" as const, current: displayExcerpt },
@@ -151,13 +154,17 @@ function ArticlePage() {
         <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <article className="overflow-hidden border border-white/12 bg-navy-deep text-white">
             <div className="group relative aspect-[16/8] overflow-hidden bg-navy">
-              <img
-                src={displayImageUrl}
-                alt={lang === "fr" ? storyMedia!.alt.fr : storyMedia!.alt.en}
-                loading="eager"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-              />
+              {ownImageUrl ? (
+                <FittedImage src={ownImageUrl} alt={displayTitle} loading="eager" />
+              ) : (
+                <img
+                  src={displayImageUrl}
+                  alt={lang === "fr" ? storyMedia!.alt.fr : storyMedia!.alt.en}
+                  loading="eager"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                />
+              )}
               <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.05),rgba(7,16,43,0.64))]" />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white md:p-7">
                 <div>
