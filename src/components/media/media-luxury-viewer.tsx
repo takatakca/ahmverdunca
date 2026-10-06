@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type TouchEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEvent, type TouchEvent } from "react";
 import { ChevronLeft, ChevronRight, Images, X, ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,8 +28,11 @@ export function MediaLuxuryViewer({
   const safeInitialIndex = Math.min(Math.max(initialIndex, 0), Math.max(items.length - 1, 0));
   const [index, setIndex] = useState(safeInitialIndex);
   const [zoomed, setZoomed] = useState(false);
+  // Zoom focus in percent of the image box: where the viewer tapped, then wherever they pan.
+  const [origin, setOrigin] = useState({ x: 50, y: 50 });
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const thumbnailRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const current = items[index];
 
@@ -38,6 +41,44 @@ export function MediaLuxuryViewer({
     setIndex(safeInitialIndex);
     setZoomed(false);
   }, [open, safeInitialIndex]);
+
+  useEffect(() => {
+    if (!zoomed) setOrigin({ x: 50, y: 50 });
+  }, [zoomed, index]);
+
+  /** Maps a screen point to the untransformed image box so panning stays stable while scaled. */
+  const originFromPoint = (clientX: number, clientY: number) => {
+    const image = imageRef.current;
+    const frame = image?.offsetParent;
+    if (!image || !(frame instanceof HTMLElement) || !image.offsetWidth || !image.offsetHeight) {
+      return { x: 50, y: 50 };
+    }
+    const box = frame.getBoundingClientRect();
+    const clamp = (value: number) => Math.min(100, Math.max(0, value));
+    return {
+      x: clamp(((clientX - box.left - image.offsetLeft) / image.offsetWidth) * 100),
+      y: clamp(((clientY - box.top - image.offsetTop) / image.offsetHeight) * 100),
+    };
+  };
+
+  const toggleZoomAt = (event: MouseEvent<HTMLButtonElement>) => {
+    if (zoomed) {
+      setZoomed(false);
+      return;
+    }
+    // Keyboard activation reports no pointer position (detail 0): zoom the centre.
+    setOrigin(event.detail === 0 ? { x: 50, y: 50 } : originFromPoint(event.clientX, event.clientY));
+    setZoomed(true);
+  };
+
+  const panWithPointer = (event: PointerEvent<HTMLButtonElement>) => {
+    if (zoomed && event.pointerType === "mouse") setOrigin(originFromPoint(event.clientX, event.clientY));
+  };
+
+  const panWithTouch = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (zoomed && touch) setOrigin(originFromPoint(touch.clientX, touch.clientY));
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -193,14 +234,16 @@ export function MediaLuxuryViewer({
       <div
         className="absolute inset-x-0 bottom-[104px] top-[65px] flex items-center justify-center overflow-auto px-2 py-3 sm:bottom-[116px] sm:px-6 sm:py-5"
         onTouchStart={handleTouchStart}
+        onTouchMove={panWithTouch}
         onTouchEnd={handleTouchEnd}
       >
         <button
           type="button"
-          onClick={() => setZoomed((value) => !value)}
+          onClick={toggleZoomAt}
+          onPointerMove={panWithPointer}
           className={cn(
-            "relative flex h-full max-h-full w-full max-w-[1500px] items-center justify-center outline-none",
-            zoomed ? "cursor-zoom-out overflow-visible" : "cursor-zoom-in overflow-hidden",
+            "relative flex h-full max-h-full w-full max-w-[1500px] items-center justify-center overflow-hidden outline-none",
+            zoomed ? "cursor-zoom-out touch-none" : "cursor-zoom-in",
           )}
           aria-label={
             zoomed
@@ -213,14 +256,16 @@ export function MediaLuxuryViewer({
           }
         >
           <img
+            ref={imageRef}
             key={current.url}
             src={current.url}
             alt={lang === "fr" ? current.alt.fr : current.alt.en}
             decoding="async"
             className={cn(
               "max-h-full max-w-full select-none object-contain shadow-[0_30px_100px_-35px_rgba(0,0,0,0.9)] transition-transform duration-300 ease-out motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-300",
-              zoomed && "scale-[1.8]",
+              zoomed && "scale-[2.2]",
             )}
+            style={{ transformOrigin: `${origin.x}% ${origin.y}%` }}
             draggable={false}
           />
         </button>
