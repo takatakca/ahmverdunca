@@ -133,3 +133,18 @@ If a NO-GO condition occurs:
 5. fix through a reviewed PR and repeat this runbook.
 
 Never “fix live” by changing hockey data, DNS, secrets or indexing without recording the change.
+
+## 8. Deploy fails at “Detect production transport”
+
+Symptom: `Auto deploy AHM Verdun production` fails at step 9, **Detect production transport**, after several minutes of SSH retries, while `https://ahmverdun.ca/healthz` still answers and port 22 on the host is reachable. Nothing is uploaded or activated, so production stays on the previous release.
+
+Cause seen on 2026-10-05 and 2026-10-06: the MochaHost shared account `bolon.ca` (server `s3650.can1.stableserver.net`, IP `209.42.24.127`), which hosts ahmverdun.ca, is exhausted by hung Node.js/Passenger processes — the CloudLinux 100-process ceiling or IOPS pinned at 100 % — so the host cannot open a new SSH session for the deploy.
+
+Fix:
+
+1. Sign in to `clients.mochahost.com` and open the live chat (Orbi).
+2. Ask: **“Reset the process and kill”** for the `bolon.ca` account (ahmverdun.ca). Support terminates the hung processes; IOPS and CPU drop back to 0 % and Passenger respawns workers on the next request.
+3. Re-run the failed deploy from GitHub Actions (**Re-run jobs**), or push the next commit to `main`.
+4. Confirm `GET /healthz` reports the new `release` SHA.
+
+If it keeps recurring, the durable fix is fewer Node.js apps on that cPanel account or a host without the shared process ceiling.
