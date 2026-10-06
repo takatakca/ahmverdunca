@@ -42,6 +42,33 @@ import { montrealDateKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
 import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase";
 import { RevenueActionPanel } from "@/components/revenue-action-panel";
+import { ContentContributionButton } from "@/components/content-contribution-button";
+
+/** Top-right correction pen for a home news card, kept outside the card link. */
+function HomeNewsPen({ article, lang }: { article: (typeof NEWS)[number]; lang: "fr" | "en" }) {
+  return (
+    <ContentContributionButton
+      resourceType="news"
+      resourceKey={`news:${article.slug}`}
+      title={article.title[lang]}
+      snapshot={{
+        slug: article.slug,
+        title: article.title,
+        excerpt: article.excerpt,
+        date: article.date ?? null,
+        sourceUrl: article.sourceUrl ?? null,
+      }}
+      fields={[
+        { key: "title", label: { fr: "Titre", en: "Title" }, kind: "text", current: article.title[lang] },
+        { key: "text", label: { fr: "Texte / résumé", en: "Text / summary" }, kind: "textarea", current: article.excerpt[lang] },
+        { key: "imageUrl", label: { fr: "Image", en: "Image" }, kind: "image-url" },
+        { key: "url", label: { fr: "Lien source", en: "Source link" }, kind: "url", current: article.sourceUrl },
+        { key: "publishedAt", label: { fr: "Date publiée", en: "Published date" }, kind: "date", current: article.date },
+      ]}
+      className="absolute right-3 top-3 z-20"
+    />
+  );
+}
 
 const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
 const HOME_TOURNAMENT_MEDIA = uploadedAhmvMediaById(26)!;
@@ -344,10 +371,11 @@ function Home() {
 
           {news[0] && (
             <div className="mt-7 grid gap-0 overflow-hidden border border-white/10 lg:grid-cols-[1.65fr_0.85fr]">
+              <div className="relative">
               <Link
                 to="/nouvelles/$slug"
                 params={{ slug: news[0].slug }}
-                className="tactile group relative min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
+                className="tactile group relative block h-full min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
               >
                 <img
                   src={homeNewsMedia(news[0].category).url}
@@ -378,16 +406,18 @@ function Home() {
                   </span>
                 </div>
               </Link>
+              <HomeNewsPen article={news[0]} lang={lang} />
+              </div>
 
               <div className="grid divide-y divide-white/10 bg-navy-deep">
                 {news.slice(1).map((article, index) => {
                   const media = homeNewsMedia(article.category);
                   return (
+                    <div key={article.slug} className="relative">
                     <Link
-                      key={article.slug}
                       to="/nouvelles/$slug"
                       params={{ slug: article.slug }}
-                      className="interactive-surface group grid min-h-56 overflow-hidden bg-competition sm:grid-cols-[0.78fr_1.22fr] lg:grid-cols-1 xl:grid-cols-[0.78fr_1.22fr]"
+                      className="interactive-surface group grid h-full min-h-56 overflow-hidden bg-competition sm:grid-cols-[0.78fr_1.22fr] lg:grid-cols-1 xl:grid-cols-[0.78fr_1.22fr]"
                     >
                       <div className="relative min-h-40 overflow-hidden bg-navy sm:min-h-full lg:min-h-40 xl:min-h-full">
                         <img
@@ -415,6 +445,8 @@ function Home() {
                         </div>
                       </div>
                     </Link>
+                    <HomeNewsPen article={article} lang={lang} />
+                    </div>
                   );
                 })}
               </div>

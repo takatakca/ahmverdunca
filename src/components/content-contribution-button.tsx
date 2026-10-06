@@ -14,6 +14,9 @@ import { useI18n } from "@/lib/i18n";
 const CONTRIBUTIONS_VISIBLE =
   import.meta.env["VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE"] === "true";
 
+/** Lets wrappers (e.g. the floating page pen) disappear together with the pens. */
+export const contributionsVisible = () => CONTRIBUTIONS_VISIBLE;
+
 export type ContributionFieldKind =
   | "text"
   | "textarea"
