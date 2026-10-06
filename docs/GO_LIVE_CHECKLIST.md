@@ -2,7 +2,7 @@
 
 Current verified AHMV production baseline: release `b33f45adeb3a482c323725a8d07a184977e4c752` is deployed on MochaHost. AHM Verdun CI #1066 succeeded, Voice Guardian #50 succeeded and production deploy #835 completed successfully. GitHub `main` may be ahead only by docs-only commits that are intentionally excluded from the production release train.
 
-The successful deployment verified immutable release activation, the approved cPanel/Passenger restart command, exact compiled runtime SHA through `/healthz.release`, homepage, core public routes, search noindex behavior, `robots.txt` and `sitemap.xml`. This does **not** make external providers automatically ready.
+The successful deployment verified immutable release activation, the approved cPanel/Passenger restart command, exact compiled runtime SHA through the `release` JSON field returned by `GET /healthz`, homepage, core public routes, search noindex behavior, `robots.txt` and `sitemap.xml`. This does **not** make external providers automatically ready.
 
 ## Technical release gate — completed
 

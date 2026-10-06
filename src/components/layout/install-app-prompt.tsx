@@ -113,9 +113,11 @@ export function InstallAppPrompt() {
     };
     window.addEventListener("ahmv:navigation-open", suppress);
     window.addEventListener("ahmv:assistant-open", suppress);
+    window.addEventListener("ahmv:welcome-open", suppress);
     return () => {
       window.removeEventListener("ahmv:navigation-open", suppress);
       window.removeEventListener("ahmv:assistant-open", suppress);
+      window.removeEventListener("ahmv:welcome-open", suppress);
     };
   }, []);
 

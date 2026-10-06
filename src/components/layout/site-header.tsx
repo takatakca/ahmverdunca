@@ -15,6 +15,7 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import type { TranslationKey } from "@/lib/translations";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
+import { welcomeEnabled } from "@/lib/welcome-policy";
 
 export function SiteHeader() {
   const { t, lang } = useI18n();
@@ -49,7 +50,11 @@ export function SiteHeader() {
       setMoreOpen(false);
     };
     window.addEventListener("ahmv:assistant-open", closeForAssistant);
-    return () => window.removeEventListener("ahmv:assistant-open", closeForAssistant);
+    window.addEventListener("ahmv:welcome-open", closeForAssistant);
+    return () => {
+      window.removeEventListener("ahmv:assistant-open", closeForAssistant);
+      window.removeEventListener("ahmv:welcome-open", closeForAssistant);
+    };
   }, []);
 
   // Lock the page behind the mobile navigation without losing the previous
@@ -125,8 +130,20 @@ export function SiteHeader() {
         className="pointer-events-none absolute -right-10 top-1/2 w-72 -translate-y-1/2 select-none object-contain opacity-[0.055] saturate-150 sm:w-80 lg:right-6 lg:w-[24rem]"
       />
       <div className="border-b border-white/10 bg-navy-deep">
-        <div className="container-site">
-          <AlertStatus language={lang} compact />
+        <div className="container-site flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1"><AlertStatus language={lang} compact /></div>
+          {welcomeEnabled(import.meta.env["VITE_COMMUNICATIONS_PREVIEW_ENABLED"]) && (
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("ahmv:welcome-open"))}
+              className="premium-control inline-flex min-h-10 shrink-0 items-center gap-1.5 border-l border-white/15 pl-3 text-[9px] font-bold uppercase tracking-[0.08em] text-white hover:text-sport-foreground"
+              aria-label={lang === "fr" ? "Ouvrir le panneau de bienvenue" : "Open the welcome panel"}
+              aria-haspopup="dialog"
+            >
+              <Sparkles className="size-3.5 text-sport-foreground" aria-hidden />
+              <span>{lang === "fr" ? "Bienvenue" : "Welcome"}</span>
+            </button>
+          )}
         </div>
       </div>
 

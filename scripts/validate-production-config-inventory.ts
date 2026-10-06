@@ -8,7 +8,6 @@ const errors: string[] = [];
 const disabledByDefault = [
   "VITE_PUBLIC_INDEXING",
   "VITE_DEMO_MEMBER_PREVIEW_ENABLED",
-  "VITE_COMMUNICATIONS_PREVIEW_ENABLED",
   "VITE_ASSISTANT_NUDGE_ENABLED",
   "VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE",
   "TAKATAK_CONTENT_CONTRIBUTIONS_ENABLED",
@@ -64,6 +63,8 @@ const websiteCriticalNames = [
   "AHMV_VOICE_BRIDGE_TOKEN",
 ] as const;
 
+const publicWelcomeFlag = "VITE_COMMUNICATIONS_PREVIEW_ENABLED";
+
 const voiceCriticalNames = [
   "PUBLIC_BASE_URL",
   "PUBLIC_WSS_URL",
@@ -96,6 +97,13 @@ for (const name of disabledByDefault) {
   if (!inventoryMentions(name)) {
     errors.push(`Production configuration inventory is missing ${name}`);
   }
+}
+
+if (envValue(env, publicWelcomeFlag) !== "true") {
+  errors.push(`${publicWelcomeFlag} must default to true for the public welcome panel`);
+}
+if (!inventoryMentions(publicWelcomeFlag)) {
+  errors.push(`Production configuration inventory is missing ${publicWelcomeFlag}`);
 }
 
 for (const name of websiteCriticalNames) {

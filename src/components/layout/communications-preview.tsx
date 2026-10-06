@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, Bot, CalendarDays, Coffee, Globe2, PhoneCall, Sparkles, Users, X } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { Bot, CalendarDays, Coffee, Globe2, PhoneCall, Sparkles, Users, X } from "lucide-react";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,7 @@ import { DEVELOPMENT_SUPPORT } from "@/lib/monetization";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { publicTeamHubUrl } from "@/data/team-directory";
+import { startWelcomeAutoOpen, welcomeEnabled } from "@/lib/welcome-policy";
 import {
   ASSISTANT_LANGUAGE_OPTIONS,
   assistantUiLanguage,
@@ -18,11 +20,28 @@ import {
   type AssistantLanguageCode,
 } from "@/lib/assistant-language";
 
-const COMMUNICATIONS_PREVIEW_ENABLED =
-  import.meta.env["VITE_COMMUNICATIONS_PREVIEW_ENABLED"] === "true";
+const COMMUNICATIONS_PREVIEW_ENABLED = welcomeEnabled(
+  import.meta.env["VITE_COMMUNICATIONS_PREVIEW_ENABLED"],
+);
 
 const HIDE_KEY = "ahmv-communications-preview-hidden";
 const SESSION_KEY = "ahmv-communications-preview-seen";
+
+function readSuppression(kind: "localStorage" | "sessionStorage", key: string) {
+  try {
+    return window[kind].getItem(key) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function rememberSuppression(kind: "localStorage" | "sessionStorage", key: string) {
+  try {
+    window[kind].setItem(key, "1");
+  } catch {
+    // Welcome navigation remains available when optional storage is blocked.
+  }
+}
 
 function popupCopy(language: AssistantLanguageCode) {
   const ui = assistantUiLanguage(language);
@@ -36,7 +55,6 @@ function popupCopy(language: AssistantLanguageCode) {
       schedules: "Horarios",
       assistant: "Asistente",
       phoneReady: "Llamar AHMV",
-      phoneReserved: "Número reservado",
       language: "Idioma",
       otherLanguages: "Más",
       never: "No mostrar de nuevo",
@@ -53,7 +71,6 @@ function popupCopy(language: AssistantLanguageCode) {
       schedules: "Schedules",
       assistant: "Assistant",
       phoneReady: "Call AHMV",
-      phoneReserved: "Reserved number",
       language: "Language",
       otherLanguages: "More",
       never: "Don't show again",
@@ -69,7 +86,6 @@ function popupCopy(language: AssistantLanguageCode) {
     schedules: "Horaires",
     assistant: "Assistant",
     phoneReady: "Appeler AHMV",
-    phoneReserved: "Numéro réservé",
     language: "Langue",
     otherLanguages: "Plus",
     never: "Ne plus afficher",
@@ -84,87 +100,80 @@ export function CommunicationsPreview() {
 
 function EnabledCommunicationsPreview() {
   const { lang, setLang } = useI18n();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const { selectedTeams } = usePreferredTeam();
   const primaryTeam = selectedTeams[0];
   const [open, setOpen] = useState(false);
-  const [teaserOpen, setTeaserOpen] = useState(false);
+  const shownThisMount = useRef(false);
+  const previouslyFocused = useRef<HTMLElement | null>(null);
+  const closeButton = useRef<HTMLButtonElement | null>(null);
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
   const copy = useMemo(() => popupCopy(assistantLanguage), [assistantLanguage]);
   const supportAvailable =
     DEVELOPMENT_SUPPORT.enabled &&
     (DEVELOPMENT_SUPPORT.customUrl || DEVELOPMENT_SUPPORT.tiers.some((tier) => Boolean(tier.url)));
 
+  const openWelcome = useCallback(() => {
+    previouslyFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    shownThisMount.current = true;
+    rememberSuppression("sessionStorage", SESSION_KEY);
+    setOpen(true);
+  }, []);
+
   useEffect(() => {
-    setAssistantLanguage(readAssistantLanguage(lang));
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    try {
+      setAssistantLanguage(readAssistantLanguage(lang));
+    } catch {
+      setAssistantLanguage(lang);
+    }
   }, [lang]);
 
   useEffect(() => {
     const closeForNavigation = () => {
       setOpen(false);
-      setTeaserOpen(false);
     };
+    window.addEventListener("ahmv:welcome-open", openWelcome);
     window.addEventListener("ahmv:navigation-open", closeForNavigation);
     window.addEventListener("ahmv:assistant-open", closeForNavigation);
 
     return () => {
+      window.removeEventListener("ahmv:welcome-open", openWelcome);
       window.removeEventListener("ahmv:navigation-open", closeForNavigation);
       window.removeEventListener("ahmv:assistant-open", closeForNavigation);
     };
-  }, []);
+  }, [openWelcome]);
 
   useEffect(() => {
-    if (window.localStorage.getItem(HIDE_KEY) === "1") return;
-    if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
-
-    // Phones already have the persistent parent dock and assistant access.
-    // Keep the content surface clear instead of stacking another floating card.
-    if (window.matchMedia("(max-width: 767px)").matches) return;
-
-    const timer = window.setTimeout(() => {
-      if (document.body.style.overflow === "hidden") return;
-      if (document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]')) return;
-      if (document.querySelector("[data-ahmv-attention-surface]")) return;
-      setTeaserOpen(true);
-      window.sessionStorage.setItem(SESSION_KEY, "1");
-    }, 15000);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
-
-  const dismissTeaser = () => setTeaserOpen(false);
-
-  const openPreview = () => {
-    setTeaserOpen(false);
-    setOpen(true);
-  };
-
-  if (!open && !teaserOpen) return null;
+    return startWelcomeAutoOpen(
+      () => ({
+        hidden: readSuppression("localStorage", HIDE_KEY),
+        sessionSeen: shownThisMount.current || readSuppression("sessionStorage", SESSION_KEY),
+        attentionBusy: document.body.style.overflow === "hidden"
+          || Boolean(document.querySelector('[aria-controls="mobile-menu"][aria-expanded="true"]'))
+          || Boolean(document.querySelector('[data-ahmv-attention-surface], [role="dialog"][aria-modal="true"]')),
+      }),
+      openWelcome,
+      { set: (callback, delay) => window.setTimeout(callback, delay), clear: (id) => window.clearTimeout(id) },
+    );
+  }, [openWelcome]);
 
   const dismissForever = () => {
-    window.localStorage.setItem(HIDE_KEY, "1");
+    rememberSuppression("localStorage", HIDE_KEY);
     setOpen(false);
   };
 
   const chooseLanguage = (code: AssistantLanguageCode) => {
     setAssistantLanguage(code);
-    saveAssistantLanguage(code);
+    try {
+      saveAssistantLanguage(code);
+    } catch {
+      // The language choice still applies to this visit without persistent storage.
+    }
     if (code === "fr" || code === "en") setLang(code);
   };
 
@@ -175,68 +184,26 @@ function EnabledCommunicationsPreview() {
     });
   };
 
-  if (!open && teaserOpen) {
-    return (
-      <aside
-        data-ahmv-attention-surface="communications"
-        className="rise fixed bottom-20 right-3 z-40 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden border border-white/12 bg-competition text-white shadow-[0_24px_72px_-34px_rgba(0,0,0,0.95)] lg:bottom-6 lg:right-6"
-        aria-label={copy.title}
-      >
-        <div className="relative h-20 overflow-hidden">
-          <img
-            src={OFFICIAL_MEDIA.practiceGoalie.url}
-            alt=""
-            aria-hidden
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 size-full object-cover opacity-72"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,16,43,0.97),rgba(7,16,43,0.58))]" />
-          <div className="relative flex h-full items-center gap-3 px-3 pr-10">
-            <LogoSlot className="size-10 shrink-0" />
-            <div className="min-w-0">
-              <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">{copy.eyebrow}</p>
-              <p className="mt-1 truncate font-display text-xl font-extrabold uppercase leading-none">{copy.title}</p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={dismissTeaser}
-            className="absolute right-2 top-2 flex size-8 items-center justify-center border border-white/15 bg-navy-deep/55 text-white/68 backdrop-blur"
-            aria-label={assistantUiLanguage(assistantLanguage) === "fr" ? "Fermer" : assistantUiLanguage(assistantLanguage) === "es" ? "Cerrar" : "Close"}
-          >
-            <X className="size-3.5" />
-          </button>
-        </div>
-        <button
-          type="button"
-          onClick={openPreview}
-          className="group flex w-full items-center justify-between gap-3 px-3 py-3 text-left"
-        >
-          <span className="text-xs leading-relaxed text-white/62">{copy.body}</span>
-          <span className="flex size-9 shrink-0 items-center justify-center bg-sport text-sport-foreground transition-transform group-hover:translate-x-0.5">
-            <ArrowRight className="size-4" />
-          </span>
-        </button>
-      </aside>
-    );
-  }
-
   return (
-    <div
-      data-ahmv-attention-surface="communications-dialog"
-      className="fixed inset-0 z-[90] flex items-end justify-center bg-navy-deep/48 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-[2px] sm:items-center sm:p-4"
-      role="presentation"
-    >
-      <section
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="communications-preview-title"
-        className="relative flex max-h-[calc(100dvh-1rem)] w-full max-w-[520px] flex-col overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_28px_80px_-36px_rgba(0,0,0,0.9)]"
+    <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-[310] bg-navy-deep/48 backdrop-blur-[2px]" />
+        <DialogPrimitive.Content
+        data-ahmv-attention-surface="communications-dialog"
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          closeButton.current?.focus();
+        }}
+        onCloseAutoFocus={(event) => {
+          event.preventDefault();
+          if (previouslyFocused.current?.isConnected) previouslyFocused.current.focus();
+        }}
+        className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 z-[320] flex max-h-[calc(100dvh-1rem-env(safe-area-inset-bottom))] w-[calc(100%-1rem)] max-w-[520px] -translate-x-1/2 flex-col overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_28px_80px_-36px_rgba(0,0,0,0.9)] outline-none sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2"
       >
         <div className="flex shrink-0 items-start bg-competition pt-2 text-white">
           <div className="min-w-0 flex-1"><AlertStatus language={assistantUiLanguage(assistantLanguage)} /></div>
           <button
+            ref={closeButton}
             type="button"
             onClick={() => setOpen(false)}
             className="premium-control mr-2 flex size-10 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white hover:bg-white/20"
@@ -258,19 +225,18 @@ function EnabledCommunicationsPreview() {
             <LogoSlot className="size-11 sm:size-12" />
             <div>
               <p className="eyebrow text-sport-foreground">{copy.eyebrow}</p>
-              <h2
-                id="communications-preview-title"
+              <DialogPrimitive.Title
                 className="mt-1 max-w-[14ch] font-display text-2xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-3xl"
               >
                 {copy.title}
-              </h2>
+              </DialogPrimitive.Title>
             </div>
           </div>
 
         </div>
 
         <div className="min-h-0 overflow-y-auto bg-navy-deep p-4 sm:max-h-[470px] sm:p-5">
-          <p className="max-w-xl text-xs leading-relaxed text-white/58">{copy.body}</p>
+          <DialogPrimitive.Description className="max-w-xl text-xs leading-relaxed text-white/58">{copy.body}</DialogPrimitive.Description>
 
           <div className="mt-5 grid grid-cols-3 gap-2">
             <Button asChild variant="sport" className="h-auto min-h-[58px] flex-col gap-1 px-2 py-2.5">
@@ -304,8 +270,7 @@ function EnabledCommunicationsPreview() {
             </button>
           </div>
 
-          <div className="mt-4">
-            {phonePublic ? (
+          {phonePublic && <div className="mt-4">
               <a
                 href={`tel:${phoneE164}`}
                 className="premium-control flex min-h-11 items-center justify-between border border-sport/35 bg-sport/10 px-3 text-white"
@@ -321,18 +286,7 @@ function EnabledCommunicationsPreview() {
                 </span>
                 <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground">1 clic</span>
               </a>
-            ) : (
-              <div className="flex min-h-11 items-center justify-between border border-white/12 bg-competition px-3 text-white">
-                <span className="flex items-center gap-3">
-                  <PhoneCall className="size-4 text-sport" />
-                  <span>
-                    <span className="block text-[9px] font-bold uppercase tracking-[0.14em] text-white/42">{copy.phoneReserved}</span>
-                    <span className="mt-0.5 block font-display text-lg font-extrabold uppercase leading-none">{phoneDisplay}</span>
-                  </span>
-                </span>
-              </div>
-            )}
-          </div>
+          </div>}
 
           <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-white/10 pt-3">
             <Globe2 className="size-4 text-sport-foreground" />
@@ -369,7 +323,7 @@ function EnabledCommunicationsPreview() {
             <button
               type="button"
               onClick={dismissForever}
-              className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground hover:text-navy"
+              className="min-h-10 text-[9px] font-bold uppercase tracking-[0.12em] text-white/60 hover:text-white"
             >
               {copy.never}
             </button>
@@ -381,7 +335,7 @@ function EnabledCommunicationsPreview() {
                   setOpen(false);
                   window.requestAnimationFrame(() => window.dispatchEvent(new CustomEvent("ahmv:support-open")));
                 }}
-                className="premium-control inline-flex min-h-9 items-center gap-2 border border-sport/25 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-navy"
+                className="premium-control inline-flex min-h-10 items-center gap-2 border border-sport/25 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white"
               >
                 <Coffee className="size-3.5 text-sport" />
                 {copy.support}
@@ -390,7 +344,8 @@ function EnabledCommunicationsPreview() {
             )}
           </div>
         </div>
-      </section>
-    </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }

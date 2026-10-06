@@ -6,7 +6,7 @@ This document records **variable names, scope and activation state only**. Never
 
 - GitHub `main` is the release source of truth.
 - cPanel/MochaHost operators inspect **presence only** for secret values.
-- Keep every gated subsystem OFF until its own live acceptance is complete.
+- Keep every provider-backed subsystem OFF until its own live acceptance is complete.
 - A server credential must never use a `VITE_` prefix.
 - The standalone Voice service has its own environment contract in `services/ahmv-voice-ai/.env.example` and `docs/VOICE_SECRETS_AND_ENVIRONMENTS.md`.
 
@@ -22,13 +22,16 @@ This document records **variable names, scope and activation state only**. Never
 | `LOVABLE_CRON_SECRET` | server secret | cron authentication where used |
 | `LOVABLE_CRON_SECRET_PREVIOUS` | server secret | optional overlap during rotation |
 
-## Release / public UI gates
+## Public welcome and release gates
+
+`VITE_COMMUNICATIONS_PREVIEW_ENABLED=true` enables the public first-visit welcome panel on mobile and desktop. An unset value also enables it; explicit `false` disables it. The header’s Bienvenue / Welcome control reopens the panel even after an automatic dismissal. This navigation panel uses existing public teams, schedules, published notices and language choices; it does not activate accounts, payments, newsletter collection, Phone/SMS or Voice.
+
+This is a compiled browser setting. Set any override in the build environment and rebuild the release; changing only the deployed server environment does not alter the client bundle. The current production workflows do not map a GitHub repository variable for this flag, so the source default applies unless the build receives an explicit override.
 
 These remain OFF until deliberately accepted:
 
 - `VITE_PUBLIC_INDEXING=false`
 - `VITE_DEMO_MEMBER_PREVIEW_ENABLED=false`
-- `VITE_COMMUNICATIONS_PREVIEW_ENABLED=false`
 - `VITE_ASSISTANT_NUDGE_ENABLED=false`
 
 Public indexing is the final SEO gate, not a substitute for production smoke testing.

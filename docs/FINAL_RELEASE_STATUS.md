@@ -10,7 +10,7 @@
 
 The AHMV public application is live on MochaHost at the verified SHA above.
 
-AHM Verdun CI #1066 succeeded, Voice Guardian #50 succeeded and production deployment #835 completed successfully. The deployment used the approved cPanel/Passenger restart command and then proved that `/healthz.release` matched the exact compiled SHA `b33f45adeb3a482c323725a8d07a184977e4c752`. Homepage, core public routes, search-noindex policy, `robots.txt` and `sitemap.xml` also passed.
+AHM Verdun CI #1066 succeeded, Voice Guardian #50 succeeded and production deployment #835 completed successfully. The deployment used the approved cPanel/Passenger restart command and then proved that the `release` JSON field returned by `GET /healthz` matched the exact compiled SHA `b33f45adeb3a482c323725a8d07a184977e4c752`. Homepage, core public routes, search-noindex policy, `robots.txt` and `sitemap.xml` also passed.
 
 The earlier stale-Passenger failure is closed: production acceptance now requires the compiled runtime SHA, not merely the active symlink or release marker.
 

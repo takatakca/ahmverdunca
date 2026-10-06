@@ -23,7 +23,7 @@
     "check:takatak-ahmv-backend-boundary": "bun scripts/validate-takatak-ahmv-backend-boundary.ts",
     "check:takatak-ahmv-migrations": "bun scripts/validate-takatak-ahmv-migrations.ts",
     "test:team-feed": "bun test scripts/takatak-team-feed.test.ts",
-    "test:assistant": "bun test scripts/ahmv-assistant.test.ts scripts/ahmv-knowledge.test.ts",
+    "test:assistant": "bun test scripts/ahmv-assistant.test.ts scripts/ahmv-knowledge.test.ts scripts/ahmv-welcome.test.ts",
     "check:canonical": "bun scripts/validate-canonical-seo.ts",
     "check:external-links": "bun scripts/validate-external-link-safety.ts",
     "generate:sitemap": "bun scripts/generate-sitemap.ts",

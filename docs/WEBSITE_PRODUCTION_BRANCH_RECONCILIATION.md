@@ -3,7 +3,7 @@
 **Audit date:** 2026-10-05  
 **Production authority:** `takatakca/ahmverdunca:main`  
 **Certified production SHA at audit:** `b33f45adeb3a482c323725a8d07a184977e4c752`  
-**Production evidence:** AHM Verdun CI #1066, Voice Guardian #50, Auto deploy #835, exact compiled runtime SHA accepted by `/healthz.release`.
+**Production evidence:** AHM Verdun CI #1066, Voice Guardian #50, Auto deploy #835, exact compiled runtime SHA accepted by the `release` JSON field returned by `GET /healthz`.
 
 This document closes the historical `website-production-*` branch train without treating old diverged branches as deployment authority.
 
@@ -153,7 +153,7 @@ They must not be merged again.
 
 Current `main` also contains release/safety work that did not exist in the old numbered train:
 
-- exact compiled runtime SHA proof through `/healthz.release`;
+- exact compiled runtime SHA proof through the `release` JSON field returned by `GET /healthz`;
 - required approved cPanel/Passenger restart command;
 - fail-closed SFTP-only production activation;
 - weekly schedule metadata consistency guard;

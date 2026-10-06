@@ -27,7 +27,7 @@ AHM Verdun CI #1066 and Voice Guardian #50 succeeded. Production deployment #835
 - full release gate and deployment-configuration validation;
 - immutable release upload/activation;
 - approved cPanel/Passenger restart command;
-- exact compiled runtime SHA verification through `/healthz.release`;
+- exact compiled runtime SHA verification through the `release` JSON field returned by `GET /healthz`;
 - production homepage;
 - core public routes;
 - search noindex policy;

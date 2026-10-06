@@ -132,8 +132,16 @@ export function AhmvAssistant() {
         // Session storage is optional; the assistant must still open.
       }
     };
+    const closeForWelcome = () => {
+      setOpen(false);
+      setShowNudge(false);
+    };
     window.addEventListener("ahmv:assistant-open", openAssistant);
-    return () => window.removeEventListener("ahmv:assistant-open", openAssistant);
+    window.addEventListener("ahmv:welcome-open", closeForWelcome);
+    return () => {
+      window.removeEventListener("ahmv:assistant-open", openAssistant);
+      window.removeEventListener("ahmv:welcome-open", closeForWelcome);
+    };
   }, []);
 
   useEffect(() => {
@@ -262,7 +270,7 @@ export function AhmvAssistant() {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[115] flex items-end justify-start bg-navy-deep/55 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-end sm:bg-transparent sm:p-4">
+        <div data-ahmv-attention-surface="assistant-dialog" className="fixed inset-0 z-[115] flex items-end justify-start bg-navy-deep/55 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-end sm:bg-transparent sm:p-4">
           <section
             role="dialog"
             aria-modal="true"
