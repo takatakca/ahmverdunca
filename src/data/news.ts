@@ -28,6 +28,19 @@ export interface NewsLink {
   url: string;
 }
 
+/**
+ * A comment shown under a post. `facebook` comments mirror the official page
+ * thread; `member` comments come from signed-in AHMV Family members once that
+ * space is live. Authors are shown as first name + last initial.
+ */
+export interface NewsComment {
+  author: string;
+  body: string;
+  /** ISO date (YYYY-MM-DD). */
+  date: string;
+  source: "facebook" | "member";
+}
+
 export interface NewsArticle {
   legacyId?: number;
   slug: string;
@@ -45,6 +58,7 @@ export interface NewsArticle {
   season: string;
   sourceUrl?: string;
   links?: NewsLink[];
+  comments?: NewsComment[];
   contentPending: boolean;
 }
 
