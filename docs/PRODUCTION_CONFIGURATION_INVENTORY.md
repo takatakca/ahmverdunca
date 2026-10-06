@@ -38,14 +38,18 @@ Public indexing is the final SEO gate, not a substitute for production smoke tes
 
 ## Community content corrections
 
-Keep OFF until TAKATAK moderation is deployed, its migration is applied, and the shared token is configured on both services:
+The correction pens are public on every editable surface:
 
-- `VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE=false`
+- `VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE=true` — compiled browser setting; unset also shows the pens, explicit `false` hides them.
+- `VITE_CONTENT_CORRECTIONS_EMAIL` — inbox that receives a pre-filled correction email whenever the moderation bridge is not connected (default `operation@ahmverdun.com`).
+
+The server moderation bridge stays OFF until TAKATAK moderation is deployed, its migration is applied, and the shared token is configured on both services:
+
 - `TAKATAK_CONTENT_CONTRIBUTIONS_ENABLED=false`
 - `TAKATAK_CONTENT_ORIGIN`
 - `TAKATAK_AHMV_CONTENT_TOKEN` — server secret
 
-Activation order: TAKATAK production → authorized read-only smoke → AHMV server bridge → correction UI visibility.
+Activation order for the bridge: TAKATAK production → authorized read-only smoke → AHMV server bridge. Until then, corrections reach the inbox by email.
 
 ## Family Experience / TAKATAK entitlement
 

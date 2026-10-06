@@ -537,8 +537,12 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-.premium-control {
+/* Unlayered rules beat Tailwind utilities, so only claim `relative` when the
+   control was not explicitly placed (e.g. a top-right correction pen). */
+.premium-control:not(.absolute, .fixed, .sticky) {
   position: relative;
+}
+.premium-control {
   border-radius: 2px;
   overflow: hidden;
   transition:

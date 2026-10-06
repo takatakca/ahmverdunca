@@ -9,7 +9,6 @@ const disabledByDefault = [
   "VITE_PUBLIC_INDEXING",
   "VITE_DEMO_MEMBER_PREVIEW_ENABLED",
   "VITE_ASSISTANT_NUDGE_ENABLED",
-  "VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE",
   "TAKATAK_CONTENT_CONTRIBUTIONS_ENABLED",
   "VITE_PARENT_PREMIUM_VISIBLE",
   "VITE_PARENT_PREMIUM_LAUNCH_ENABLED",
@@ -64,6 +63,8 @@ const websiteCriticalNames = [
 ] as const;
 
 const publicWelcomeFlag = "VITE_COMMUNICATIONS_PREVIEW_ENABLED";
+const publicCorrectionFlag = "VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE";
+const correctionsEmail = "VITE_CONTENT_CORRECTIONS_EMAIL";
 
 const voiceCriticalNames = [
   "PUBLIC_BASE_URL",
@@ -104,6 +105,18 @@ if (envValue(env, publicWelcomeFlag) !== "true") {
 }
 if (!inventoryMentions(publicWelcomeFlag)) {
   errors.push(`Production configuration inventory is missing ${publicWelcomeFlag}`);
+}
+
+if (envValue(env, publicCorrectionFlag) !== "true") {
+  errors.push(`${publicCorrectionFlag} must default to true for the public correction pens`);
+}
+if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(envValue(env, correctionsEmail) ?? "")) {
+  errors.push(`.env.example must give ${correctionsEmail} a valid inbox for the email fallback`);
+}
+for (const name of [publicCorrectionFlag, correctionsEmail]) {
+  if (!inventoryMentions(name)) {
+    errors.push(`Production configuration inventory is missing ${name}`);
+  }
 }
 
 for (const name of websiteCriticalNames) {

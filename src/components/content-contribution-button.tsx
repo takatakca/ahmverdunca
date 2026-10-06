@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, MoreHorizontal, Pencil, Send, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Mail, MoreHorizontal, Pencil, Send, ShieldCheck } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +10,42 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
+import { SITE } from "@/lib/site";
 
+/** Correction pens are public by default; an explicit "false" at build time hides them. */
 const CONTRIBUTIONS_VISIBLE =
-  import.meta.env["VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE"] === "true";
+  import.meta.env["VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE"] !== "false";
+
+/** Inbox that receives corrections while the TAKATAK moderation bridge is not connected. */
+const CORRECTIONS_EMAIL =
+  import.meta.env["VITE_CONTENT_CORRECTIONS_EMAIL"]?.trim() || SITE.operationsEmail;
+
+function correctionMailto(details: {
+  title: string;
+  resourceType: string;
+  resourceKey: string;
+  fieldLabel: string;
+  value: string;
+  reason: string;
+  evidenceUrl: string;
+  pageUrl: string;
+}) {
+  const subject = `Correction AHMV — ${details.title}`.slice(0, 160);
+  const body = [
+    `Page : ${details.pageUrl}`,
+    `Élément : ${details.resourceType} · ${details.resourceKey}`,
+    `Information : ${details.fieldLabel}`,
+    "",
+    "Nouvelle valeur proposée :",
+    details.value || "—",
+    "",
+    "Pourquoi :",
+    details.reason || "—",
+    "",
+    `Source : ${details.evidenceUrl || "—"}`,
+  ].join("\n");
+  return `mailto:${CORRECTIONS_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.slice(0, 1800))}`;
+}
 
 /** Lets wrappers (e.g. the floating page pen) disappear together with the pens. */
 export const contributionsVisible = () => CONTRIBUTIONS_VISIBLE;
@@ -113,6 +146,7 @@ export function ContentContributionButton({
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<ContributionResponse | null>(null);
   const [error, setError] = useState("");
+  const [emailFallback, setEmailFallback] = useState("");
 
   useEffect(() => {
     setValue(currentToInput(selected));
@@ -125,6 +159,7 @@ export function ContentContributionButton({
     if (!activeField) return;
     setError("");
     setResult(null);
+    setEmailFallback("");
     if (!reason.trim()) {
       setError(lang === "fr" ? "Expliquez brièvement pourquoi cette information doit changer." : "Briefly explain why this information should change.");
       return;
@@ -175,10 +210,19 @@ export function ContentContributionButton({
       }
       setResult(payload);
     } catch {
-      setError(
-        lang === "fr"
-          ? "La suggestion n’a pas pu être envoyée. Réessayez plus tard."
-          : "The suggestion could not be sent. Please try again later.",
+      // The moderation bridge is not connected (or unreachable): hand the same
+      // correction to the association inbox so the pen always reaches someone.
+      setEmailFallback(
+        correctionMailto({
+          title,
+          resourceType,
+          resourceKey,
+          fieldLabel: activeField.label[lang],
+          value,
+          reason: reason.trim(),
+          evidenceUrl: evidenceUrl.trim(),
+          pageUrl: window.location.href,
+        }),
       );
     } finally {
       setSending(false);
@@ -191,6 +235,7 @@ export function ContentContributionButton({
       if (!next) {
         setResult(null);
         setError("");
+        setEmailFallback("");
         setReason("");
         setEvidenceUrl("");
       }
@@ -232,6 +277,25 @@ export function ContentContributionButton({
                 : `Review target: ${result.sla ?? "1–7 days"}. Nothing is published without moderation.`}
             </p>
             <p className="mt-2 text-xs opacity-65">ID {result.id}</p>
+          </div>
+        ) : emailFallback ? (
+          <div className="border border-sport/35 bg-sport/10 p-5 text-white">
+            <Mail className="size-6 text-sport-foreground" />
+            <p className="mt-3 font-display text-xl font-extrabold uppercase">
+              {lang === "fr" ? "Dernière étape : l’envoyer" : "Last step: send it"}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-white/70">
+              {lang === "fr"
+                ? `Votre correction est prête dans un courriel adressé à ${CORRECTIONS_EMAIL}. Appuyez sur le bouton, puis sur Envoyer.`
+                : `Your correction is ready in an email to ${CORRECTIONS_EMAIL}. Tap the button, then Send.`}
+            </p>
+            <a
+              href={emailFallback}
+              className="premium-control mt-4 inline-flex min-h-12 w-full items-center justify-center gap-2 bg-sport px-5 text-xs font-extrabold uppercase tracking-[0.12em] text-sport-foreground"
+            >
+              <Mail className="size-4" />
+              {lang === "fr" ? "Envoyer par courriel" : "Send by email"}
+            </a>
           </div>
         ) : (
           <>

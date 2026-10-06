@@ -71,10 +71,16 @@ requireFragment(
 );
 
 requireFragment(
+  "src/components/content-contribution-button.tsx",
+  contributionButton,
+  "correctionMailto",
+  "email fallback when the moderation bridge is not connected",
+);
+requireFragment(
   ".env.example",
   env,
-  "VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE=false",
-  "correction UI disabled-by-default gate",
+  "VITE_TAKATAK_CONTENT_CONTRIBUTIONS_VISIBLE=true",
+  "public correction pens",
 );
 requireFragment(
   ".env.example",
