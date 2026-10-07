@@ -37,14 +37,14 @@ function AccessPage() {
   const showPlannedServices = import.meta.env["VITE_PUBLIC_INDEXING"] !== "true";
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Accès officiel" : "Official access"}
         title={lang === "fr" ? "Services hockey" : "Hockey services"}
         description={
           lang === "fr"
-            ? "AHM Verdun conserve ses outils hockey déjà établis. Le site vous dirige simplement vers le bon service."
-            : "AHM Verdun keeps its established hockey tools. This site simply sends you to the right service."
+            ? "Retrouvez rapidement votre équipe, vos résultats et les services d’inscription."
+            : "Quickly find your team, results and registration services."
         }
         actions={
           <Button asChild variant="sport" size="lg">
@@ -67,14 +67,14 @@ function AccessPage() {
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.9))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail familles" : "Family portal"}</p>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Pour les familles" : "For families"}</p>
               <h2 className="mt-2 max-w-2xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl">
                 {lang === "fr" ? "Choisissez le bon accès." : "Choose the right access."}
               </h2>
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/66">
                 {lang === "fr"
-                  ? "Le portail AHMV sert d’entrée unique. Les opérations hockey officielles restent dans leurs systèmes d’autorité."
-                  : "The AHMV portal is the single front door. Official hockey operations remain in their authoritative systems."}
+                  ? "Tout part d’ici : votre équipe, vos résultats et le bon accès pour les services hockey."
+                  : "Start here for your team, results and the right hockey-service access."}
               </p>
             </div>
           </div>
@@ -115,11 +115,11 @@ function AccessPage() {
 
         <HouseSponsorSlot placement="access-gateway" count={1} compact />
 
-        <div className="border border-border bg-ice p-5">
-          <p className="eyebrow text-sport">
+        <div className="border border-white/12 bg-competition p-5 text-white">
+          <p className="eyebrow text-sport-foreground">
             {lang === "fr" ? "Le bon service, tout de suite" : "The right service, right away"}
           </p>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-white/58">
             {lang === "fr"
               ? "Pour les inscriptions et services membres hockey, utilisez Spordle. Pour l'information générale et les communications AHMV, restez sur ce site."
               : "For hockey registration and member services, use Spordle. For general AHMV information and communications, stay on this site."}
@@ -145,18 +145,18 @@ function AccessPage() {
           </section>
 
           {showPlannedServices && (
-            <section className="card-elevated p-6 md:p-8">
-              <Mail className="size-7 text-sport" aria-hidden />
-              <p className="eyebrow mt-6 text-sport">{lang === "fr" ? "Communications" : "Communications"}</p>
+            <section className="interactive-surface border border-white/12 bg-navy p-6 text-white md:p-8">
+              <Mail className="size-7 text-sport-foreground" aria-hidden />
+              <p className="eyebrow mt-6 text-sport-foreground">{lang === "fr" ? "Communications" : "Communications"}</p>
               <h2 className="heading-section mt-2">
                 {lang === "fr" ? "Communications AHMV" : "AHMV communications"}
               </h2>
-              <p className="mt-3 text-sm text-muted-foreground">
+              <p className="mt-3 text-sm text-white/55">
                 {lang === "fr"
                   ? "Les infolettres, nouvelles générales, campagnes et préférences de communication seront gérées séparément des opérations hockey."
                   : "Newsletters, general updates, campaigns and communication preferences will be managed separately from hockey operations."}
               </p>
-              <Button asChild variant="outline" className="mt-6">
+              <Button asChild variant="outline-light" className="mt-6">
                 <Link to="/contact">
                   {lang === "fr" ? "Contacter l'association" : "Contact the association"} <ArrowRight className="size-4" />
                 </Link>
@@ -167,6 +167,7 @@ function AccessPage() {
 
         <section>
           <SectionHeading
+            className="border-white/12 [&_h2]:text-white [&_p]:text-white/55"
             title={lang === "fr" ? "Vous voulez inscrire un enfant?" : "Want to register a child?"}
             description={
               lang === "fr"
@@ -174,13 +175,13 @@ function AccessPage() {
                 : "Review the AHMV information first, then continue to the official service."
             }
           />
-          <Button asChild variant="outline">
+          <Button asChild variant="outline-light">
             <Link to="/inscriptions">
               {lang === "fr" ? "Voir les inscriptions" : "View registration information"} <ArrowRight className="size-4" />
             </Link>
           </Button>
         </section>
       </div>
-    </>
+    </div>
   );
 }
