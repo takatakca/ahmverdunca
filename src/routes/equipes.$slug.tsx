@@ -13,7 +13,6 @@ import {
 } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import { TeamPortfolio } from "@/components/team-portfolio";
 import { TeamGameCenter } from "@/components/team-game-center";
 import { TeamMicrositeHero } from "@/components/team-microsite-hero";
 import { TeamParentDeck } from "@/components/team-parent-deck";
@@ -181,7 +180,7 @@ function TeamPage() {
             {[
               { href: "#jour-de-match", fr: "Jour de match", en: "Game day" },
               { href: "#match-center", fr: "Parties", en: "Games" },
-              { href: "#social-equipe", fr: "Réseaux", en: "Social" },
+              ...(socialLinks.length > 0 ? [{ href: "#social-equipe", fr: "Réseaux", en: "Social" }] : []),
               { href: "#nouvelles-equipe", fr: "Nouvelles", en: "News" },
               { href: "#photos-equipe", fr: "Photos", en: "Photos" },
               { href: "#benevolat-equipe", fr: "Bénévoles", en: "Volunteers" },
@@ -218,8 +217,8 @@ function TeamPage() {
                 </p>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
                   {lang === "fr"
-                    ? "Une entrée directe vers ce qui compte pour cette catégorie : horaires, équipes publiées, arénas, nouvelles et ressources."
-                    : "A direct route to what matters for this category: schedules, published teams, arenas, news and resources."}
+                    ? "Tout ce qui compte pour cette catégorie : équipes, horaires, arénas, nouvelles et ressources."
+                    : "Everything that matters for this category: teams, schedules, arenas, news and resources."}
                 </p>
               </div>
             </div>
@@ -311,122 +310,114 @@ function TeamPage() {
         {exactTeam && <TeamGameDayPanel team={exactTeam} lang={lang} />}
 
         {exactTeam && <TeamParentDeck team={exactTeam} lang={lang} />}
-        {exactTeam && (
-          <TeamPortfolio
-            team={exactTeam}
-            lang={lang}
-            newsCount={news.length}
-            albumCount={albums.length}
-            approvedSocialCount={socialLinks.length}
-          />
-        )}
-
         {exactTeam && <TeamLiveFeed team={exactTeam} lang={lang} />}
 
         {exactTeam && <TeamParentPremium team={exactTeam} lang={lang} />}
         {exactTeam && <HouseSponsorSlot placement={`team-lower-${exactTeam.legacyScheduleTeamId}`} count={1} compact />}
         {exactTeam && <TeamCommunityBoard team={exactTeam} lang={lang} />}
 
-        <section
-          aria-labelledby="team-command-title"
-          className="overflow-hidden border border-white/12 bg-navy-deep text-white"
-        >
-          <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
-            <div className="competition-panel p-6 text-navy-foreground md:p-8">
-              <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Centre équipe" : "Team centre"}
-              </p>
-              <h2
-                id="team-command-title"
-                className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl"
-              >
-                {exactTeam ? exactTeam.name : team.code}
-              </h2>
-              <p className="mt-4 max-w-2xl text-sm text-navy-foreground/75 md:text-base">
-                {exactTeam
-                  ? (lang === "fr"
-                      ? "Le point d’entrée de cette équipe exacte : horaire et résultats officiels, médias approuvés, arénas et mises à jour révisées."
-                      : "The entry point for this exact team: official schedule and results, approved media, arenas and reviewed updates.")
-                  : (lang === "fr"
-                      ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
-                      : "A simple starting point for families: schedules, arenas, registration, news and public media.")}
-              </p>
-
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Button asChild variant="sport">
-                  {exactTeam ? (
-                    <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
-                      <CalendarDays className="size-4" />
-                      {lang === "fr" ? "Horaire officiel" : "Official schedule"}
-                    </a>
-                  ) : (
-                    <Link to="/horaires" search={{ team: slug }}>
-                      <CalendarDays className="size-4" />
-                      {lang === "fr" ? "Horaires officiels" : "Official schedules"}
-                    </Link>
-                  )}
-                </Button>
-                <Button asChild variant="outline-light">
-                  <Link to="/arenas">
-                    <MapPin className="size-4" />
-                    {lang === "fr" ? "Arénas & itinéraires" : "Arenas & directions"}
-                  </Link>
-                </Button>
-              </div>
-            </div>
-
-            <div className="bg-competition p-6 md:p-8">
-              <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Accès rapide" : "Quick access"}
-              </p>
-              <div className="mt-5 grid gap-2">
-                {news.length > 0 && (
-                  <a
-                    href="#nouvelles-equipe"
-                    className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
-                  >
-                    {lang === "fr" ? "Nouvelles" : "News"}
-                    <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                  </a>
-                )}
-                {albums.length > 0 && (
-                  <a
-                    href="#photos-equipe"
-                    className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
-                  >
-                    {lang === "fr" ? "Photos" : "Photos"}
-                    <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                  </a>
-                )}
-                {(exactTeam || socialLinks.length > 0) && (
-                  <a
-                    href="#social-equipe"
-                    className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
-                  >
-                    {lang === "fr" ? "Réseaux sociaux" : "Social"}
-                    <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                  </a>
-                )}
-                <Link
-                  to="/inscriptions"
-                  className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
+        {!exactTeam && (
+          <section
+            aria-labelledby="team-command-title"
+            className="overflow-hidden border border-white/12 bg-navy-deep text-white"
+          >
+            <div className="grid lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="competition-panel p-6 text-navy-foreground md:p-8">
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Centre équipe" : "Team centre"}
+                </p>
+                <h2
+                  id="team-command-title"
+                  className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl"
                 >
-                  {lang === "fr" ? "Inscriptions" : "Registration"}
-                  <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
-                </Link>
-                {slug === "feminin" && (
-                  <a
-                    href={`mailto:${SITE.girlsHockeyEmail}`}
+                  {exactTeam ? exactTeam.name : team.code}
+                </h2>
+                <p className="mt-4 max-w-2xl text-sm text-navy-foreground/75 md:text-base">
+                  {exactTeam
+                    ? (lang === "fr"
+                        ? "Le point d’entrée de cette équipe exacte : horaire et résultats officiels, médias approuvés, arénas et mises à jour révisées."
+                        : "The entry point for this exact team: official schedule and results, approved media, arenas and reviewed updates.")
+                    : (lang === "fr"
+                        ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
+                        : "A simple starting point for families: schedules, arenas, registration, news and public media.")}
+                </p>
+  
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                  <Button asChild variant="sport">
+                    {exactTeam ? (
+                      <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
+                        <CalendarDays className="size-4" />
+                        {lang === "fr" ? "Horaire officiel" : "Official schedule"}
+                      </a>
+                    ) : (
+                      <Link to="/horaires" search={{ team: slug }}>
+                        <CalendarDays className="size-4" />
+                        {lang === "fr" ? "Horaires officiels" : "Official schedules"}
+                      </Link>
+                    )}
+                  </Button>
+                  <Button asChild variant="outline-light">
+                    <Link to="/arenas">
+                      <MapPin className="size-4" />
+                      {lang === "fr" ? "Arénas & itinéraires" : "Arenas & directions"}
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+  
+              <div className="bg-competition p-6 md:p-8">
+                <p className="eyebrow text-sport-foreground">
+                  {lang === "fr" ? "Accès rapide" : "Quick access"}
+                </p>
+                <div className="mt-5 grid gap-2">
+                  {news.length > 0 && (
+                    <a
+                      href="#nouvelles-equipe"
+                      className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
+                    >
+                      {lang === "fr" ? "Nouvelles" : "News"}
+                      <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                    </a>
+                  )}
+                  {albums.length > 0 && (
+                    <a
+                      href="#photos-equipe"
+                      className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
+                    >
+                      {lang === "fr" ? "Photos" : "Photos"}
+                      <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                    </a>
+                  )}
+                  {(exactTeam || socialLinks.length > 0) && (
+                    <a
+                      href="#social-equipe"
+                      className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
+                    >
+                      {lang === "fr" ? "Réseaux sociaux" : "Social"}
+                      <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                    </a>
+                  )}
+                  <Link
+                    to="/inscriptions"
                     className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
                   >
-                    {lang === "fr" ? "Questions hockey féminin" : "Girls' hockey questions"}
-                    <Mail className="size-4 text-sport" />
-                  </a>
-                )}
+                    {lang === "fr" ? "Inscriptions" : "Registration"}
+                    <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
+                  </Link>
+                  {slug === "feminin" && (
+                    <a
+                      href={`mailto:${SITE.girlsHockeyEmail}`}
+                      className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
+                    >
+                      {lang === "fr" ? "Questions hockey féminin" : "Girls' hockey questions"}
+                      <Mail className="size-4 text-sport" />
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         <section className="grid overflow-hidden border border-white/12 bg-competition text-white lg:grid-cols-[1fr_auto] lg:items-stretch">
           <div className="p-6 md:p-8">

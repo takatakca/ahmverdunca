@@ -65,6 +65,8 @@ export function TeamLiveFeed({
     return () => controller.abort();
   }, [publicBridgeEnabled, team.legacyScheduleTeamId]);
 
+  if (!publicBridgeEnabled) return null;
+
   const message = {
     disabled: {
       fr: "Aucune publication d’équipe à afficher pour le moment.",
