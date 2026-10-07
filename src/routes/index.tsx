@@ -31,7 +31,6 @@ import { AhmvCommunityFeed } from "@/components/home/ahmv-community-feed";
 import { HomeParentCommand } from "@/components/home/home-parent-command";
 import { HomeCreativeRail } from "@/components/home/home-creative-rail";
 import { AHMV_LOGO_URL, LogoSlot } from "@/components/layout/logo-slot";
-import { AdSenseSlot } from "@/components/adsense-slot";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { publicTeamHubUrl } from "@/data/team-directory";
@@ -736,7 +735,6 @@ function Home() {
         </div>
       </section>
 
-      <AdSenseSlot placement="home-main" className="container-site my-8 md:my-12" />
 
       {/* Partners */}
       <section className="navy-texture overflow-hidden py-8 text-navy-foreground md:py-10">
