@@ -435,7 +435,7 @@ function TeamsPage() {
                   </span>
                 </Link>
 
-                <Link to="/equipes/$slug" params={{ slug: team.slug }} className="py-5 md:px-6 md:py-7">
+                <Link to="/equipes/$slug" params={{ slug: team.slug }} className="px-4 py-5 md:px-6 md:py-7">
                   <div className="flex flex-wrap items-center gap-2">
                     {saved && (
                       <span className="bg-sport px-2 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
@@ -457,7 +457,7 @@ function TeamsPage() {
                   <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/52">{l(team.description)}</p>
                 </Link>
 
-                <div className="flex flex-col justify-center gap-2 border-t border-white/10 py-4 md:border-l md:border-t-0 md:px-5">
+                <div className="flex flex-col justify-center gap-2 border-t border-white/10 px-4 py-4 md:border-l md:border-t-0 md:px-5">
                   <Link
                     to="/equipes/$slug"
                     params={{ slug: team.slug }}

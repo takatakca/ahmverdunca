@@ -102,7 +102,7 @@ function GalleryPage() {
                   setViewerIndex(index);
                   setViewerOpen(true);
                 }}
-                className="interactive-surface group relative overflow-hidden bg-navy text-left"
+                className="interactive-surface group relative block size-full overflow-hidden bg-navy text-left"
                 aria-label={
                   lang === "fr"
                     ? `Agrandir ${media.label.fr}`
