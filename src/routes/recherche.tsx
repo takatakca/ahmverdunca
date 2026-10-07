@@ -316,7 +316,7 @@ function SearchPage() {
   }, [q, l, t, lang, officialWeekActive, publicLaunch]);
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Trouver en quelques secondes" : "Find it in seconds"}
         title={t("search.title")}
@@ -384,19 +384,21 @@ function SearchPage() {
           </div>
         </section>
 
-        <div className="mb-5 grid grid-cols-3 gap-2">
-          <Link to="/horaires" className="premium-control flex min-h-16 flex-col justify-between border border-white/12 bg-competition p-3 text-white hover:bg-white/[0.04]">
-            <CalendarDays className="size-4 text-sport-foreground" />
-            <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Horaires" : "Schedules"}</span>
-          </Link>
-          <Link to="/arenas" className="premium-control flex min-h-16 flex-col justify-between border border-white/12 bg-competition p-3 text-white hover:bg-white/[0.04]">
-            <MapPin className="size-4 text-sport-foreground" />
-            <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Arénas" : "Arenas"}</span>
-          </Link>
-          <Link to="/inscriptions" className="premium-control flex min-h-16 flex-col justify-between border border-white/12 bg-competition p-3 text-white hover:bg-white/[0.04]">
-            <ArrowRight className="size-4 text-sport-foreground" />
-            <span className="font-display text-base font-extrabold uppercase leading-none">{lang === "fr" ? "Inscription" : "Register"}</span>
-          </Link>
+        <div className="scrollbar-none mb-4 flex gap-2 overflow-x-auto pb-1">
+          {[
+            { to: "/horaires" as const, label: lang === "fr" ? "Horaires" : "Schedules", icon: CalendarDays },
+            { to: "/arenas" as const, label: lang === "fr" ? "Arénas" : "Arenas", icon: MapPin },
+            { to: "/inscriptions" as const, label: lang === "fr" ? "Inscription" : "Register", icon: ArrowRight },
+          ].map(({ to, label, icon: Icon }) => (
+            <Link
+              key={to}
+              to={to}
+              className="premium-control inline-flex min-h-10 shrink-0 items-center gap-2 border border-white/12 bg-competition px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white/72 hover:border-sport hover:text-white"
+            >
+              <Icon className="size-3.5 text-sport-foreground" />
+              {label}
+            </Link>
+          ))}
         </div>
 
         <div className="relative">
@@ -537,6 +539,6 @@ function SearchPage() {
           })}
         </div>
       </div>
-    </>
+    </div>
   );
 }

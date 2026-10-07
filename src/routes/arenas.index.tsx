@@ -53,14 +53,14 @@ function ArenasPage() {
   });
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Adresses vérifiées" : "Verified addresses"}
         title={t("nav.arenas")}
         description={
           lang === "fr"
-            ? "Toutes les adresses ont été recoupées avec les pages municipales ou institutionnelles officielles."
-            : "All addresses were cross-checked against official municipal or institutional pages."
+            ? "Adresses, itinéraires et informations pratiques pour les arénas utilisés par les familles AHMV."
+            : "Addresses, directions and practical information for arenas used by AHMV families."
         }
       />
 
@@ -82,8 +82,8 @@ function ArenasPage() {
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/72">
                 {lang === "fr"
-                  ? "Le répertoire regroupe les installations utilisées par les familles AHMV. La photo illustre la vie de l’association; les adresses ci-dessous sont les données vérifiées."
-                  : "The directory groups facilities used by AHMV families. The photo illustrates association life; the addresses below are the verified facility data."}
+                  ? "Retrouvez rapidement l’adresse et le trajet avant de partir pour la glace."
+                  : "Quickly find the address and route before heading to the rink."}
               </p>
             </div>
           </div>
@@ -109,39 +109,8 @@ function ArenasPage() {
                 </div>
               </div>
             )}
-            <div className="mt-3 grid gap-px bg-white/12">
-              <Link to="/horaires" className="interactive-surface flex items-center justify-between bg-navy p-5 hover:bg-white/[0.06]">
-                <span className="font-display text-xl font-bold uppercase">{lang === "fr" ? "Voir les horaires" : "View schedules"}</span>
-                <CalendarDays className="size-5 text-sport-foreground" />
-              </Link>
-              <a
-                href={OFFICIAL_MEDIA.tournamentM11Tertiary.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="interactive-surface flex items-center justify-between bg-navy p-5 text-[10px] font-bold uppercase tracking-[0.15em] text-white/55 hover:bg-white/[0.06] hover:text-white"
-              >
-                {lang === "fr" ? "Photo : archive AHMV" : "Photo: AHMV archive"} <ExternalLink className="size-4" />
-              </a>
-            </div>
           </div>
         </section>
-        <div className="mb-7 grid gap-px border border-white/12 bg-navy-deep p-4 text-white sm:grid-cols-[1fr_auto] sm:items-center">
-          <div>
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Trouver la bonne glace" : "Find the right rink"}
-            </p>
-            <p className="mt-1 text-sm text-white/48">
-              {ARENAS.length} {lang === "fr" ? "installations répertoriées" : "facilities listed"}
-            </p>
-          </div>
-          <Link
-            to="/horaires"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-sport-foreground hover:underline"
-          >
-            {lang === "fr" ? "Voir les horaires" : "View schedules"}
-          </Link>
-        </div>
-
         <label className="mb-4 flex min-h-12 items-center gap-3 border border-white/12 bg-navy-deep px-4 text-white focus-within:border-sport">
           <Search className="size-4 shrink-0 text-sport-foreground" aria-hidden />
           <input
@@ -230,6 +199,6 @@ function ArenasPage() {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
