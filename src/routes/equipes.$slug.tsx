@@ -235,10 +235,6 @@ function TeamPage() {
                     <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes publiées" : "Published teams"}</span>
                     <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
                   </div>
-                  <div className="flex items-end justify-between gap-4 py-4">
-                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Saison" : "Season"}</span>
-                    <span className="font-display text-xl font-extrabold uppercase">2026–2027</span>
-                  </div>
                 </div>
               </div>
               <a
@@ -477,7 +473,7 @@ function TeamPage() {
         {visiblePublicTeams.length > 0 && (
           <section aria-labelledby="public-team-directory-title">
             <SectionHeading
-              eyebrow={lang === "fr" ? "Répertoire public 2026–2027" : "2026–2027 public directory"}
+              eyebrow={lang === "fr" ? "Répertoire d’équipes" : "Team directory"}
               title={
                 exactTeam
                   ? (lang === "fr" ? "Autres équipes de la catégorie" : "Other teams in this category")
