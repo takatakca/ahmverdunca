@@ -229,8 +229,8 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-navy-foreground/62">
             {lang === "fr"
-              ? `Activités publiées par l’AHMV pour cette semaine · mise à jour du ${publishedLabel}.`
-              : `AHMV activities published for this week · updated ${publishedLabel}.`}
+              ? `AHMV · mise à jour du ${publishedLabel}.`
+              : `AHMV · updated ${publishedLabel}.`}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -277,11 +277,11 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
               <p className="mt-2 max-w-2xl text-xs leading-relaxed text-white/58">
                 {newerPublishedIsActive
                   ? (lang === "fr"
-                      ? `Source officielle publiée le ${newerPublishedAtLabel}. Les activités structurées plus bas proviennent de la dernière semaine intégrée; ouvrez cette source pour les détails les plus récents.`
-                      : `Official source published ${newerPublishedAtLabel}. The structured activities below come from the last integrated week; open this source for the latest details.`)
+                      ? `Publié le ${newerPublishedAtLabel} · utilisez ce document pour les détails les plus récents.`
+                      : `Published ${newerPublishedAtLabel} · use this document for the latest details.`)
                   : (lang === "fr"
-                      ? `Source officielle publiée le ${newerPublishedAtLabel}. Elle prendra le relais à partir du ${formatDate(newerPublishedDocument.start, lang, { day: "numeric", month: "long" })}.`
-                      : `Official source published ${newerPublishedAtLabel}. It takes effect on ${formatDate(newerPublishedDocument.start, lang, { day: "numeric", month: "long" })}.`)}
+                      ? `Publié le ${newerPublishedAtLabel} · en vigueur dès le ${formatDate(newerPublishedDocument.start, lang, { day: "numeric", month: "long" })}.`
+                      : `Published ${newerPublishedAtLabel} · effective ${formatDate(newerPublishedDocument.start, lang, { day: "numeric", month: "long" })}.`)}
               </p>
             </div>
             <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
@@ -368,6 +368,21 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           </div>
         )}
 
+        {displayed.length > 0 && days.length > 1 && (
+          <div className="scrollbar-none mt-4 flex gap-2 overflow-x-auto pb-1">
+            {days.map((date) => (
+              <a
+                key={date}
+                href={`#schedule-day-${date}`}
+                className="premium-control inline-flex min-h-10 shrink-0 items-center gap-2 border border-white/12 bg-navy-deep px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white/68 hover:border-sport hover:text-white"
+              >
+                <span>{formatDate(date, lang, { weekday: "short" })}</span>
+                <span className="text-sport-foreground">{formatDate(date, lang, { day: "numeric" })}</span>
+              </a>
+            ))}
+          </div>
+        )}
+
         {displayed.length === 0 ? (
           <p className="py-8 text-center text-sm text-white/52">
             {lang === "fr"
@@ -377,7 +392,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
         ) : (
           <div className="mt-6 space-y-8">
             {days.map((date) => (
-              <section key={date}>
+              <section key={date} id={`schedule-day-${date}`} className="scroll-mt-28">
                 <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/12 pb-2">
                   <h3 className="font-display text-xl font-bold uppercase">
                     {formatDate(date, lang, { weekday: "long", day: "numeric", month: "long" })}
