@@ -41,7 +41,7 @@ function assistantCopy(language: AssistantLanguageCode) {
   if (ui === "en") {
     return {
       title: "AHMV Assistant",
-      subtitle: "Smart guide · text or voice · validated public data",
+      subtitle: "Smart guide · text or voice",
       greeting: "Hi. I can find your team, schedule, results, arena or registration. I can also add a team to “My teams”.",
       placeholder: "Ex. Louves results, M11 Coyotes…",
       ask: "Ask",
@@ -57,7 +57,7 @@ function assistantCopy(language: AssistantLanguageCode) {
   }
   return {
     title: "Assistant AHMV",
-    subtitle: "Guide intelligent · données publiques validées",
+    subtitle: "Guide intelligent · texte ou voix",
     greeting: "Salut. Je peux trouver votre équipe, horaire, résultats, aréna ou inscription. Je peux aussi ajouter une équipe à « Mes équipes ».",
     placeholder: "Ex. résultats Louves, M11 Coyotes…",
     ask: "Demander",

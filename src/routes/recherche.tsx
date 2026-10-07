@@ -51,8 +51,8 @@ type Hit = {
 const STATIC_PAGES = [
   {
     key: "registration",
-    fr: "Inscriptions 2026–2027 Spordle",
-    en: "2026–2027 registration Spordle",
+    fr: "Inscriptions hockey",
+    en: "Hockey registration",
     keywords: "inscription inscrire enfant spordle paiement registration register",
     to: "/inscriptions",
   },
@@ -339,7 +339,7 @@ function SearchPage() {
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.9))]" />
             <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Recherche parent" : "Parent search"}</p>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Trouver rapidement" : "Find it fast"}</p>
               <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.88] sm:text-4xl">
                 {lang === "fr" ? "Une question. Un raccourci." : "One question. One shortcut."}
               </p>
@@ -373,8 +373,8 @@ function SearchPage() {
                 </p>
                 <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/58">
                   {lang === "fr"
-                    ? "Une équipe enregistrée remonte ensuite en priorité dans le portail, le menu et la recherche."
-                    : "A saved team is then prioritized across the portal, menu and search."}
+                    ? "Vos équipes enregistrées passent ensuite en priorité dans le menu et la recherche."
+                    : "Your saved teams are then prioritized in the menu and search."}
                 </p>
                 <Link to="/equipes" className="premium-control mt-5 inline-flex min-h-11 w-fit items-center gap-2 bg-sport px-4 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
                   <Users className="size-4" /> {lang === "fr" ? "Choisir mon équipe" : "Choose my team"}

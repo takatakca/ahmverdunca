@@ -133,7 +133,7 @@ function copy(language: AssistantLanguageCode) {
   }
   if (ui === "en") {
     return {
-      teamFound: "I found this published team. I can open its mini-site, official schedule or official results.",
+      teamFound: "I found this team. I can open its page, official schedule or official results.",
       teamsFound: "I found several possible teams. Choose the right one so I do not open the wrong team.",
       added: "Done. I added this team to “My teams” on this device.",
       schedule: "Here is the official schedule access.",
@@ -149,11 +149,11 @@ function copy(language: AssistantLanguageCode) {
       openPage: "Open",
       source: "View source",
       myTeams: "These are your teams saved on this device.",
-      noMyTeams: "You have not saved a team yet. Open a team mini-site and choose “Add to My teams”.",
+      noMyTeams: "You have not saved a team yet. Open a team page and choose “Add to My teams”.",
     };
   }
   return {
-    teamFound: "J’ai trouvé cette équipe publiée. Je peux ouvrir son mini-site, son horaire ou ses résultats officiels.",
+    teamFound: "J’ai trouvé cette équipe. Je peux ouvrir sa page, son horaire ou ses résultats officiels.",
     teamsFound: "J’ai trouvé plusieurs équipes possibles. Choisissez la bonne pour éviter d’ouvrir la mauvaise équipe.",
     added: "C’est fait. J’ai ajouté cette équipe à « Mes équipes » sur cet appareil.",
     schedule: "Voici l’accès à l’horaire officiel.",
@@ -169,7 +169,7 @@ function copy(language: AssistantLanguageCode) {
     openPage: "Ouvrir",
     source: "Voir la source",
     myTeams: "Voici les équipes enregistrées sur cet appareil.",
-    noMyTeams: "Vous n’avez encore enregistré aucune équipe. Ouvrez un mini-site puis choisissez « Ajouter à mes équipes ».",
+    noMyTeams: "Vous n’avez encore enregistré aucune équipe. Ouvrez une page d’équipe puis choisissez « Ajouter à mes équipes ».",
   };
 }
 

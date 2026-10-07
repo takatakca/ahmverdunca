@@ -175,7 +175,7 @@ function TeamPage() {
 
         {exactTeam && (
           <nav
-            aria-label={lang === "fr" ? "Navigation du mini-site d’équipe" : "Team mini-site navigation"}
+            aria-label={lang === "fr" ? "Navigation de l’équipe" : "Team navigation"}
             className="scrollbar-none -mt-5 flex gap-1 overflow-x-auto border-y border-white/10 bg-competition px-2 py-2 md:-mt-7"
           >
             {[
@@ -232,7 +232,7 @@ function TeamPage() {
                     <span className="font-display text-3xl font-extrabold uppercase">{team.code}</span>
                   </div>
                   <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
-                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes publiées" : "Published teams"}</span>
+                    <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes" : "Teams"}</span>
                     <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
                   </div>
                 </div>
