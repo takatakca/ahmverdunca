@@ -45,14 +45,14 @@ function TournamentsPage() {
   ];
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Événements AHMV" : "AHMV events"}
         title={lang === "fr" ? "Tournois" : "Tournaments"}
         description={
           lang === "fr"
-            ? "Le site AHM Verdun vous mène vers les informations officielles du tournoi sans recréer les horaires, classements ou inscriptions."
-            : "The AHM Verdun site sends you to official tournament information without recreating schedules, standings or registration."
+            ? "Dates, inscriptions, horaires, règlements et accès utiles pour les tournois AHMV."
+            : "Dates, registration, schedules, rules and useful tournament access for AHMV families."
         }
       />
 
@@ -139,8 +139,8 @@ function TournamentsPage() {
             title={lang === "fr" ? "Tout au bon endroit" : "Everything in the right place"}
             description={
               lang === "fr"
-                ? "AHM Verdun présente l'événement; les opérations du tournoi restent dans leur système officiel."
-                : "AHM Verdun showcases the event; tournament operations remain in their official system."
+                ? "Inscriptions, horaire, règlements et festival : ouvrez directement ce dont vous avez besoin."
+                : "Registration, schedule, rules and festival: open exactly what you need."
             }
           />
           <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 md:mx-0 md:grid md:grid-cols-2 md:gap-4 md:overflow-visible md:px-0 md:pb-0 xl:grid-cols-4">
@@ -232,12 +232,12 @@ function TournamentsPage() {
             </h3>
             <p className="mt-2 max-w-3xl text-sm leading-relaxed text-white/58">
               {lang === "fr"
-                ? "Pour contribuer au tournoi comme bénévole ou partenaire, communiquez avec l’association. Les inscriptions, horaires et résultats demeurent sur les plateformes officielles."
-                : "To support the tournament as a volunteer or partner, contact the association. Registration, schedules and results remain on the official platforms."}
+                ? "Pour contribuer au tournoi comme bénévole ou partenaire, communiquez directement avec l’association."
+                : "To support the tournament as a volunteer or partner, contact the association directly."}
             </p>
           </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }

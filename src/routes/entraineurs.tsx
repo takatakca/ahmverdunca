@@ -31,7 +31,7 @@ function CoachesPage() {
   const list = cat === "all" ? COACH_RESOURCES : COACH_RESOURCES.filter((r) => r.category === cat);
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Ressources officielles" : "Official resources"}
         title={t("nav.coaches")}
@@ -59,8 +59,8 @@ function CoachesPage() {
               </h2>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/72">
                 {lang === "fr"
-                  ? "Formations, formulaires et accès officiels regroupés sans recopier ni conserver les données sensibles."
-                  : "Training, forms and official access grouped together without copying or storing sensitive data."}
+                  ? "Formations, formulaires et outils utiles pour préparer la glace et encadrer l’équipe."
+                  : "Training, forms and useful tools for preparing the rink and supporting the team."}
               </p>
             </div>
           </div>
@@ -88,8 +88,8 @@ function CoachesPage() {
           </p>
           <p className="mt-2 text-sm text-white/55">
             {lang === "fr"
-              ? "Les liens ci-dessous ouvrent les services actuellement référencés par l'AHM Verdun. La fiche médicale n'est jamais remplie ni conservée sur ce site."
-              : "The links below open services currently referenced by AHM Verdun. The medical form is never completed or stored on this site."}
+              ? "Ouvrez directement la formation, le formulaire ou la ressource dont vous avez besoin. Les documents sensibles restent dans leur service prévu."
+              : "Open the training, form or resource you need. Sensitive documents stay in their designated service."}
           </p>
         </div>
 
@@ -168,7 +168,7 @@ function CoachesPage() {
               onClick={() => setCat(c.id)}
               className={cn(
                 "shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors",
-                cat === c.id ? "border-sport bg-sport text-sport-foreground" : "border-input hover:bg-secondary",
+                cat === c.id ? "border-sport bg-sport text-sport-foreground" : "border-white/14 text-white/62 hover:bg-white/[0.05] hover:text-white",
               )}
             >
               {l(c.label)}
@@ -201,6 +201,6 @@ function CoachesPage() {
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }

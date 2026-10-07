@@ -36,14 +36,14 @@ function WllvPage() {
   const wllvMedia = [wllvCampPoster, wllvCampSchedule];
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow="AA / BB"
         title="WLLV — Les Chacals"
         description={
           lang === "fr"
-            ? "Le hockey double lettre demeure géré par le WLLV. AHM Verdun vous donne un accès simple aux bonnes ressources sans recréer cette opération."
-            : "Double-letter hockey remains managed by WLLV. AHM Verdun gives families a simple path to the right resources without recreating that operation."
+            ? "Accès rapide aux équipes, camps, horaires et informations AA/BB du WLLV."
+            : "Quick access to WLLV AA/BB teams, camps, schedules and information."
         }
         actions={
           <Button asChild variant="sport">
@@ -82,11 +82,11 @@ function WllvPage() {
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65 md:text-base">
               {lang === "fr"
-                ? "AHM Verdun sert de passerelle. Les équipes, camps, opérations et données AA/BB restent sous l’autorité du WLLV et de ses systèmes officiels."
-                : "AHM Verdun acts as a gateway. AA/BB teams, camps, operations and data remain under WLLV and its official systems."}
+                ? "Retrouvez ici les principaux accès du parcours AA/BB des Chacals."
+                : "Find the main access points for the Chacals AA/BB pathway here."}
             </p>
             <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.14em] text-white/34">
-              {lang === "fr" ? "Affiche de camp WLLV conservée dans la médiathèque AHMV. Les opérations AA/BB demeurent sous l’autorité du WLLV." : "WLLV camp artwork preserved in the AHMV media library. AA/BB operations remain under WLLV authority."}
+              {lang === "fr" ? "Camp WLLV · Chacals AA/BB" : "WLLV camp · Chacals AA/BB"}
             </p>
             </div>
           </div>
@@ -214,41 +214,7 @@ function WllvPage() {
           </a>
         </section>
 
-        <section>
-          <SectionHeading
-            title={lang === "fr" ? "Ce que fait AHM Verdun ici" : "What AHM Verdun does here"}
-          />
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              {
-                fr: "Orienter",
-                en: "Guide",
-                frText: "Diriger les familles vers la bonne ressource officielle.",
-                enText: "Send families to the correct official resource.",
-              },
-              {
-                fr: "Simplifier",
-                en: "Simplify",
-                frText: "Éviter de chercher dans plusieurs menus ou vieux liens.",
-                enText: "Avoid hunting through multiple menus or old links.",
-              },
-              {
-                fr: "Respecter la source",
-                en: "Respect the source",
-                frText: "Ne pas dupliquer ni modifier les opérations WLLV.",
-                enText: "Do not duplicate or modify WLLV operations.",
-              },
-            ].map((item) => (
-              <div key={item.fr} className="interactive-surface border border-white/12 bg-navy-deep p-5 text-white">
-                <h3 className="heading-card text-white">{lang === "fr" ? item.fr : item.en}</h3>
-                <p className="mt-2 text-sm text-white/55">
-                  {lang === "fr" ? item.frText : item.enText}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
       </div>
-    </>
+    </div>
   );
 }
