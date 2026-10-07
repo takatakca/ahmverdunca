@@ -107,6 +107,7 @@ function EnabledCommunicationsPreview() {
   const [open, setOpen] = useState(false);
   const shownThisMount = useRef(false);
   const previouslyFocused = useRef<HTMLElement | null>(null);
+  const handingFocusToAssistant = useRef(false);
   const closeButton = useRef<HTMLButtonElement | null>(null);
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
   const copy = useMemo(() => popupCopy(assistantLanguage), [assistantLanguage]);
@@ -115,6 +116,7 @@ function EnabledCommunicationsPreview() {
     (DEVELOPMENT_SUPPORT.customUrl || DEVELOPMENT_SUPPORT.tiers.some((tier) => Boolean(tier.url)));
 
   const openWelcome = useCallback(() => {
+    handingFocusToAssistant.current = false;
     previouslyFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     shownThisMount.current = true;
     rememberSuppression("sessionStorage", SESSION_KEY);
@@ -178,9 +180,12 @@ function EnabledCommunicationsPreview() {
   };
 
   const launchAssistant = () => {
+    handingFocusToAssistant.current = true;
     setOpen(false);
     window.requestAnimationFrame(() => {
-      window.dispatchEvent(new CustomEvent("ahmv:assistant-open"));
+      window.dispatchEvent(new CustomEvent("ahmv:assistant-open", {
+        detail: { returnFocus: previouslyFocused.current },
+      }));
     });
   };
 
@@ -196,6 +201,7 @@ function EnabledCommunicationsPreview() {
         }}
         onCloseAutoFocus={(event) => {
           event.preventDefault();
+          if (handingFocusToAssistant.current) return;
           if (previouslyFocused.current?.isConnected) previouslyFocused.current.focus();
         }}
         className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 z-[320] flex max-h-[calc(100dvh-1rem-env(safe-area-inset-bottom))] w-[calc(100%-1rem)] max-w-[520px] -translate-x-1/2 flex-col overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_28px_80px_-36px_rgba(0,0,0,0.9)] outline-none sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2"

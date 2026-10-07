@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "check:data": "bun scripts/validate-data.ts",
+    "check:data": "bun scripts/validate-data.ts && bun test scripts/news-discussion.test.ts",
     "check:seo": "bun run generate:sitemap && bun scripts/validate-public-seo.ts",
     "check:runtime-policy": "bun scripts/validate-runtime-policy.ts",
     "check:mobile-nav": "bun scripts/validate-mobile-navigation.ts",
