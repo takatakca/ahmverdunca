@@ -103,7 +103,7 @@ function HouseSponsorInventory({
   return (
     <aside
       className={`overflow-hidden border border-navy/12 bg-navy-deep text-white ${className}`}
-      aria-label={lang === "fr" ? "Publicités et promotions maison" : "House advertising and promotions"}
+      aria-label={lang === "fr" ? "Publicités et promotions" : "Advertising and promotions"}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
@@ -152,7 +152,7 @@ function HouseSponsorInventory({
         <div className="border-b border-white/10 bg-competition">
           <div className="flex items-center justify-between gap-3 px-4 py-2">
             <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-sport-foreground">
-              {lang === "fr" ? "Créatifs publicitaires locaux" : "Local advertising creatives"}
+              {lang === "fr" ? "Promotions à découvrir" : "Promotions to explore"}
             </p>
             <p className="text-[8px] font-semibold uppercase tracking-[0.12em] text-white/34">
               {lang === "fr" ? "Touchez ou glissez" : "Tap or swipe"}
@@ -177,7 +177,7 @@ function HouseSponsorInventory({
                   <div className="relative aspect-video overflow-hidden">
                     <img
                       src={imageUrl}
-                      alt={lang === "fr" ? "Créatif publicitaire local" : "Local advertising creative"}
+                      alt={lang === "fr" ? "Publicité locale" : "Local advertisement"}
                       loading="lazy"
                       decoding="async"
                       className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
@@ -189,7 +189,7 @@ function HouseSponsorInventory({
                     <ContentContributionButton
                       resourceType="image"
                       resourceKey={`ad-creative:${creative.id}`}
-                      title={lang === "fr" ? "Créatif publicitaire local" : "Local advertising creative"}
+                      title={lang === "fr" ? "Publicité locale" : "Local advertisement"}
                       snapshot={{ imageUrl }}
                       fields={[
                         {
@@ -248,8 +248,8 @@ function HouseSponsorInventory({
                 <p className="text-[11px] leading-relaxed text-white/58">{sponsor.tagline[lang]}</p>
                 <p className="mt-2 text-[8px] font-bold uppercase tracking-[0.13em] text-white/34">
                   {lang === "fr"
-                    ? "Annonce textuelle — aucun faux logo utilisé"
-                    : "Text advertisement — no simulated logo used"}
+                    ? "Promotion"
+                    : "Promotion"}
                 </p>
               </div>
             </div>
@@ -296,8 +296,8 @@ function HouseSponsorInventory({
       <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2">
         <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-white/36">
           {lang === "fr"
-            ? "Inventaire local · les logos officiels sont affichés seulement lorsqu’ils sont fournis ou vérifiés."
-            : "Local inventory · official logos appear only when supplied or verified."}
+            ? "Entreprises et services à découvrir"
+            : "Businesses and services to explore"}
         </p>
         <span className="shrink-0 text-[8px] font-bold tabular-nums text-white/38">
           {String(rotation + 1).padStart(2, "0")} / {String(sequence.length).padStart(2, "0")}

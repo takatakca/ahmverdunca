@@ -381,7 +381,7 @@ function HomeSection({
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
               {!hasFamilySetup
-                ? "Ajoutez votre enfant pour que l’expérience puisse relier les bonnes équipes et les bonnes activités. Aucune donnée de match n’est inventée."
+                ? "Ajoutez votre enfant pour commencer à organiser votre espace familial."
                 : !hasTeamLink
                   ? "Reliez ensuite les équipes officielles de vos enfants. Les prochains matchs et pratiques apparaîtront seulement à partir de sources vérifiées."
                   : "Les équipes sont reliées. Les prochains événements apparaîtront ici lorsque la source officielle les aura synchronisés."}
@@ -562,7 +562,7 @@ function FamilySection({
 
 function ModuleSection({ section, children }: { section: string; children: Child[] }) {
   const messages: Record<string, string> = {
-    Calendrier: "Les activités officielles liées à vos enfants apparaîtront ici sans créer de faux horaires.",
+    Calendrier: "Les activités officielles liées aux équipes de vos enfants apparaîtront ici.",
     Équipes: "Reliez chaque enfant à son équipe officielle pour personnaliser l’expérience.",
     Présences: "Les RSVP familiaux seront centralisés ici pour les activités officielles synchronisées.",
     Transport: "Départs, covoiturage et coordination des gardiens seront regroupés dans cette vue.",

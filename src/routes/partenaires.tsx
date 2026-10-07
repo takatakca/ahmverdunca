@@ -48,10 +48,10 @@ function PartnersPage() {
 
   const placements = [
     { Icon: Building2, fr: "Accueil", en: "Homepage", frText: "Présence de marque dans une zone de visibilité dédiée.", enText: "Brand presence in a dedicated visibility area." },
-    { Icon: CalendarDays, fr: "Horaires", en: "Schedules", frText: "Visibilité près d’un parcours parent à forte utilité.", enText: "Visibility near a high-utility parent journey." },
+    { Icon: CalendarDays, fr: "Horaires", en: "Schedules", frText: "À côté des horaires consultés par les familles.", enText: "Alongside the schedules families consult." },
     { Icon: Users, fr: "Équipes", en: "Teams", frText: "Emplacements autour des catégories et mini-sites d’équipes.", enText: "Placements around categories and team mini-sites." },
-    { Icon: GalleryHorizontal, fr: "Galerie", en: "Gallery", frText: "Association possible avec des albums et moments AHMV réels.", enText: "Possible association with real AHMV albums and moments." },
-    { Icon: Newspaper, fr: "Nouvelles", en: "News", frText: "Visibilité éditoriale clairement séparée du contenu officiel.", enText: "Editorial visibility clearly separated from official content." },
+    { Icon: GalleryHorizontal, fr: "Galerie", en: "Gallery", frText: "À côté des photos et des albums de l’association.", enText: "Alongside the association’s photos and albums." },
+    { Icon: Newspaper, fr: "Nouvelles", en: "News", frText: "Des promotions identifiées, à côté des nouvelles de l’association.", enText: "Clearly labeled promotions alongside association news." },
     { Icon: MapPin, fr: "Arénas", en: "Arenas", frText: "Présence près des pages d’itinéraire et d’information pratique.", enText: "Presence near directions and practical-information pages." },
   ];
 
@@ -60,8 +60,8 @@ function PartnersPage() {
       Icon: Megaphone,
       fr: "Emplacement rotatif",
       en: "Rotating placement",
-      frText: "Bannière ou créatif dans l’inventaire publicitaire du portail.",
-      enText: "Banner or creative inside the portal advertising inventory.",
+      frText: "Votre annonce parmi les promotions présentées sur le portail.",
+      enText: "Your advertisement among the promotions featured on the portal.",
     },
     {
       Icon: Users,
@@ -74,15 +74,15 @@ function PartnersPage() {
       Icon: Trophy,
       fr: "Game Day / tournoi",
       en: "Game Day / tournament",
-      frText: "Présence événementielle lorsque l’espace et les données officielles existent.",
-      enText: "Event visibility when the placement and official event data exist.",
+      frText: "Discutez des espaces disponibles autour d’un match ou d’un tournoi publié.",
+      enText: "Ask about available placements around a published game or tournament.",
     },
     {
       Icon: MousePointerClick,
-      fr: "Campagne mesurable",
-      en: "Measurable campaign",
-      frText: "Impressions et clics pourront être suivis lorsque l’analytics autorisé est actif.",
-      enText: "Impressions and clicks can be tracked once approved analytics is active.",
+      fr: "Suivi de campagne",
+      en: "Campaign tracking",
+      frText: "Demandez les options de suivi disponibles pour votre campagne.",
+      enText: "Ask which tracking options are available for your campaign.",
     },
   ];
 
@@ -93,8 +93,8 @@ function PartnersPage() {
         title={lang === "fr" ? "Votre entreprise ici" : "Your business here"}
         description={
           lang === "fr"
-            ? "Une page de commandite claire pour comprendre où une entreprise peut être visible sur le portail AHMV, sans inventer de portée, d’audience ou de performance."
-            : "A clear sponsorship page showing where a business can appear across the AHMV portal, without inventing reach, audience or performance."
+            ? "Découvrez les partenaires d’AHM Verdun et les possibilités de visibilité pour votre entreprise auprès des familles du hockey."
+            : "Meet AHM Verdun’s partners and explore ways to introduce your business to hockey families."
         }
         actions={
           <Button asChild variant="sport" size="lg">
@@ -144,12 +144,12 @@ function PartnersPage() {
 
         <section>
           <SectionHeading
-            eyebrow={lang === "fr" ? "Inventaire disponible" : "Available inventory"}
+            eyebrow={lang === "fr" ? "Espaces de visibilité" : "Visibility options"}
             title={lang === "fr" ? "Où votre marque peut apparaître" : "Where your brand can appear"}
             description={
               lang === "fr"
-                ? "Aucune statistique de portée n’est affichée tant qu’elle n’est pas réellement mesurée. Les emplacements ci-dessous décrivent seulement les surfaces disponibles ou prévues."
-                : "No reach statistics are shown until they are actually measured. The placements below describe only available or planned surfaces."
+                ? "Explorez les emplacements ci-dessous, puis contactez l’association pour confirmer les disponibilités."
+                : "Explore the placements below, then contact the association to confirm availability."
             }
           />
           <div className="mt-7 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3">
@@ -173,8 +173,8 @@ function PartnersPage() {
             title={lang === "fr" ? "Une offre simple à comprendre" : "A simple offer to understand"}
             description={
               lang === "fr"
-                ? "Les niveaux Platine, Or, Argent ou autres appellations ne seront utilisés que s’ils sont officiellement approuvés par AHMV."
-                : "Platinum, Gold, Silver or other tier names will only be used if officially approved by AHMV."
+                ? "Présentez votre projet à l’association pour confirmer le format et les conditions de votre commandite."
+                : "Share your proposal with the association to confirm your sponsorship format and terms."
             }
           />
           <div className="mt-8 grid gap-4 md:grid-cols-2">
@@ -193,12 +193,12 @@ function PartnersPage() {
             <ShieldCheck className="size-7 text-sport-foreground" aria-hidden />
             <p className="eyebrow mt-6 text-sport-foreground">{lang === "fr" ? "Transparence" : "Transparency"}</p>
             <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-white">
-              {lang === "fr" ? "Pas de chiffres inventés." : "No invented numbers."}
+              {lang === "fr" ? "Un projet à discuter." : "Let’s discuss your project."}
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-white/58">
               {lang === "fr"
-                ? "Nous ne publions pas de nombre de visiteurs, impressions, clics ou taux de conversion avant que ces données soient réellement collectées et vérifiables."
-                : "We do not publish visitor, impression, click or conversion numbers until those metrics are actually collected and verifiable."}
+                ? "La période, les emplacements et les modalités de votre campagne se confirment directement avec l’association."
+                : "Confirm your campaign dates, placements and terms directly with the association."}
             </p>
           </div>
           <div className="bg-competition p-6 text-white md:p-8">
@@ -227,15 +227,15 @@ function PartnersPage() {
         <section className="space-y-6">
           <div>
             <p className="eyebrow text-sport">
-              {lang === "fr" ? "Promotion maison · distincte des commanditaires" : "House promotion · separate from sponsors"}
+              {lang === "fr" ? "Promotion TAKATAK · distincte des partenaires" : "TAKATAK promotion · separate from partners"}
             </p>
             <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy sm:text-5xl">
               {lang === "fr" ? "Réseau de promotions locales" : "Local promotion network"}
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
-                ? "Ces entreprises apparaissent dans un inventaire promotionnel distinct des commanditaires officiels. Aucun faux logo n’est utilisé : le nom et le lien public sont affichés jusqu’à ce qu’un fichier de marque officiel soit vérifié."
-                : "These businesses appear in promotional inventory separate from official sponsors. No simulated logo is used: the name and public link are shown until an official brand file is verified."}
+                ? "Des entreprises et services à découvrir parmi les promotions proposées par TAKATAK, distinctes des partenaires officiels d’AHMV."
+                : "Explore businesses and services in TAKATAK promotions, separate from AHMV’s official partners."}
             </p>
           </div>
 
