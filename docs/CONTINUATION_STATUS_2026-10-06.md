@@ -19,11 +19,23 @@ At this continuation's start, `main` and `GET https://ahmverdun.ca/healthz` both
 
 Browser validation covered the welcome/assistant handoff, initial focus, Tab wrap, Escape return, the verified comment and its source links, and a 390 px article viewport. Full public-site CI-equivalent gates and a production artifact build are required before merge. Voice remains a separate service; its syntax/tests and production dependency audit also passed, without starting the service.
 
-## Open work after this lot
+## Verified publication and follow-up lot
 
-- Review and publish verified Instagram archives using their original dates and seasons. The latest publicly visible post examined is January 11, 2026, not a current-season announcement.
-- Reconcile Facebook coverage against actual post permalinks. There are 51 articles at this checkpoint, including 17 identified Facebook posts, two page-only Facebook sources and one verified comment. The old phrase “about 39 posts” is not an enumerable completion manifest.
-- Resolve source ambiguity for the Denis-Savard cancellation wording and the two page-only posts; do not infer missing exact dates or links.
+PR #364 merged with green PR CI #1075 and main CI #1076. Production deployment #845 succeeded, and `/healthz` reported `aa3fd84c590bda4a8e311a13f682a55855ad5d12`. The public M11/M13 article showed its verified discussion and the recovered image.
+
+The follow-up lot adds ten bilingual Instagram archives covering twelve identified public posts, with twelve locally saved initial images and links to the full original carousels. Dates are converted to Montreal and historical seasons remain explicit. The Denis-Savard post date is corrected to September 22; two September 25 comments are separately attributed with their exact permalinks.
+
+Installation help can be reopened from Bienvenue and the footer even after automatic dismissal. A native installation action is offered only when the browser actually supplies it; otherwise the guide uses the real iOS/Chrome path. The helper handles an already installed site. One shared Montreal alert policy is used on the home, header and welcome, with inclusive publication/expiry boundaries and future notices excluded.
+
+The content bridge now reads its three private server settings from `process.env` at request time. Tests confirm configuration supplied after import takes effect without exposing credentials. Defaults and provider activation safeguards remain unchanged; this code correction does not certify a connected backend.
+
+Full CI-equivalent gates and the final production artifact passed for this lot. Browser checks confirmed a 390 px installation dialog, keyboard focus/close/return, and the Nouvelles Instagram filter displaying ten archives. A subsequent successful deployment and matching `release` JSON field returned by `GET /healthz` are still required before certifying this follow-up as live.
+
+## Open work after these lots
+
+- Verify the Instagram follow-up deployment. The latest public post examined is January 11, 2026, not a current-season announcement. Twelve initial images are mirrored; original links expose the complete carousels.
+- Reconcile Facebook coverage against actual post permalinks. There are now 61 articles, including ten Instagram archives and three verified Facebook comments. The old phrase “about 39 posts” is not an enumerable completion manifest.
+- Resolve the two page-only Facebook sources; do not infer missing exact dates or links.
 - Member comment submission, authentication and moderation remain unimplemented in this discussion lot. Links to Facebook are functional; they are not an automatic Meta import.
 - Automatic Meta ingestion, live provider feeds, newsletter delivery, commercial services and VPS migration need their actual configured services and verification. Existing phone/provider/indexing safeguards remain in force.
 

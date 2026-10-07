@@ -1,23 +1,13 @@
-import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Bell, CircleCheck } from "lucide-react";
 import { ALERTS } from "@/data/alerts";
-
-function todayInMontreal() {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Toronto", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
-}
+import { getActiveAlerts } from "@/lib/active-alerts";
+import { useMontrealDate } from "@/lib/use-montreal-date";
 
 /** Published association notices only; expired and future notices stay hidden. */
 export function AlertStatus({ language = "fr", compact = false }: { language?: string; compact?: boolean }) {
-  const [today, setToday] = useState(todayInMontreal);
-  useEffect(() => {
-    const refresh = () => setToday(todayInMontreal());
-    const timer = window.setInterval(refresh, 60_000);
-    window.addEventListener("focus", refresh);
-    return () => { window.clearInterval(timer); window.removeEventListener("focus", refresh); };
-  }, []);
-  const active = ALERTS.filter((alert) => !alert.archived && alert.publishedAt <= today && alert.expiresAt >= today)
-    .sort((a, b) => Number(b.level === "urgent") - Number(a.level === "urgent"));
+  const today = useMontrealDate();
+  const active = getActiveAlerts(ALERTS, today);
   const lang = language === "en" ? "en" : "fr";
   const empty = language === "es" ? "No hay alertas por ahora" : lang === "fr" ? "Aucune alerte en cours" : "No alerts right now";
   return (

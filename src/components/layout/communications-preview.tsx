@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { Bot, CalendarDays, Coffee, Globe2, PhoneCall, Sparkles, Users, X } from "lucide-react";
+import { Bot, CalendarDays, Coffee, Download, Globe2, PhoneCall, Sparkles, Users, X } from "lucide-react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
@@ -12,6 +12,7 @@ import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { publicTeamHubUrl } from "@/data/team-directory";
 import { startWelcomeAutoOpen, welcomeEnabled } from "@/lib/welcome-policy";
+import { usePwaInstalled } from "@/lib/use-pwa-installed";
 import {
   ASSISTANT_LANGUAGE_OPTIONS,
   assistantUiLanguage,
@@ -54,6 +55,8 @@ function popupCopy(language: AssistantLanguageCode) {
       chooseTeams: "Mis equipos",
       schedules: "Horarios",
       assistant: "Asistente",
+      install: "Instalar",
+      installed: "Sitio instalado",
       phoneReady: "Llamar AHMV",
       language: "Idioma",
       otherLanguages: "Más",
@@ -70,6 +73,8 @@ function popupCopy(language: AssistantLanguageCode) {
       chooseTeams: "My teams",
       schedules: "Schedules",
       assistant: "Assistant",
+      install: "Install",
+      installed: "Site installed",
       phoneReady: "Call AHMV",
       language: "Language",
       otherLanguages: "More",
@@ -85,6 +90,8 @@ function popupCopy(language: AssistantLanguageCode) {
     chooseTeams: "Mes équipes",
     schedules: "Horaires",
     assistant: "Assistant",
+    install: "Installer",
+    installed: "Site installé",
     phoneReady: "Appeler AHMV",
     language: "Langue",
     otherLanguages: "Plus",
@@ -100,6 +107,7 @@ export function CommunicationsPreview() {
 
 function EnabledCommunicationsPreview() {
   const { lang, setLang } = useI18n();
+  const installed = usePwaInstalled();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const { selectedTeams } = usePreferredTeam();
@@ -107,7 +115,7 @@ function EnabledCommunicationsPreview() {
   const [open, setOpen] = useState(false);
   const shownThisMount = useRef(false);
   const previouslyFocused = useRef<HTMLElement | null>(null);
-  const handingFocusToAssistant = useRef(false);
+  const handingFocusAway = useRef(false);
   const closeButton = useRef<HTMLButtonElement | null>(null);
   const [assistantLanguage, setAssistantLanguage] = useState<AssistantLanguageCode>(lang);
   const copy = useMemo(() => popupCopy(assistantLanguage), [assistantLanguage]);
@@ -116,7 +124,7 @@ function EnabledCommunicationsPreview() {
     (DEVELOPMENT_SUPPORT.customUrl || DEVELOPMENT_SUPPORT.tiers.some((tier) => Boolean(tier.url)));
 
   const openWelcome = useCallback(() => {
-    handingFocusToAssistant.current = false;
+    handingFocusAway.current = false;
     previouslyFocused.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     shownThisMount.current = true;
     rememberSuppression("sessionStorage", SESSION_KEY);
@@ -137,16 +145,19 @@ function EnabledCommunicationsPreview() {
 
   useEffect(() => {
     const closeForNavigation = () => {
+      handingFocusAway.current = true;
       setOpen(false);
     };
     window.addEventListener("ahmv:welcome-open", openWelcome);
     window.addEventListener("ahmv:navigation-open", closeForNavigation);
     window.addEventListener("ahmv:assistant-open", closeForNavigation);
+    window.addEventListener("ahmv:install-open", closeForNavigation);
 
     return () => {
       window.removeEventListener("ahmv:welcome-open", openWelcome);
       window.removeEventListener("ahmv:navigation-open", closeForNavigation);
       window.removeEventListener("ahmv:assistant-open", closeForNavigation);
+      window.removeEventListener("ahmv:install-open", closeForNavigation);
     };
   }, [openWelcome]);
 
@@ -180,11 +191,21 @@ function EnabledCommunicationsPreview() {
   };
 
   const launchAssistant = () => {
-    handingFocusToAssistant.current = true;
+    handingFocusAway.current = true;
     setOpen(false);
     window.requestAnimationFrame(() => {
       window.dispatchEvent(new CustomEvent("ahmv:assistant-open", {
         detail: { returnFocus: previouslyFocused.current },
+      }));
+    });
+  };
+
+  const launchInstall = () => {
+    handingFocusAway.current = true;
+    setOpen(false);
+    window.requestAnimationFrame(() => {
+      window.dispatchEvent(new CustomEvent("ahmv:install-open", {
+        detail: { returnFocus: previouslyFocused.current, language: assistantUiLanguage(assistantLanguage) },
       }));
     });
   };
@@ -201,7 +222,7 @@ function EnabledCommunicationsPreview() {
         }}
         onCloseAutoFocus={(event) => {
           event.preventDefault();
-          if (handingFocusToAssistant.current) return;
+          if (handingFocusAway.current) return;
           if (previouslyFocused.current?.isConnected) previouslyFocused.current.focus();
         }}
         className="fixed bottom-[max(0.5rem,env(safe-area-inset-bottom))] left-1/2 z-[320] flex max-h-[calc(100dvh-1rem-env(safe-area-inset-bottom))] w-[calc(100%-1rem)] max-w-[520px] -translate-x-1/2 flex-col overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_28px_80px_-36px_rgba(0,0,0,0.9)] outline-none sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2"
@@ -275,6 +296,16 @@ function EnabledCommunicationsPreview() {
               <span className="text-[10px] font-bold uppercase tracking-[0.08em]">{copy.assistant}</span>
             </button>
           </div>
+
+          <button
+            type="button"
+            onClick={launchInstall}
+            className="premium-control mt-3 flex min-h-11 w-full items-center justify-center gap-2 border border-white/20 bg-white/[0.04] px-3 text-[10px] font-bold uppercase tracking-[0.08em] text-white hover:border-sport"
+            aria-haspopup="dialog"
+          >
+            <Download className="size-4 text-sport-foreground" aria-hidden />
+            {installed ? copy.installed : copy.install} · AHM Verdun
+          </button>
 
           {phonePublic && <div className="mt-4">
               <a

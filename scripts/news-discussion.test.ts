@@ -2,6 +2,8 @@ import { describe, expect, test } from "bun:test";
 import {
   exactFacebookCommentUrl,
   exactFacebookThreadUrl,
+  exactInstagramThreadUrl,
+  exactSocialThread,
   newsCommentProblems,
 } from "../src/lib/news-discussion";
 
@@ -57,6 +59,50 @@ describe("exact Facebook discussion links", () => {
       expect(exactFacebookCommentUrl(url)).toBeUndefined();
     }
   });
+});
+
+describe("official Instagram archive discussion links", () => {
+  test("accepts observed official permalinks and returns the correct network", () => {
+    const post = "https://www.instagram.com/ahm_verdun/p/DTX_IuSgOS4/";
+    expect(exactInstagramThreadUrl(post)).toBe(post);
+    expect(
+      exactInstagramThreadUrl("https://instagram.com/ahm_verdun/p/DFle-7BSLNi/"),
+    ).toBeDefined();
+    expect(exactSocialThread(post)).toEqual({ network: "Instagram", url: post });
+    const facebook = "https://www.facebook.com/AHMVerdun/posts/pfbid123";
+    expect(exactSocialThread(facebook)).toEqual({ network: "Facebook", url: facebook });
+  });
+
+  test("rejects profile pages, other accounts, fake hosts and unsafe schemes", () => {
+    for (const url of [
+      undefined,
+      "https://www.instagram.com/ahm_verdun/",
+      "https://www.instagram.com/p/DTX_IuSgOS4/",
+      "https://www.instagram.com/other_account/p/DTX_IuSgOS4/",
+      "https://www.instagram.com/ahm_verdun/p/",
+      "https://www.instagram.com.evil.example/ahm_verdun/p/DTX_IuSgOS4/",
+      "https://evil.example/instagram.com/ahm_verdun/p/DTX_IuSgOS4/",
+      "https://user@www.instagram.com/ahm_verdun/p/DTX_IuSgOS4/",
+      "https://www.instagram.com:444/ahm_verdun/p/DTX_IuSgOS4/",
+      "http://www.instagram.com/ahm_verdun/p/DTX_IuSgOS4/",
+      "javascript:alert(1)",
+    ]) {
+      expect(exactInstagramThreadUrl(url)).toBeUndefined();
+      expect(exactSocialThread(url)).toBeUndefined();
+    }
+  });
+});
+
+test("Facebook reply links must identify a single numeric reply", () => {
+  const comment = "https://www.facebook.com/AHMVerdun/posts/pfbid123?comment_id=456";
+  expect(exactFacebookCommentUrl(`${comment}&reply_comment_id=789`)).toBeDefined();
+  for (const suffix of [
+    "&reply_comment_id=bad",
+    "&reply_comment_id=",
+    "&reply_comment_id=1&reply_comment_id=2",
+  ]) {
+    expect(exactFacebookCommentUrl(`${comment}${suffix}`)).toBeUndefined();
+  }
 });
 
 describe("mirrored comment integrity", () => {

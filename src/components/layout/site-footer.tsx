@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, ExternalLink, Facebook, Instagram, MapPin, ShieldCheck, Trophy, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, Download, ExternalLink, Facebook, Instagram, MapPin, ShieldCheck, Trophy, Users } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
@@ -9,9 +9,11 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { NewsletterInterest } from "@/components/newsletter-interest";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
+import { usePwaInstalled } from "@/lib/use-pwa-installed";
 
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
+  const installed = usePwaInstalled();
   const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const { selectedTeams } = usePreferredTeam();
@@ -161,6 +163,15 @@ export function SiteFooter() {
             </div>
           </div>
           <p className="mt-6 max-w-sm text-sm leading-relaxed text-navy-foreground/58">{t("footer.tagline")}</p>
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("ahmv:install-open"))}
+            className="premium-control mt-5 inline-flex min-h-11 items-center gap-2 border border-sport/35 px-4 text-[10px] font-bold uppercase tracking-[0.08em] text-white hover:bg-white/[0.04]"
+            aria-haspopup="dialog"
+          >
+            <Download className="size-4 text-sport-foreground" aria-hidden />
+            {installed ? (lang === "fr" ? "Site déjà installé" : "Site already installed") : (lang === "fr" ? "Installer AHM Verdun" : "Install AHM Verdun")}
+          </button>
           <div className="mt-7 grid grid-cols-2 gap-px border border-navy-foreground/10 bg-navy-foreground/10">
             <div className="bg-competition p-4">
               <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-navy-foreground/40">{lang === "fr" ? "Territoire" : "Home"}</p>

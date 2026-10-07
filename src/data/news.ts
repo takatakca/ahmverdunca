@@ -1,4 +1,5 @@
 import type { Localized } from "@/lib/i18n";
+import { INSTAGRAM_ARCHIVE_NEWS } from "./instagram-archive";
 
 export type NewsCategory =
   | "association"
@@ -39,6 +40,7 @@ export interface NewsComment {
   /** Verified ISO date (YYYY-MM-DD). Omit when the comment date is unknown. */
   date?: string;
   source: "facebook" | "member";
+  language?: "fr" | "en";
   /** Exact public comment permalink for mirrored Facebook comments. */
   sourceUrl?: string;
 }
@@ -61,6 +63,8 @@ export interface NewsArticle {
   sourceUrl?: string;
   links?: NewsLink[];
   comments?: NewsComment[];
+  /** Historical source material, explicitly labelled as an archive in public date labels. */
+  archived?: boolean;
   contentPending: boolean;
 }
 
@@ -118,6 +122,7 @@ export const NEWS: NewsArticle[] = [
         body: "Belle nouvelle pour le hockey!",
         date: "2026-10-03",
         source: "facebook",
+        language: "fr",
         sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid02SpaARKRLMNbrPSZE8d2AyvnKvLaFoEppqCC5RmNuBvtSy8RY4y7tDMRZdh99wZUyl?comment_id=1108886175444795",
       },
     ],
@@ -205,12 +210,30 @@ export const NEWS: NewsArticle[] = [
         "For September 26, another message will follow later this week. Thank you.",
       ],
     },
-    date: "2026-09-25",
+    date: "2026-09-22",
     author: "AHM Verdun",
     category: "cancellations",
     teamSlugs: [],
     season: "2026-2027",
     sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid0RVabaRbHSoEeuGVHW78hWr6XqCiTwW2geBvGTnCXXxPU8mh9LwQHVs351JyDE6Gwl",
+    comments: [
+      {
+        author: "Karine N.-C.",
+        body: "Bonjour! Ai-je manqué l’autre message pour le 26 septembre? La grève a toujours lieu? C’est toujours à Westmount ou y a t’il eu un changement?",
+        date: "2026-09-25",
+        source: "facebook",
+        language: "fr",
+        sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid02Us4nCSwuUWHsnkKfde9HV5QjdG1UnWx25MwLBar8SLFj2xHARXgJox8BxsFo1ykql?comment_id=2905802566485590",
+      },
+      {
+        author: "AHM Verdun",
+        body: "c’est à Denis Savard. Merci.",
+        date: "2026-09-25",
+        source: "facebook",
+        language: "fr",
+        sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid02Us4nCSwuUWHsnkKfde9HV5QjdG1UnWx25MwLBar8SLFj2xHARXgJox8BxsFo1ykql?comment_id=2905802566485590&reply_comment_id=1582419517018306",
+      },
+    ],
     contentPending: false,
   },
   {
@@ -1859,8 +1882,9 @@ export const NEWS: NewsArticle[] = [
   "teamSlugs": [],
   "season": "2026-2027",
   "contentPending": false
-}
+},
 
+  ...INSTAGRAM_ARCHIVE_NEWS,
 ];
 
 export const CURRENT_LEGACY_NEWS_IDS = [39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 14] as const;
@@ -1868,12 +1892,13 @@ export const DISCOVERED_ARCHIVE_NEWS_IDS = [20, 19, 18, 16, 15, 9, 4, 3, 2] as c
 
 export function newsDateLabel(article: NewsArticle, lang: "fr" | "en") {
   if (article.date) {
-    return new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
+    const label = new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
       year: "numeric",
       month: "short",
       day: "numeric",
       timeZone: "America/Toronto",
     }).format(new Date(`${article.date}T12:00:00-04:00`));
+    return article.archived ? `${label} · Archive` : label;
   }
   return article.publishedLabel?.[lang] ?? (lang === "fr" ? "Archive AHMV" : "AHMV archive");
 }

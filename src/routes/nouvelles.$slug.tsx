@@ -14,7 +14,7 @@ import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { ContentContributionButton } from "@/components/content-contribution-button";
 import { FittedImage } from "@/components/media/fitted-image";
 import { useContentOverlayRegistry } from "@/lib/community-content";
-import { exactFacebookCommentUrl, exactFacebookThreadUrl } from "@/lib/news-discussion";
+import { exactFacebookCommentUrl, exactSocialThread } from "@/lib/news-discussion";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
   loader: ({ params }) => {
@@ -113,7 +113,7 @@ function ArticlePage() {
   const displayImageUrl = ownImageUrl ?? storyMedia!.url;
   const comments = a.comments ?? [];
   // Only a link to the exact post lets people join that thread; the page URL alone does not.
-  const facebookThreadUrl = exactFacebookThreadUrl(displaySourceUrl);
+  const discussionThread = exactSocialThread(displaySourceUrl);
   const contributionFields = [
     { key: "title", label: { fr: "Titre", en: "Title" }, kind: "text" as const, current: displayTitle },
     { key: "text", label: { fr: "Résumé", en: "Summary" }, kind: "textarea" as const, current: displayExcerpt },
@@ -256,7 +256,7 @@ function ArticlePage() {
                           {comment.source === "facebook" ? "Facebook" : lang === "fr" ? "Membre AHMV" : "AHMV member"}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm leading-relaxed text-white/75">{comment.body}</p>
+                      <p lang={comment.language} className="mt-2 text-sm leading-relaxed text-white/75">{comment.body}</p>
                       {commentSourceUrl && (
                         <a href={commentSourceUrl} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-xs text-sport-foreground hover:underline">
                           {lang === "fr" ? "Voir ce commentaire sur Facebook" : "View this comment on Facebook"}
@@ -269,10 +269,10 @@ function ArticlePage() {
                 </ul>
               )}
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                {facebookThreadUrl ? (
+                {discussionThread ? (
                   <Button asChild variant="sport" size="sm">
-                    <a href={facebookThreadUrl} target="_blank" rel="noopener noreferrer">
-                      {lang === "fr" ? "Voir et commenter sur Facebook" : "View and comment on Facebook"}
+                    <a href={discussionThread.url} target="_blank" rel="noopener noreferrer">
+                      {lang === "fr" ? `Voir et commenter sur ${discussionThread.network}` : `View and comment on ${discussionThread.network}`}
                       <ExternalLink className="size-4" />
                     </a>
                   </Button>
@@ -282,8 +282,8 @@ function ArticlePage() {
                   </Button>
                 )}
                 <p className="text-xs leading-relaxed text-white/50">
-                  {facebookThreadUrl
-                    ? lang === "fr" ? "Participez à la discussion sur la publication Facebook." : "Join the discussion on the Facebook post."
+                  {discussionThread
+                    ? lang === "fr" ? `Participez à la discussion sur la publication ${discussionThread.network}.` : `Join the discussion on the ${discussionThread.network} post.`
                     : lang === "fr" ? "Pour réagir à cette nouvelle, utilisez les coordonnées officielles de l’AHMV." : "To respond to this update, use AHMV’s official contact details."}
                 </p>
               </div>

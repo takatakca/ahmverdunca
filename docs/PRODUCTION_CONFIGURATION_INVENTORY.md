@@ -51,6 +51,8 @@ The server moderation bridge stays OFF until TAKATAK moderation is deployed, its
 
 Activation order for the bridge: TAKATAK production → authorized read-only smoke → AHMV server bridge. Until then, corrections reach the inbox by email.
 
+The bridge reads these three server values from `process.env` for each request. Set them in the cPanel/application runtime environment and restart Passenger once after an approved configuration change; they do not belong in the browser build or any `VITE_` variable. The enable flag still defaults to OFF, and the bridge requires an HTTPS origin and a 32-character or longer shared token. Deploying this runtime-reading correction does not enable the provider by itself.
+
 ## Family Experience / TAKATAK entitlement
 
 Keep OFF until TAKATAK Product Catalog launch/exchange/introspection is live and the Family migration is applied:

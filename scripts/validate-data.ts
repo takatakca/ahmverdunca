@@ -18,13 +18,29 @@ import { AHMV_SOCIAL_ARCHIVE_REFERENCES, HOCKEY_HERITAGE } from "../src/data/her
 import { TEAM_COMMUNITY_POSTS, TEAM_DOCUMENTS, TEAM_FUNDRAISING_CAMPAIGNS, TEAM_VOLUNTEER_NEEDS } from "../src/data/team-community";
 import { UPLOADED_AHMV_MEDIA } from "../src/data/uploaded-media";
 import { FACEBOOK_TEAM_ALBUM_MANIFEST } from "../src/data/facebook-team-albums";
-import { newsCommentProblems } from "../src/lib/news-discussion";
+import { exactInstagramThreadUrl, newsCommentProblems } from "../src/lib/news-discussion";
+import { INSTAGRAM_ARCHIVE_SOURCES } from "../src/data/instagram-archive";
+import { montrealPublicationDate } from "../src/lib/news-archive";
 import { existsSync, statSync } from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const errors: string[] = [];
 const publicRoot = fileURLToPath(new URL("../public/", import.meta.url));
+
+function requirePublicImage(label: string, image: string) {
+  const assetPath = resolve(publicRoot, `.${image}`);
+  const assetRelativePath = relative(publicRoot, assetPath);
+  if (
+    !image.startsWith("/") || image.startsWith("//") || image.includes("\\") ||
+    assetRelativePath.startsWith("..") || isAbsolute(assetRelativePath) ||
+    !/\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(image)
+  ) {
+    errors.push(`${label} image must be a local public image path.`);
+  } else if (!existsSync(assetPath) || !statSync(assetPath).isFile()) {
+    errors.push(`${label} image asset is missing: "${image}".`);
+  }
+}
 
 function duplicateValues(values: string[]) {
   const seen = new Set<string>();
@@ -43,7 +59,9 @@ function requireUnique(label: string, values: string[]) {
 }
 
 function validDate(value: string) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T12:00:00Z`));
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T12:00:00Z`);
+  return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
 function validTime(value: string) {
@@ -273,19 +291,7 @@ for (const article of NEWS) {
     errors.push(`News article "${article.slug}" must have an exact date or a publishedLabel.`);
   }
   for (const link of article.links ?? []) requireHttps(`News article "${article.slug}" related link`, link.url);
-  if (article.image) {
-    const assetPath = resolve(publicRoot, `.${article.image}`);
-    const assetRelativePath = relative(publicRoot, assetPath);
-    if (
-      !article.image.startsWith("/") || article.image.startsWith("//") || article.image.includes("\\") ||
-      assetRelativePath.startsWith("..") || isAbsolute(assetRelativePath) ||
-      !/\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(article.image)
-    ) {
-      errors.push(`News article "${article.slug}" image must be a local public image path.`);
-    } else if (!existsSync(assetPath) || !statSync(assetPath).isFile()) {
-      errors.push(`News article "${article.slug}" image asset is missing: "${article.image}".`);
-    }
-  }
+  if (article.image) requirePublicImage(`News article "${article.slug}"`, article.image);
   for (const [index, comment] of (article.comments ?? []).entries()) {
     for (const problem of newsCommentProblems(comment)) {
       errors.push(`News article "${article.slug}" comment ${index + 1} ${problem}.`);
@@ -295,6 +301,36 @@ for (const article of NEWS) {
     if (!teamSlugs.has(teamSlug)) {
       errors.push(`News article "${article.slug}" references unknown team "${teamSlug}".`);
     }
+  }
+}
+
+requireUnique("INSTAGRAM_ARCHIVE_SOURCES.shortcode", INSTAGRAM_ARCHIVE_SOURCES.map((source) => source.shortcode));
+requireUnique("INSTAGRAM_ARCHIVE_SOURCES.url", INSTAGRAM_ARCHIVE_SOURCES.map((source) => source.url));
+if (INSTAGRAM_ARCHIVE_SOURCES.length !== 12) errors.push("Expected coverage for all 12 verified Instagram archive posts.");
+for (const source of INSTAGRAM_ARCHIVE_SOURCES) {
+  const sourceLabel = `Instagram archive "${source.shortcode}"`;
+  const exactUrl = exactInstagramThreadUrl(source.url);
+  if (!exactUrl || new URL(exactUrl).pathname !== `/ahm_verdun/p/${source.shortcode}/`) {
+    errors.push(`${sourceLabel} must use its exact official ahm_verdun post URL.`);
+  }
+  if (!validDate(source.date)) errors.push(`${sourceLabel} has an invalid publication date.`);
+  if (source.observedTimestamp && montrealPublicationDate(source.observedTimestamp) !== source.date) {
+    errors.push(`${sourceLabel} date must preserve the Montreal publication day from the source timestamp.`);
+  }
+  requirePublicImage(sourceLabel, source.image);
+  const article = NEWS.find((item) => item.slug === source.articleSlug);
+  if (!article) {
+    errors.push(`${sourceLabel} is not represented by a news archive article.`);
+    continue;
+  }
+  if (!article.archived || article.date !== source.date || article.season !== source.season) {
+    errors.push(`${sourceLabel} must preserve its archive status, verified date and historical season.`);
+  }
+  if (![article.sourceUrl, ...(article.links ?? []).map((link) => link.url)].includes(source.url)) {
+    errors.push(`${sourceLabel} permalink is missing from its archive article.`);
+  }
+  if (article.sourceUrl === source.url && article.image !== source.image) {
+    errors.push(`${sourceLabel} must use the original image associated with its primary source.`);
   }
 }
 
@@ -578,6 +614,7 @@ console.log(
     `Arenas: ${ARENAS.length}`,
     `Schedule events: ${SCHEDULE.length}`,
     `News: ${NEWS.length}`,
+    `Verified Instagram archive sources: ${INSTAGRAM_ARCHIVE_SOURCES.length}`,
     `Albums: ${ALBUMS.length}`,
     `Alerts: ${ALERTS.length}`,
     `FAQ: ${FAQ.length}`,

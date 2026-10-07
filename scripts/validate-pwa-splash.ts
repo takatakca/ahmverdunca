@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
+import { INSTALL_DISMISS_TTL_MS } from "../src/lib/pwa-install-policy";
 
 const root = readFileSync("src/routes/__root.tsx", "utf8");
 const splash = readFileSync("src/components/layout/app-launch-splash.tsx", "utf8");
@@ -34,8 +35,9 @@ assert.match(installPrompt, /beforeinstallprompt/);
 assert.match(installPrompt, /appinstalled/);
 assert.match(installPrompt, /setInterval\(attemptShow, RETRY_MS\)/);
 assert.match(installPrompt, /isIosLike\(\)/);
-assert.match(installPrompt, /Date\.now\(\) - dismissedAt < DISMISS_TTL_MS/);
-assert.match(installPrompt, /Partager → Sur l’écran d’accueil → Ajouter/);
+assert.equal(INSTALL_DISMISS_TTL_MS, 14 * 24 * 60 * 60 * 1000);
+assert.match(installPrompt, /isInstallDismissalRecent/);
+assert.match(installPrompt, /Touchez Partager, puis Sur l’écran d’accueil/);
 
 assert.equal(manifest.id, "/");
 assert.equal(manifest.display, "standalone");
