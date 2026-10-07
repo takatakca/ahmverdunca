@@ -42,7 +42,7 @@ export function ParentQuickPanel() {
 
           <div className="grid grid-cols-2 gap-px bg-navy/10">
             {[
-              { href: publicTeamHubUrl(team), labelFr: "Mini-site", labelEn: "Mini-site", icon: Users },
+              { href: publicTeamHubUrl(team), labelFr: "Équipe", labelEn: "Team", icon: Users },
               { href: publicTeamScheduleUrl(team), labelFr: "Horaire", labelEn: "Schedule", icon: CalendarDays },
               { href: officialTeamResultsUrl(team), labelFr: "Résultats", labelEn: "Results", icon: Trophy, external: true },
               { href: "/arenas", labelFr: "Arénas", labelEn: "Arenas", icon: MapPin },

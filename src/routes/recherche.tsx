@@ -356,7 +356,7 @@ function SearchPage() {
                 <p className="mt-2 text-xs font-semibold uppercase tracking-[0.12em] text-white/42">{primaryTeam.level}</p>
                 <div className="mt-5 grid grid-cols-2 gap-2">
                   <a href={publicTeamHubUrl(primaryTeam)} className="premium-control flex min-h-11 items-center justify-center gap-2 bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
-                    <Users className="size-3.5" /> {lang === "fr" ? "Mini-site" : "Mini-site"}
+                    <Users className="size-3.5" /> {lang === "fr" ? "Équipe" : "Team"}
                   </a>
                   <a href={officialTeamResultsUrl(primaryTeam)} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white">
                     <Trophy className="size-3.5 text-sport-foreground" /> {lang === "fr" ? "Résultats" : "Results"}

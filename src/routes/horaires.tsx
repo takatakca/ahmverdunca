@@ -115,7 +115,7 @@ function SchedulePage() {
           <section className="mb-6 overflow-hidden border border-sport/30 bg-navy-deep text-white">
             <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
               <div className="p-5 md:p-6">
-                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail parent" : "Parent portal"}</p>
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Mes équipes" : "My teams"}</p>
                 <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9]">
                   {lang === "fr" ? "Mes équipes — accès direct" : "My teams — direct access"}
                 </h2>
