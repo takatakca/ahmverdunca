@@ -3,9 +3,27 @@ import assert from "node:assert/strict";
 import { constants, createDecipheriv, generateKeyPairSync, privateDecrypt } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { spawnSync } from "node:child_process";
-import { encryptInventory, publicKeyFingerprint, recipientKey, RECIPIENT_SPKI_SHA256, REMOTE_COMMAND, validateProjection, validateSshSettings } from "./hosting-app-inventory.mjs";
+import { EventEmitter } from "node:events";
+import { PassThrough } from "node:stream";
+import { collectProjectedInventory, encryptInventory, frameProjectionSource, parseFramedProjection, publicKeyFingerprint, recipientKey, RECIPIENT_SPKI_SHA256, REMOTE_COMMAND, PROJECTION_BEGIN, PROJECTION_END, runSshAttempt, SHELL_SOURCE_DELIMITER, SSH_TOTAL_BUDGET_MS, validateProjection, validateSshSettings } from "./hosting-app-inventory.mjs";
 
 const fixtureKeys = generateKeyPairSync("rsa", { modulusLength: 2048 });
+const fixtureProjection = { version: 1, passenger: { status: "no_matching_apps", applications: [] }, domainConfiguration: { status: "not_available", domain: null }, domainPassengerDirectives: { status: "not_available", domain: "takatak.ca" } };
+const fixtureSource = 'import json\nprint(json.dumps({"version":1,"passenger":{"status":"no_matching_apps","applications":[]}}))\n';
+const fixtureSettings = { RUNNER_TEMP: "fixture-runner" };
+
+function framedFixture(prefix = "", suffix = "") {
+  return `${prefix}\n${PROJECTION_BEGIN}\n${JSON.stringify(fixtureProjection)}\n${PROJECTION_END}\n${suffix}`;
+}
+
+function fixtureChild() {
+  const child = new EventEmitter();
+  child.stdin = new PassThrough();
+  child.stdout = new PassThrough();
+  child.killed = false;
+  child.kill = (signal) => { child.killed = signal; return true; };
+  return child;
+}
 
 function decryptFixture(envelope) {
   const key = privateDecrypt({ key: fixtureKeys.privateKey, padding: constants.RSA_PKCS1_OAEP_PADDING, oaepHash: "sha256" }, Buffer.from(envelope.wrappedKey, "base64"));
@@ -72,6 +90,97 @@ describe("Encrypted read-only hosting inventory", () => {
     assert.equal(projection.domainPassengerDirectives.PassengerAppRoot, "/home/owner/current");
   });
 
+  it("accepts exactly one framed projection and discards banners, raw JSON and echoed source", () => {
+    const source = frameProjectionSource(fixtureSource);
+    const projection = parseFramedProjection(framedFixture(`fixture banner with fixture-secret\n${source}`, "fixture footer with fixture-secret"));
+    assert.equal(projection.passenger.status, "no_matching_apps");
+    assert.ok(!JSON.stringify(projection).includes("fixture-secret"));
+    assert.throws(() => parseFramedProjection(JSON.stringify(fixtureProjection)), /frame/);
+    assert.throws(() => parseFramedProjection(framedFixture() + framedFixture()), /frame/);
+    assert.throws(() => parseFramedProjection(`${PROJECTION_END}\n{}\n${PROJECTION_BEGIN}`), /frame/);
+    assert.throws(() => parseFramedProjection(`\n${PROJECTION_BEGIN}\n{"errors":["fixture-secret"]}\n${PROJECTION_END}\n`), /schema/);
+    assert.throws(() => frameProjectionSource(`${fixtureSource}\n${SHELL_SOURCE_DELIMITER}\n`), /source/);
+  });
+
+  it("retries only SSH exit 255 through the same pinned non-PTY shell channel", async () => {
+    const calls = [];
+    let time = 1000;
+    const result = await collectProjectedInventory({ settings: fixtureSettings, script: fixtureSource, now: () => time, attempt: async (request) => {
+      calls.push(request);
+      if (calls.length === 1) { time += 30_000; return { exitCode: 255, reason: "ssh_exit_255", stderr: "fixture-secret" }; }
+      return { exitCode: 0, reason: "projection_received", projection: parseFramedProjection(framedFixture("fixture-secret banner")) };
+    } });
+    assert.equal(result.transport.selected, "shell");
+    assert.deepEqual(result.transport.attempts, [{ type: "exec", exitCode: 255, reason: "ssh_exit_255" }, { type: "shell", exitCode: 0, reason: "projection_received" }]);
+    assert.equal(calls.length, 2);
+    assert.deepEqual(calls[0].args.slice(0, -1), calls[1].args);
+    assert.equal(calls[0].args.at(-1), REMOTE_COMMAND);
+    assert.deepEqual(calls[1].args.slice(-2), ["-T", "ahmv-hosting-inventory"]);
+    assert.equal(calls[0].timeoutMs, SSH_TOTAL_BUDGET_MS);
+    assert.equal(calls[1].timeoutMs, SSH_TOTAL_BUDGET_MS - 30_000);
+    assert.equal(calls[1].input, `${REMOTE_COMMAND} <<'${SHELL_SOURCE_DELIMITER}'\n${calls[0].input}${SHELL_SOURCE_DELIMITER}\nexit\n`);
+    const shell = process.platform === "win32" ? "C:\\Program Files\\Git\\bin\\bash.exe" : "bash";
+    assert.equal(spawnSync(shell, ["--noprofile", "--norc", "-n"], { input: calls[1].input, encoding: "utf8" }).status, 0);
+    assert.ok(!JSON.stringify(result).includes("fixture-secret"));
+  });
+
+  it("returns successful exec directly and never retries remote command, schema or launch failure", async () => {
+    for (const outcome of [
+      { exitCode: 0, reason: "projection_received", projection: fixtureProjection },
+      { exitCode: 127, reason: "command_unavailable" },
+      { exitCode: 1, reason: "remote_command_failed" },
+      { exitCode: 0, reason: "invalid_projection" },
+      { exitCode: null, reason: "ssh_launch_failed" },
+    ]) {
+      let calls = 0;
+      const result = await collectProjectedInventory({ settings: fixtureSettings, script: fixtureSource, attempt: async () => { calls++; return outcome; } });
+      assert.equal(calls, 1);
+      assert.equal(result.transport.attempts[0].reason, outcome.reason);
+      assert.equal(result.transport.selected, outcome.reason === "projection_received" ? "exec" : null);
+      assert.equal(result.passenger.status, outcome.reason === "projection_received" ? "no_matching_apps" : outcome.reason === "invalid_projection" ? "schema_unavailable" : "transport_unavailable");
+    }
+  });
+
+  it("does not start a fallback after timeout or exhaustion of the shared budget", async () => {
+    for (const outcome of [{ exitCode: null, reason: "timeout" }, { exitCode: 255, reason: "ssh_exit_255" }]) {
+      let time = 0;
+      let calls = 0;
+      const result = await collectProjectedInventory({ settings: fixtureSettings, script: fixtureSource, now: () => time, attempt: async () => { calls++; time = SSH_TOTAL_BUDGET_MS; return outcome; } });
+      assert.equal(calls, 1);
+      assert.equal(result.transport.budgetExceeded, true);
+      assert.equal(result.transport.selected, null);
+    }
+    await assert.rejects(() => collectProjectedInventory({ settings: fixtureSettings, script: fixtureSource, totalBudgetMs: SSH_TOTAL_BUDGET_MS + 1 }), /budget/);
+  });
+
+  it("the SSH process discards stderr, bounds stdout, classifies exit127 and kills a timeout", async () => {
+    for (const code of [127, 255, 1, 0]) {
+      const child = fixtureChild();
+      const promise = runSshAttempt({ args: ["-T", "fixture-alias"], input: "fixture-input", timeoutMs: 500 }, (command, args, options) => {
+        assert.equal(command, "ssh");
+        assert.deepEqual(options.stdio, ["pipe", "pipe", "ignore"]);
+        queueMicrotask(() => { child.stdout.write(framedFixture("fixture-secret banner")); child.emit("close", code); });
+        return child;
+      });
+      const result = await promise;
+      assert.equal(result.exitCode, code);
+      assert.equal(result.reason, code === 127 ? "command_unavailable" : code === 255 ? "ssh_exit_255" : code === 0 ? "projection_received" : "remote_command_failed");
+      assert.ok(!JSON.stringify(result).includes("fixture-secret"));
+    }
+    const hanging = fixtureChild();
+    const timeout = await runSshAttempt({ args: [], input: "fixture-input", timeoutMs: 5 }, () => hanging);
+    assert.deepEqual(timeout, { exitCode: null, reason: "timeout" });
+    assert.equal(hanging.killed, "SIGKILL");
+    const oversized = fixtureChild();
+    const limited = runSshAttempt({ args: [], input: "fixture-input", timeoutMs: 500 }, () => {
+      queueMicrotask(() => oversized.stdout.write(Buffer.alloc(262_145, 65)));
+      return oversized;
+    });
+    assert.deepEqual(await limited, { exitCode: null, reason: "output_limit" });
+    assert.equal(oversized.killed, "SIGKILL");
+    assert.deepEqual(await runSshAttempt({ args: [], input: "fixture-input", timeoutMs: 500 }, () => { throw new Error("fixture-secret"); }), { exitCode: null, reason: "ssh_launch_failed" });
+  });
+
   it("the workflow is manual, main-only, disabled by default and stores only ciphertext", async () => {
     const workflow = await readFile(new URL("../.github/workflows/hosting-app-inventory.yml", import.meta.url), "utf8");
     assert.match(workflow, /workflow_dispatch:/);
@@ -93,7 +202,7 @@ describe("Encrypted read-only hosting inventory", () => {
     const runner = await readFile(new URL("./hosting-app-inventory.mjs", import.meta.url), "utf8");
     assert.match(runner, /StrictHostKeyChecking yes/);
     assert.match(runner, /stdio: \["pipe", "pipe", "ignore"\]/);
-    assert.match(runner, /90_000/);
+    assert.match(runner, /120_000/);
     assert.doesNotMatch(runner, /console\.(?:log|error)\((?:input|projection|envelope|chunks|settings|error)[),]/);
     const shell = process.platform === "win32" ? "C:\\Program Files\\Git\\bin\\bash.exe" : "bash";
     const blocks = [...workflow.matchAll(/run: \|\r?\n((?: {10}[^\r\n]*\r?\n|[ \t]*\r?\n)+)/g)];
