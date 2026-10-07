@@ -436,8 +436,8 @@ function TeamPage() {
             </h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/60 md:text-base">
               {lang === "fr"
-                ? "Parents, entraîneurs et bénévoles peuvent proposer une nouvelle, un document ou un lien d'équipe. Pour l'instant, chaque envoi passe par une révision humaine avant publication."
-                : "Parents, coaches and volunteers can suggest a story, document or team link. For now, every submission is reviewed by a person before publication."}
+                ? "Vous voyez une erreur ou avez une mise à jour utile? Proposez-la ici; elle sera vérifiée avant publication."
+                : "See an error or have a useful update? Send it here; it will be reviewed before publication."}
             </p>
           </div>
           <div className="flex min-w-[250px] flex-col justify-center border-t border-white/12 bg-navy-deep p-6 lg:border-l lg:border-t-0 md:p-8">
@@ -480,10 +480,10 @@ function TeamPage() {
                   : (lang === "fr" ? "Équipes publiées" : "Published teams")
               }
               description={lang === "fr"
-                ? "Noms et niveaux actuellement affichés dans le répertoire public AHM Verdun. Aucun alignement de joueurs ni donnée personnelle n’est recopié."
-                : "Names and levels currently shown in AHM Verdun’s public directory. No player roster or personal information is mirrored."}
+                ? "Choisissez une équipe pour ouvrir sa page, ses résultats et ses accès utiles."
+                : "Choose a team to open its page, results and useful links."}
             />
-            <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
+            <div id="public-team-directory-title" className="grid gap-px overflow-hidden border border-white/12 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
               {visiblePublicTeams.map((entry, index) => {
                 const teamSocialLinks = getPublicTeamSocialLinks(entry.legacyScheduleTeamId);
                 return (
@@ -519,7 +519,7 @@ function TeamPage() {
                           {entry.name}
                         </p>
                         <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.18em] text-white/38">
-                          {lang === "fr" ? "Équipe publiée · source officielle" : "Published team · official source"}
+                          {lang === "fr" ? "Équipe AHMV" : "AHMV team"}
                         </p>
                       </div>
                     </div>

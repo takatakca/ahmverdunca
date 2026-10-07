@@ -29,23 +29,23 @@ export function PageHeader({
         className="pointer-events-none absolute right-[4vw] top-1/2 hidden size-28 -translate-y-1/2 opacity-[0.09] grayscale md:flex lg:size-32"
       />
 
-      <div className="container-site relative grid gap-4 py-7 sm:py-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-11">
+      <div className="container-site relative grid gap-3 py-5 sm:py-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end md:py-8">
         <div className="max-w-5xl min-w-0">
           {eyebrow && (
-            <p className="eyebrow mb-3 flex flex-wrap items-center gap-2.5 text-sport-foreground/90">
+            <p className="eyebrow mb-2 flex flex-wrap items-center gap-2.5 text-sport-foreground/90">
               <span className="h-1 w-8 bg-sport" aria-hidden />
               {eyebrow}
             </p>
           )}
-          <h1 className="max-w-[17ch] break-words font-display text-[clamp(2.65rem,7vw,5.5rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.04em] text-balance">
+          <h1 className="max-w-[18ch] break-words font-display text-[clamp(2.3rem,6.2vw,4.9rem)] font-extrabold uppercase leading-[0.87] tracking-[-0.04em] text-balance">
             {title}
           </h1>
           {description && (
-            <p className="mt-3 max-w-3xl border-l-2 border-sport pl-4 text-sm leading-relaxed text-navy-foreground/70 sm:text-base">
+            <p className="mt-2.5 max-w-3xl border-l-2 border-sport pl-3.5 text-sm leading-relaxed text-navy-foreground/68 sm:text-base">
               {description}
             </p>
           )}
-          {actions && <div className="mt-4 flex flex-wrap gap-2">{actions}</div>}
+          {actions && <div className="mt-3 flex flex-wrap gap-2">{actions}</div>}
         </div>
 
         <div className="hidden min-w-[7rem] border-l border-navy-foreground/12 pl-4 lg:block">
