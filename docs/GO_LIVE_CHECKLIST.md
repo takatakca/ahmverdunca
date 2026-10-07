@@ -1,6 +1,6 @@
 # AHM Verdun — Go-live checklist
 
-Current verified AHMV production baseline: release `b40666e2e1a9433b3744815748bfa3d64618f528` is deployed on MochaHost. AHM Verdun CI #1091 succeeded and production deploy #860 completed successfully. GitHub `main` may be ahead only by docs-only commits that are intentionally excluded from the production release train.
+Current verified AHMV production baseline: release `e366ba134ea84ed92eabb22861623b819ad47597` is deployed on MochaHost. AHM Verdun CI #1094 succeeded and production deploy #863 completed successfully. GitHub `main` may be ahead only by docs-only commits that are intentionally excluded from the production release train.
 
 The successful deployment verified immutable release activation, the approved cPanel/Passenger restart command, exact compiled runtime SHA through the `release` JSON field returned by `GET /healthz`, homepage, core public routes, search noindex behavior, `robots.txt` and `sitemap.xml`. This does **not** make external providers automatically ready.
 
