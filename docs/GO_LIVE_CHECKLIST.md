@@ -1,6 +1,6 @@
 # AHM Verdun — Go-live checklist
 
-Current verified AHMV production baseline: release `b33f45adeb3a482c323725a8d07a184977e4c752` is deployed on MochaHost. AHM Verdun CI #1066 succeeded, Voice Guardian #50 succeeded and production deploy #835 completed successfully. GitHub `main` may be ahead only by docs-only commits that are intentionally excluded from the production release train.
+Current verified AHMV production baseline: release `b40666e2e1a9433b3744815748bfa3d64618f528` is deployed on MochaHost. AHM Verdun CI #1091 succeeded and production deploy #860 completed successfully. GitHub `main` may be ahead only by docs-only commits that are intentionally excluded from the production release train.
 
 The successful deployment verified immutable release activation, the approved cPanel/Passenger restart command, exact compiled runtime SHA through the `release` JSON field returned by `GET /healthz`, homepage, core public routes, search noindex behavior, `robots.txt` and `sitemap.xml`. This does **not** make external providers automatically ready.
 
@@ -60,7 +60,7 @@ The successful deployment verified immutable release activation, the approved cP
 | TAKATAK staging Prisma history | #100 merged; not certified reconciled | Add protected `TAKATAK_STAGING_DATABASE_URL`; guarded workflow must succeed |
 | Public indexing | Manual gate, currently fail-closed | Enable only after release owner accepts public/legal/provider items |
 
-The current TAKATAK backend authority after #103 is `8adfa23ca50f52f6a49e0eaec68e933c68dd1c78`. Post-merge CI #492 completed successfully. Staging reconciler #28 failed safely at its protected secret gate because `TAKATAK_STAGING_DATABASE_URL` was empty. A read-only audit confirms all 102 repo migrations are already represented by 87 Prisma-applied plus 15 matching Supabase-history migrations with zero canonical SQL mismatches; the guarded workflow still must certify that state.
+The current TAKATAK backend authority is `f13932daf713dd39d64ccc6f6a889f3a97ec12c6`. Post-merge CI #492 completed successfully. Staging reconciler #28 failed safely at its protected secret gate because `TAKATAK_STAGING_DATABASE_URL` was empty. A read-only audit confirms all 102 repo migrations are already represented by 87 Prisma-applied plus 15 matching Supabase-history migrations with zero canonical SQL mismatches; the guarded workflow still must certify that state.
 
 Run:
 
