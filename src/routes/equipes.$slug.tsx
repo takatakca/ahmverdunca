@@ -330,31 +330,20 @@ function TeamPage() {
                   id="team-command-title"
                   className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl"
                 >
-                  {exactTeam ? exactTeam.name : team.code}
+                  {team.code}
                 </h2>
                 <p className="mt-4 max-w-2xl text-sm text-navy-foreground/75 md:text-base">
-                  {exactTeam
-                    ? (lang === "fr"
-                        ? "Le point d’entrée de cette équipe exacte : horaire et résultats officiels, médias approuvés, arénas et mises à jour révisées."
-                        : "The entry point for this exact team: official schedule and results, approved media, arenas and reviewed updates.")
-                    : (lang === "fr"
-                        ? "Un point d'entrée simple pour les parents : horaires, arénas, inscriptions, nouvelles et médias publics."
-                        : "A simple starting point for families: schedules, arenas, registration, news and public media.")}
+                  {lang === "fr"
+                    ? "Un accès simple aux horaires, arénas, inscriptions, nouvelles et médias de cette catégorie."
+                    : "Simple access to schedules, arenas, registration, news and media for this category."}
                 </p>
   
                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                   <Button asChild variant="sport">
-                    {exactTeam ? (
-                      <a href={legacyTeamScheduleUrl(exactTeam)} target="_blank" rel="noopener noreferrer">
-                        <CalendarDays className="size-4" />
-                        {lang === "fr" ? "Horaire officiel" : "Official schedule"}
-                      </a>
-                    ) : (
-                      <Link to="/horaires" search={{ team: slug }}>
-                        <CalendarDays className="size-4" />
-                        {lang === "fr" ? "Horaires officiels" : "Official schedules"}
-                      </Link>
-                    )}
+                    <Link to="/horaires" search={{ team: slug }}>
+                      <CalendarDays className="size-4" />
+                      {lang === "fr" ? "Horaire" : "Schedule"}
+                    </Link>
                   </Button>
                   <Button asChild variant="outline-light">
                     <Link to="/arenas">
@@ -388,7 +377,7 @@ function TeamPage() {
                       <ArrowRight className="size-4 text-sport transition-transform group-hover:translate-x-1" />
                     </a>
                   )}
-                  {(exactTeam || socialLinks.length > 0) && (
+                  {socialLinks.length > 0 && (
                     <a
                       href="#social-equipe"
                       className="premium-control group flex items-center justify-between border border-white/12 bg-white/[0.025] px-4 py-3 text-sm font-semibold text-white/78 hover:border-sport/50 hover:bg-white/[0.06] hover:text-white"
