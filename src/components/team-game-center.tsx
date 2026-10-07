@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, ExternalLink, MapPin, Navigation, Radio, Trophy } from "lucide-react";
+import { ExternalLink, MapPin, Navigation, Radio, Trophy } from "lucide-react";
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-directory";
 import { EXTERNAL_LINKS } from "@/lib/site";
@@ -88,7 +88,9 @@ export function TeamGameCenter({
   const officialResults = officialTeamResultsUrl(team);
   const doubleLetter = isDoubleLetter(team.level);
   const fallbackCompetition = doubleLetter ? EXTERNAL_LINKS.wllvSchedules : officialSchedule;
-  const sourceLabel = doubleLetter ? "WLLV · Scoresheets" : "AHMV · GameData · Scoresheets";
+  const sourceLabel = doubleLetter
+    ? (lang === "fr" ? "WLLV officiel" : "Official WLLV")
+    : (lang === "fr" ? "AHMV officiel" : "Official AHMV");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -178,9 +180,13 @@ export function TeamGameCenter({
                 </div>
                 <div className="text-center">
                   <span className="block text-[8px] font-bold uppercase tracking-[0.18em] text-white/38">
-                    {lang === "fr" ? "Match" : "Game"}
+                    {nextGame.status === "cancelled"
+                      ? (lang === "fr" ? "Annulé" : "Cancelled")
+                      : (lang === "fr" ? "Avant-match" : "Pregame")}
                   </span>
-                  <span className="mt-1 block font-display text-3xl font-extrabold text-sport-foreground">VS</span>
+                  <span className="mt-1 block whitespace-nowrap font-display text-3xl font-extrabold tabular-nums text-sport-foreground sm:text-4xl">
+                    {nextGame.status === "cancelled" ? "—" : "0 – 0"}
+                  </span>
                 </div>
                 <div className="min-w-0 text-center">
                   <span className="mx-auto flex size-14 items-center justify-center rounded-full border border-sport/45 bg-sport/10 font-display text-lg font-extrabold text-sport-foreground sm:size-16 sm:text-xl">
@@ -230,26 +236,7 @@ export function TeamGameCenter({
             </a>
           )}
 
-          <div className="mt-3 flex flex-wrap gap-2">
-            <a
-              href={nextGame?.officialUrl || officialSchedule}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="premium-control inline-flex min-h-11 items-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground"
-            >
-              <CalendarDays className="size-4" />
-              {lang === "fr" ? "Horaire officiel" : "Official schedule"}
-            </a>
-            <a
-              href={latestResult?.scoresheetUrl || officialResults}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="premium-control inline-flex min-h-11 items-center gap-2 border border-white/18 px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-white hover:border-sport"
-            >
-              <Trophy className="size-4 text-sport-foreground" />
-              {lang === "fr" ? "Résultats / classement" : "Results / standings"}
-            </a>
-          </div>
+
         </div>
 
         <div className="grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-1">
@@ -328,7 +315,7 @@ export function TeamGameCenter({
           ) : (
             <a
               href="/arenas"
-              className="premium-control inline-flex min-h-10 items-center gap-2 border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-navy"
+              className="premium-control inline-flex min-h-10 items-center gap-2 border border-white/16 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-white"
             >
               <Navigation className="size-3.5 text-sport" />
               {lang === "fr" ? "Voir les arénas" : "View arenas"}

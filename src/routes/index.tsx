@@ -243,6 +243,10 @@ function Home() {
       )}
 
 
+      <HomeParentCommand />
+
+      <OfficialWeekPreview />
+
       <HomeCreativeRail />
 
       {/* Local restaurant / business inventory — always visible to free visitors. */}
@@ -251,10 +255,6 @@ function Home() {
           <HouseSponsorSlot placement="home-local-food" count={4} />
         </div>
       </section>
-
-      <OfficialWeekPreview />
-
-      <HomeParentCommand />
 
       <AhmvRealHockeyWall />
 
