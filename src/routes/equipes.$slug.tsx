@@ -124,7 +124,7 @@ function TeamPage() {
   ];
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       {!exactTeam && (
         <PageHeader
           eyebrow={`${team.code} · ${l(team.ages)}`}
@@ -176,7 +176,7 @@ function TeamPage() {
         {exactTeam && (
           <nav
             aria-label={lang === "fr" ? "Navigation du mini-site d’équipe" : "Team mini-site navigation"}
-            className="scrollbar-none -mt-5 flex gap-1 overflow-x-auto border-y border-navy/10 bg-ice px-2 py-2 md:-mt-7"
+            className="scrollbar-none -mt-5 flex gap-1 overflow-x-auto border-y border-white/10 bg-competition px-2 py-2 md:-mt-7"
           >
             {[
               { href: "#jour-de-match", fr: "Jour de match", en: "Game day" },
@@ -190,7 +190,7 @@ function TeamPage() {
               <a
                 key={item.href}
                 href={item.href}
-                className="premium-control shrink-0 border border-navy/10 bg-background px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.13em] text-navy hover:border-sport"
+                className="premium-control shrink-0 border border-white/12 bg-white/[0.035] px-4 py-2.5 text-[9px] font-bold uppercase tracking-[0.13em] text-white/68 hover:border-sport hover:bg-white/[0.07] hover:text-white"
               >
                 {lang === "fr" ? item.fr : item.en}
               </a>
@@ -578,47 +578,46 @@ function TeamPage() {
           </section>
         )}
 
-        <section id="horaires-equipe">
-          <SectionHeading
-            eyebrow={lang === "fr" ? "Source officielle" : "Official source"}
-            title={lang === "fr" ? "Horaires" : "Schedules"}
-            description={
-              lang === "fr"
-                ? "Les horaires et résultats restent sous l'autorité des systèmes hockey officiels. Cette page vous dirige vers le bon accès sans créer de données parallèles."
-                : "Schedules and results remain under the authority of official hockey systems. This page directs you to the right place without creating parallel data."
-            }
-          />
-          <div className="grid gap-4 md:grid-cols-2">
-            <Link to="/horaires" search={{ team: slug }} className="card-elevated group p-6">
-              <CalendarDays className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5 group-hover:text-sport">
-                {lang === "fr" ? "Consulter les horaires" : "View schedules"}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr"
-                  ? "Horaire hebdomadaire AHMV et passerelles vers les calendriers officiels."
-                  : "AHMV weekly schedule and gateways to official calendars."}
-              </p>
-            </Link>
-            <Link to="/arenas" className="card-elevated group p-6">
-              <MapPin className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5 group-hover:text-sport">
-                {lang === "fr" ? "Trouver un aréna" : "Find an arena"}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {lang === "fr"
-                  ? "Adresses et itinéraires regroupés dans un seul endroit."
-                  : "Addresses and directions grouped in one place."}
-              </p>
-            </Link>
-          </div>
-        </section>
+        {!exactTeam && (
+          <section id="horaires-equipe">
+            <SectionHeading
+              eyebrow={lang === "fr" ? "Accès utiles" : "Useful links"}
+              title={lang === "fr" ? "Horaire & arénas" : "Schedule & arenas"}
+              description={
+                lang === "fr"
+                  ? "Retrouvez l’horaire de la catégorie et les itinéraires vers les arénas."
+                  : "Find the category schedule and directions to the arenas."
+              }
+              className="border-white/12 [&_h2]:text-white [&_p]:text-white/55"
+            />
+            <div className="grid gap-3 md:grid-cols-2">
+              <Link to="/horaires" search={{ team: slug }} className="interactive-surface group border border-white/12 bg-navy p-5 text-white hover:border-sport/50 hover:bg-white/[0.05]">
+                <CalendarDays className="size-5 text-sport-foreground" aria-hidden />
+                <h3 className="heading-card mt-4 text-white group-hover:text-sport-foreground">
+                  {lang === "fr" ? "Horaire" : "Schedule"}
+                </h3>
+                <p className="mt-2 text-sm text-white/52">
+                  {lang === "fr" ? "Voir les activités de cette catégorie." : "View this category’s activities."}
+                </p>
+              </Link>
+              <Link to="/arenas" className="interactive-surface group border border-white/12 bg-navy p-5 text-white hover:border-sport/50 hover:bg-white/[0.05]">
+                <MapPin className="size-5 text-sport-foreground" aria-hidden />
+                <h3 className="heading-card mt-4 text-white group-hover:text-sport-foreground">
+                  {lang === "fr" ? "Arénas" : "Arenas"}
+                </h3>
+                <p className="mt-2 text-sm text-white/52">
+                  {lang === "fr" ? "Adresses, photos et itinéraires." : "Addresses, photos and directions."}
+                </p>
+              </Link>
+            </div>
+          </section>
+        )}
 
         {news.length > 0 && (
           <section id="nouvelles-equipe">
             <div className="flex items-end justify-between gap-4">
-              <SectionHeading title={t("teams.news")} />
-              <p className="mb-1 hidden text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground sm:block md:hidden">
+              <SectionHeading title={t("teams.news")} className="border-white/12 [&_h2]:text-white [&_p]:text-white/55" />
+              <p className="mb-1 hidden text-[9px] font-bold uppercase tracking-[0.14em] text-white/38 sm:block md:hidden">
                 {lang === "fr" ? "Glissez pour parcourir" : "Swipe to browse"}
               </p>
             </div>
@@ -631,7 +630,7 @@ function TeamPage() {
                     key={article.slug}
                     to="/nouvelles/$slug"
                     params={{ slug: article.slug }}
-                    className="interactive-surface group w-[84vw] max-w-[23rem] shrink-0 snap-center overflow-hidden border border-navy/12 bg-background"
+                    className="interactive-surface group w-[84vw] max-w-[23rem] shrink-0 snap-center overflow-hidden border border-white/12 bg-navy text-white"
                   >
                     <div className="relative aspect-[16/10] overflow-hidden bg-navy">
                       <img
@@ -647,8 +646,8 @@ function TeamPage() {
                       </span>
                     </div>
                     <div className="p-5">
-                      <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
-                      <h3 className="heading-card mt-2 group-hover:text-sport">{l(article.title)}</h3>
+                      <p className="eyebrow text-sport-foreground">{newsDateLabel(article, lang)}</p>
+                      <h3 className="heading-card mt-2 text-white group-hover:text-sport-foreground">{l(article.title)}</h3>
                     </div>
                   </Link>
                 );
@@ -663,7 +662,7 @@ function TeamPage() {
                     key={article.slug}
                     to="/nouvelles/$slug"
                     params={{ slug: article.slug }}
-                    className="interactive-surface group overflow-hidden border border-navy/12 bg-background"
+                    className="interactive-surface group overflow-hidden border border-white/12 bg-navy text-white"
                   >
                     <div className="relative aspect-[16/9] overflow-hidden bg-navy">
                       <img
@@ -678,8 +677,8 @@ function TeamPage() {
                       </span>
                     </div>
                     <div className="p-5">
-                      <p className="eyebrow text-sport">{newsDateLabel(article, lang)}</p>
-                      <h3 className="heading-card mt-2 group-hover:text-sport">{l(article.title)}</h3>
+                      <p className="eyebrow text-sport-foreground">{newsDateLabel(article, lang)}</p>
+                      <h3 className="heading-card mt-2 text-white group-hover:text-sport-foreground">{l(article.title)}</h3>
                     </div>
                   </Link>
                 );
@@ -691,8 +690,8 @@ function TeamPage() {
         {albums.length > 0 && (
           <section id="photos-equipe">
             <div className="flex items-end justify-between gap-4">
-              <SectionHeading title={t("teams.albums")} />
-              <p className="mb-1 hidden text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground sm:block md:hidden">
+              <SectionHeading title={t("teams.albums")} className="border-white/12 [&_h2]:text-white [&_p]:text-white/55" />
+              <p className="mb-1 hidden text-[9px] font-bold uppercase tracking-[0.14em] text-white/38 sm:block md:hidden">
                 {lang === "fr" ? "Albums à glisser" : "Swipe albums"}
               </p>
             </div>
@@ -706,7 +705,7 @@ function TeamPage() {
                     key={album.slug}
                     to="/galerie/$slug"
                     params={{ slug: album.slug }}
-                    className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center overflow-hidden border border-navy/12 bg-background"
+                    className="interactive-surface group w-[82vw] max-w-[22rem] shrink-0 snap-center overflow-hidden border border-white/12 bg-navy text-white"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-navy">
                       <img
@@ -728,8 +727,8 @@ function TeamPage() {
                       </span>
                     </div>
                     <div className="p-4">
-                      <h3 className="heading-card group-hover:text-sport">{l(album.title)}</h3>
-                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                      <h3 className="heading-card text-white group-hover:text-sport-foreground">{l(album.title)}</h3>
+                      <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white/42">
                         {album.season} · {l(album.eventType)}
                       </p>
                     </div>
@@ -747,7 +746,7 @@ function TeamPage() {
                     key={album.slug}
                     to="/galerie/$slug"
                     params={{ slug: album.slug }}
-                    className="interactive-surface group overflow-hidden border border-navy/12 bg-background"
+                    className="interactive-surface group overflow-hidden border border-white/12 bg-navy text-white"
                   >
                     <div className="relative aspect-[4/3] overflow-hidden bg-navy">
                       <img
@@ -772,7 +771,7 @@ function TeamPage() {
                       </span>
                     </div>
                     <div className="p-4">
-                      <h3 className="heading-card group-hover:text-sport">{l(album.title)}</h3>
+                      <h3 className="heading-card text-white group-hover:text-sport-foreground">{l(album.title)}</h3>
                     </div>
                   </Link>
                 );
@@ -803,11 +802,11 @@ function TeamPage() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="card-elevated group border-t-4 border-t-sport p-6"
+                    className="interactive-surface group border border-white/12 border-t-4 border-t-sport bg-navy p-5 text-white hover:bg-white/[0.05]"
                   >
-                    <Icon className="size-6 text-navy" aria-hidden />
+                    <Icon className="size-5 text-sport-foreground" aria-hidden />
                     <h3 className="heading-card mt-8 group-hover:text-sport">{label}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm text-white/52">
                       {lang === "fr" ? "Ouvrir le compte officiel de l'équipe." : "Open the team's official account."}
                     </p>
                   </a>
@@ -820,26 +819,27 @@ function TeamPage() {
         <section>
           <SectionHeading
             eyebrow={lang === "fr" ? "Ressources publiques" : "Public resources"}
+            className="border-white/12 [&_h2]:text-white [&_p]:text-white/55"
             title={lang === "fr" ? "Besoin d'autre chose?" : "Need something else?"}
           />
           <div className="grid gap-4 md:grid-cols-2">
-            <Link to="/ressources" className="card-elevated group p-6">
+            <Link to="/ressources" className="interactive-surface group border border-white/12 bg-navy p-5 text-white hover:border-sport/50 hover:bg-white/[0.05]">
               <ShieldCheck className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5 group-hover:text-sport">
+              <h3 className="heading-card mt-4 text-white group-hover:text-sport-foreground">
                 {lang === "fr" ? "Ressources hockey" : "Hockey resources"}
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-white/52">
                 {lang === "fr"
                   ? "Hockey Québec, Hockey Canada, aide financière et liens officiels."
                   : "Hockey Québec, Hockey Canada, financial assistance and official links."}
               </p>
             </Link>
-            <Link to="/faq" className="card-elevated group p-6">
+            <Link to="/faq" className="interactive-surface group border border-white/12 bg-navy p-5 text-white hover:border-sport/50 hover:bg-white/[0.05]">
               <ArrowRight className="size-6 text-sport" aria-hidden />
-              <h3 className="heading-card mt-5 group-hover:text-sport">
+              <h3 className="heading-card mt-4 text-white group-hover:text-sport-foreground">
                 F.A.Q.
               </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-white/52">
                 {lang === "fr"
                   ? "Réponses rapides aux questions les plus fréquentes des familles."
                   : "Quick answers to families' most common questions."}
@@ -848,6 +848,6 @@ function TeamPage() {
           </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }
