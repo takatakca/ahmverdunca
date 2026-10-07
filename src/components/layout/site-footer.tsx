@@ -14,7 +14,6 @@ import { usePwaInstalled } from "@/lib/use-pwa-installed";
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
   const installed = usePwaInstalled();
-  const publicLaunch = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
   const { phonePublic, phoneDisplay, phoneE164 } = useAhmvPhoneStatus();
   const { selectedTeams } = usePreferredTeam();
   const primaryTeam = selectedTeams[0];
@@ -248,8 +247,7 @@ export function SiteFooter() {
         <div className="container-site flex flex-col gap-3 py-5 text-[10px] uppercase tracking-[0.14em] text-navy-foreground/38 md:flex-row md:items-center md:justify-between">
           <p>© 2026 {l(SITE.name)} · {t("footer.rights")}</p>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
-            {!publicLaunch && <span>{t("footer.prototype")}</span>}
-            <span>Expérience numérique · GROUPE TAKATAK</span>
+            <span>{lang === "fr" ? "Propulsé par GROUPE TAKATAK" : "Powered by GROUPE TAKATAK"}</span>
           </div>
         </div>
       </div>
