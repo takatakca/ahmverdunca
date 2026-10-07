@@ -452,8 +452,8 @@ function TeamPage() {
                 </p>
                 <p className="mt-1 text-[11px] leading-relaxed text-white/45">
                   {lang === "fr"
-                    ? "TAKATAK reçoit, vérifie et soumet chaque correction à la modération."
-                    : "TAKATAK receives, checks and sends every correction to moderation."}
+                    ? "Chaque correction est vérifiée avant sa publication."
+                    : "Every correction is reviewed before publication."}
                 </p>
               </div>
               <ContentContributionButton
