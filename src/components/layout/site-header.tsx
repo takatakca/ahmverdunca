@@ -207,9 +207,9 @@ export function SiteHeader() {
         </div>
       </div>
 
-      <div className={cn("container-site flex items-center justify-between gap-3 transition-[height] duration-300", scrolled ? "h-[64px] lg:h-[72px]" : "h-[70px] lg:h-[86px]")}>
+      <div className={cn("container-site flex items-center justify-between gap-3 transition-[height] duration-300", scrolled ? "h-[64px] lg:h-[72px]" : "h-[64px] lg:h-[78px]")}>
         <Link to="/" className="group flex min-w-0 items-center gap-3" aria-label={t("nav.home")}>
-          <LogoSlot className="transition-transform duration-300 group-hover:scale-[1.045]" />
+          <LogoSlot className="size-11 transition-transform duration-300 group-hover:scale-[1.045] sm:size-14" />
           <span className="flex min-w-0 items-center gap-2 sm:gap-3">
             <span className="hidden h-8 w-px bg-navy-foreground/20 sm:block" aria-hidden />
             <span className="flex min-w-0 flex-col leading-none">
@@ -303,7 +303,7 @@ export function SiteHeader() {
           <button
             type="button"
             className={cn(
-              "premium-control tap-target relative z-[1] inline-flex h-10 shrink-0 items-center justify-center gap-1.5 border px-3 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.95)] min-[360px]:gap-2 min-[360px]:px-4 min-[360px]:text-xs min-[360px]:tracking-[0.12em]",
+              "premium-control tap-target relative z-[1] inline-flex h-10 rounded-xl shrink-0 items-center justify-center gap-1.5 border px-3 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.95)] min-[360px]:gap-2 min-[360px]:px-4 min-[360px]:text-xs min-[360px]:tracking-[0.12em]",
               open
                 ? "border-sport bg-sport text-sport-foreground"
                 : "border-white/22 bg-white/[0.055] text-white hover:border-sport hover:bg-sport hover:text-sport-foreground",
@@ -337,7 +337,7 @@ export function SiteHeader() {
             <div className="flex items-center justify-between gap-3 border-b border-navy-foreground/12 pb-3">
               <div className="min-w-0">
                 <p className="eyebrow text-sport-foreground">
-                  {lang === "fr" ? "Centre parent AHMV" : "AHMV parent centre"}
+                  {lang === "fr" ? "Mes équipes" : "My teams"}
                 </p>
                 <p className="mt-1 truncate font-display text-2xl font-extrabold uppercase leading-none text-white">
                   {selectedTeams[0]

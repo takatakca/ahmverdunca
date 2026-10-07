@@ -22,8 +22,8 @@ export function AhmvRealHockeyWall() {
       to: "/equipes" as const,
       number: "01",
       icon: Users,
-      fr: "Mini-sites d'équipes",
-      en: "Team mini-sites",
+      fr: "Mes équipes",
+      en: "My teams",
       frBody: "Chaque catégorie mène vers son univers, ses équipes et ses accès officiels.",
       enBody: "Each category leads to its own hub, teams and official access points.",
     },
@@ -40,8 +40,8 @@ export function AhmvRealHockeyWall() {
       to: "/galerie" as const,
       number: "03",
       icon: Images,
-      fr: "Photos réelles",
-      en: "Real photography",
+      fr: "Galerie",
+      en: "Gallery",
       frBody: "Tournois, équipes, trophées, bénévoles et souvenirs AHMV.",
       enBody: "Tournaments, teams, trophies, volunteers and AHMV memories.",
     },
@@ -64,31 +64,11 @@ export function AhmvRealHockeyWall() {
       </div>
 
       <div className="relative grid lg:grid-cols-[0.86fr_1.14fr]">
-        <div className="flex min-h-[470px] flex-col justify-center px-5 py-10 sm:px-8 md:px-10 lg:min-h-[650px] lg:px-12 xl:pl-[max(3rem,calc((100vw-80rem)/2))]">
-          <div className="flex flex-wrap gap-2">
-            {[
-              lang === "fr" ? "Mini-sites" : "Mini-sites",
-              lang === "fr" ? "Blogue" : "News",
-              lang === "fr" ? "Galerie" : "Gallery",
-              lang === "fr" ? "Bénévoles" : "Volunteers",
-            ].map((label) => (
-              <span key={label} className="border border-white/14 bg-white/[0.04] px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white/58">
-                {label}
-              </span>
-            ))}
-          </div>
+        <div className="flex min-h-[300px] flex-col justify-center px-5 py-10 sm:px-8 md:px-10 lg:min-h-[520px] lg:px-12 xl:pl-[max(3rem,calc((100vw-80rem)/2))]">
 
-          <p className="eyebrow mt-7 text-sport-foreground">
-            {lang === "fr" ? "AHM Verdun · Le vrai hockey de chez nous" : "AHM Verdun · Real local hockey"}
-          </p>
-          <h2 className="mt-3 max-w-[10ch] font-display text-[clamp(3.7rem,7.4vw,7.8rem)] font-extrabold uppercase leading-[0.79] tracking-[-0.05em]">
-            {lang === "fr" ? "Verdun. En vrai." : "Verdun. For real."}
+          <h2 className="mt-6 max-w-[12ch] font-display text-[clamp(2.8rem,6vw,6rem)] font-extrabold uppercase leading-[0.88] tracking-[-0.04em]">
+            {lang === "fr" ? "Votre hockey. Votre équipe." : "Your hockey. Your team."}
           </h2>
-          <p className="mt-6 max-w-xl text-sm leading-relaxed text-white/68 md:text-base">
-            {lang === "fr"
-              ? "Le site met maintenant les vraies équipes, les jeunes, les entraîneurs, les bénévoles et les moments AHMV au premier plan. Les images proviennent de la médiathèque AHMV et des archives validées de l’association."
-              : "The site now puts real teams, players, coaches, volunteers and AHMV moments first. Images come from the AHMV media library and the association’s validated archives."}
-          </p>
 
           <div className="mt-7 flex flex-wrap gap-2">
             <Link
@@ -153,12 +133,12 @@ export function AhmvRealHockeyWall() {
 
       <div className="relative border-t border-white/10">
         <div className="container-site">
-          <div className="scrollbar-none flex snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain bg-white/10 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4">
-          {actions.map(({ to, number, icon: Icon, fr, en, frBody, enBody }) => (
+          <div className="scrollbar-none flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain py-4 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4">
+          {actions.map(({ to, number, icon: Icon, fr, en }) => (
             <Link
               key={number}
               to={to}
-              className="interactive-surface group flex min-h-[138px] min-w-[76vw] snap-start flex-col bg-competition p-5 hover:bg-white/[0.045] sm:min-w-0"
+              className="interactive-surface group flex min-h-[120px] min-w-[64vw] snap-start flex-col rounded-2xl border border-white/12 bg-white/[0.035] p-4 hover:bg-white/[0.045] sm:min-w-0"
             >
               <div className="flex items-center justify-between">
                 <span className="font-display text-xs font-extrabold uppercase tracking-[0.16em] text-sport-foreground">{number}</span>
@@ -167,7 +147,7 @@ export function AhmvRealHockeyWall() {
               <h3 className="mt-5 font-display text-2xl font-extrabold uppercase leading-[0.9] text-white">
                 {lang === "fr" ? fr : en}
               </h3>
-              <p className="mt-3 text-xs leading-relaxed text-white/48">{lang === "fr" ? frBody : enBody}</p>
+
               <ArrowRight className="mt-auto size-4 translate-y-2 text-sport-foreground transition-transform group-hover:translate-x-1 group-hover:translate-y-2" />
             </Link>
           ))}

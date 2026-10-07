@@ -49,3 +49,56 @@ describe("AHMV installation capability and dismissal", () => {
     }
   });
 });
+
+// Browser preferences must not turn optional persistence into a site failure.
+describe("browser preference storage resilience", () => {
+  test("blocked storage retains preferences for the current page and permits reset", async () => {
+    const { readBrowserPreference, writeBrowserPreference, removeBrowserPreference } = await import("../src/lib/browser-preferences");
+    const previous = Object.getOwnPropertyDescriptor(globalThis, "window");
+    const denied = { getItem() { throw new Error("SecurityError"); }, setItem() { throw new Error("SecurityError"); }, removeItem() { throw new Error("SecurityError"); } };
+    Object.defineProperty(globalThis, "window", { configurable: true, value: { localStorage: denied, sessionStorage: denied } });
+    try {
+      expect(readBrowserPreference("blocked-language")).toBeNull();
+      writeBrowserPreference("blocked-language", "en");
+      expect(readBrowserPreference("blocked-language")).toBe("en");
+      expect(readBrowserPreference("blocked-language", "sessionStorage")).toBeNull();
+      removeBrowserPreference("blocked-language");
+      expect(readBrowserPreference("blocked-language")).toBeNull();
+      writeBrowserPreference("blocked-splash", "1", "sessionStorage");
+      expect(readBrowserPreference("blocked-splash", "sessionStorage")).toBe("1");
+      removeBrowserPreference("blocked-splash", "sessionStorage");
+    } finally {
+      if (previous) Object.defineProperty(globalThis, "window", previous);
+      else Reflect.deleteProperty(globalThis, "window");
+    }
+  });
+
+  test("quota failure does not revert to an older persisted value", async () => {
+    const { readBrowserPreference, writeBrowserPreference, removeBrowserPreference } = await import("../src/lib/browser-preferences");
+    const previous = Object.getOwnPropertyDescriptor(globalThis, "window");
+    const quota = { getItem() { return "fr"; }, setItem() { throw new Error("QuotaExceededError"); }, removeItem() { throw new Error("SecurityError"); } };
+    Object.defineProperty(globalThis, "window", { configurable: true, value: { localStorage: quota } });
+    try {
+      expect(readBrowserPreference("quota-language")).toBe("fr");
+      writeBrowserPreference("quota-language", "en");
+      expect(readBrowserPreference("quota-language")).toBe("en");
+      removeBrowserPreference("quota-language");
+      expect(readBrowserPreference("quota-language")).toBeNull();
+    } finally {
+      if (previous) Object.defineProperty(globalThis, "window", previous);
+      else Reflect.deleteProperty(globalThis, "window");
+    }
+  });
+
+  test("SSR does not read or retain browser preferences", async () => {
+    const { readBrowserPreference, writeBrowserPreference } = await import("../src/lib/browser-preferences");
+    const previous = Object.getOwnPropertyDescriptor(globalThis, "window");
+    Reflect.deleteProperty(globalThis, "window");
+    try {
+      writeBrowserPreference("server-only-test", "en");
+      expect(readBrowserPreference("server-only-test")).toBeNull();
+    } finally {
+      if (previous) Object.defineProperty(globalThis, "window", previous);
+    }
+  });
+});

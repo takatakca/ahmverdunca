@@ -1,3 +1,4 @@
+import { TeamPicker } from "@/components/team-picker";
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
@@ -48,31 +49,21 @@ export function ScheduleFinder() {
       <div className="container-site relative">
         <div className="grid gap-4 xl:grid-cols-[0.62fr_1.38fr] xl:items-center">
           <div>
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Accès parent · priorité #1" : "Parent access · priority #1"}
-            </p>
+
             <h2
               id="schedule-finder-title"
               className="mt-1.5 max-w-3xl font-display text-2xl font-extrabold uppercase leading-[0.9] tracking-[-0.025em] text-white sm:text-4xl lg:text-5xl"
             >
               {lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}
             </h2>
-            <p className="mt-3 hidden max-w-xl text-sm leading-relaxed text-white/62 sm:block">
-              {lang === "fr"
-                ? "Une seule trajectoire : votre catégorie, votre espace équipe, puis les activités publiées de la semaine."
-                : "One path: your category, your team space, then this week's published activities."}
-            </p>
-            <div className="mt-4 hidden items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/48 md:flex">
-              <span className="h-px w-10 bg-sport" />
-              {lang === "fr" ? "Simple. Rapide. Sur un seul écran." : "Simple. Fast. One screen."}
-            </div>
+
+            <TeamPicker />
           </div>
 
-          <div className="interactive-surface overflow-hidden border border-white/12 bg-white/[0.055] shadow-[0_24px_60px_-36px_rgba(0,0,0,0.72)] backdrop-blur-sm">
+          <div className="interactive-surface overflow-hidden rounded-2xl border border-white/12 bg-white/[0.055] shadow-[0_24px_60px_-36px_rgba(0,0,0,0.72)] backdrop-blur-sm">
             <div className="grid grid-cols-2 sm:grid-cols-3">
               <div className="relative col-span-2 border-b border-white/10 p-3 sm:col-span-1 sm:border-b-0 sm:border-r sm:p-5">
-                <span className="hidden font-display text-4xl font-extrabold leading-none text-white/10 sm:block">01</span>
-                <p className="eyebrow text-sport sm:mt-3">{lang === "fr" ? "Catégorie" : "Category"}</p>
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Catégorie" : "Category"}</p>
                 <label className="mt-2 block">
                   <span className="sr-only">
                     {lang === "fr" ? "Choisir ma catégorie" : "Choose my category"}
@@ -122,8 +113,7 @@ export function ScheduleFinder() {
               </div>
 
               <div className="relative border-r border-white/10 p-3 sm:p-5">
-                <span className="hidden font-display text-4xl font-extrabold leading-none text-white/10 sm:block">02</span>
-                <p className="eyebrow text-sport sm:mt-3">{lang === "fr" ? "Mon équipe" : "My team"}</p>
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Mon équipe" : "My team"}</p>
                 <p className="mt-1.5 font-display text-lg font-extrabold uppercase leading-none text-white sm:text-2xl">
                   {selected
                     ? selected.code === "F"
@@ -158,8 +148,7 @@ export function ScheduleFinder() {
               </div>
 
               <div className="relative bg-sport/12 p-3 text-white sm:p-5">
-                <span className="hidden font-display text-4xl font-extrabold leading-none text-navy-foreground/10 sm:block">03</span>
-                <p className="eyebrow text-sport-foreground sm:mt-3">
+                <p className="eyebrow text-sport-foreground">
                   {lang === "fr" ? "Cette semaine" : "This week"}
                 </p>
                 <p className="mt-1.5 font-display text-lg font-extrabold uppercase leading-none sm:text-2xl">

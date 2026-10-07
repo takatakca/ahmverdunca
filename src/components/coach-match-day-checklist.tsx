@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference, removeBrowserPreference } from "@/lib/browser-preferences";
 import { useEffect, useState } from "react";
 import { Check, ClipboardCheck, RotateCcw } from "lucide-react";
 
@@ -15,7 +16,7 @@ export function CoachMatchDayChecklist({ lang }: { lang: "fr" | "en" }) {
 
   useEffect(() => {
     try {
-      const stored = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || "[]");
+      const stored = JSON.parse(readBrowserPreference(STORAGE_KEY) || "[]");
       setChecked(Array.isArray(stored) ? stored.filter((value): value is string => typeof value === "string") : []);
     } catch {
       setChecked([]);
@@ -27,7 +28,7 @@ export function CoachMatchDayChecklist({ lang }: { lang: "fr" | "en" }) {
       const next = current.includes(key)
         ? current.filter((value) => value !== key)
         : [...current, key];
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      writeBrowserPreference(STORAGE_KEY, JSON.stringify(next));
       return next;
     });
   };
@@ -89,7 +90,7 @@ export function CoachMatchDayChecklist({ lang }: { lang: "fr" | "en" }) {
         <button
           type="button"
           onClick={() => {
-            window.localStorage.removeItem(STORAGE_KEY);
+            removeBrowserPreference(STORAGE_KEY);
             setChecked([]);
           }}
           className="inline-flex min-h-9 items-center gap-2 px-2 text-[8px] font-bold uppercase tracking-[0.14em] text-white/42 hover:text-sport-foreground"

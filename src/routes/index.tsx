@@ -111,7 +111,7 @@ function Home() {
   return (
     <div className="flow-root bg-navy-deep text-white">
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
-      <section className="relative isolate min-h-[68svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[72svh] md:min-h-[80svh]">
+      <section className="relative isolate min-h-[52svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[60svh] md:min-h-[70svh]">
         <img
           src={HOME_HERO_MEDIA.url}
           alt={lang === "fr" ? HOME_HERO_MEDIA.alt.fr : HOME_HERO_MEDIA.alt.en}
@@ -137,7 +137,7 @@ function Home() {
         <div className="arena-light opacity-45" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
-        <div className="container-site relative flex min-h-[66svh] flex-col justify-end pb-8 pt-20 sm:min-h-[70svh] md:min-h-[78svh] md:pb-11">
+        <div className="container-site relative flex min-h-[50svh] flex-col justify-end pb-7 pt-12 sm:min-h-[58svh] md:min-h-[68svh] md:pb-11">
           <div className="max-w-6xl">
             <div className="rise mb-5 flex items-center gap-4">
               <LogoSlot size="lg" className="size-20 sm:size-24 md:size-24" />
@@ -148,18 +148,8 @@ function Home() {
                 </p>
               </div>
             </div>
-            <div className="rise flex flex-wrap items-center gap-3">
-              <span className="hidden h-px w-10 bg-sport md:block" aria-hidden />
-              <p className="eyebrow text-sport-foreground">
-                {t("common.season")} {SITE.season} · {SITE.city}
-              </p>
-            </div>
 
-            <p className="rise mt-4 broadcast-label text-base text-navy-foreground/82 [animation-delay:80ms] sm:text-xl md:text-2xl">
-              {lang === "fr" ? "Association du hockey mineur de Verdun" : "Verdun Minor Hockey Association"}
-            </p>
-
-            <h1 className="rise mt-2 max-w-[10ch] font-display text-[clamp(3.65rem,10.8vw,8.8rem)] font-extrabold uppercase leading-[0.8] tracking-[-0.052em] text-navy-foreground [animation-delay:140ms]">
+            <h1 className="rise mt-2 max-w-[10ch] font-display text-[clamp(3.2rem,10vw,7.2rem)] font-extrabold uppercase leading-[0.8] tracking-[-0.052em] text-navy-foreground [animation-delay:140ms]">
               {t("home.heroTitle")}
             </h1>
 
@@ -206,20 +196,7 @@ function Home() {
             </div>
           </div>
 
-          <div className="mt-7 grid gap-3 border-t border-navy-foreground/15 pt-4 sm:grid-cols-3">
-            <div>
-              <p className="eyebrow text-navy-foreground/45">{lang === "fr" ? "Priorité parent" : "Parent priority"}</p>
-              <p className="mt-1 font-display text-xl font-bold uppercase">{lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}</p>
-            </div>
-            <div>
-              <p className="eyebrow text-navy-foreground/45">{lang === "fr" ? "Association" : "Association"}</p>
-              <p className="mt-1 font-display text-xl font-bold uppercase">Verdun · Montréal</p>
-            </div>
-            <div>
-              <p className="eyebrow text-navy-foreground/45">{lang === "fr" ? "Saison" : "Season"}</p>
-              <p className="mt-1 font-display text-xl font-bold uppercase">{SITE.season}</p>
-            </div>
-          </div>
+
         </div>
       </section>
 

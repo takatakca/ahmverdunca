@@ -1,3 +1,4 @@
+import { readBrowserPreference, removeBrowserPreference } from "@/lib/browser-preferences";
 import { useEffect } from "react";
 import { ADSENSE_CONFIG } from "@/lib/monetization";
 import {
@@ -12,7 +13,7 @@ function memberPreviewActive() {
   return (
     DEMO_MEMBER_PREVIEW_ENABLED &&
     typeof window !== "undefined" &&
-    window.localStorage.getItem(DEMO_MEMBER_STORAGE_KEY) === "member"
+    readBrowserPreference(DEMO_MEMBER_STORAGE_KEY) === "member"
   );
 }
 
@@ -38,7 +39,7 @@ function loadAdSense() {
 export function AdSenseScriptController() {
   useEffect(() => {
     if (!DEMO_MEMBER_PREVIEW_ENABLED) {
-      window.localStorage.removeItem(DEMO_MEMBER_STORAGE_KEY);
+      removeBrowserPreference(DEMO_MEMBER_STORAGE_KEY);
       loadAdSense();
       return;
     }

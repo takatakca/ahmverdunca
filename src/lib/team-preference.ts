@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference, removeBrowserPreference } from "./browser-preferences";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getTeam } from "@/data/teams";
 import { getPublicTeamById, type PublicTeamDirectoryEntry } from "@/data/team-directory";
@@ -8,7 +9,7 @@ const EVENT = "ahmv-team-changed";
 
 function readSelectedTeamIds() {
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(EXACT_TEAMS_KEY) ?? "[]") as unknown;
+    const parsed = JSON.parse(readBrowserPreference(EXACT_TEAMS_KEY) ?? "[]") as unknown;
     if (!Array.isArray(parsed)) return [];
     return parsed
       .filter((value): value is string => typeof value === "string")
@@ -25,7 +26,7 @@ export function usePreferredTeam() {
 
   useEffect(() => {
     const update = () => {
-      const stored = window.localStorage.getItem(LEGACY_KEY) ?? "";
+      const stored = readBrowserPreference(LEGACY_KEY) ?? "";
       setSlug(getTeam(stored) ? stored : "");
       setSelectedTeamIds(readSelectedTeamIds());
     };
@@ -43,8 +44,8 @@ export function usePreferredTeam() {
   const save = useCallback((value: string) => {
     const valid = getTeam(value) ? value : "";
 
-    if (valid) window.localStorage.setItem(LEGACY_KEY, valid);
-    else window.localStorage.removeItem(LEGACY_KEY);
+    if (valid) writeBrowserPreference(LEGACY_KEY, valid);
+    else removeBrowserPreference(LEGACY_KEY);
 
     setSlug(valid);
     window.dispatchEvent(new Event(EVENT));
@@ -55,8 +56,8 @@ export function usePreferredTeam() {
       .filter((value, index) => values.indexOf(value) === index)
       .filter((value) => Boolean(getPublicTeamById(value)));
 
-    if (valid.length > 0) window.localStorage.setItem(EXACT_TEAMS_KEY, JSON.stringify(valid));
-    else window.localStorage.removeItem(EXACT_TEAMS_KEY);
+    if (valid.length > 0) writeBrowserPreference(EXACT_TEAMS_KEY, JSON.stringify(valid));
+    else removeBrowserPreference(EXACT_TEAMS_KEY);
 
     setSelectedTeamIds(valid);
     window.dispatchEvent(new Event(EVENT));
@@ -74,8 +75,8 @@ export function usePreferredTeam() {
   const clearSelectedTeams = useCallback(() => saveSelectedTeamIds([]), [saveSelectedTeamIds]);
 
   const clearAllTeamPreferences = useCallback(() => {
-    window.localStorage.removeItem(LEGACY_KEY);
-    window.localStorage.removeItem(EXACT_TEAMS_KEY);
+    removeBrowserPreference(LEGACY_KEY);
+    removeBrowserPreference(EXACT_TEAMS_KEY);
     setSlug("");
     setSelectedTeamIds([]);
     window.dispatchEvent(new Event(EVENT));

@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference, removeBrowserPreference } from "./browser-preferences";
 import { useCallback, useEffect, useState } from "react";
 
 export const DEMO_MEMBER_STORAGE_KEY = "ahmv-demo-member-mode";
@@ -10,7 +11,7 @@ export type DemoMemberMode = "visitor" | "member";
 
 function readMode(): DemoMemberMode {
   if (!DEMO_MEMBER_PREVIEW_ENABLED || typeof window === "undefined") return "visitor";
-  return window.localStorage.getItem(DEMO_MEMBER_STORAGE_KEY) === "member" ? "member" : "visitor";
+  return readBrowserPreference(DEMO_MEMBER_STORAGE_KEY) === "member" ? "member" : "visitor";
 }
 
 export function useDemoMemberMode() {
@@ -18,7 +19,7 @@ export function useDemoMemberMode() {
 
   useEffect(() => {
     if (!DEMO_MEMBER_PREVIEW_ENABLED) {
-      window.localStorage.removeItem(DEMO_MEMBER_STORAGE_KEY);
+      removeBrowserPreference(DEMO_MEMBER_STORAGE_KEY);
       setModeState("visitor");
       return;
     }
@@ -37,12 +38,12 @@ export function useDemoMemberMode() {
 
   const setMode = useCallback((next: DemoMemberMode) => {
     if (!DEMO_MEMBER_PREVIEW_ENABLED) {
-      window.localStorage.removeItem(DEMO_MEMBER_STORAGE_KEY);
+      removeBrowserPreference(DEMO_MEMBER_STORAGE_KEY);
       setModeState("visitor");
       return;
     }
 
-    window.localStorage.setItem(DEMO_MEMBER_STORAGE_KEY, next);
+    writeBrowserPreference(DEMO_MEMBER_STORAGE_KEY, next);
     setModeState(next);
     window.dispatchEvent(new CustomEvent(DEMO_MEMBER_EVENT_NAME));
   }, []);

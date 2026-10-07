@@ -54,9 +54,9 @@ export function RevenueActionPanel() {
                 : "Explore visibility options on the AHMV portal and contact the association to discuss a format and dates."}
             </p>
             <Button asChild variant="sport" className="mt-6 h-auto min-h-11 w-full justify-between whitespace-normal py-3 text-left sm:w-auto">
-              <Link to="/partenaires">
-                {lang === "fr" ? "Voir les possibilités" : "View opportunities"} <ArrowRight className="size-4" />
-              </Link>
+              <a href="/partenaires#commandite">
+                {lang === "fr" ? "Présenter ma commandite" : "Propose a sponsorship"} <ArrowRight className="size-4" />
+              </a>
             </Button>
           </article>
         </div>
