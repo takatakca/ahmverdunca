@@ -55,9 +55,6 @@ export function PageHeader({
           <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.2em] text-navy-foreground/45">
             Verdun · Montréal
           </p>
-          <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-sport-foreground/80">
-            2026–2027
-          </p>
         </div>
       </div>
 
