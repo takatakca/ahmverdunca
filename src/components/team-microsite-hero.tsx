@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronRight, Clock3, ExternalLink, Trophy } from "lucide-react";
+import { ChevronRight, Clock3, ExternalLink, Trophy } from "lucide-react";
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-directory";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
@@ -78,45 +78,47 @@ function MiniCalendar({
         {kind === "game" ? <Trophy className="size-4 text-sport-foreground" /> : <Clock3 className="size-4 text-sport-foreground" />}
       </div>
 
-      <div className="divide-y divide-white/10">
-        {rows.length === 0 && (
-          <div className="px-4 py-5">
-            <p className="text-sm font-semibold text-white/72">
-              {lang === "fr"
-                ? "Aucune pratique de cette équipe n’est affichée pour cette semaine."
-                : "No practice for this team is shown for this week."}
-            </p>
-            <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.13em] text-white/38">
-              {lang === "fr" ? "Voir l’horaire complet" : "View the full schedule"}
-            </p>
-          </div>
-        )}
-        {rows.map((row, index) => (
-          <a
-            key={`${kind}-${index}`}
-            href={row.href ?? eventHref(team, kind, index + 1)}
-            target={row.href?.startsWith("http") ? "_blank" : undefined}
-            rel={row.href?.startsWith("http") ? "noopener noreferrer" : undefined}
-            className="group grid grid-cols-[3.5rem_4.2rem_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 text-white transition-colors hover:bg-white/[0.055]"
-          >
-            <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-white/42">
-              {lang === "fr" ? row.dayFr : row.dayEn}
-            </span>
-            <span className="font-display text-lg font-extrabold uppercase text-white">{row.time}</span>
-            <span className="min-w-0">
-              <span className="block truncate text-[10px] font-semibold uppercase tracking-[0.08em] text-white/54">
-                {lang === "fr" ? row.noteFr : row.noteEn}
-              </span>
-              {row.verified && (
-                <span className="mt-0.5 block text-[7px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
-                  AHMV
+      {rows.length === 0 ? (
+        <div className="px-4 py-5">
+          <p className="text-sm font-semibold text-white/72">
+            {lang === "fr"
+              ? "Aucune pratique publiée pour cette équipe cette semaine."
+              : "No published practice for this team this week."}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-px bg-white/10">
+          {rows.map((row, index) => (
+            <a
+              key={`${kind}-${index}`}
+              href={row.href ?? eventHref(team, kind, index + 1)}
+              target={row.href?.startsWith("http") ? "_blank" : undefined}
+              rel={row.href?.startsWith("http") ? "noopener noreferrer" : undefined}
+              className="group flex min-h-[118px] min-w-0 flex-col justify-between bg-navy-deep px-3 py-3.5 text-white transition-colors hover:bg-white/[0.055] sm:min-h-[132px] sm:px-4"
+            >
+              <span>
+                <span className="block text-[9px] font-extrabold uppercase tracking-[0.15em] text-sport-foreground">
+                  {lang === "fr" ? row.dayFr : row.dayEn}
                 </span>
-              )}
-            </span>
-            <ChevronRight className="size-3.5 text-sport-foreground transition-transform group-hover:translate-x-0.5" />
-          </a>
-        ))}
-      </div>
+                <span className="mt-1 block font-display text-xl font-extrabold uppercase text-white sm:text-2xl">
+                  {row.time}
+                </span>
+              </span>
+              <span className="min-w-0">
+                <span className="block line-clamp-2 text-[9px] font-semibold uppercase leading-snug tracking-[0.07em] text-white/52">
+                  {lang === "fr" ? row.noteFr : row.noteEn}
+                </span>
+                <span className="mt-2 flex items-center justify-between">
+                  {row.verified ? (
+                    <span className="text-[7px] font-bold uppercase tracking-[0.14em] text-white/32">AHMV</span>
+                  ) : <span />}
+                  <ChevronRight className="size-3.5 text-sport-foreground transition-transform group-hover:translate-x-0.5" />
+                </span>
+              </span>
+            </a>
+          ))}
+        </div>
+      )}
 
       <a
         href={sourceHref ?? (kind === "game" ? officialTeamResultsUrl(team) : legacyTeamScheduleUrl(team))}
@@ -228,16 +230,6 @@ export function TeamMicrositeHero({
                 ? "Parties, pratiques, nouvelles, photos et accès utiles de l’équipe, au même endroit."
                 : "Games, practices, news, photos and useful team links, all in one place."}
             </p>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              <a href="#match-center" className="premium-control inline-flex min-h-10 items-center gap-2 bg-white px-4 text-[9px] font-bold uppercase tracking-[0.12em] text-navy">
-                <CalendarDays className="size-4 text-sport" />
-                {lang === "fr" ? "Calendrier" : "Calendar"}
-              </a>
-              <a href="#social-equipe" className="premium-control inline-flex min-h-10 items-center gap-2 border border-white/18 px-4 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
-                {lang === "fr" ? "Réseaux sociaux" : "Social"}
-              </a>
-            </div>
 
           </div>
         </div>
