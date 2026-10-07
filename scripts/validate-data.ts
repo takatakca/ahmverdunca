@@ -18,8 +18,13 @@ import { AHMV_SOCIAL_ARCHIVE_REFERENCES, HOCKEY_HERITAGE } from "../src/data/her
 import { TEAM_COMMUNITY_POSTS, TEAM_DOCUMENTS, TEAM_FUNDRAISING_CAMPAIGNS, TEAM_VOLUNTEER_NEEDS } from "../src/data/team-community";
 import { UPLOADED_AHMV_MEDIA } from "../src/data/uploaded-media";
 import { FACEBOOK_TEAM_ALBUM_MANIFEST } from "../src/data/facebook-team-albums";
+import { newsCommentProblems } from "../src/lib/news-discussion";
+import { existsSync, statSync } from "node:fs";
+import { isAbsolute, relative, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const errors: string[] = [];
+const publicRoot = fileURLToPath(new URL("../public/", import.meta.url));
 
 function duplicateValues(values: string[]) {
   const seen = new Set<string>();
@@ -268,6 +273,24 @@ for (const article of NEWS) {
     errors.push(`News article "${article.slug}" must have an exact date or a publishedLabel.`);
   }
   for (const link of article.links ?? []) requireHttps(`News article "${article.slug}" related link`, link.url);
+  if (article.image) {
+    const assetPath = resolve(publicRoot, `.${article.image}`);
+    const assetRelativePath = relative(publicRoot, assetPath);
+    if (
+      !article.image.startsWith("/") || article.image.startsWith("//") || article.image.includes("\\") ||
+      assetRelativePath.startsWith("..") || isAbsolute(assetRelativePath) ||
+      !/\.(?:jpe?g|png|webp|avif|gif|svg)$/i.test(article.image)
+    ) {
+      errors.push(`News article "${article.slug}" image must be a local public image path.`);
+    } else if (!existsSync(assetPath) || !statSync(assetPath).isFile()) {
+      errors.push(`News article "${article.slug}" image asset is missing: "${article.image}".`);
+    }
+  }
+  for (const [index, comment] of (article.comments ?? []).entries()) {
+    for (const problem of newsCommentProblems(comment)) {
+      errors.push(`News article "${article.slug}" comment ${index + 1} ${problem}.`);
+    }
+  }
   for (const teamSlug of article.teamSlugs) {
     if (!teamSlugs.has(teamSlug)) {
       errors.push(`News article "${article.slug}" references unknown team "${teamSlug}".`);

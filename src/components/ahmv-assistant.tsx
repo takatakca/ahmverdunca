@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Bot, CalendarDays, Mic, PhoneCall, Send, Sparkles, Trophy, Users, X } from "lucide-react";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { Button } from "@/components/ui/button";
@@ -81,6 +82,26 @@ export function AhmvAssistant() {
   const [reply, setReply] = useState<AssistantReply | null>(null);
   const [bookmarkNotice, setBookmarkNotice] = useState("");
   const [showNudge, setShowNudge] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const handingFocusToWelcome = useRef(false);
+
+  const showAssistant = useCallback((returnFocus?: HTMLElement | null) => {
+    const opener = returnFocus ?? document.activeElement;
+    returnFocusRef.current = opener instanceof HTMLElement && opener !== document.body && !opener.closest('[role="dialog"]')
+      ? opener
+      : triggerRef.current;
+    handingFocusToWelcome.current = false;
+    setOpen(true);
+    setShowNudge(false);
+    setBookmarkNotice("");
+    try {
+      window.sessionStorage.setItem("ahmv-assistant-nudge-seen", "1");
+    } catch {
+      // Session storage is optional; the assistant must still open.
+    }
+  }, []);
 
   useEffect(() => {
     setAssistantLanguage(readAssistantLanguage(lang));
@@ -122,17 +143,12 @@ export function AhmvAssistant() {
 
 
   useEffect(() => {
-    const openAssistant = () => {
-      setOpen(true);
-      setShowNudge(false);
-      setBookmarkNotice("");
-      try {
-        window.sessionStorage.setItem("ahmv-assistant-nudge-seen", "1");
-      } catch {
-        // Session storage is optional; the assistant must still open.
-      }
+    const openAssistant = (event: Event) => {
+      const detail = (event as CustomEvent<{ returnFocus?: unknown }>).detail;
+      showAssistant(detail?.returnFocus instanceof HTMLElement ? detail.returnFocus : undefined);
     };
     const closeForWelcome = () => {
+      handingFocusToWelcome.current = true;
       setOpen(false);
       setShowNudge(false);
     };
@@ -142,23 +158,7 @@ export function AhmvAssistant() {
       window.removeEventListener("ahmv:assistant-open", openAssistant);
       window.removeEventListener("ahmv:welcome-open", closeForWelcome);
     };
-  }, []);
-
-  useEffect(() => {
-    if (!open) return;
-    const previousOverflow = document.body.style.overflow;
-    if (window.innerWidth < 640) document.body.style.overflow = "hidden";
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
+  }, [showAssistant]);
 
   const copy = useMemo(() => assistantCopy(assistantLanguage), [assistantLanguage]);
 
@@ -206,13 +206,12 @@ export function AhmvAssistant() {
   };
 
   const openAssistant = () => {
-    dismissNudge();
     window.dispatchEvent(new CustomEvent("ahmv:navigation-open"));
-    setOpen(true);
+    showAssistant();
   };
 
   return (
-    <>
+    <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
       {ASSISTANT_NUDGE_ENABLED && showNudge && !open && (
         <aside
           data-ahmv-attention-surface="assistant-nudge"
@@ -252,6 +251,7 @@ export function AhmvAssistant() {
       )}
 
       <button
+        ref={triggerRef}
         type="button"
         onClick={openAssistant}
         className="premium-control fixed bottom-20 left-3 z-40 flex min-h-12 items-center gap-2 border border-sport/55 bg-competition/96 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_18px_50px_-22px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-4 lg:left-4"
@@ -269,14 +269,24 @@ export function AhmvAssistant() {
         <Sparkles className="size-3.5 text-sport-foreground" aria-hidden />
       </button>
 
-      {open && (
-        <div data-ahmv-attention-surface="assistant-dialog" className="fixed inset-0 z-[115] flex items-end justify-start bg-navy-deep/55 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-end sm:bg-transparent sm:p-4">
-          <section
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="ahmv-assistant-title"
-            className="w-full max-w-md overflow-hidden border border-white/12 bg-background shadow-[0_32px_90px_-28px_rgba(0,0,0,0.78)]"
-          >
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay asChild>
+          <div className="fixed inset-0 z-[115] flex items-end justify-start bg-navy-deep/55 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-end sm:bg-transparent sm:p-4">
+            <DialogPrimitive.Content
+              data-ahmv-attention-surface="assistant-dialog"
+              aria-modal="true"
+              onOpenAutoFocus={(event) => {
+                event.preventDefault();
+                closeButtonRef.current?.focus();
+              }}
+              onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                if (handingFocusToWelcome.current) return;
+                const target = returnFocusRef.current?.isConnected ? returnFocusRef.current : triggerRef.current;
+                target?.focus();
+              }}
+              className="w-full max-w-md overflow-hidden border border-white/12 bg-background shadow-[0_32px_90px_-28px_rgba(0,0,0,0.78)] outline-none"
+            >
             <div className="bg-competition p-5 text-white">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
@@ -284,11 +294,12 @@ export function AhmvAssistant() {
                     <Bot className="size-5 text-sport-foreground" />
                   </span>
                   <div>
-                    <p id="ahmv-assistant-title" className="font-display text-2xl font-extrabold uppercase leading-none">{copy.title}</p>
-                    <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/42">{copy.subtitle}</p>
+                    <DialogPrimitive.Title className="font-display text-2xl font-extrabold uppercase leading-none">{copy.title}</DialogPrimitive.Title>
+                    <DialogPrimitive.Description className="mt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/42">{copy.subtitle}</DialogPrimitive.Description>
                   </div>
                 </div>
                 <button
+                  ref={closeButtonRef}
                   type="button"
                   onClick={() => setOpen(false)}
                   className="premium-control flex size-11 shrink-0 items-center justify-center border border-white/15"
@@ -415,9 +426,10 @@ export function AhmvAssistant() {
                 </p>
               </div>
             </div>
-          </section>
-        </div>
-      )}
-    </>
+            </DialogPrimitive.Content>
+          </div>
+        </DialogPrimitive.Overlay>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }

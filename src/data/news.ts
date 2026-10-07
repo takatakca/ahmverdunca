@@ -36,9 +36,11 @@ export interface NewsLink {
 export interface NewsComment {
   author: string;
   body: string;
-  /** ISO date (YYYY-MM-DD). */
-  date: string;
+  /** Verified ISO date (YYYY-MM-DD). Omit when the comment date is unknown. */
+  date?: string;
   source: "facebook" | "member";
+  /** Exact public comment permalink for mirrored Facebook comments. */
+  sourceUrl?: string;
 }
 
 export interface NewsArticle {
@@ -65,6 +67,7 @@ export interface NewsArticle {
 export const NEWS: NewsArticle[] = [
   {
     slug: "division-equipes-m11-m13-2026-2027",
+    image: "/news-media/facebook/division-equipes-m11-m13.jpg",
     title: {
       fr: "Plus d’inscriptions en M11 et M13 : division des équipes 2026-2027",
       en: "More U11 and U13 registrations: 2026-2027 team split",
@@ -109,10 +112,20 @@ export const NEWS: NewsArticle[] = [
     teamSlugs: ["m11", "m13"],
     season: "2026-2027",
     sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid0Ny8TEeVWW7A8oaNiQVptfqYCeskpx4BxeCkruS8nwoguYTg1dLqKd3XMA4kxVHSUl",
+    comments: [
+      {
+        author: "Georges-Etienne B.",
+        body: "Belle nouvelle pour le hockey!",
+        date: "2026-10-03",
+        source: "facebook",
+        sourceUrl: "https://www.facebook.com/AHMVerdun/posts/pfbid02SpaARKRLMNbrPSZE8d2AyvnKvLaFoEppqCC5RmNuBvtSy8RY4y7tDMRZdh99wZUyl?comment_id=1108886175444795",
+      },
+    ],
     contentPending: false,
   },
   {
     slug: "mise-a-jour-horaire-semaine-29-septembre-2026",
+    image: "/news-media/facebook/horaire-semaine-29-septembre.jpg",
     title: {
       fr: "Mise à jour de l’horaire de la semaine",
       en: "This week’s schedule update",
@@ -136,6 +149,7 @@ export const NEWS: NewsArticle[] = [
   },
   {
     slug: "horaire-week-end-ajuste-greve-25-septembre-2026",
+    image: "/news-media/facebook/horaire-week-end-greve-25-septembre.jpg",
     title: {
       fr: "Horaire du week-end mis à jour après la grève",
       en: "Weekend schedule updated after the strike",
@@ -201,6 +215,7 @@ export const NEWS: NewsArticle[] = [
   },
   {
     slug: "125-ans-histoire-hockey-verdun-souvenirs",
+    image: "/news-media/facebook/125-ans-histoire-hockey-verdun.jpg",
     title: {
       fr: "125 ans d’histoire du hockey à Verdun — vos souvenirs font partie de notre histoire!",
       en: "125 years of Verdun hockey history — your memories are part of our history!",
@@ -245,6 +260,7 @@ export const NEWS: NewsArticle[] = [
   },
   {
     slug: "derniere-chance-equipes-feminines-m12-septembre-2026",
+    image: "/news-media/facebook/derniere-chance-m12-feminin.jpg",
     title: {
       fr: "Dernière chance — équipes féminines M12",
       en: "Last call — U12 girls teams",
