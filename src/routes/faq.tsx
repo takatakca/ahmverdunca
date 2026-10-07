@@ -76,7 +76,7 @@ function FaqPage() {
   );
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={l({ fr: "Aide aux familles", en: "Family help" })}
         title={t("nav.faq")}
@@ -86,25 +86,6 @@ function FaqPage() {
         })}
       />
       <div className="container-site py-8 md:py-12">
-        <section className="mb-7 grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-[1fr_auto]">
-          <div className="bg-navy p-6 text-white md:p-8">
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Centre d’aide familles" : "Family help centre"}</p>
-            <p className="mt-3 max-w-2xl font-display text-3xl font-extrabold uppercase leading-[0.9] sm:text-4xl">
-              {lang === "fr" ? "Cherchez. Trouvez. Repartez avec la bonne réponse." : "Search. Find. Leave with the right answer."}
-            </p>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/65">
-              {lang === "fr"
-                ? "Recherche texte ou vocale, sujets filtrés et accès vers les pages de référence lorsqu’une réponse demande plus de détails."
-                : "Text or voice search, filtered topics and direct access to reference pages when an answer needs more detail."}
-            </p>
-          </div>
-          <div className="flex min-w-48 flex-col justify-center bg-competition p-6 text-white md:p-8">
-            <p className="font-display text-6xl font-extrabold tracking-[-0.05em] text-white">{String(visibleFaq.length).padStart(2, "0")}</p>
-            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.17em] text-white/42">
-              {lang === "fr" ? "réponses disponibles" : "answers available"}
-            </p>
-          </div>
-        </section>
         <section className="mb-6 grid overflow-hidden border border-navy/12 bg-competition text-white lg:grid-cols-[0.82fr_1.18fr]">
           <div className="relative min-h-[220px] overflow-hidden sm:min-h-[280px]">
             <img
@@ -178,7 +159,7 @@ function FaqPage() {
         </div>
 
         {q.trim() ? (
-          <p className="mt-3 text-sm font-semibold text-muted-foreground" aria-live="polite">
+          <p className="mt-3 text-sm font-semibold text-white/52" aria-live="polite">
             {lang === "fr"
               ? `${list.length} réponse${list.length === 1 ? "" : "s"} trouvée${list.length === 1 ? "" : "s"}`
               : `${list.length} answer${list.length === 1 ? "" : "s"} found`}
@@ -194,7 +175,7 @@ function FaqPage() {
               onClick={() => setTopic(c.id)}
               className={cn(
                 "premium-control shrink-0 border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors",
-                topic === c.id ? "border-sport bg-sport text-sport-foreground" : "border-input hover:bg-secondary",
+                topic === c.id ? "border-sport bg-sport text-sport-foreground" : "border-white/14 text-white/62 hover:bg-white/[0.05] hover:text-white",
               )}
             >
               {l(c.label)}
@@ -202,7 +183,7 @@ function FaqPage() {
           ))}
         </div>
 
-        {list.length === 0 && <p className="text-muted-foreground">{t("common.noResults")}</p>}
+        {list.length === 0 && <p className="text-white/52">{t("common.noResults")}</p>}
         <Accordion
           type="single"
           collapsible
@@ -211,12 +192,12 @@ function FaqPage() {
           className="w-full"
         >
           {list.map((f) => (
-            <AccordionItem key={f.id} id={f.id} value={f.id} className="scroll-mt-28">
-              <AccordionTrigger className="text-left font-display text-lg font-bold uppercase">{l(f.question)}</AccordionTrigger>
+            <AccordionItem key={f.id} id={f.id} value={f.id} className="scroll-mt-28 border-white/10">
+              <AccordionTrigger className="text-left font-display text-lg font-bold uppercase text-white hover:text-sport-foreground">{l(f.question)}</AccordionTrigger>
               <AccordionContent>
-                <p className="text-base text-foreground/90">{l(f.answer)}</p>
+                <p className="text-base text-white/72">{l(f.answer)}</p>
                 {!f.validated && (
-                  <p className="mt-2 text-xs italic text-muted-foreground">
+                  <p className="mt-2 text-xs italic text-white/45">
                     {lang === "fr"
                       ? "Cette procédure doit encore être confirmée par l'association."
                       : "This procedure still needs confirmation from the association."}
@@ -245,6 +226,6 @@ function FaqPage() {
           ))}
         </Accordion>
       </div>
-    </>
+    </div>
   );
 }
