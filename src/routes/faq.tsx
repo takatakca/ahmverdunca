@@ -147,12 +147,8 @@ function FaqPage() {
           </p>
           <p className="mt-2 text-sm text-white/55">
             {lang === "fr"
-              ? publicLaunch
-                ? "Les réponses affichées ici s'appuient uniquement sur des informations actuellement validées."
-                : "Les réponses validées s'appuient sur les ressources actuellement publiées. Les éléments encore à confirmer sont identifiés en préproduction."
-              : publicLaunch
-                ? "Answers shown here rely only on currently validated information."
-                : "Validated answers rely on currently published resources. Items still awaiting confirmation are identified in pre-production."}
+              ? "Les réponses s’appuient sur les ressources actuellement publiées. Lorsqu’une information doit encore être confirmée par l’association, elle est clairement indiquée."
+              : "Answers rely on currently published resources. When information still needs association confirmation, it is clearly identified."}
           </p>
         </div>
 
