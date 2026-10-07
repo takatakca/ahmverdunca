@@ -23,7 +23,7 @@ function visualPlacementForHouseSlot(placement: string): RunwayAdPlacement {
 }
 
 const GROUP_LABELS = {
-  takatak: { fr: "Écosystème TAKATAK", en: "TAKATAK ecosystem" },
+  takatak: { fr: "Services partenaires", en: "Partner services" },
   hospitality: { fr: "Escapades & loisirs", en: "Getaways & leisure" },
   food: { fr: "Restaurants & gourmandises", en: "Food & treats" },
   local: { fr: "Entreprise locale", en: "Local business" },
