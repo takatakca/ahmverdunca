@@ -160,9 +160,11 @@ function ArenaPage() {
                 {arena.name}
               </p>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/72">
-                {lang === "fr"
-                  ? "Photo d’ambiance AHMV. Pour éviter de présenter une image incorrecte de l’installation, les photos de l’aréna sont reliées à leur source officielle tant qu’elles ne sont pas archivées localement."
-                  : "AHMV atmosphere photo. To avoid showing the wrong facility, arena photos link to their official source until they are archived locally."}
+                {arena.photoUrl && arena.photoCredit
+                  ? `Photo : ${arena.photoCredit}`
+                  : lang === "fr"
+                    ? "Photo d’ambiance AHMV. Consultez les photos de l’installation sur la page officielle."
+                    : "AHMV atmosphere photo. View facility photos on the official page."}
               </p>
               {arena.officialPhotoPage && (
                 <a
@@ -172,7 +174,7 @@ function ArenaPage() {
                   className="premium-control mt-4 inline-flex min-h-10 items-center gap-2 border border-white/18 bg-black/20 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white"
                 >
                   <Camera className="size-4 text-sport-foreground" />
-                  {lang === "fr" ? "Voir les vraies photos de l’aréna" : "View real arena photos"}
+                  {lang === "fr" ? "Photos de l’aréna" : "Arena photos"}
                 </a>
               )}
             </div>

@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference } from "@/lib/browser-preferences";
 import { useEffect, useMemo, useState } from "react";
 import {
   Bell,
@@ -32,7 +33,7 @@ function wazeDirections(destination: string) {
 function readFollow(teamId: string) {
   if (typeof window === "undefined") return [] as string[];
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(`ahmv-follow-${teamId}`) || "[]");
+    const parsed = JSON.parse(readBrowserPreference(`ahmv-follow-${teamId}`) || "[]");
     return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : [];
   } catch {
     return [];
@@ -89,7 +90,7 @@ export function TeamParentDeck({
   const toggleFollow = (key: string) => {
     setFollow((current) => {
       const next = current.includes(key) ? current.filter((item) => item !== key) : [...current, key];
-      window.localStorage.setItem(`ahmv-follow-${team.legacyScheduleTeamId}`, JSON.stringify(next));
+      writeBrowserPreference(`ahmv-follow-${team.legacyScheduleTeamId}`, JSON.stringify(next));
       return next;
     });
   };

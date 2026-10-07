@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference } from "./browser-preferences";
 export type AssistantLanguageCode =
   | "fr"
   | "en"
@@ -43,10 +44,10 @@ export function speechLocaleForAssistant(code: AssistantLanguageCode) {
 }
 
 export function saveAssistantLanguage(code: AssistantLanguageCode) {
-  window.localStorage.setItem(ASSISTANT_LANGUAGE_STORAGE_KEY, code);
+  writeBrowserPreference(ASSISTANT_LANGUAGE_STORAGE_KEY, code);
 }
 
 export function readAssistantLanguage(fallback: AssistantLanguageCode = "fr"): AssistantLanguageCode {
-  const stored = window.localStorage.getItem(ASSISTANT_LANGUAGE_STORAGE_KEY);
+  const stored = readBrowserPreference(ASSISTANT_LANGUAGE_STORAGE_KEY);
   return isAssistantLanguageCode(stored) ? stored : fallback;
 }

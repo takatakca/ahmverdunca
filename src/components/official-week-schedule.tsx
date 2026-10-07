@@ -1,3 +1,4 @@
+import { ArenaTripCard } from "@/components/arena-trip-card";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ExternalLink, MapPin, Search, XCircle } from "lucide-react";
@@ -15,8 +16,7 @@ import {
   type OfficialWeekActivity,
 } from "@/data/official-week";
 import { formatDate, useI18n } from "@/lib/i18n";
-import { arenaDirectionsTargetForVenue, getArenaForVenue } from "@/data/arenas";
-import { mapsDirectionsUrl } from "@/lib/site";
+import { arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
 import { cn } from "@/lib/utils";
 import { ContentContributionButton } from "@/components/content-contribution-button";
@@ -44,12 +44,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   const nowTime = montrealTimeKey();
   const upcoming =
     item.date > today || (item.date === today && item.end > nowTime);
-  const arena = getArenaForVenue(item.venue);
   const directionTarget = arenaDirectionsTargetForVenue(item.venue);
-  const encodedTarget = encodeURIComponent(directionTarget);
-  const googleUrl = mapsDirectionsUrl(directionTarget);
-  const wazeUrl = `https://www.waze.com/ul?q=${encodedTarget}&navigate=yes`;
-  const appleUrl = `https://maps.apple.com/?daddr=${encodedTarget}`;
   const contributionFields = [
     { key: "date", label: { fr: "Date", en: "Date" }, kind: "date" as const, current: item.date },
     { key: "start", label: { fr: "Heure de début", en: "Start time" }, kind: "time" as const, current: item.start },
@@ -62,7 +57,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   return (
     <article
       className={cn(
-        "interactive-surface grid gap-3 border border-white/12 bg-navy-deep p-4 text-white sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-center",
+        "interactive-surface grid gap-4 overflow-hidden rounded-2xl border border-white/12 bg-navy-deep p-4 text-white sm:grid-cols-[6rem_minmax(0,1fr)] sm:items-start",
         cancelled && "border-status-cancelled/40 bg-status-cancelled-soft/40",
       )}
     >
@@ -95,7 +90,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
         </p>
       </div>
 
-      <div className="w-full sm:w-auto">
+      <div className="w-full sm:col-span-2">
         <div className="mb-2 flex justify-end">
           <ContentContributionButton
             resourceType="schedule"
@@ -107,30 +102,7 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
             appearance="menu"
           />
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {arena ? (
-            <Button asChild variant="sport" size="sm" className="w-full">
-              <Link to="/arenas/$slug" params={{ slug: arena.slug }}>
-                {lang === "fr" ? "Fiche" : "Arena"}
-              </Link>
-            </Button>
-          ) : (
-            <Button asChild variant="outline-light" size="sm" className="w-full">
-              <a href={googleUrl} target="_blank" rel="noopener noreferrer">
-                {lang === "fr" ? "Itinéraire" : "Directions"}
-              </a>
-            </Button>
-          )}
-          <Button asChild variant="outline-light" size="sm" className="w-full">
-            <a href={googleUrl} target="_blank" rel="noopener noreferrer">Google</a>
-          </Button>
-          <Button asChild variant="outline-light" size="sm" className="w-full">
-            <a href={wazeUrl} target="_blank" rel="noopener noreferrer">Waze</a>
-          </Button>
-          <Button asChild variant="outline-light" size="sm" className="w-full">
-            <a href={appleUrl} target="_blank" rel="noopener noreferrer">Apple</a>
-          </Button>
-        </div>
+        <ArenaTripCard venue={item.venue} />
         {!cancelled && upcoming && (
           <div className="mt-2">
             <AddToCalendarButton

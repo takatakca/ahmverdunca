@@ -1,5 +1,6 @@
+import { ArenaTripCard } from "@/components/arena-trip-card";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, MapPin, XCircle } from "lucide-react";
+import { ExternalLink, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   HAS_NEWER_PUBLISHED_SCHEDULE,
@@ -10,8 +11,6 @@ import {
 import { TEAMS } from "@/data/teams";
 import { formatDate, useI18n } from "@/lib/i18n";
 import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
-import { mapsDirectionsUrl } from "@/lib/site";
-import { arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { officialScheduleTermsForTeam } from "@/lib/official-schedule-team";
 import { cn } from "@/lib/utils";
@@ -31,11 +30,6 @@ export function OfficialWeekPreview() {
 
   const inPublishedWeek =
     today >= OFFICIAL_WEEK_META.start && today <= OFFICIAL_WEEK_META.end;
-  const publishedLabel = formatDate(OFFICIAL_WEEK_META.publishedAt, lang, {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
 
   const upcomingOfficialDocument =
     HAS_NEWER_PUBLISHED_SCHEDULE ? LATEST_PUBLISHED_SCHEDULE_DOCUMENT : null;
@@ -45,13 +39,6 @@ export function OfficialWeekPreview() {
         lang,
         { day: "numeric", month: "long", year: "numeric" },
       )}`
-    : "";
-  const upcomingPublishedLabel = upcomingOfficialDocument
-    ? formatDate(upcomingOfficialDocument.publishedAt, lang, {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
     : "";
 
   const savedTeam = TEAMS.find((item) => item.slug === preferredTeam);
@@ -93,11 +80,7 @@ export function OfficialWeekPreview() {
                   ? `Semaine ${upcomingOfficialDocument.week} · ${upcomingRangeLabel}`
                   : `Week ${upcomingOfficialDocument.week} · ${upcomingRangeLabel}`}
               </p>
-              <p className="mt-2 text-xs text-white/58">
-                {lang === "fr"
-                  ? `Source officielle AHMV publiée le ${upcomingPublishedLabel}. Touchez pour ouvrir l’horaire complet.`
-                  : `Official AHMV source published ${upcomingPublishedLabel}. Tap to open the full schedule.`}
-              </p>
+
             </div>
             <span className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 bg-sport px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
               {lang === "fr" ? "Ouvrir le PDF" : "Open PDF"}
@@ -108,19 +91,7 @@ export function OfficialWeekPreview() {
 
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="eyebrow text-sport-foreground">
-              {inPublishedWeek
-                ? isPersonalized
-                  ? lang === "fr"
-                    ? "Votre horaire officiel"
-                    : "Your official schedule"
-                  : lang === "fr"
-                    ? "Horaire officiel de la semaine"
-                    : "Official weekly schedule"
-                : lang === "fr"
-                  ? "Horaires"
-                  : "Schedules"}
-            </p>
+
             <h2 className="mt-2 font-display text-[clamp(2.4rem,5.2vw,4.8rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.03em]">
               {isPersonalized
                 ? lang === "fr"
@@ -130,19 +101,7 @@ export function OfficialWeekPreview() {
                   ? "Cette semaine à AHM Verdun"
                   : "This week at AHM Verdun"}
             </h2>
-            <p className="mt-2 max-w-2xl text-sm text-navy-foreground/70">
-              {inPublishedWeek
-                ? isPersonalized
-                  ? lang === "fr"
-                    ? `Votre catégorie mémorisée (${l(savedTeam.name)}) est priorisée à partir du PDF hebdomadaire AHMV publié le ${publishedLabel}.`
-                    : `Your saved category (${l(savedTeam.name)}) is prioritized from the AHMV weekly PDF published ${publishedLabel}.`
-                  : lang === "fr"
-                    ? `Données transcrites du PDF hebdomadaire AHMV publié le ${publishedLabel}.`
-                    : `Data transcribed from the AHMV weekly PDF published ${publishedLabel}.`
-                : lang === "fr"
-                  ? "Consultez la page Horaires pour accéder aux sources officielles les plus récentes."
-                  : "Open the Schedules page for the latest official sources."}
-            </p>
+
           </div>
 
           <Button asChild variant="outline-light">
@@ -202,20 +161,8 @@ export function OfficialWeekPreview() {
 
                   <h3 className="mt-4 font-display text-xl font-bold uppercase">{item.group}</h3>
                   <p className="mt-1 text-sm font-semibold text-sport-foreground">{item.activity}</p>
-                  <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="flex min-w-0 items-center gap-1.5 text-sm text-white/52">
-                      <MapPin className="size-3.5 shrink-0" aria-hidden />
-                      <span className="truncate">{item.venue}</span>
-                    </p>
-                    <a
-                      href={mapsDirectionsUrl(arenaDirectionsTargetForVenue(item.venue))}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold uppercase tracking-wide text-sport-foreground hover:underline"
-                    >
-                      {lang === "fr" ? "Itinéraire" : "Directions"} <ExternalLink className="size-3" />
-                    </a>
-                  </div>
+
+                  <div className="mt-4"><ArenaTripCard venue={item.venue} /></div>
                 </article>
               );
             })}

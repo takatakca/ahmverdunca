@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference } from "@/lib/browser-preferences";
 import { Link } from "@tanstack/react-router";
 import {
   ChevronDown,
@@ -148,7 +149,7 @@ function sourceIcon(network: Network) {
 
 function readSavedFilters(): SavedFilters {
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(FILTER_KEY) ?? "{}") as Partial<SavedFilters>;
+    const parsed = JSON.parse(readBrowserPreference(FILTER_KEY) ?? "{}") as Partial<SavedFilters>;
     return {
       team: typeof parsed.team === "string" ? parsed.team : DEFAULT_FILTERS.team,
       association:
@@ -215,7 +216,7 @@ export function NewsCentre() {
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(FILTER_KEY, JSON.stringify(filters));
+    writeBrowserPreference(FILTER_KEY, JSON.stringify(filters));
   }, [filters, hydrated]);
 
   useEffect(() => {

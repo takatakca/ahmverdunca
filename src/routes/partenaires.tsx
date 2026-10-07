@@ -1,3 +1,4 @@
+import { SponsorshipInquiry } from "@/components/sponsorship-inquiry";
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -98,14 +99,15 @@ function PartnersPage() {
         }
         actions={
           <Button asChild variant="sport" size="lg">
-            <Link to="/contact">
-              {lang === "fr" ? "Demander les disponibilités" : "Ask about availability"} <ArrowRight className="size-4" />
-            </Link>
+            <a href="#commandite">
+              {lang === "fr" ? "Présenter ma commandite" : "Propose a sponsorship"} <ArrowRight className="size-4" />
+            </a>
           </Button>
         }
       />
 
       <div className="container-site space-y-12 py-8 md:py-12">
+        <SponsorshipInquiry />
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
           <div className="technical-grid p-7 md:p-10">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Hockey · Familles · Verdun" : "Hockey · Families · Verdun"}</p>
@@ -127,7 +129,7 @@ function PartnersPage() {
               </p>
             </div>
             <Button asChild variant="sport" size="lg" className="mt-8">
-              <Link to="/contact">{lang === "fr" ? "Parler commandite" : "Discuss sponsorship"} <ArrowRight className="size-4" /></Link>
+              <a href="#commandite">{lang === "fr" ? "Parler commandite" : "Discuss sponsorship"} <ArrowRight className="size-4" /></a>
             </Button>
           </div>
         </section>
@@ -213,9 +215,9 @@ function PartnersPage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Button asChild variant="sport" size="lg">
-                <Link to="/contact">
-                  {lang === "fr" ? "Envoyer une demande" : "Send an inquiry"} <ArrowRight className="size-4" />
-                </Link>
+                <a href="#commandite">
+                  {lang === "fr" ? "Préparer une demande" : "Prepare an inquiry"} <ArrowRight className="size-4" />
+                </a>
               </Button>
               <Button asChild variant="outline-light" size="lg">
                 <Link to="/">{lang === "fr" ? "Voir le portail" : "View the portal"}</Link>

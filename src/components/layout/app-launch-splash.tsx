@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference } from "@/lib/browser-preferences";
 import { useEffect, useRef, useState } from "react";
 import { AHMV_LOGO_URL } from "@/components/layout/logo-slot";
 
@@ -22,9 +23,9 @@ export function AppLaunchSplash() {
 
   useEffect(() => {
     if (!isStandaloneApp()) return;
-    if (window.sessionStorage.getItem(SESSION_KEY) === "1") return;
+    if (readBrowserPreference(SESSION_KEY, "sessionStorage") === "1") return;
 
-    window.sessionStorage.setItem(SESSION_KEY, "1");
+    writeBrowserPreference(SESSION_KEY, "1", "sessionStorage");
     setVisible(true);
 
     const previousOverflow = document.body.style.overflow;

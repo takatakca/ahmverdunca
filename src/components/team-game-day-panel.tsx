@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference, removeBrowserPreference } from "@/lib/browser-preferences";
 import { useEffect, useState } from "react";
 import { CalendarDays, Check, MapPin, ShieldCheck, Trophy } from "lucide-react";
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
@@ -25,7 +26,7 @@ export function TeamGameDayPanel({
 
   useEffect(() => {
     try {
-      const value = JSON.parse(window.localStorage.getItem(storageKey(team.legacyScheduleTeamId)) || "[]");
+      const value = JSON.parse(readBrowserPreference(storageKey(team.legacyScheduleTeamId)) || "[]");
       setChecks(Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : []);
     } catch {
       setChecks([]);
@@ -37,7 +38,7 @@ export function TeamGameDayPanel({
       const next = current.includes(key)
         ? current.filter((item) => item !== key)
         : [...current, key];
-      window.localStorage.setItem(storageKey(team.legacyScheduleTeamId), JSON.stringify(next));
+      writeBrowserPreference(storageKey(team.legacyScheduleTeamId), JSON.stringify(next));
       return next;
     });
   };
@@ -147,7 +148,7 @@ export function TeamGameDayPanel({
           <button
             type="button"
             onClick={() => {
-              window.localStorage.removeItem(storageKey(team.legacyScheduleTeamId));
+              removeBrowserPreference(storageKey(team.legacyScheduleTeamId));
               setChecks([]);
             }}
             className="mt-4 text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground hover:text-sport"

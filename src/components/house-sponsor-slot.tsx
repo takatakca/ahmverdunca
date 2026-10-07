@@ -210,7 +210,7 @@ function HouseSponsorInventory({
         </div>
       )}
 
-      <div
+      {creatives.length === 0 && <div
         className={
           compact
             ? "scrollbar-none flex snap-x snap-mandatory gap-px overflow-x-auto overscroll-x-contain bg-white/10 sm:grid sm:grid-cols-2 sm:overflow-visible"
@@ -291,7 +291,7 @@ function HouseSponsorInventory({
             </div>
           );
         })}
-      </div>
+      </div>}
 
       <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-2">
         <p className="text-[8px] font-semibold uppercase tracking-[0.13em] text-white/36">

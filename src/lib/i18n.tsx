@@ -1,3 +1,4 @@
+import { readBrowserPreference, writeBrowserPreference } from "./browser-preferences";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { translations, type TranslationKey } from "./translations";
 
@@ -21,7 +22,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("fr");
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(STORAGE_KEY);
+    const stored = readBrowserPreference(STORAGE_KEY);
     if (stored === "en" || stored === "fr") setLangState(stored);
   }, []);
 
@@ -31,7 +32,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
-    window.localStorage.setItem(STORAGE_KEY, l);
+    writeBrowserPreference(STORAGE_KEY, l);
   }, []);
 
   const value = useMemo<I18nValue>(
