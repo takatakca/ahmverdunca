@@ -1,14 +1,12 @@
 import { Link } from "@tanstack/react-router";
-import { ArrowRight, CalendarDays, Download, ExternalLink, Facebook, Instagram, MapPin, ShieldCheck, Trophy, Users } from "lucide-react";
+import { ArrowRight, Download, ExternalLink, Facebook, Instagram } from "lucide-react";
 import { MAIN_NAV, MORE_NAV, EXTERNAL_LINKS, SITE } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { usePreferredTeam } from "@/lib/team-preference";
-import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { NewsletterInterest } from "@/components/newsletter-interest";
-import { PARENT_PREMIUM } from "@/lib/parent-premium";
 import { usePwaInstalled } from "@/lib/use-pwa-installed";
 
 export function SiteFooter() {
@@ -26,32 +24,8 @@ export function SiteFooter() {
         Verdun
       </div>
 
-      <div className="relative border-y border-navy-foreground/12 border-t-2 border-t-sport">
-        <div className="container-site grid md:grid-cols-[0.36fr_1.64fr]">
-          <div className="flex items-center border-b border-navy-foreground/12 py-6 md:border-b-0 md:border-r md:py-7 md:pr-8">
-            <span className="font-display text-[4.6rem] font-extrabold leading-none tracking-[-0.07em] text-sport-foreground sm:text-[5.5rem]">125</span>
-          </div>
-          <div className="flex flex-col justify-center gap-5 py-6 md:py-7 md:pl-8 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Hockey à Verdun · mémoire collective" : "Hockey in Verdun · shared heritage"}
-              </p>
-              <p className="mt-2 max-w-3xl font-display text-2xl font-extrabold uppercase leading-[0.92] sm:text-3xl">
-                {lang === "fr" ? "125 ans d’histoire. Des générations à raconter." : "125 years of history. Generations of stories."}
-              </p>
-            </div>
-            <a
-              href="/#archives-hockey"
-              className="premium-control inline-flex min-h-12 shrink-0 items-center justify-between gap-4 border border-navy-foreground/20 px-5 font-display text-sm font-bold uppercase tracking-[0.12em] text-white hover:border-sport"
-            >
-              {lang === "fr" ? "Voir les archives" : "Explore the archive"} <ArrowRight className="size-4 text-sport-foreground" />
-            </a>
-          </div>
-        </div>
-      </div>
+      <div className="relative border-t-2 border-t-sport" />
 
-      <div className="relative border-b border-navy-foreground/12">
-        <div className="container-site py-6 md:py-7">
           <div className="grid gap-3 lg:grid-cols-[1.15fr_0.85fr]">
             <div className="border border-navy-foreground/12 bg-white/[0.025] p-5 md:p-6">
               <p className="eyebrow text-sport-foreground">
@@ -150,37 +124,28 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="container-site relative grid gap-0 py-0 lg:grid-cols-[1.25fr_0.75fr_0.75fr_0.9fr]">
-        <div className="border-b border-navy-foreground/10 py-8 lg:border-b-0 lg:border-r lg:py-10 lg:pr-10">
-          <div className="flex items-center gap-4">
-            <LogoSlot size="lg" className="size-24 sm:size-28" />
+      <div className="container-site relative grid gap-0 py-0 lg:grid-cols-[1.1fr_0.8fr_0.8fr_0.9fr]">
+        <div className="border-b border-navy-foreground/10 py-6 lg:border-b-0 lg:border-r lg:py-8 lg:pr-8">
+          <div className="flex items-center gap-3">
+            <LogoSlot size="lg" className="size-16 sm:size-20" />
             <div>
-              <p className="font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.035em]">AHM Verdun</p>
+              <p className="font-display text-3xl font-extrabold uppercase leading-[0.9] tracking-[-0.035em]">AHM Verdun</p>
               <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-navy-foreground/45">
                 {l(SITE.name)}
               </p>
             </div>
           </div>
-          <p className="mt-6 max-w-sm text-sm leading-relaxed text-navy-foreground/58">{t("footer.tagline")}</p>
+          <p className="mt-4 max-w-sm text-sm leading-relaxed text-navy-foreground/58">{t("footer.tagline")}</p>
           <button
             type="button"
             onClick={() => window.dispatchEvent(new CustomEvent("ahmv:install-open"))}
-            className="premium-control mt-5 inline-flex min-h-11 items-center gap-2 border border-sport/35 px-4 text-[10px] font-bold uppercase tracking-[0.08em] text-white hover:bg-white/[0.04]"
+            className="premium-control mt-4 inline-flex min-h-10 items-center gap-2 border border-sport/35 px-3 text-[9px] font-bold uppercase tracking-[0.08em] text-white hover:bg-white/[0.04]"
             aria-haspopup="dialog"
           >
             <Download className="size-4 text-sport-foreground" aria-hidden />
             {installed ? (lang === "fr" ? "Site déjà installé" : "Site already installed") : (lang === "fr" ? "Installer AHM Verdun" : "Install AHM Verdun")}
           </button>
-          <div className="mt-7 grid grid-cols-2 gap-px border border-navy-foreground/10 bg-navy-foreground/10">
-            <div className="bg-competition p-4">
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-navy-foreground/40">{lang === "fr" ? "Territoire" : "Home"}</p>
-              <p className="mt-1 font-display text-xl font-bold uppercase">{SITE.city}</p>
-            </div>
-            <div className="bg-competition p-4">
-              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-navy-foreground/40">{lang === "fr" ? "Saison" : "Season"}</p>
-              <p className="mt-1 font-display text-xl font-bold uppercase">{SITE.season}</p>
-            </div>
-          </div>
+          <p className="mt-4 text-[10px] font-bold uppercase tracking-[0.15em] text-navy-foreground/38">{SITE.city}</p>
           {showPhone && (
             <a href={`tel:${phoneE164}`} className="mt-5 inline-block font-display text-xl font-bold text-navy-foreground hover:text-sport-foreground">
               {phoneDisplay}
@@ -236,9 +201,19 @@ export function SiteFooter() {
               {t("footer.legal")}
             </Link>
           </div>
-          <div className="mt-7">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-navy-foreground/35">{lang === "fr" ? "Langue" : "Language"}</p>
-            <LangSwitch />
+          <div className="mt-6 flex items-end justify-between gap-4">
+            <div>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-navy-foreground/35">{lang === "fr" ? "Langue" : "Language"}</p>
+              <LangSwitch />
+            </div>
+            <div className="flex gap-2">
+              <a href={EXTERNAL_LINKS.facebook} target="_blank" rel="noopener noreferrer" className="premium-control flex size-9 items-center justify-center border border-white/14 text-white hover:border-sport" aria-label="Facebook AHM Verdun">
+                <Facebook className="size-4" />
+              </a>
+              <a href={EXTERNAL_LINKS.instagram} target="_blank" rel="noopener noreferrer" className="premium-control flex size-9 items-center justify-center border border-white/14 text-white hover:border-sport" aria-label="Instagram AHM Verdun">
+                <Instagram className="size-4" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

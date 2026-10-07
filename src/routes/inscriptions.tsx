@@ -40,14 +40,14 @@ function RegistrationPage() {
   const registrationPoster = REGISTRATION_POSTER;
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
-        eyebrow={t("common.season")}
+        eyebrow={lang === "fr" ? "Inscriptions hockey" : "Hockey registration"}
         title={t("reg.title")}
         description={
           lang === "fr"
-            ? "Tout ce qu'il faut pour comprendre le parcours, puis un accès direct au système officiel d'inscription hockey."
-            : "Everything you need to understand the process, then direct access to the official hockey registration system."
+            ? "Choisissez la bonne catégorie, préparez les informations utiles et continuez vers l’inscription."
+            : "Choose the right category, get the key information and continue to registration."
         }
         actions={
           <Button asChild variant="sport" size="lg">
@@ -58,7 +58,7 @@ function RegistrationPage() {
         }
       />
 
-      <div className="container-site space-y-12 py-8 md:py-12">
+      <div className="container-site space-y-8 py-7 md:space-y-10 md:py-10">
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
           <MediaZoomTrigger
             items={[registrationPoster]}
@@ -103,17 +103,6 @@ function RegistrationPage() {
             </a>
           </div>
         </section>
-        <div className="broadcast-rail border border-white/12 bg-competition p-5 pl-7 text-white">
-          <p className="eyebrow text-sport-foreground">
-            {lang === "fr" ? "Parcours officiel" : "Official pathway"}
-          </p>
-          <p className="mt-2 text-sm text-white/62">
-            {lang === "fr"
-              ? "AHM Verdun explique le parcours ici, puis l'inscription elle-même se poursuit sur Spordle, la plateforme officielle déjà utilisée par l'association."
-              : "AHM Verdun explains the process here, then registration continues on Spordle, the official platform already used by the association."}
-          </p>
-        </div>
-
         <HouseSponsorSlot placement="registration-path" count={1} compact />
 
         <section aria-labelledby="registration-steps-title">
@@ -123,9 +112,10 @@ function RegistrationPage() {
             title={lang === "fr" ? "Simple du début à la fin" : "Simple from start to finish"}
             description={
               lang === "fr"
-                ? "Le site vous prépare, puis Spordle prend le relais pour l'inscription hockey officielle."
-                : "This site prepares you, then Spordle takes over for the official hockey registration."
+                ? "Trois étapes claires avant de poursuivre l’inscription."
+                : "Three clear steps before continuing registration."
             }
+            className="border-white/12 [&_h2]:text-white [&_p]:text-white/55"
           />
           <div className="grid gap-4 md:grid-cols-3">
             {[
@@ -154,7 +144,7 @@ function RegistrationPage() {
                 enText: "Documents, payments and confirmations stay in the Spordle process.",
               },
             ].map(({ Icon, number, frTitle, enTitle, frText, enText }) => (
-              <div key={number} className="interactive-surface relative overflow-hidden border border-white/12 bg-competition p-6 text-white">
+              <div key={number} className="interactive-surface relative overflow-hidden border border-white/12 bg-competition p-5 text-white">
                 <span className="absolute right-4 top-2 font-display text-5xl font-extrabold text-white/5">
                   {number}
                 </span>
@@ -168,43 +158,21 @@ function RegistrationPage() {
           </div>
         </section>
 
-        <section className="competition-panel relative overflow-hidden border border-navy-foreground/10 p-6 text-navy-foreground md:p-8">
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Inscription hockey officielle" : "Official hockey registration"}
-              </p>
-              <h2 className="heading-section mt-2">
-                {lang === "fr" ? "Prêt? Continuez sur Spordle" : "Ready? Continue on Spordle"}
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm text-navy-foreground/75">
-                {lang === "fr"
-                  ? "Les renseignements d'inscription, documents requis et étapes officielles restent dans Spordle. AHM Verdun demeure l'autorité pour ses règles et informations hockey."
-                  : "Registration information, required documents and official steps remain in Spordle. AHM Verdun remains the authority for its hockey rules and information."}
-              </p>
-            </div>
-            <Button asChild variant="sport" size="lg">
-              <a href={EXTERNAL_LINKS.spordleRegister} target="_blank" rel="noopener noreferrer">
-                {t("reg.cta")} <ExternalLink className="size-4" />
-              </a>
-            </Button>
-          </div>
-        </section>
-
         <section>
           <SectionHeading
             eyebrow={lang === "fr" ? "Choisir sa catégorie" : "Choose a category"}
             title={t("teams.title")}
             description={
               lang === "fr"
-                ? "Accédez rapidement à la page de votre catégorie pour voir les informations publiques disponibles."
-                : "Quickly open your category page to see the available public information."
+                ? "Ouvrez la catégorie qui correspond à votre enfant."
+                : "Open the category that matches your child."
             }
             action={
-              <Button asChild variant="outline" size="sm">
+              <Button asChild variant="outline-light" size="sm">
                 <Link to="/equipes">{t("common.seeAll")}</Link>
               </Button>
             }
+            className="border-white/12 [&_h2]:text-white [&_p]:text-white/55"
           />
           <div className="scrollbar-none -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-3 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
             {CURRENT_TEAMS.map((team) => {
@@ -261,6 +229,6 @@ function RegistrationPage() {
           </Button>
         </section>
       </div>
-    </>
+    </div>
   );
 }
