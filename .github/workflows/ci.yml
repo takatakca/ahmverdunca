@@ -46,6 +46,9 @@ jobs:
       - name: Validate deployment concurrency
         run: bun scripts/validate-deployment-concurrency.ts
 
+      - name: Validate encrypted read-only hosting inventory boundary
+        run: bun run test:hosting-inventory
+
       - name: Validate production configuration inventory
         run: bun run check:production-config
 
