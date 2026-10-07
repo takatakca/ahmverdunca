@@ -787,27 +787,6 @@ function Home() {
 
       <RevenueActionPanel />
 
-      {/* Final action */}
-      <section className="bg-sport text-sport-foreground">
-        <div className="container-site flex flex-col gap-6 py-9 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="eyebrow text-sport-foreground/70">{lang === "fr" ? "Votre prochaine étape" : "Your next step"}</p>
-            <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-none md:text-5xl">
-              {lang === "fr" ? "Trouver mon horaire" : "Find my schedule"}
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
-            <Button asChild variant="outline-light" size="lg" className="border-white/45">
-              <Link to="/equipes"><Users className="size-4" /> {lang === "fr" ? "Les équipes" : "Teams"}</Link>
-            </Button>
-            <Button asChild variant="secondary" size="lg">
-              <Link to="/horaires" search={preferredTeam ? { team: preferredTeam } : {}}>
-                <CalendarDays className="size-5" /> {lang === "fr" ? "Voir les horaires" : "View schedules"}
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

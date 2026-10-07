@@ -1,18 +1,21 @@
-import { CalendarDays, ChevronRight, Trophy, Users } from "lucide-react";
+import { ChevronRight, MapPin, Trophy, Users } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import {
   officialTeamResultsUrl,
   publicTeamHubUrl,
-  publicTeamScheduleUrl,
 } from "@/data/team-directory";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
+import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
+import { montrealDateKey } from "@/lib/montreal-date";
 
 export function HomeParentCommand() {
   const { lang } = useI18n();
   const { selectedTeams } = usePreferredTeam();
   const introMedia = uploadedAhmvMediaById(52);
+  const today = montrealDateKey();
   return (
     <section className="border-y border-white/10 bg-competition py-7 text-white md:py-10">
       <div className="container-site">
@@ -32,6 +35,15 @@ export function HomeParentCommand() {
           <div className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
             {selectedTeams.map((team) => {
               const visual = teamVisualForCategory(team.categorySlug);
+              const nextActivity = OFFICIAL_WEEK_ACTIVITIES.find(
+                (item) => item.date >= today && officialWeekActivityMatchesPublicTeam(item, team),
+              );
+              const nextDay = nextActivity
+                ? new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", { weekday: "short" })
+                    .format(new Date(`${nextActivity.date}T12:00:00-04:00`))
+                    .replace(".", "")
+                    .toUpperCase()
+                : undefined;
               return (
                 <article
                   key={team.legacyScheduleTeamId}
@@ -63,19 +75,28 @@ export function HomeParentCommand() {
                       aria-hidden
                     />
                   </a>
-                  <div className="grid grid-cols-3 gap-px border-t border-white/10 bg-white/10">
+                  {nextActivity && (
+                    <div className="grid grid-cols-[4.5rem_minmax(0,1fr)] items-center gap-3 border-t border-white/10 bg-navy px-4 py-3">
+                      <div>
+                        <p className="font-display text-xl font-extrabold uppercase text-sport-foreground">{nextDay}</p>
+                        <p className="text-[9px] font-bold uppercase tracking-[0.1em] text-white/42">{nextActivity.start}</p>
+                      </div>
+                      <div className="min-w-0 border-l border-white/10 pl-3">
+                        <p className="truncate text-xs font-semibold uppercase tracking-[0.06em] text-white">{nextActivity.activity}</p>
+                        <p className="mt-1 flex items-center gap-1 truncate text-[10px] text-white/48">
+                          <MapPin className="size-3 shrink-0 text-sport-foreground" />
+                          {nextActivity.venue}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 gap-px border-t border-white/10 bg-white/10">
                     {[
                       {
                         href: publicTeamHubUrl(team),
                         icon: Users,
-                        fr: "Mini-site",
-                        en: "Team hub",
-                      },
-                      {
-                        href: publicTeamScheduleUrl(team),
-                        icon: CalendarDays,
-                        fr: "Horaire",
-                        en: "Schedule",
+                        fr: "Mon équipe",
+                        en: "My team",
                       },
                       {
                         href: officialTeamResultsUrl(team),
@@ -90,7 +111,7 @@ export function HomeParentCommand() {
                         href={href}
                         target={external ? "_blank" : undefined}
                         rel={external ? "noopener noreferrer" : undefined}
-                        className="flex min-h-16 flex-col items-center justify-center gap-1.5 bg-navy-deep text-xs font-semibold hover:bg-navy"
+                        className="flex min-h-14 items-center justify-center gap-2 bg-navy-deep text-xs font-semibold hover:bg-navy"
                       >
                         <Icon className="size-4 text-sport-foreground" />
                         {lang === "fr" ? fr : en}
