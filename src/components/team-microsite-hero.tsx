@@ -181,25 +181,6 @@ export function TeamMicrositeHero({
       }),
     }));
 
-  const gameRows: CalendarRow[] = [
-    {
-      dayFr: "HORAIRE",
-      dayEn: "SCHEDULE",
-      time: "—",
-      noteFr: "Prochaine partie · source officielle",
-      noteEn: "Next game · official source",
-      href: scheduleUrl,
-    },
-    {
-      dayFr: "SCORES",
-      dayEn: "SCORES",
-      time: "—",
-      noteFr: "Résultats et classement officiels",
-      noteEn: "Official results and standings",
-      href: resultsUrl,
-    },
-  ];
-
   const practiceRows = publishedPracticeRows;
 
   return (
@@ -234,7 +215,7 @@ export function TeamMicrositeHero({
                 {team.level}
               </span>
               <span className="border border-white/20 bg-black/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/78 backdrop-blur">
-                {lang === "fr" ? "Mini-site équipe" : "Team mini-site"}
+                {lang === "fr" ? "Équipe AHMV" : "AHMV team"}
               </span>
             </div>
 
@@ -244,8 +225,8 @@ export function TeamMicrositeHero({
 
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/66">
               {lang === "fr"
-                ? "Votre point d’entrée pour les parties, pratiques, nouvelles, photos, réseaux sociaux et services de l’équipe."
-                : "Your starting point for games, practices, news, photos, social channels and team services."}
+                ? "Parties, pratiques, nouvelles, photos et accès utiles de l’équipe, au même endroit."
+                : "Games, practices, news, photos and useful team links, all in one place."}
             </p>
 
             <div className="mt-5 flex flex-wrap gap-2">
@@ -258,69 +239,69 @@ export function TeamMicrositeHero({
               </a>
             </div>
 
-            <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.15em] text-white/35">
-              {lang === "fr"
-                ? "Photo d’ambiance AHMV de la catégorie · Horaires et résultats : liens officiels."
-                : "AHMV category photo for context · Official links for schedules and results."}
-            </p>
           </div>
         </div>
 
         <div className="flex flex-col justify-center gap-3 border-t border-white/12 p-4 sm:p-5 lg:border-l lg:border-t-0 lg:p-6">
           <div className="mb-1 flex items-center justify-between gap-3">
             <div>
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Parties & pratiques" : "Games & practices"}</p>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "En un coup d’œil" : "At a glance"}</p>
               <p className="mt-1 text-xs leading-relaxed text-white/48">
                 {lang === "fr"
-                  ? "Les données publiées d’abord; la source officielle lorsque le détail exact n’est pas disponible ici."
-                  : "Published data first; the official source whenever exact detail is not available here."}
+                  ? "Pratiques publiées et accès direct au prochain match."
+                  : "Published practices and direct access to the next game."}
               </p>
             </div>
             <span className="border border-sport/30 bg-sport/10 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
-              {publishedPracticeRows.length > 0 ? (lang === "fr" ? "PUBLIC + LIENS OFFICIELS" : "PUBLIC + OFFICIAL LINKS") : (lang === "fr" ? "LIENS OFFICIELS" : "OFFICIAL LINKS")}
+              {publishedPracticeRows.length > 0 ? (lang === "fr" ? "À JOUR" : "UPDATED") : "AHMV"}
             </span>
           </div>
 
           <MiniCalendar
-            title={lang === "fr" ? "Parties" : "Games"}
-            eyebrow={lang === "fr" ? "Source officielle" : "Official source"}
-            rows={gameRows}
-            team={team}
-            kind="game"
-            lang={lang}
-            sourceHref={resultsUrl}
-          />
-
-          <MiniCalendar
             title={lang === "fr" ? "Pratiques" : "Practices"}
-            eyebrow={lang === "fr" ? "Grille AHMV publiée" : "Published AHMV grid"}
+            eyebrow={lang === "fr" ? "Cette semaine" : "This week"}
             rows={practiceRows}
             team={team}
             kind="practice"
             lang={lang}
             sourceHref={publishedPracticeRows.length > 0 ? OFFICIAL_WEEK_META.sourceUrl : scheduleUrl}
           />
+
+          <div className="grid gap-2 sm:grid-cols-2">
+            <a
+              href="#match-center"
+              className="group flex min-h-20 items-center justify-between border border-white/12 bg-white/[0.04] px-4 text-white transition-colors hover:bg-white/[0.075]"
+            >
+              <span>
+                <span className="block text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
+                  {lang === "fr" ? "Prochain match" : "Next game"}
+                </span>
+                <span className="mt-1 block font-display text-xl font-extrabold uppercase">
+                  {lang === "fr" ? "Voir le duel" : "View matchup"}
+                </span>
+              </span>
+              <Trophy className="size-5 text-sport-foreground" />
+            </a>
+            <a
+              href={resultsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex min-h-20 items-center justify-between border border-white/12 bg-white/[0.04] px-4 text-white transition-colors hover:bg-white/[0.075]"
+            >
+              <span>
+                <span className="block text-[8px] font-bold uppercase tracking-[0.15em] text-sport-foreground">
+                  {lang === "fr" ? "Résultats" : "Results"}
+                </span>
+                <span className="mt-1 block font-display text-xl font-extrabold uppercase">
+                  {lang === "fr" ? "Scores & classement" : "Scores & standings"}
+                </span>
+              </span>
+              <ExternalLink className="size-4 text-sport-foreground" />
+            </a>
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-px border-t border-white/10 bg-white/10 sm:grid-cols-3">
-        {[
-          { icon: Trophy, fr: "Résultats", en: "Results", href: resultsUrl },
-          { icon: MapPin, fr: "Arénas", en: "Arenas", href: "/arenas" },
-          { icon: CalendarDays, fr: "Horaire officiel", en: "Official schedule", href: scheduleUrl },
-        ].map(({ icon: Icon, fr, en, href }) => (
-          <a
-            key={fr}
-            href={href}
-            target={href.startsWith("http") ? "_blank" : undefined}
-            rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
-            className="group flex min-h-14 items-center justify-between bg-competition px-4 text-[9px] font-bold uppercase tracking-[0.13em] text-white/66 hover:bg-white/[0.045] hover:text-white"
-          >
-            <span className="flex items-center gap-2"><Icon className="size-4 text-sport-foreground" />{lang === "fr" ? fr : en}</span>
-            <ChevronRight className="size-3.5 text-sport-foreground transition-transform group-hover:translate-x-0.5" />
-          </a>
-        ))}
-      </div>
     </section>
   );
 }
