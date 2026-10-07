@@ -41,16 +41,16 @@ export function MobileQuickNav() {
             aria-current={active ? "page" : undefined}
             className={
               primary
-                ? "relative flex min-h-16 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 px-1 text-center"
+                ? `relative flex min-h-16 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 px-1 text-center transition-[color,transform] duration-150 active:scale-[.95] ${active ? "text-sport-foreground" : "text-white/58"}`
                 : `relative flex min-h-16 min-w-0 touch-manipulation flex-col items-center justify-center gap-1 px-1 text-center text-[9px] font-bold uppercase tracking-[0.06em] transition-[color,transform] duration-150 active:scale-[.95] ${active ? "text-sport-foreground" : "text-white/52"}`
             }
           >
             {primary ? (
               <>
-                <span className={`absolute -top-4 flex size-12 items-center justify-center border-4 border-navy-deep bg-sport text-sport-foreground shadow-[0_12px_28px_-12px_rgba(7,16,43,0.6)] transition-transform active:scale-[.94] ${active ? "scale-[1.04]" : ""}`}>
+                <span className={`absolute -top-4 flex size-12 items-center justify-center border-4 border-navy-deep shadow-[0_12px_28px_-12px_rgba(7,16,43,0.6)] transition-[background-color,color,transform] active:scale-[.94] ${active ? "scale-[1.04] bg-sport text-sport-foreground" : "bg-navy text-white/70 ring-1 ring-inset ring-white/14"}`}>
                   <Icon className="size-5" aria-hidden />
                 </span>
-                <span className="mt-7 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] text-sport-foreground">
+                <span className={`mt-7 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] ${active ? "text-sport-foreground" : "text-white/58"}`}>
                   {label}
                 </span>
               </>
