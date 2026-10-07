@@ -1,7 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Download, Mail, Send } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { SITE } from "@/lib/site";
 
 const OPTIONS = [
   ["arena", "Affichage dans l’aréna", "Arena signage"],
@@ -29,7 +28,7 @@ export function SponsorshipInquiry() {
   const [brief, setBrief] = useState("");
   const [error, setError] = useState("");
   const [editing, setEditing] = useState(false);
-  const email = import.meta.env["VITE_SPONSORSHIP_EMAIL"]?.trim() || SITE.operationsEmail;
+  const email = import.meta.env["VITE_SPONSORSHIP_EMAIL"]?.trim() || "ahmverdun.ca@gmail.com";
   const inputClass =
     "mt-2 min-h-12 w-full rounded-xl border border-white/15 bg-navy-deep px-3 py-2 text-sm text-white outline-none focus:border-sport focus:ring-2 focus:ring-sport/20";
   const field = (name: string, label: string, type = "text", required = false) => (
