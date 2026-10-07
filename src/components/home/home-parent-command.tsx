@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { ChevronRight, MapPin, Trophy, Users } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
@@ -23,13 +24,13 @@ export function HomeParentCommand() {
           <h2 className="font-display text-3xl font-extrabold uppercase tracking-tight md:text-4xl">
             {lang === "fr" ? "Mes équipes" : "My teams"}
           </h2>
-          <a
-            href="#mon-equipe"
+          <Link
+            to="/equipes"
             className="inline-flex min-h-11 items-center gap-2 text-xs font-semibold text-sport-foreground"
           >
-            {lang === "fr" ? "Ajouter une équipe" : "Add a team"}
+            {lang === "fr" ? "Gérer mes équipes" : "Manage my teams"}
             <ChevronRight className="size-4" />
-          </a>
+          </Link>
         </div>
         {selectedTeams.length ? (
           <div className="scrollbar-none flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2">
@@ -123,8 +124,8 @@ export function HomeParentCommand() {
             })}
           </div>
         ) : (
-          <a
-            href="#mon-equipe"
+          <Link
+            to="/equipes"
             className="group relative flex min-h-48 items-end overflow-hidden rounded-2xl border border-white/12 p-5"
           >
             {introMedia && (
@@ -142,7 +143,7 @@ export function HomeParentCommand() {
               </span>
               <ChevronRight className="size-6 text-sport-foreground" />
             </span>
-          </a>
+          </Link>
         )}
       </div>
     </section>
