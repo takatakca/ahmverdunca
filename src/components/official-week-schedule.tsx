@@ -369,17 +369,33 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
         )}
 
         {displayed.length > 0 && days.length > 1 && (
-          <div className="scrollbar-none mt-4 flex gap-2 overflow-x-auto pb-1">
-            {days.map((date) => (
-              <a
-                key={date}
-                href={`#schedule-day-${date}`}
-                className="premium-control inline-flex min-h-10 shrink-0 items-center gap-2 border border-white/12 bg-navy-deep px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white/68 hover:border-sport hover:text-white"
-              >
-                <span>{formatDate(date, lang, { weekday: "short" })}</span>
-                <span className="text-sport-foreground">{formatDate(date, lang, { day: "numeric" })}</span>
-              </a>
-            ))}
+          <div className="scrollbar-none mt-4 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1">
+            {days.map((date) => {
+              const activityCount = displayed.filter((item) => item.date === date).length;
+              const isToday = date === today;
+              return (
+                <a
+                  key={date}
+                  href={`#schedule-day-${date}`}
+                  className={cn(
+                    "premium-control flex min-w-[4.75rem] snap-start flex-col items-center justify-center border px-3 py-2.5 text-center transition-colors",
+                    isToday
+                      ? "border-sport bg-sport text-sport-foreground"
+                      : "border-white/12 bg-navy-deep text-white hover:border-sport",
+                  )}
+                >
+                  <span className={cn("text-[8px] font-bold uppercase tracking-[0.13em]", isToday ? "text-sport-foreground/75" : "text-white/42")}>
+                    {formatDate(date, lang, { weekday: "short" })}
+                  </span>
+                  <span className="mt-0.5 font-display text-2xl font-extrabold leading-none">
+                    {formatDate(date, lang, { day: "numeric" })}
+                  </span>
+                  <span className={cn("mt-1 text-[8px] font-bold uppercase tracking-[0.08em]", isToday ? "text-sport-foreground/70" : "text-white/38")}>
+                    {activityCount} {lang === "fr" ? (activityCount > 1 ? "activités" : "activité") : (activityCount > 1 ? "events" : "event")}
+                  </span>
+                </a>
+              );
+            })}
           </div>
         )}
 
@@ -390,7 +406,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
               : "No activity matches this search in this week's PDF."}
           </p>
         ) : (
-          <div className="mt-6 space-y-8">
+          <div className="mt-5 space-y-6">
             {days.map((date) => (
               <section key={date} id={`schedule-day-${date}`} className="scroll-mt-28">
                 <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/12 pb-2">
