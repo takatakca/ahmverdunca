@@ -24,7 +24,7 @@ export function OfficialSponsorShowcase({
   return (
     <div className={compact
       ? "grid gap-px overflow-hidden border border-white/12 bg-white/12 sm:grid-cols-2 lg:grid-cols-4"
-      : "grid gap-px overflow-hidden border border-navy/12 bg-navy/12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      : "grid gap-px overflow-hidden border border-white/12 bg-white/10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
     }>
       {SPONSORS.map((baseSponsor, index) => {
         const resourceKey = sponsorResourceKey(baseSponsor.name);
@@ -46,7 +46,7 @@ export function OfficialSponsorShowcase({
             <div className="flex items-start justify-between gap-4">
               <div className={compact
                 ? "flex min-h-16 min-w-0 flex-1 items-center border border-white/12 bg-white/[0.035] px-4 py-3"
-                : "flex min-h-20 min-w-0 flex-1 items-center border border-navy/10 bg-ice/55 px-4 py-3"
+                : "flex min-h-20 min-w-0 flex-1 items-center border border-white/12 bg-white/[0.035] px-4 py-3"
               }>
                 {hasOfficialLogo ? (
                   <img
@@ -59,7 +59,7 @@ export function OfficialSponsorShowcase({
                 ) : (
                   <span className={compact
                     ? "font-display text-lg font-extrabold uppercase leading-[0.92] text-white"
-                    : "font-display text-xl font-extrabold uppercase leading-[0.92] text-navy"
+                    : "font-display text-xl font-extrabold uppercase leading-[0.92] text-white"
                   }>
                     {sponsor.name}
                   </span>
@@ -67,7 +67,7 @@ export function OfficialSponsorShowcase({
               </div>
               <span className={compact
                 ? "font-display text-sm font-bold text-white/22"
-                : "font-display text-sm font-bold text-navy/16"
+                : "font-display text-sm font-bold text-white/20"
               }>
                 {String(index + 1).padStart(2, "0")}
               </span>
@@ -79,7 +79,7 @@ export function OfficialSponsorShowcase({
               </p>
               <p className={compact
                 ? "mt-2 text-[10px] font-semibold leading-relaxed text-white/58"
-                : "mt-2 text-xs font-semibold leading-relaxed text-muted-foreground"
+                : "mt-2 text-xs font-semibold leading-relaxed text-white/52"
               }>
                 {hasOfficialLogo
                   ? (lang === "fr" ? "Un partenaire de l’association" : "An association partner")
@@ -91,7 +91,7 @@ export function OfficialSponsorShowcase({
 
             <div className={compact
               ? "mt-5 flex items-center justify-between border-t border-white/10 pt-3 text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground"
-              : "mt-6 flex items-center justify-between border-t border-navy/10 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport"
+              : "mt-6 flex items-center justify-between border-t border-white/10 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground"
             }>
               <span>
                 {sponsor.website
@@ -105,7 +105,7 @@ export function OfficialSponsorShowcase({
 
         const classes = compact
           ? "interactive-surface flex min-h-48 flex-col justify-between bg-competition p-4 transition-colors hover:bg-white/[0.05]"
-          : "interactive-surface flex min-h-64 flex-col justify-between bg-background p-5 transition-colors hover:bg-ice/55";
+          : "interactive-surface flex min-h-64 flex-col justify-between bg-competition p-5 text-white transition-colors hover:bg-white/[0.05]";
 
         const card = sponsor.website ? (
           <a
@@ -143,15 +143,15 @@ export function OfficialSponsorShowcase({
 export function SponsorIdentityNotice() {
   const { lang } = useI18n();
   return (
-    <div className="flex items-start gap-3 border border-navy/12 bg-ice p-4">
-      <span className="flex size-9 shrink-0 items-center justify-center bg-background">
+    <div className="flex items-start gap-3 border border-white/12 bg-competition p-4 text-white">
+      <span className="flex size-9 shrink-0 items-center justify-center border border-white/12 bg-white/[0.04]">
         <Handshake className="size-4 text-sport" aria-hidden />
       </span>
       <div>
-        <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-navy">
+        <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white">
           {lang === "fr" ? "Partenaires de l’association" : "Association partners"}
         </p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+        <p className="mt-1 text-xs leading-relaxed text-white/52">
           {lang === "fr"
             ? "Découvrez les partenaires d’AHM Verdun. Les liens disponibles vous donnent accès à leurs sites pour en savoir plus."
             : "Meet AHM Verdun’s partners. Use the available links to visit their websites and learn more."}

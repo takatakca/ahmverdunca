@@ -146,7 +146,7 @@ function MembershipPreviewPage() {
 
         <div className="flex justify-center">
           <Link to="/equipes" className="premium-control inline-flex min-h-12 items-center gap-2 bg-navy px-5 font-display text-xs font-extrabold uppercase tracking-[0.12em] text-white">
-            {lang === "fr" ? "Voir les mini-sites d’équipes" : "See team mini-sites"}
+            {lang === "fr" ? "Voir les équipes" : "See teams"}
           </Link>
         </div>
       </div>

@@ -50,7 +50,7 @@ function PartnersPage() {
   const placements = [
     { Icon: Building2, fr: "Accueil", en: "Homepage", frText: "Présence de marque dans une zone de visibilité dédiée.", enText: "Brand presence in a dedicated visibility area." },
     { Icon: CalendarDays, fr: "Horaires", en: "Schedules", frText: "À côté des horaires consultés par les familles.", enText: "Alongside the schedules families consult." },
-    { Icon: Users, fr: "Équipes", en: "Teams", frText: "Emplacements autour des catégories et mini-sites d’équipes.", enText: "Placements around categories and team mini-sites." },
+    { Icon: Users, fr: "Équipes", en: "Teams", frText: "Emplacements autour des catégories et pages d’équipes.", enText: "Placements around categories and team pages." },
     { Icon: GalleryHorizontal, fr: "Galerie", en: "Gallery", frText: "À côté des photos et des albums de l’association.", enText: "Alongside the association’s photos and albums." },
     { Icon: Newspaper, fr: "Nouvelles", en: "News", frText: "Des promotions identifiées, à côté des nouvelles de l’association.", enText: "Clearly labeled promotions alongside association news." },
     { Icon: MapPin, fr: "Arénas", en: "Arenas", frText: "Présence près des pages d’itinéraire et d’information pratique.", enText: "Presence near directions and practical-information pages." },
@@ -61,8 +61,8 @@ function PartnersPage() {
       Icon: Megaphone,
       fr: "Emplacement rotatif",
       en: "Rotating placement",
-      frText: "Votre annonce parmi les promotions présentées sur le portail.",
-      enText: "Your advertisement among the promotions featured on the portal.",
+      frText: "Votre annonce parmi les promotions présentées sur le site.",
+      enText: "Your advertisement among the promotions featured on the site.",
     },
     {
       Icon: Users,
@@ -116,8 +116,8 @@ function PartnersPage() {
             </p>
             <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/65">
               {lang === "fr"
-                ? "Le portail sert d’abord les parents. La commandite vient ensuite, dans des emplacements identifiés qui ne bloquent jamais l’information urgente, les horaires ou les itinéraires."
-                : "The portal serves parents first. Sponsorship comes afterward, in identified placements that never block urgent information, schedules or directions."}
+                ? "Les familles passent d’abord. La commandite reste clairement identifiée et ne bloque jamais l’information urgente, les horaires ou les itinéraires."
+                : "Families come first. Sponsorship stays clearly identified and never blocks urgent information, schedules or directions."}
             </p>
           </div>
           <div className="flex flex-col justify-between border-t border-white/12 p-7 lg:border-l lg:border-t-0 md:p-10">

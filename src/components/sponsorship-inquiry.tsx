@@ -13,7 +13,7 @@ const OPTIONS = [
   ["equipment", "Équipement et matériel sportif", "Sports equipment and supplies"],
   ["tournament", "Tournois et événements", "Tournaments and events"],
   ["scholarships", "Bourses et aide aux familles", "Scholarships and family assistance"],
-  ["web", "Site et mini-sites d’équipes", "Website and team hubs"],
+  ["web", "Site et pages d’équipes", "Website and team pages"],
   ["tablet", "Affichage numérique et tablettes", "Digital screens and tablets"],
   ["newsletter", "Infolettre", "Newsletter"],
   ["social", "Réseaux sociaux", "Social media"],
