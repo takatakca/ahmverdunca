@@ -27,7 +27,6 @@ import { ARENAS } from "@/data/arenas";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
 import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
-import { ScheduleFinder } from "@/components/schedule-finder";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { AhmvRealHockeyWall } from "@/components/home/ahmv-real-hockey-wall";
 import { AhmvCommunityFeed } from "@/components/home/ahmv-community-feed";
@@ -86,7 +85,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     links: canonicalLink("/"),
     meta: [
-      { title: "AHM Verdun — Le hockey commence ici | Saison 2026–2027" },
+      { title: "AHM Verdun — Le hockey commence ici" },
       { name: "description", content: "Horaires, équipes, inscriptions, nouvelles, arénas et ressources de l'Association du hockey mineur de Verdun." },
       { property: "og:title", content: "AHM Verdun — Le hockey commence ici" },
       { property: "og:description", content: "Horaires, équipes, inscriptions et nouvelles de l'Association du hockey mineur de Verdun." },
@@ -202,7 +201,7 @@ function Home() {
 
       {/* Current / important strip */}
       <section className="border-b border-white/10 bg-navy text-white">
-        <div className="container-site flex flex-col gap-3 py-3.5 sm:py-4 md:flex-row md:items-center md:justify-between">
+        <div className="container-site py-3.5 sm:py-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="shrink-0 bg-sport px-2.5 py-1 font-display text-xs font-bold uppercase tracking-[0.12em] text-sport-foreground">
               {lang === "fr" ? "Cette semaine" : "This week"}
@@ -214,11 +213,6 @@ function Home() {
                   ? "Horaires, équipes et informations AHMV au même endroit."
                   : "Schedules, teams and AHMV information in one place."}
             </p>
-          </div>
-          <div className="scrollbar-none flex shrink-0 gap-4 overflow-x-auto text-xs font-semibold uppercase tracking-[0.12em] text-white/58">
-            <Link to="/horaires" className="hover:text-sport-foreground">{lang === "fr" ? "Horaires" : "Schedules"}</Link>
-            <Link to="/equipes" className="hover:text-sport-foreground">{lang === "fr" ? "Équipes" : "Teams"}</Link>
-            <Link to="/nouvelles" className="hover:text-sport-foreground">{lang === "fr" ? "Nouvelles" : "News"}</Link>
           </div>
         </div>
       </section>
@@ -251,7 +245,6 @@ function Home() {
         </section>
       )}
 
-      <ScheduleFinder />
 
       <HomeCreativeRail />
 
