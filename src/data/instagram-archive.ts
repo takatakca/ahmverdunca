@@ -4,7 +4,7 @@ export interface InstagramArchiveSource {
   shortcode: string;
   url: string;
   date: string;
-  /** Exact timestamp observed on the public post; absent when only a date was available. */
+  /** Verified publication footer timestamp, not a caption edit time; absent if only the day is known. */
   observedTimestamp?: string;
   articleSlug: string;
   season: string;
@@ -17,6 +17,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DTX_IuSgOS4",
     url: "https://www.instagram.com/ahm_verdun/p/DTX_IuSgOS4/",
     date: "2026-01-11",
+    observedTimestamp: "2026-01-11T15:05:25.000Z",
     articleSlug: "joueurs-semaine-11-janvier-2026-instagram",
     season: "2025-2026",
     image: "/news-media/instagram/DTX_IuSgOS4.jpg",
@@ -34,7 +35,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DNEyPOQurr3",
     url: "https://www.instagram.com/ahm_verdun/p/DNEyPOQurr3/",
     date: "2025-08-07",
-    observedTimestamp: "2025-08-08T00:58:47.000Z",
+    observedTimestamp: "2025-08-08T00:58:46.000Z",
     articleSlug: "portes-ouvertes-feminin-annonce-2025-instagram",
     season: "2025-2026",
     image: "/news-media/instagram/DNEyPOQurr3.jpg",
@@ -43,7 +44,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DH1CQIMuAkV",
     url: "https://www.instagram.com/ahm_verdun/p/DH1CQIMuAkV/",
     date: "2025-03-30",
-    observedTimestamp: "2025-03-30T15:33:54.000Z",
+    observedTimestamp: "2025-03-30T15:33:53.000Z",
     articleSlug: "joueur-semaine-30-mars-2025-instagram",
     season: "2024-2025",
     image: "/news-media/instagram/DH1CQIMuAkV.jpg",
@@ -52,7 +53,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DHQczPRu72Q",
     url: "https://www.instagram.com/ahm_verdun/p/DHQczPRu72Q/",
     date: "2025-03-16",
-    observedTimestamp: "2025-03-16T10:35:24.000Z",
+    observedTimestamp: "2025-03-16T10:33:58.000Z",
     articleSlug: "joueur-semaine-16-mars-2025-instagram",
     season: "2024-2025",
     image: "/news-media/instagram/DHQczPRu72Q.jpg",
@@ -88,7 +89,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DEvHhffyz4d",
     url: "https://www.instagram.com/ahm_verdun/p/DEvHhffyz4d/",
     date: "2025-01-12",
-    observedTimestamp: "2025-01-12T18:50:20.000Z",
+    observedTimestamp: "2025-01-12T18:50:19.000Z",
     articleSlug: "portrait-ahmv-12-janvier-2025-instagram",
     season: "2024-2025",
     image: "/news-media/instagram/DEvHhffyz4d.jpg",
@@ -97,7 +98,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DDod0fCRIm2",
     url: "https://www.instagram.com/ahm_verdun/p/DDod0fCRIm2/",
     date: "2024-12-16",
-    observedTimestamp: "2024-12-16T08:19:05.000Z",
+    observedTimestamp: "2024-12-16T08:19:04.000Z",
     articleSlug: "journee-benevoles-decembre-2024-instagram",
     season: "2024-2025",
     image: "/news-media/instagram/DDod0fCRIm2.jpg",
@@ -106,7 +107,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DDodwwhxVM1",
     url: "https://www.instagram.com/ahm_verdun/p/DDodwwhxVM1/",
     date: "2024-12-16",
-    observedTimestamp: "2024-12-16T08:18:35.000Z",
+    observedTimestamp: "2024-12-16T08:18:34.000Z",
     articleSlug: "journee-benevoles-decembre-2024-instagram",
     season: "2024-2025",
     image: "/news-media/instagram/DDodwwhxVM1.jpg",
@@ -115,7 +116,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
     shortcode: "DDodmmNxkfL",
     url: "https://www.instagram.com/ahm_verdun/p/DDodmmNxkfL/",
     date: "2024-12-16",
-    observedTimestamp: "2024-12-16T08:17:12.000Z",
+    observedTimestamp: "2024-12-16T08:17:10.000Z",
     articleSlug: "journee-benevoles-decembre-2024-instagram",
     season: "2024-2025",
     image: "/news-media/instagram/DDodmmNxkfL.jpg",
@@ -123,7 +124,7 @@ export const INSTAGRAM_ARCHIVE_SOURCES: InstagramArchiveSource[] = [
 ];
 
 /** Historical publications stay explicit archives; no current registration or player identity is inferred. */
-export const INSTAGRAM_ARCHIVE_NEWS: NewsArticle[] = [
+const instagramArchiveArticles: NewsArticle[] = [
   {
     slug: "joueurs-semaine-11-janvier-2026-instagram",
     title: {
@@ -481,3 +482,10 @@ export const INSTAGRAM_ARCHIVE_NEWS: NewsArticle[] = [
     contentPending: false,
   },
 ];
+
+export const INSTAGRAM_ARCHIVE_NEWS: NewsArticle[] = instagramArchiveArticles.map((article) => {
+  const source = INSTAGRAM_ARCHIVE_SOURCES.find((entry) => entry.url === article.sourceUrl);
+  return source?.observedTimestamp
+    ? { ...article, publishedAt: source.observedTimestamp }
+    : article;
+});

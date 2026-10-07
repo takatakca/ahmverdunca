@@ -12,9 +12,11 @@ import { Button } from "@/components/ui/button";
 import { ShareButton } from "@/components/share-button";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { ContentContributionButton } from "@/components/content-contribution-button";
-import { FittedImage } from "@/components/media/fitted-image";
+import { NewsArticleMedia } from "@/components/news/news-article-media";
+import { newsArticleMedia } from "@/lib/news-media";
 import { useContentOverlayRegistry } from "@/lib/community-content";
 import { exactFacebookCommentUrl, exactSocialThread } from "@/lib/news-discussion";
+import { overridePublicationTime, publicationDateLabel, publicationFieldValue, resolvePublicationTime } from "@/lib/news-publication";
 
 export const Route = createFileRoute("/nouvelles/$slug")({
   loader: ({ params }) => {
@@ -56,20 +58,10 @@ function ArticlePage() {
   const displayExcerpt = typeof patch["text"] === "string" ? patch["text"] : l(a.excerpt);
   const displayAuthor = typeof patch["author"] === "string" ? patch["author"] : a.author;
   const displaySourceUrl = typeof patch["url"] === "string" ? patch["url"] : a.sourceUrl;
-  const publishedOverride = typeof patch["publishedAt"] === "string" ? new Date(patch["publishedAt"]) : null;
-  const displayDate = publishedOverride && Number.isFinite(publishedOverride.getTime())
-    ? new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        timeZone: "America/Toronto",
-      }).format(publishedOverride)
-    : newsDateLabel(a, lang);
+  const publication = overridePublicationTime(resolvePublicationTime(a), patch["publishedAt"]);
+  const displayDate = publicationDateLabel(publication, lang, a.publishedLabel?.[lang], Boolean(a.archived));
   const articleUrl = canonicalUrl(`/nouvelles/${slug}`);
-  const publishedSchemaDate =
-    publishedOverride && Number.isFinite(publishedOverride.getTime())
-      ? publishedOverride.toISOString()
-      : a.date || undefined;
+  const publishedSchemaDate = publicationFieldValue(publication);
   const newsJsonLd = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -111,6 +103,14 @@ function ArticlePage() {
   // The post's own image (or an approved correction) is shown whole; generic visuals fill the frame.
   const ownImageUrl = typeof patch["imageUrl"] === "string" ? patch["imageUrl"] : a.image;
   const displayImageUrl = ownImageUrl ?? storyMedia!.url;
+  const imageSourceUrl = ownImageUrl ? displaySourceUrl : storyMedia!.sourceUrl;
+  const media = newsArticleMedia(a, {
+    url: displayImageUrl,
+    ...(imageSourceUrl ? { sourceUrl: imageSourceUrl } : {}),
+    alt: ownImageUrl ? { ...a.title, [lang]: displayTitle } : storyMedia!.alt,
+    label: { ...a.title, [lang]: displayTitle },
+    ...(category ? { categoryLabel: category.label } : {}),
+  });
   const comments = a.comments ?? [];
   // Only a link to the exact post lets people join that thread; the page URL alone does not.
   const discussionThread = exactSocialThread(displaySourceUrl);
@@ -121,7 +121,7 @@ function ArticlePage() {
     { key: "imageUrl", label: { fr: "Image principale", en: "Main image" }, kind: "image-url" as const, current: displayImageUrl },
     { key: "url", label: { fr: "Lien source", en: "Source link" }, kind: "url" as const, current: displaySourceUrl },
     { key: "author", label: { fr: "Auteur / source", en: "Author / source" }, kind: "text" as const, current: displayAuthor },
-    { key: "publishedAt", label: { fr: "Date publiée", en: "Published date" }, kind: "text" as const, current: typeof patch["publishedAt"] === "string" ? patch["publishedAt"] : a.date },
+    { key: "publishedAt", label: { fr: "Date publiée", en: "Published date" }, kind: "text" as const, current: publishedSchemaDate ?? undefined },
   ];
 
   return (
@@ -143,47 +143,22 @@ function ArticlePage() {
               imageUrl: displayImageUrl,
               url: displaySourceUrl,
               author: displayAuthor,
-              publishedAt: typeof patch["publishedAt"] === "string" ? patch["publishedAt"] : a.date,
+              publishedAt: publishedSchemaDate ?? undefined,
             }}
             fields={contributionFields}
             appearance="menu"
           />
         }
       />
+      <div className="bg-navy-deep text-white">
       <div className="container-site py-8 md:py-12">
-        <Link to="/nouvelles" className="inline-flex items-center gap-1.5 text-sm font-semibold text-sport hover:underline">
+        <Link to="/nouvelles" className="inline-flex items-center gap-1.5 text-sm font-semibold text-white/80 hover:text-white hover:underline">
           <ArrowLeft className="size-4" /> {t("common.back")}
         </Link>
 
         <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <article className="min-w-0 overflow-hidden border border-white/12 bg-navy-deep text-white">
-            <div className="group relative aspect-[16/8] overflow-hidden bg-navy">
-              {ownImageUrl ? (
-                <FittedImage src={ownImageUrl} alt={displayTitle} loading="eager" />
-              ) : (
-                <img
-                  src={displayImageUrl}
-                  alt={lang === "fr" ? storyMedia!.alt.fr : storyMedia!.alt.en}
-                  loading="eager"
-                  decoding="async"
-                  className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                />
-              )}
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.05),rgba(7,16,43,0.64))]" />
-              <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-white md:p-7">
-                <div>
-                  <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/70">
-                    {lang === "fr" ? "Média AHMV associé à la nouvelle" : "AHMV media related to this update"}
-                  </p>
-                  <p className="mt-1 font-display text-2xl font-extrabold uppercase leading-none">
-                    {category ? l(category.label) : "AHMV"}
-                  </p>
-                </div>
-                <span className="font-display text-5xl font-extrabold text-white/18">
-                  {String(a.legacyId ?? "01").padStart(2, "0")}
-                </span>
-              </div>
-            </div>
+            <NewsArticleMedia key={slug} items={media} ownImage={Boolean(ownImageUrl)} category={category ? l(category.label) : "AHMV"} lang={lang} />
             <div className="mt-0 grid gap-px border-x border-b border-white/12 bg-white/10 sm:grid-cols-3">
               <div className="bg-competition p-4 text-white">
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{lang === "fr" ? "Publication" : "Published"}</p>
@@ -299,7 +274,7 @@ function ArticlePage() {
             <HouseSponsorSlot placement={`story-${a.slug}`} count={1} compact />
             {teams.length > 0 && (
               <div>
-                <p className="eyebrow mb-3 text-sport">{t("article.teams")}</p>
+                <p className="eyebrow mb-3 text-sport-foreground">{t("article.teams")}</p>
                 <div className="flex flex-wrap gap-2">
                   {teams.map((tm) => (
                     <Link key={tm!.slug} to="/equipes/$slug" params={{ slug: tm!.slug }} className="rounded-full border border-white/14 bg-navy-deep px-3 py-1.5 text-sm text-white/70 hover:border-sport hover:text-white">
@@ -310,7 +285,7 @@ function ArticlePage() {
               </div>
             )}
             <div>
-              <SectionHeading title={t("article.related")} className="mb-4" />
+              <SectionHeading title={t("article.related")} className="mb-4 border-white/12 [&_h2]:text-white" />
               <div className="space-y-4">
                 {related.map((r) => (
                   <Link key={r.slug} to="/nouvelles/$slug" params={{ slug: r.slug }} className="interactive-surface block border border-white/12 bg-competition p-4 text-white hover:border-sport/50">
@@ -322,6 +297,7 @@ function ArticlePage() {
             </div>
           </aside>
         </div>
+      </div>
       </div>
     </>
   );

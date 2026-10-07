@@ -22,6 +22,15 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import { cn } from "@/lib/utils";
 import { ContentContributionButton } from "@/components/content-contribution-button";
 import { useContentOverlayRegistry } from "@/lib/community-content";
+import {
+  matchesPublicationRange,
+  overridePublicationTime,
+  publicationDateLabel,
+  publicationFieldValue,
+  resolvePublicationTime,
+  sortByPublication,
+  type PublicationTime,
+} from "@/lib/news-publication";
 
 const FEED_URL =
   import.meta.env["VITE_TAKATAK_PUBLIC_API_ORIGIN"]?.trim()
@@ -60,6 +69,7 @@ type NewsFeedItem = {
   network: Network;
   association: string;
   publishedAt: string | null;
+  publication: PublicationTime;
   dateLabel: string;
   title: string;
   text: string;
@@ -174,14 +184,6 @@ function readSavedFilters(): SavedFilters {
   }
 }
 
-function timeRangeMs(range: TimeRange): number | null {
-  if (range === "hour") return 60 * 60 * 1000;
-  if (range === "day") return 24 * 60 * 60 * 1000;
-  if (range === "week") return 7 * 24 * 60 * 60 * 1000;
-  if (range === "month") return 30 * 24 * 60 * 60 * 1000;
-  return null;
-}
-
 export function NewsCentre() {
   const { lang, l } = useI18n();
   const { selectedTeams } = usePreferredTeam();
@@ -189,7 +191,22 @@ export function NewsCentre() {
   const [filters, setFilters] = useState<SavedFilters>(DEFAULT_FILTERS);
   const [filterOpen, setFilterOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const contentRegistry = useContentOverlayRegistry();
+
+  useEffect(() => {
+    const refresh = () => setNow(Date.now());
+    const onVisibility = () => { if (document.visibilityState === "visible") refresh(); };
+    refresh();
+    const timer = window.setInterval(refresh, 60_000);
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("focus", refresh);
+    };
+  }, []);
 
   useEffect(() => {
     setFilters(readSavedFilters());
@@ -228,12 +245,14 @@ export function NewsCentre() {
       const title = l(article.title);
       const text = l(article.excerpt);
       const url = article.sourceUrl ?? null;
+      const sourcePublication = resolvePublicationTime(article);
       const base: NewsFeedItem = {
         id: `archive:${article.slug}`,
         kind: "official",
         network: classifyNetwork(url),
         association: "AHM Verdun",
-        publishedAt: article.date ? `${article.date}T12:00:00-04:00` : null,
+        publishedAt: publicationFieldValue(sourcePublication),
+        publication: sourcePublication,
         dateLabel: newsDateLabel(article, lang),
         title,
         text,
@@ -248,8 +267,12 @@ export function NewsCentre() {
         `news:${article.slug}`,
         base as unknown as Record<string, unknown>,
       ) as unknown as NewsFeedItem;
+      const publication = overridePublicationTime(sourcePublication, patched.publishedAt);
       return {
         ...patched,
+        publication,
+        publishedAt: publicationFieldValue(publication),
+        dateLabel: publicationDateLabel(publication, lang, newsDateLabel(article, lang), Boolean(article.archived)),
         searchable: normalize(
           ["AHM Verdun", patched.title, patched.text, article.author, article.category, ...article.teamSlugs].join(" "),
         ),
@@ -261,20 +284,15 @@ export function NewsCentre() {
       const inferred = inferTeamSlugs(text);
       const teamSlugs = Array.from(new Set([...(item.teamSlugs ?? []), ...inferred]));
       const network = item.network ?? "facebook";
+      const sourcePublication = resolvePublicationTime({ publishedAt: item.publishedAt });
       const base: NewsFeedItem = {
         id: `live:${item.id}`,
         kind: item.source,
         network,
         association: item.association?.trim() || "AHM Verdun",
-        publishedAt: item.publishedAt,
-        dateLabel: new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
-          timeZone: "America/Toronto",
-        }).format(new Date(item.publishedAt)),
+        publishedAt: publicationFieldValue(sourcePublication),
+        publication: sourcePublication,
+        dateLabel: publicationDateLabel(sourcePublication, lang),
         title:
           item.source === "community"
             ? lang === "fr"
@@ -295,8 +313,12 @@ export function NewsCentre() {
         `post:${item.id}`,
         base as unknown as Record<string, unknown>,
       ) as unknown as NewsFeedItem;
+      const publication = overridePublicationTime(sourcePublication, patched.publishedAt);
       return {
         ...patched,
+        publication,
+        publishedAt: publicationFieldValue(publication),
+        dateLabel: publicationDateLabel(publication, lang),
         searchable: normalize([
           patched.association,
           patched.title,
@@ -308,11 +330,9 @@ export function NewsCentre() {
     });
 
     return [...socialItems, ...archiveItems];
-  }, [contentRegistry.overlays, lang, l, liveItems]);
+  }, [contentRegistry, lang, l, liveItems]);
 
   const visibleItems = useMemo(() => {
-    const now = Date.now();
-    const maxAge = timeRangeMs(filters.timeRange);
     const query = normalize(filters.query);
     const exactTeam =
       filters.team.startsWith("exact:")
@@ -340,24 +360,14 @@ export function NewsCentre() {
         }
       }
 
-      if (maxAge != null) {
-        if (!item.publishedAt) return false;
-        const stamp = new Date(item.publishedAt).getTime();
-        if (!Number.isFinite(stamp) || now - stamp > maxAge || stamp > now + 5 * 60 * 1000) {
-          return false;
-        }
-      }
+      if (!matchesPublicationRange(item.publication, filters.timeRange, now)) return false;
 
       if (query && !item.searchable.includes(query)) return false;
       return true;
     });
 
-    return result.sort((a, b) => {
-      const aTime = a.publishedAt ? new Date(a.publishedAt).getTime() : 0;
-      const bTime = b.publishedAt ? new Date(b.publishedAt).getTime() : 0;
-      return filters.sort === "oldest" ? aTime - bTime : bTime - aTime;
-    });
-  }, [filters, items, selectedTeams]);
+    return sortByPublication(result, filters.sort);
+  }, [filters, items, selectedTeams, now]);
 
   const associations = useMemo(
     () => Array.from(new Set(items.map((item) => item.association))).sort(),
@@ -392,8 +402,8 @@ export function NewsCentre() {
               </h2>
               <p className="mt-3 max-w-3xl text-sm leading-6 text-white/65">
                 {lang === "fr"
-                  ? "Les nouvelles officielles, publications Facebook et contenus communautaires sont rassemblés ici. Instagram, TikTok et les autres sources peuvent être ajoutés au même fil sans changer l’expérience."
-                  : "Official news, Facebook posts and community content are gathered here. Instagram, TikTok and other sources can join the same feed without changing the experience."}
+                  ? "Retrouvez les nouvelles du site AHMV et les publications officielles de Facebook et d’Instagram, avec leurs archives vérifiées."
+                  : "Find AHMV website news and official Facebook and Instagram posts, including their verified archives."}
               </p>
             </div>
 
@@ -526,7 +536,7 @@ export function NewsCentre() {
                 >
                   <option value="all">{lang === "fr" ? "Tout le temps" : "All time"}</option>
                   <option value="hour">{lang === "fr" ? "Dernière heure" : "Last hour"}</option>
-                  <option value="day">{lang === "fr" ? "Dernières 24 h" : "Last 24 hours"}</option>
+                  <option value="day">{lang === "fr" ? "Aujourd’hui" : "Today"}</option>
                   <option value="week">{lang === "fr" ? "7 derniers jours" : "Last 7 days"}</option>
                   <option value="month">{lang === "fr" ? "30 derniers jours" : "Last 30 days"}</option>
                 </select>

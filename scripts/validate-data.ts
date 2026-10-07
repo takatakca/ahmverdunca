@@ -21,6 +21,7 @@ import { FACEBOOK_TEAM_ALBUM_MANIFEST } from "../src/data/facebook-team-albums";
 import { exactInstagramThreadUrl, newsCommentProblems } from "../src/lib/news-discussion";
 import { INSTAGRAM_ARCHIVE_SOURCES } from "../src/data/instagram-archive";
 import { montrealPublicationDate } from "../src/lib/news-archive";
+import { resolvePublicationTime } from "../src/lib/news-publication";
 import { existsSync, statSync } from "node:fs";
 import { isAbsolute, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -287,6 +288,14 @@ for (const article of NEWS) {
   if (article.date && !validDate(article.date)) {
     errors.push(`News article "${article.slug}" has invalid date "${article.date}".`);
   }
+  if (article.publishedAt) {
+    const publication = resolvePublicationTime(article);
+    if (publication.precision !== "instant") {
+      errors.push(`News article "${article.slug}" publishedAt must be an explicit valid source timestamp.`);
+    } else if (article.date && publication.day !== article.date) {
+      errors.push(`News article "${article.slug}" publication timestamp must match its verified Montreal date.`);
+    }
+  }
   if (!article.date && !article.publishedLabel) {
     errors.push(`News article "${article.slug}" must have an exact date or a publishedLabel.`);
   }
@@ -331,6 +340,9 @@ for (const source of INSTAGRAM_ARCHIVE_SOURCES) {
   }
   if (article.sourceUrl === source.url && article.image !== source.image) {
     errors.push(`${sourceLabel} must use the original image associated with its primary source.`);
+  }
+  if (article.sourceUrl === source.url && article.publishedAt !== source.observedTimestamp) {
+    errors.push(`${sourceLabel} must preserve its primary source publication timestamp.`);
   }
 }
 

@@ -1,5 +1,6 @@
 import type { Localized } from "@/lib/i18n";
 import { INSTAGRAM_ARCHIVE_NEWS } from "./instagram-archive";
+import { publicationDateLabel, resolvePublicationTime } from "../lib/news-publication";
 
 export type NewsCategory =
   | "association"
@@ -53,6 +54,8 @@ export interface NewsArticle {
   body: { fr: string[]; en?: string[] };
   /** Exact publication date only when verified. Never infer a date from "x weeks ago". */
   date?: string;
+  /** Exact source publication instant, only when verified with an explicit timezone offset. */
+  publishedAt?: string;
   /** Used when the legacy site exposes only a relative/seasonal date. */
   publishedLabel?: Localized;
   author: string;
@@ -1891,16 +1894,12 @@ export const CURRENT_LEGACY_NEWS_IDS = [39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 
 export const DISCOVERED_ARCHIVE_NEWS_IDS = [20, 19, 18, 16, 15, 9, 4, 3, 2] as const;
 
 export function newsDateLabel(article: NewsArticle, lang: "fr" | "en") {
-  if (article.date) {
-    const label = new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      timeZone: "America/Toronto",
-    }).format(new Date(`${article.date}T12:00:00-04:00`));
-    return article.archived ? `${label} · Archive` : label;
-  }
-  return article.publishedLabel?.[lang] ?? (lang === "fr" ? "Archive AHMV" : "AHMV archive");
+  return publicationDateLabel(
+    resolvePublicationTime(article),
+    lang,
+    article.publishedLabel?.[lang] ?? (lang === "fr" ? "Archive AHMV" : "AHMV archive"),
+    Boolean(article.archived),
+  );
 }
 
 export const getArticle = (slug: string) => NEWS.find((article) => article.slug === slug);
