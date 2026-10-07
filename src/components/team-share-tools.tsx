@@ -13,8 +13,8 @@ export function TeamShareTools({
 
   const shareTitle = `${team.name} · AHM Verdun`;
   const shareText = lang === "fr"
-    ? `Mini-site de ${team.name} — horaire, résultats, arénas et nouvelles.`
-    : `${team.name} mini-site — schedule, results, arenas and news.`;
+    ? `${team.name} — parties, résultats, arénas et nouvelles AHMV.`
+    : `${team.name} — games, results, arenas and AHMV news.`;
 
   const copyLink = async () => {
     await navigator.clipboard.writeText(window.location.href);
@@ -35,12 +35,12 @@ export function TeamShareTools({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 border border-navy/10 bg-ice px-4 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-3 border border-white/10 bg-competition px-4 py-3 text-white">
       <div className="min-w-0">
-        <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-muted-foreground">
-          {lang === "fr" ? "Partager le mini-site" : "Share team mini-site"}
+        <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-white/38">
+          {lang === "fr" ? "Partager l’équipe" : "Share team"}
         </p>
-        <p className="mt-1 truncate font-display text-lg font-extrabold uppercase text-navy">
+        <p className="mt-1 truncate font-display text-lg font-extrabold uppercase text-white">
           {team.name}
         </p>
       </div>
@@ -49,7 +49,7 @@ export function TeamShareTools({
         <button
           type="button"
           onClick={copyLink}
-          className="premium-control inline-flex min-h-10 items-center gap-2 border border-navy/12 bg-background px-3 text-[9px] font-bold uppercase tracking-[0.11em] text-navy hover:border-sport"
+          className="premium-control inline-flex min-h-10 items-center gap-2 border border-white/12 bg-white/[0.035] px-3 text-[9px] font-bold uppercase tracking-[0.11em] text-white/72 hover:border-sport hover:text-white"
         >
           {copied ? <Check className="size-3.5 text-sport" /> : <Copy className="size-3.5 text-sport" />}
           {copied

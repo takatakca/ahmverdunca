@@ -67,25 +67,25 @@ export function TeamLiveFeed({
 
   const message = {
     disabled: {
-      fr: "Aucune publication sociale d’équipe n’est diffusée ici actuellement.",
-      en: "No team social posts are currently published here.",
+      fr: "Aucune publication d’équipe à afficher pour le moment.",
+      en: "No team posts to show right now.",
     },
-    loading: { fr: "Chargement des publications approuvées…", en: "Loading approved team posts…" },
+    loading: { fr: "Chargement des publications…", en: "Loading team posts…" },
     not_connected: {
-      fr: "Aucun compte social approuvé n’est relié publiquement à cette équipe.",
-      en: "No approved social account is publicly linked to this team.",
+      fr: "Aucun compte d’équipe n’est relié ici pour le moment.",
+      en: "No team account is linked here right now.",
     },
     subscription_required: {
-      fr: "Aucune publication sociale approuvée n’est disponible publiquement pour cette équipe.",
-      en: "No approved social posts are publicly available for this team.",
+      fr: "Aucune publication d’équipe n’est disponible ici pour le moment.",
+      en: "No team posts are available here right now.",
     },
     connected: {
-      fr: "La connexion est active, mais aucune publication publique approuvée n’est disponible pour le moment.",
-      en: "The connection is active, but no approved public posts are currently available.",
+      fr: "Le compte est relié, mais aucune publication n’est disponible pour le moment.",
+      en: "The account is linked, but no posts are available right now.",
     },
     active: {
-      fr: "Publications publiques approuvées pour cette équipe.",
-      en: "Approved public posts for this team.",
+      fr: "Dernières publications de l’équipe.",
+      en: "Latest team posts.",
     },
     unavailable: {
       fr: "Les publications sociales sont temporairement indisponibles.",
@@ -95,7 +95,7 @@ export function TeamLiveFeed({
   }[feed.status];
 
   return (
-    <section id="social-equipe" className="scroll-mt-28 overflow-hidden border border-navy/12 bg-background">
+    <section id="social-equipe" className="scroll-mt-28 overflow-hidden border border-white/12 bg-navy-deep text-white">
       <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
         <div className="p-6 md:p-8">
           <div className="flex items-center gap-3">
@@ -133,17 +133,17 @@ export function TeamLiveFeed({
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.12),rgba(7,16,43,0.94))]" />
             <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
               <p className="eyebrow text-sport-foreground">
-                {lang === "fr" ? "Contenu AHMV vérifié" : "Verified AHMV content"}
+                {lang === "fr" ? "Vie AHMV" : "AHMV life"}
               </p>
               <h3 className="mt-2 max-w-xl font-display text-3xl font-extrabold uppercase leading-[0.88]">
                 {lang === "fr"
-                  ? "Les vraies nouvelles restent accessibles maintenant."
-                  : "Real association content remains available now."}
+                  ? "Nouvelles et photos de l’association."
+                  : "Association news and photos."}
               </h3>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/62">
                 {lang === "fr"
-                  ? "En attendant une publication sociale propre à cette équipe, utilisez les nouvelles et les archives photo officielles de l’AHM Verdun."
-                  : "Until this team has an approved social post, use AHM Verdun’s official news and photo archives."}
+                  ? "Retrouvez les nouvelles et les photos AHMV pendant que cette équipe n’a pas encore de publication ici."
+                  : "Browse AHMV news and photos while this team has no posts here yet."}
               </p>
             </div>
           </div>
@@ -151,28 +151,28 @@ export function TeamLiveFeed({
           <div className="grid gap-px bg-navy/10">
             <a
               href="/nouvelles"
-              className="interactive-surface flex min-h-36 flex-col justify-between bg-background p-5 text-navy hover:bg-ice"
+              className="interactive-surface flex min-h-36 flex-col justify-between bg-navy p-5 text-white hover:bg-white/[0.05]"
             >
-              <Newspaper className="size-5 text-sport" />
+              <Newspaper className="size-5 text-sport-foreground" />
               <div>
                 <p className="font-display text-2xl font-extrabold uppercase">
                   {lang === "fr" ? "Nouvelles" : "News"}
                 </p>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-xs leading-relaxed text-white/48">
                   {lang === "fr" ? "Communications publiées par l’association." : "Association-published updates."}
                 </p>
               </div>
             </a>
             <a
               href="/galerie"
-              className="interactive-surface flex min-h-36 flex-col justify-between bg-background p-5 text-navy hover:bg-ice"
+              className="interactive-surface flex min-h-36 flex-col justify-between bg-navy p-5 text-white hover:bg-white/[0.05]"
             >
-              <Images className="size-5 text-sport" />
+              <Images className="size-5 text-sport-foreground" />
               <div>
                 <p className="font-display text-2xl font-extrabold uppercase">
                   {lang === "fr" ? "Galerie" : "Gallery"}
                 </p>
-                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-xs leading-relaxed text-white/48">
                   {lang === "fr" ? "Photos réelles et archives AHMV." : "Real AHMV photos and archives."}
                 </p>
               </div>
@@ -184,7 +184,7 @@ export function TeamLiveFeed({
       {feed.items.length > 0 && (
         <div className="grid gap-px bg-navy/10 md:grid-cols-2 xl:grid-cols-3">
           {feed.items.map((item) => (
-            <article key={item.id} className="flex min-h-64 flex-col bg-background">
+            <article key={item.id} className="flex min-h-64 flex-col bg-navy text-white">
               {item.mediaUrl && (
                 <div className="relative aspect-[16/9] overflow-hidden bg-navy">
                   <img
@@ -198,8 +198,8 @@ export function TeamLiveFeed({
               )}
               <div className="flex flex-1 flex-col p-5">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="eyebrow text-sport">{item.platform}</p>
-                  <time className="text-[9px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                  <p className="eyebrow text-sport-foreground">{item.platform}</p>
+                  <time className="text-[9px] font-bold uppercase tracking-[0.12em] text-white/38">
                     {new Intl.DateTimeFormat(lang === "fr" ? "fr-CA" : "en-CA", {
                       year: "numeric",
                       month: "short",
@@ -207,12 +207,12 @@ export function TeamLiveFeed({
                     }).format(new Date(item.publishedAt))}
                   </time>
                 </div>
-                {item.text && <p className="mt-4 text-sm leading-relaxed text-foreground">{item.text}</p>}
+                {item.text && <p className="mt-4 text-sm leading-relaxed text-white/72">{item.text}</p>}
                 <a
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="premium-control mt-auto flex min-h-10 items-center justify-between border-t border-navy/10 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport"
+                  className="premium-control mt-auto flex min-h-10 items-center justify-between border-t border-white/10 pt-4 text-[9px] font-bold uppercase tracking-[0.12em] text-sport-foreground"
                 >
                   {lang === "fr" ? "Voir la publication" : "View post"}
                   <ExternalLink className="size-3.5" />

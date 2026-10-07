@@ -44,7 +44,7 @@ export function TeamGameDayPanel({
   };
 
   return (
-    <section id="jour-de-match" className="overflow-hidden border border-sport/30 bg-background">
+    <section id="jour-de-match" className="overflow-hidden border border-sport/30 bg-navy-deep text-white">
       <div className="grid lg:grid-cols-[0.82fr_1.18fr]">
         <div className="competition-panel p-5 text-white md:p-6">
           <div className="flex items-center gap-2">
@@ -58,8 +58,8 @@ export function TeamGameDayPanel({
           </h2>
           <p className="mt-4 text-sm leading-relaxed text-white/60">
             {lang === "fr"
-              ? "Ce panneau n’invente jamais une heure ni un aréna. Vérifiez la source officielle, puis gardez votre préparation localement sur cet appareil."
-              : "This panel never invents a time or arena. Check the official source, then keep your preparation locally on this device."}
+              ? "Vérifiez l’heure et l’aréna, puis cochez ce qu’il vous reste à préparer avant de partir."
+              : "Check the time and arena, then tick off what is left before you leave."}
           </p>
 
           <div className="mt-6 grid grid-cols-2 gap-2">
@@ -98,19 +98,19 @@ export function TeamGameDayPanel({
           </div>
         </div>
 
-        <div className="p-5 md:p-6">
+        <div className="bg-navy p-5 md:p-6">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="eyebrow text-sport">
+              <p className="eyebrow text-sport-foreground">
                 {lang === "fr" ? "Checklist locale" : "Local checklist"}
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              <p className="mt-1 text-xs leading-relaxed text-white/48">
                 {lang === "fr"
-                  ? "Mémorisée uniquement dans ce navigateur. Aucun message n’est envoyé."
-                  : "Saved only in this browser. No message is sent."}
+                  ? "Votre checklist reste sur cet appareil."
+                  : "Your checklist stays on this device."}
               </p>
             </div>
-            <span className="font-display text-2xl font-extrabold text-navy">
+            <span className="font-display text-2xl font-extrabold text-sport-foreground">
               {checks.length}/{CHECKLIST.length}
             </span>
           </div>
@@ -126,16 +126,16 @@ export function TeamGameDayPanel({
                   aria-pressed={checked}
                   className={
                     checked
-                      ? "premium-control flex min-h-16 items-center gap-3 border border-sport bg-sport/10 p-3 text-left text-navy"
-                      : "premium-control flex min-h-16 items-center gap-3 border border-navy/12 bg-background p-3 text-left text-navy hover:border-sport"
+                      ? "premium-control flex min-h-16 items-center gap-3 border border-sport bg-sport/12 p-3 text-left text-white"
+                      : "premium-control flex min-h-16 items-center gap-3 border border-white/12 bg-navy-deep p-3 text-left text-white hover:border-sport"
                   }
                 >
                   <span className={
                     checked
                       ? "flex size-8 shrink-0 items-center justify-center bg-sport text-sport-foreground"
-                      : "flex size-8 shrink-0 items-center justify-center border border-navy/12 bg-ice text-muted-foreground"
+                      : "flex size-8 shrink-0 items-center justify-center border border-white/12 bg-white/[0.035] text-white/38"
                   }>
-                    {checked ? <Check className="size-4" /> : <span className="size-2 rounded-full bg-navy/20" />}
+                    {checked ? <Check className="size-4" /> : <span className="size-2 rounded-full bg-white/20" />}
                   </span>
                   <span className="font-display text-lg font-extrabold uppercase leading-none">
                     {lang === "fr" ? item.fr : item.en}
@@ -151,7 +151,7 @@ export function TeamGameDayPanel({
               removeBrowserPreference(storageKey(team.legacyScheduleTeamId));
               setChecks([]);
             }}
-            className="mt-4 text-[8px] font-bold uppercase tracking-[0.14em] text-muted-foreground hover:text-sport"
+            className="mt-4 text-[8px] font-bold uppercase tracking-[0.14em] text-white/38 hover:text-sport-foreground"
           >
             {lang === "fr" ? "Réinitialiser la checklist" : "Reset checklist"}
           </button>
