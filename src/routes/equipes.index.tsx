@@ -255,8 +255,8 @@ function TeamsPage() {
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/68 md:text-base">
                 {lang === "fr"
-                  ? "Choisissez l’équipe exacte. Les résultats et classements restent servis par la source hockey officielle; AHMV vous amène directement au bon identifiant sans recréer une deuxième version des scores."
-                  : "Choose the exact team. Results and standings remain served by the official hockey source; AHMV takes you directly to the correct identifier without creating a second version of the scores."}
+                  ? "Choisissez votre équipe pour ouvrir directement ses résultats et son classement auprès de la source hockey officielle."
+                  : "Choose your team to open its results and standings directly from the official hockey source."}
               </p>
               {selectedTeamIds.length > 0 && (
                 <button
@@ -362,8 +362,8 @@ function TeamsPage() {
           <div className="border-t border-white/10 bg-competition px-5 py-4">
             <p className="text-xs leading-relaxed text-white/48">
               {lang === "fr"
-                ? "Source officielle externe : la surface publique AHMV « Horaire et Classements ». Les scores et classements ne sont pas inventés ni recopiés manuellement dans ce portail."
-                : "Official external source: AHMV’s public “Schedule and Standings” surface. Scores and standings are not invented or manually duplicated in this portal."}
+                ? "Les résultats et classements s’ouvrent directement auprès de la source hockey officielle."
+                : "Results and standings open directly from the official hockey source."}
             </p>
           </div>
         </section>
