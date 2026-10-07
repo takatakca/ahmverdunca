@@ -143,7 +143,7 @@ def scoped_file_exists(candidate, home):
 
 
 def empty_directives(status):
-    return {"status": status, "domain": "takatak.ca", "PassengerAppRoot": None, "PassengerStartupFile": None, "PassengerNodejs": None, "PassengerAppType": None, "PassengerEnabled": None, "currentIsSymlink": None, "envFileExists": None, "startupFileExists": None}
+    return {"status": status, "domain": "takatak.ca", "PassengerAppRoot": None, "PassengerStartupFile": None, "PassengerNodejs": None, "PassengerAppType": None, "PassengerEnabled": None, "appRootIsSymlink": None, "currentIsSymlink": None, "envFileExists": None, "startupFileExists": None}
 
 
 def read_htaccess_bytes(candidate):
@@ -206,7 +206,9 @@ def project_domain_directives(domain_result, home):
     if app_root_value and scoped_root is None:
         output["status"] = "scope_unavailable"
     if scoped_root is not None and scoped_root.is_dir():
-        output["currentIsSymlink"] = (scoped_root / "current").is_symlink()
+        configured_root = Path(app_root_value)
+        output["appRootIsSymlink"] = configured_root.is_symlink()
+        output["currentIsSymlink"] = (configured_root / "current").is_symlink()
         output["envFileExists"] = scoped_file_exists(scoped_root / ".env", home)
         if output["PassengerStartupFile"] is not None:
             output["startupFileExists"] = scoped_file_exists(scoped_root / output["PassengerStartupFile"], home)

@@ -95,6 +95,7 @@ class HostingProjectionTests(unittest.TestCase):
             self.assertTrue(result["envFileExists"])
             self.assertTrue(result["startupFileExists"])
             self.assertFalse(result["currentIsSymlink"])
+            self.assertFalse(result["appRootIsSymlink"])
             for private in ("PRIVATE_ENV_CONTENT", "private-setenv-value", "private-rewrite-value", "SetEnv", "RewriteRule"):
                 self.assertNotIn(private, json.dumps(result))
 
@@ -130,6 +131,28 @@ class HostingProjectionTests(unittest.TestCase):
             self.assertEqual(result["status"], "scope_unavailable")
             self.assertIsNone(result["PassengerAppRoot"])
             self.assertIsNone(result["envFileExists"])
+            self.assertIsNone(result["appRootIsSymlink"])
+
+    def test_configured_current_symlink_is_detected_before_resolution(self):
+        with tempfile.TemporaryDirectory(prefix="ahmv-inventory-fixture-") as fixture:
+            home = Path(fixture).resolve()
+            docroot = home / "public"
+            release = home / "releases" / "fixture-release"
+            docroot.mkdir()
+            release.mkdir(parents=True)
+            current = home / "current"
+            try:
+                current.symlink_to(release, target_is_directory=True)
+            except (NotImplementedError, OSError):
+                self.skipTest("Directory symlink creation requires privileges; CI Linux covers this case")
+            (release / "server.js").write_text("fixture startup", encoding="utf8")
+            (docroot / ".htaccess").write_text('PassengerAppRoot "' + fixture_api_path(home) + '/current"\nPassengerStartupFile server.js\n', encoding="utf8")
+            domain = {"status": "ready", "domain": {"domain": "takatak.ca", "documentRoot": fixture_api_path(docroot)}}
+            result = projection.project_domain_directives(domain, home)
+            self.assertEqual(result["PassengerAppRoot"], fixture_api_path(home) + "/current")
+            self.assertTrue(result["appRootIsSymlink"])
+            self.assertFalse(result["currentIsSymlink"])
+            self.assertTrue(result["startupFileExists"])
 
 
 if __name__ == "__main__":

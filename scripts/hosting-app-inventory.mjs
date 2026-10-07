@@ -77,6 +77,7 @@ export function validateProjection(input) {
       PassengerNodejs: directives?.domain === "takatak.ca" ? safePath(directives.PassengerNodejs) : null,
       PassengerAppType: ["node", "python", "ruby"].includes(directives?.PassengerAppType) ? directives.PassengerAppType : null,
       PassengerEnabled: ["on", "off"].includes(directives?.PassengerEnabled) ? directives.PassengerEnabled : null,
+      appRootIsSymlink: optionalBoolean(directives?.appRootIsSymlink),
       currentIsSymlink: optionalBoolean(directives?.currentIsSymlink),
       envFileExists: optionalBoolean(directives?.envFileExists),
       startupFileExists: optionalBoolean(directives?.startupFileExists),
@@ -85,7 +86,7 @@ export function validateProjection(input) {
 }
 
 function unavailableProjection(status) {
-  return { version: 1, passenger: { status, applications: [] }, domainConfiguration: { status, domain: null }, domainPassengerDirectives: { status, domain: "takatak.ca", PassengerAppRoot: null, PassengerStartupFile: null, PassengerNodejs: null, PassengerAppType: null, PassengerEnabled: null, currentIsSymlink: null, envFileExists: null, startupFileExists: null } };
+  return { version: 1, passenger: { status, applications: [] }, domainConfiguration: { status, domain: null }, domainPassengerDirectives: { status, domain: "takatak.ca", PassengerAppRoot: null, PassengerStartupFile: null, PassengerNodejs: null, PassengerAppType: null, PassengerEnabled: null, appRootIsSymlink: null, currentIsSymlink: null, envFileExists: null, startupFileExists: null } };
 }
 
 export function validateSshSettings(settings) {

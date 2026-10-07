@@ -65,6 +65,13 @@ describe("Encrypted read-only hosting inventory", () => {
     assert.equal(REMOTE_COMMAND, "python3 -B -");
   });
 
+  it("preserves a configured application-root symlink separately from its current child", () => {
+    const projection = validateProjection({ version: 1, passenger: { status: "no_matching_apps", applications: [] }, domainConfiguration: { status: "ready", domain: null }, domainPassengerDirectives: { status: "ready", domain: "takatak.ca", PassengerAppRoot: "/home/owner/current", appRootIsSymlink: true, currentIsSymlink: false, startupFileExists: true } });
+    assert.equal(projection.domainPassengerDirectives.appRootIsSymlink, true);
+    assert.equal(projection.domainPassengerDirectives.currentIsSymlink, false);
+    assert.equal(projection.domainPassengerDirectives.PassengerAppRoot, "/home/owner/current");
+  });
+
   it("the workflow is manual, main-only, disabled by default and stores only ciphertext", async () => {
     const workflow = await readFile(new URL("../.github/workflows/hosting-app-inventory.yml", import.meta.url), "utf8");
     assert.match(workflow, /workflow_dispatch:/);
