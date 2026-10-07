@@ -50,7 +50,7 @@ function TeamsPage() {
       : CURRENT_TEAMS;
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={`${t("common.season")} · 2026–2027`}
         title={t("teams.title")}
@@ -372,7 +372,7 @@ function TeamsPage() {
           <div>
             <p className="eyebrow text-sport">{lang === "fr" ? "Répertoire des catégories" : "Category directory"}</p>
             {selectedTeamIds.length > 0 && !showAllDirectory && (
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1 text-sm text-white/55">
                 {lang === "fr" ? "Seules les catégories de vos équipes sont affichées." : "Only categories containing your teams are shown."}
               </p>
             )}
@@ -485,6 +485,6 @@ function TeamsPage() {
           })}
         </div>
       </div>
-    </>
+    </div>
   );
 }
