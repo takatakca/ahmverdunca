@@ -230,19 +230,19 @@ function TeamsPage() {
           </section>
         )}
 
-        <div className="grid gap-px border border-navy/12 bg-navy/12 md:grid-cols-2">
-          <div className="bg-navy p-6 text-navy-foreground md:p-8">
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Répertoire public" : "Public directory"}</p>
-            <p className="mt-3 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em]">
-              {lang === "fr" ? "Catégories d’abord." : "Categories first."}
-            </p>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/65">{t("teams.divisionsNote")}</p>
+        <section className="border border-white/12 bg-navy p-6 text-white md:p-8">
+          <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Équipes AHMV" : "AHMV teams"}</p>
+          <p className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em]">
+            {lang === "fr" ? "Catégories et équipes." : "Categories and teams."}
+          </p>
+          <p className="mt-4 max-w-3xl text-sm leading-relaxed text-white/62">{t("teams.divisionsNote")}</p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-white/10 pt-4 text-xs text-white/48">
+            <span>{t("teams.privacyNote")}</span>
+            <Link to="/confidentialite" className="font-bold uppercase tracking-[0.1em] text-sport-foreground hover:text-white">
+              {lang === "fr" ? "Confidentialité" : "Privacy"}
+            </Link>
           </div>
-          <div className="bg-competition p-6 text-white md:p-8">
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Confidentialité" : "Privacy"}</p>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/55">{t("teams.privacyNote")}</p>
-          </div>
-        </div>
+        </section>
 
         <section id="resultats" className="mt-9 scroll-mt-28 overflow-hidden border border-white/12 bg-navy-deep text-white">
           <div className="grid bg-competition text-white lg:grid-cols-[1.1fr_0.9fr]">
