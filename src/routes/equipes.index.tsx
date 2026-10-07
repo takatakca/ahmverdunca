@@ -17,7 +17,7 @@ export const Route = createFileRoute("/equipes/")({
     links: canonicalLink("/equipes"),
     meta: [
       { title: "Équipes et catégories — AHM Verdun" },
-      { name: "description", content: "M5, M7, M9, M11, M13, M15, M17, M19, M22 et hockey féminin : les catégories AHM Verdun pour la saison 2026–2027." },
+      { name: "description", content: "M5, M7, M9, M11, M13, M15, M17, M19, M22 et hockey féminin : les catégories et équipes AHM Verdun." },
       { property: "og:title", content: "Équipes et catégories — AHM Verdun" },
       { property: "og:description", content: "Toutes les catégories de l'AHM Verdun, avec page dédiée pour chacune." },
     ],
@@ -52,7 +52,7 @@ function TeamsPage() {
   return (
     <div className="bg-navy-deep text-white">
       <PageHeader
-        eyebrow={`${t("common.season")} · 2026–2027`}
+        eyebrow={lang === "fr" ? "Hockey à Verdun" : "Hockey in Verdun"}
         title={t("teams.title")}
         description={lang === "fr"
           ? "Du premier coup de patin à M22 : choisissez une catégorie pour retrouver son horaire, ses équipes publiques, ses résultats, son classement, ses arénas et ses informations."
