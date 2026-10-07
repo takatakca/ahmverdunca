@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Check, ChevronDown, Users, X } from "lucide-react";
 import { PUBLIC_TEAM_DIRECTORY, publicTeamHubUrl } from "@/data/team-directory";
 import { useI18n } from "@/lib/i18n";
@@ -5,11 +6,18 @@ import { usePreferredTeam } from "@/lib/team-preference";
 
 export function TeamPicker() {
   const { lang } = useI18n();
+  const [choosing, setChoosing] = useState(false);
   const { selectedTeams, isTeamSelected, toggleSelectedTeam, removeSelectedTeam } =
     usePreferredTeam();
   return (
-    <div className="mt-5 space-y-3">
-      <details className="group rounded-2xl border border-white/14 bg-white/[0.045]">
+    <div
+      className="mt-5 space-y-3"
+      data-ahmv-attention-surface={choosing ? "team-picker" : undefined}
+    >
+      <details
+        onToggle={(event) => setChoosing(event.currentTarget.open)}
+        className="group rounded-2xl border border-white/14 bg-white/[0.045]"
+      >
         <summary className="flex min-h-14 cursor-pointer list-none items-center gap-3 px-4 text-sm font-semibold text-white [&::-webkit-details-marker]:hidden">
           <Users className="size-5 text-sport-foreground" aria-hidden />
           <span className="flex-1">

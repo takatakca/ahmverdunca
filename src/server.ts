@@ -20,6 +20,7 @@ import { handleTakatakMarketingCampaign } from "./features/ahmv-phone/marketing/
 import { handleTakatakMarketingConsentSync } from "./features/ahmv-phone/marketing/consent-handler.server";
 import { handleAhmvMarketingCampaignCron } from "./features/ahmv-phone/marketing/cron-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
+import { handleCommunityFeed } from "./lib/community-feed.server";
 import { handleTakatakTeamGames } from "./lib/takatak-team-games.server";
 import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
 import { handleTakatakContentContributions } from "./lib/takatak-content-contributions.server";
@@ -157,6 +158,8 @@ export default {
     if (teamGamesResponse) return teamGamesResponse;
     const teamFeedResponse = await handleTakatakTeamFeed(request);
     if (teamFeedResponse) return teamFeedResponse;
+    const communityFeedResponse = await handleCommunityFeed(request);
+    if (communityFeedResponse) return communityFeedResponse;
     if (url.pathname === "/healthz") {
       return new Response(
         JSON.stringify({
