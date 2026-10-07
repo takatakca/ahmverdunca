@@ -114,7 +114,7 @@ const dict = {
 
   // Teams
   "teams.title": { fr: "Équipes", en: "Teams" },
-  "teams.subtitle": { fr: "Toutes les catégories de l'AHM Verdun pour la saison 2026–2027.", en: "All AHM Verdun categories for the 2026–2027 season." },
+  "teams.subtitle": { fr: "Toutes les catégories et équipes de l'AHM Verdun.", en: "All AHM Verdun categories and teams." },
   "teams.upcoming": { fr: "Prochaines activités", en: "Upcoming activities" },
   "teams.schedule": { fr: "Calendrier de l'équipe", en: "Team calendar" },
   "teams.news": { fr: "Dernières nouvelles", en: "Latest news" },
