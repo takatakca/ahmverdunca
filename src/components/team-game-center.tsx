@@ -50,6 +50,16 @@ function directionsUrls(destination: string) {
   };
 }
 
+function teamInitials(value: string) {
+  return value
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase() || "—";
+}
+
 function formatGameDate(startsAt: string | undefined, lang: "fr" | "en") {
   if (!startsAt) return undefined;
   const date = new Date(startsAt);
@@ -122,7 +132,7 @@ export function TeamGameCenter({
     <section
       id="match-center"
       aria-labelledby="team-game-center-title"
-      className="overflow-hidden border border-navy/12 bg-background shadow-[0_26px_60px_-48px_rgba(7,16,43,0.75)]"
+      className="overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_26px_60px_-48px_rgba(0,0,0,0.8)]"
     >
       <div className="grid lg:grid-cols-[1.32fr_0.68fr]">
         <div className="competition-panel p-5 text-white sm:p-6 md:p-8">
@@ -145,33 +155,63 @@ export function TeamGameCenter({
           </div>
 
           <div className="mt-6 border-t border-white/12 pt-5">
-            <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
-              {lang === "fr" ? "Prochaine partie" : "Next game"}
-            </p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
+                {lang === "fr" ? "Prochaine partie" : "Next game"}
+              </p>
+              {nextDate && (
+                <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-white/48">
+                  {nextDate}
+                </span>
+              )}
+            </div>
 
             {nextGame ? (
-              <>
-                <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-none text-white sm:text-3xl">
-                  {nextGame.awayTeam} <span className="text-white/38">vs</span> {nextGame.homeTeam}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs font-semibold uppercase tracking-[0.1em] text-white/62">
-                  {nextDate && <span>{nextDate}</span>}
-                  {nextGame.venue && <span>{nextGame.venue}</span>}
+              <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3 border border-white/12 bg-white/[0.035] p-4 sm:p-5">
+                <div className="min-w-0 text-center">
+                  <span className="mx-auto flex size-14 items-center justify-center rounded-full border border-white/14 bg-white/[0.06] font-display text-lg font-extrabold text-white sm:size-16 sm:text-xl">
+                    {teamInitials(nextGame.awayTeam)}
+                  </span>
+                  <p className="mt-3 line-clamp-2 font-display text-lg font-extrabold uppercase leading-[0.92] text-white sm:text-xl">
+                    {nextGame.awayTeam}
+                  </p>
                 </div>
-              </>
+                <div className="text-center">
+                  <span className="block text-[8px] font-bold uppercase tracking-[0.18em] text-white/38">
+                    {lang === "fr" ? "Match" : "Game"}
+                  </span>
+                  <span className="mt-1 block font-display text-3xl font-extrabold text-sport-foreground">VS</span>
+                </div>
+                <div className="min-w-0 text-center">
+                  <span className="mx-auto flex size-14 items-center justify-center rounded-full border border-sport/45 bg-sport/10 font-display text-lg font-extrabold text-sport-foreground sm:size-16 sm:text-xl">
+                    {teamInitials(nextGame.homeTeam)}
+                  </span>
+                  <p className="mt-3 line-clamp-2 font-display text-lg font-extrabold uppercase leading-[0.92] text-white sm:text-xl">
+                    {nextGame.homeTeam}
+                  </p>
+                </div>
+                {(nextGame.venue || nextDate) && (
+                  <div className="col-span-3 mt-1 flex flex-wrap justify-center gap-x-4 gap-y-1 border-t border-white/10 pt-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-white/56">
+                    {nextDate && <span>{nextDate}</span>}
+                    {nextGame.venue && <span>{nextGame.venue}</span>}
+                  </div>
+                )}
+              </div>
             ) : (
-              <>
-                <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white sm:text-3xl">
+              <div className="mt-4 border border-white/12 bg-white/[0.035] p-5">
+                <p className="font-display text-2xl font-extrabold uppercase leading-[0.92] text-white sm:text-3xl">
                   {loading
                     ? (lang === "fr" ? "Vérification de l’horaire…" : "Checking schedule…")
-                    : (lang === "fr" ? "Aucune donnée exacte publiée actuellement" : "No exact game data published right now")}
+                    : (lang === "fr" ? "Aucune partie exacte publiée" : "No exact game published")}
                 </p>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58">
-                  {lang === "fr"
-                    ? "Consultez la source officielle pour l’heure, l’adversaire et l’aréna les plus récents."
-                    : "Use the official source for the latest time, opponent and arena information."}
-                </p>
-              </>
+                {!loading && (
+                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/58">
+                    {lang === "fr"
+                      ? "La source officielle reste accessible ci-dessous dès qu’une mise à jour est publiée."
+                      : "The official source remains available below whenever an update is published."}
+                  </p>
+                )}
+              </div>
             )}
           </div>
 
@@ -212,31 +252,31 @@ export function TeamGameCenter({
           </div>
         </div>
 
-        <div className="grid gap-px bg-navy/10 sm:grid-cols-2 lg:grid-cols-1">
-          <article className="bg-background p-5 md:p-6">
+        <div className="grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-1">
+          <article className="bg-navy p-5 text-white md:p-6">
             <p className="eyebrow text-sport">{lang === "fr" ? "Dernier résultat" : "Latest result"}</p>
-            <p className="mt-3 font-display text-2xl font-extrabold uppercase leading-[0.92] text-navy">
+            <p className="mt-3 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white">
               {scoreLine || (lang === "fr" ? "Voir la source officielle" : "View official source")}
             </p>
             <a
               href={latestResult?.scoresheetUrl || officialResults}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.14em] text-sport"
+              className="mt-4 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground"
             >
               {lang === "fr" ? "Feuille / résultats" : "Scoresheet / results"} <ExternalLink className="size-3.5" />
             </a>
           </article>
 
-          <article className="bg-background p-5 md:p-6">
+          <article className="bg-navy p-5 text-white md:p-6">
             <p className="eyebrow text-sport">{lang === "fr" ? "Classement" : "Standings"}</p>
-            <p className="mt-3 font-display text-3xl font-extrabold uppercase leading-none text-navy">
+            <p className="mt-3 font-display text-3xl font-extrabold uppercase leading-none text-white">
               {standing?.rank
                 ? `#${standing.rank}`
                 : (lang === "fr" ? "Source officielle" : "Official source")}
             </p>
             {standing?.points !== undefined && (
-              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.11em] text-muted-foreground">
+              <p className="mt-2 text-xs font-semibold uppercase tracking-[0.11em] text-white/52">
                 {standing.points} {lang === "fr" ? "points" : "points"} · {standing.gamesPlayed ?? 0} PJ
               </p>
             )}
@@ -244,7 +284,7 @@ export function TeamGameCenter({
               href={sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.14em] text-sport"
+              className="mt-4 inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.14em] text-sport-foreground"
             >
               {lang === "fr" ? "Voir le classement" : "View standings"} <ExternalLink className="size-3.5" />
             </a>
@@ -252,19 +292,19 @@ export function TeamGameCenter({
         </div>
       </div>
 
-      <div className="grid border-t border-navy/10 sm:grid-cols-[1fr_auto]">
+      <div className="grid border-t border-white/10 bg-navy-deep sm:grid-cols-[1fr_auto]">
         <div className="p-5 md:px-6">
           <div className="flex items-start gap-3">
             <MapPin className="mt-0.5 size-5 shrink-0 text-sport" />
             <div>
-              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted-foreground">
+              <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/45">
                 {lang === "fr" ? "Aréna & trajet" : "Arena & directions"}
               </p>
-              <p className="mt-1 font-display text-xl font-extrabold uppercase text-navy">
+              <p className="mt-1 font-display text-xl font-extrabold uppercase text-white">
                 {nextGame?.venue || (lang === "fr" ? "Disponible avec la prochaine partie" : "Available with next game")}
               </p>
               {nextGame?.venueAddress && (
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs text-white/52">
                   <span className="font-semibold">{lang === "fr" ? "Adresse :" : "Address:"}</span> {nextGame.venueAddress}
                 </p>
               )}
@@ -272,16 +312,16 @@ export function TeamGameCenter({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 border-t border-navy/10 p-4 sm:border-l sm:border-t-0">
+        <div className="flex flex-wrap items-center gap-2 border-t border-white/10 p-4 sm:border-l sm:border-t-0">
           {directions ? (
             <>
-              <a href={directions.google} target="_blank" rel="noopener noreferrer" className="premium-control min-h-10 border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-navy">
+              <a href={directions.google} target="_blank" rel="noopener noreferrer" className="premium-control min-h-10 border border-white/16 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
                 Google Maps
               </a>
-              <a href={directions.waze} target="_blank" rel="noopener noreferrer" className="premium-control min-h-10 border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-navy">
+              <a href={directions.waze} target="_blank" rel="noopener noreferrer" className="premium-control min-h-10 border border-white/16 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
                 Waze
               </a>
-              <a href={directions.apple} target="_blank" rel="noopener noreferrer" className="premium-control min-h-10 border border-navy/12 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-navy">
+              <a href={directions.apple} target="_blank" rel="noopener noreferrer" className="premium-control min-h-10 border border-white/16 px-3 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
                 Apple Plans
               </a>
             </>
