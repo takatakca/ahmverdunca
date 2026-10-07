@@ -74,7 +74,7 @@ function RegistrationPage() {
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.84))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}</p>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Inscriptions hockey" : "Hockey registration"}</p>
               <h2 className="mt-2 max-w-2xl font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] sm:text-5xl">
                 {lang === "fr" ? "Du bon groupe au bon système." : "From the right group to the right system."}
               </h2>

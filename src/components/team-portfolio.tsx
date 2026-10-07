@@ -103,7 +103,7 @@ export function TeamPortfolio({
       <div className="grid bg-competition text-white lg:grid-cols-[1.2fr_0.8fr]">
         <div className="p-6 md:p-8">
           <p className="eyebrow text-sport-foreground">
-            {lang === "fr" ? "Mini-site équipe" : "Team mini-site"}
+            {lang === "fr" ? "Équipe AHMV" : "AHMV team"}
           </p>
           <h2 className="mt-2 max-w-3xl font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.035em] md:text-5xl">
             {team.name}

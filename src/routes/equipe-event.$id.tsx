@@ -64,7 +64,7 @@ function TeamEventPage() {
             className="inline-flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.14em] text-white/62 hover:text-white"
           >
             <ArrowLeft className="size-3.5 text-sport-foreground" />
-            {lang === "fr" ? "Retour au mini-site" : "Back to team mini-site"}
+            {lang === "fr" ? "Retour à l’équipe" : "Back to team"}
           </a>
 
           <div className="mt-8 flex flex-wrap gap-2">
