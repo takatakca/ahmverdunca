@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { AlertStatus } from "./alert-status";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { CalendarDays, ChevronDown, LogIn, MapPin, Menu, PhoneCall, Search, Sparkles, Trophy, Users, X } from "lucide-react";
-import { MAIN_NAV, MORE_NAV, SITE } from "@/lib/site";
+import { MAIN_NAV, MORE_NAV } from "@/lib/site";
 import { useI18n } from "@/lib/i18n";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -347,7 +347,7 @@ export function SiteHeader() {
                       : (lang === "fr" ? "Votre hockey. Rapidement." : "Your hockey. Fast.")}
                 </p>
                 <p className="mt-1 text-[9px] font-bold uppercase tracking-[0.14em] text-white/40">
-                  {SITE.season} · Verdun
+                  Verdun · Montréal
                 </p>
               </div>
               <LogoSlot className="size-14" />

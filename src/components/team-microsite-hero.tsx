@@ -83,11 +83,11 @@ function MiniCalendar({
           <div className="px-4 py-5">
             <p className="text-sm font-semibold text-white/72">
               {lang === "fr"
-                ? "Aucune activité exacte de cette équipe n’est publiée dans la grille AHMV actuellement chargée."
-                : "No exact activity for this team is published in the currently loaded AHMV schedule."}
+                ? "Aucune pratique de cette équipe n’est affichée pour cette semaine."
+                : "No practice for this team is shown for this week."}
             </p>
             <p className="mt-2 text-[9px] font-bold uppercase tracking-[0.13em] text-white/38">
-              {lang === "fr" ? "Consultez la source officielle ci-dessous." : "Use the official source below."}
+              {lang === "fr" ? "Voir l’horaire complet" : "View the full schedule"}
             </p>
           </div>
         )}
@@ -109,7 +109,7 @@ function MiniCalendar({
               </span>
               {row.verified && (
                 <span className="mt-0.5 block text-[7px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
-                  {lang === "fr" ? "Publié AHMV" : "Published AHMV"}
+                  AHMV
                 </span>
               )}
             </span>
@@ -124,7 +124,7 @@ function MiniCalendar({
         rel="noopener noreferrer"
         className="flex min-h-10 items-center justify-between border-t border-white/10 px-4 text-[8px] font-bold uppercase tracking-[0.14em] text-white/48 hover:text-white"
       >
-        <span>{lang === "fr" ? "Source officielle" : "Official source"}</span>
+        <span>{lang === "fr" ? "Horaire complet" : "Full schedule"}</span>
         <ExternalLink className="size-3.5" />
       </a>
     </section>
