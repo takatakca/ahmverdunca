@@ -93,7 +93,7 @@ export function HomeCreativeRail() {
                         </span>
                       </span>
                       <span className="flex items-center justify-between border-t border-white/12 pt-3 text-[9px] font-bold uppercase tracking-[0.12em]">
-                        <span className="text-white/52">AHMV · 2026–2027</span>
+                        <span className="text-white/52">AHMV · Verdun</span>
                         <span className="inline-flex items-center gap-1 text-sport-foreground">
                           {lang === "fr" ? "Retour" : "Back"} <RotateCcw className="size-3" />
                         </span>
