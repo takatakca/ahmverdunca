@@ -217,12 +217,19 @@ jobs:
         run: |
           set -euo pipefail
 
-          HEALTH_BODY="$(curl --fail --silent --show-error --retry 5 --retry-delay 3 "$AHMV_PRODUCTION_URL/healthz")"
-          echo "$HEALTH_BODY"
-          printf '%s' "$HEALTH_BODY" | grep -Fq "\"release\":\"$RELEASE_SHA\"" || {
-            echo "Production Passenger is not serving compiled release $RELEASE_SHA"
-            exit 1
-          }
+          HEALTH_BODY=""
+          for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            HEALTH_BODY="$(curl --fail --silent --show-error --retry 2 --retry-delay 1 "$AHMV_PRODUCTION_URL/healthz")"
+            echo "$HEALTH_BODY"
+            if printf '%s' "$HEALTH_BODY" | grep -Fq "\"release\":\"$RELEASE_SHA\""; then
+              break
+            fi
+            if [ "$attempt" -eq 12 ]; then
+              echo "Production Passenger is not serving compiled release $RELEASE_SHA"
+              exit 1
+            fi
+            sleep 3
+          done
 
           ROOT_HEADERS="$(mktemp)"
           ROOT_BODY="$(mktemp)"
