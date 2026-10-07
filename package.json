@@ -43,6 +43,7 @@
     "check:newsletter": "bun scripts/validate-newsletter.ts",
     "check:community-editability": "bun scripts/validate-community-editability.ts && bun test scripts/takatak-runtime-env.test.ts",
     "check:deploy-concurrency": "bun scripts/validate-deployment-concurrency.ts",
+    "test:hosting-inventory": "node --test scripts/hosting-app-inventory.test.mjs && python3 -B scripts/hosting-app-projection.test.py",
     "check:production-config": "bun scripts/validate-production-config-inventory.ts",
     "report:production-readiness": "bun scripts/production-readiness-report.ts",
     "publish:official-week": "bun scripts/publish-official-week-to-takatak.ts"

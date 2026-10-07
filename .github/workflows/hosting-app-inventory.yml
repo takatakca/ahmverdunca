@@ -1,0 +1,65 @@
+name: Encrypted read-only hosting application inventory
+
+on:
+  workflow_dispatch:
+    inputs:
+      collect_inventory:
+        description: Run the two fixed read-only UAPI queries and encrypt approved metadata
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ahmv-hosting-app-inventory
+  cancel-in-progress: false
+
+jobs:
+  inventory:
+    if: github.ref == 'refs/heads/main' && inputs.collect_inventory
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 5
+    steps:
+      - name: Checkout reviewed inventory tools
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup reviewed runtime
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
+
+      - name: Prepare pinned existing SSH transport
+        env:
+          AHMV_HOST: ${{ secrets.AHMV_PRODUCTION_HOST }}
+          AHMV_PORT: ${{ secrets.AHMV_PRODUCTION_SSH_PORT }}
+          AHMV_USER: ${{ secrets.AHMV_PRODUCTION_USER }}
+          AHMV_SSH_PRIVATE_KEY: ${{ secrets.AHMV_PRODUCTION_SSH_PRIVATE_KEY }}
+          AHMV_KNOWN_HOSTS: ${{ secrets.AHMV_PRODUCTION_KNOWN_HOSTS }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          bun scripts/hosting-app-inventory.mjs --prepare-ssh
+
+      - name: Collect server-projected metadata and encrypt it
+        shell: bash
+        run: |
+          set -euo pipefail
+          bun scripts/hosting-app-inventory.mjs --collect
+
+      - name: Retain encrypted owner-only inventory
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: hosting-app-inventory-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ahmv-hosting-inventory/hosting-app-inventory.enc.json
+          if-no-files-found: error
+          retention-days: 3
+
+      - name: Remove temporary transport material
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$RUNNER_TEMP/ahmv-hosting-inventory/key" "$RUNNER_TEMP/ahmv-hosting-inventory/known_hosts" "$RUNNER_TEMP/ahmv-hosting-inventory/config"
