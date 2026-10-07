@@ -7,8 +7,6 @@ import {
   BookOpen,
   CalendarDays,
   ExternalLink,
-  Facebook,
-  Instagram,
   MapPin,
   Trophy,
   Users,
@@ -41,7 +39,6 @@ import { getActiveAlerts } from "@/lib/active-alerts";
 import { useMontrealDate } from "@/lib/use-montreal-date";
 import { cn } from "@/lib/utils";
 import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase";
-import { RevenueActionPanel } from "@/components/revenue-action-panel";
 import { ContentContributionButton } from "@/components/content-contribution-button";
 import { FittedImage } from "@/components/media/fitted-image";
 
@@ -512,14 +509,14 @@ function Home() {
             </Button>
           </div>
 
-          <div className="mt-8 grid auto-rows-[170px] gap-2 sm:grid-cols-2 sm:auto-rows-[220px] lg:grid-cols-4 lg:auto-rows-[230px]">
+          <div className="scrollbar-none -mx-4 mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:grid sm:auto-rows-[220px] sm:grid-cols-2 sm:gap-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4 lg:auto-rows-[230px]">
             {ALBUMS.map((album, index) => (
               <Link
                 key={album.slug}
                 to="/galerie/$slug"
                 params={{ slug: album.slug }}
                 className={cn(
-                  "interactive-surface group relative overflow-hidden bg-navy",
+                  "interactive-surface group relative w-[82vw] max-w-[22rem] shrink-0 snap-start overflow-hidden bg-navy sm:w-auto sm:max-w-none",
                   index === 0 && "sm:row-span-2 lg:col-span-2 lg:row-span-2",
                   index === 1 && "lg:col-span-2",
                 )}
@@ -605,7 +602,7 @@ function Home() {
                     </div>
                   </div>
 
-                  <div className="divide-y divide-white/10 border-t border-white/10 md:border-l md:border-t-0">
+                  <div className="hidden divide-y divide-white/10 border-t border-white/10 md:block md:border-l md:border-t-0">
                     {ARENAS.slice(1, 5).map((arena, index) => (
                       <Link
                         key={arena.slug}
@@ -628,41 +625,19 @@ function Home() {
         </div>
       </section>
 
-      {/* Social strip */}
-      <section className="border-y border-white/10 bg-navy-deep text-white">
-        <div className="container-site flex flex-col gap-4 py-5 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="eyebrow text-sport-foreground">{t("home.socialPreview")}</p>
-            <p className="mt-1 text-sm text-white/52">{t("home.socialNote")}</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline-light" size="sm">
-              <a href={EXTERNAL_LINKS.instagram} target="_blank" rel="noopener noreferrer">
-                <Instagram className="size-4" /> Instagram <ExternalLink className="size-3" />
-              </a>
-            </Button>
-            <Button asChild variant="outline-light" size="sm">
-              <a href={EXTERNAL_LINKS.facebook} target="_blank" rel="noopener noreferrer">
-                <Facebook className="size-4" /> Facebook <ExternalLink className="size-3" />
-              </a>
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* WLLV */}
-      <section className="competition-panel relative overflow-hidden py-16 text-navy-foreground md:py-24">
+      <section className="competition-panel relative overflow-hidden py-9 text-navy-foreground md:py-12">
         <div className="pointer-events-none absolute right-[-2vw] top-1/2 -translate-y-1/2 font-display text-[28vw] font-extrabold leading-none text-navy-foreground/[0.035]">
           AA
         </div>
         <div className="container-site relative grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <div>
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Parcours compétitif" : "Competitive pathway"}</p>
-            <h2 className="mt-3 font-display text-5xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-6xl md:text-7xl">
+            <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.86] tracking-[-0.03em] sm:text-5xl md:text-6xl">
               WLLV
               <span className="outline-text ml-3">AA / BB</span>
             </h2>
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/65">{t("home.wllvNote")}</p>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-navy-foreground/65">{t("home.wllvNote")}</p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
             <Button asChild variant="outline-light" size="lg">
@@ -678,7 +653,7 @@ function Home() {
       </section>
 
       {/* Hockey heritage */}
-      <section id="archives-hockey" className="relative scroll-mt-28 overflow-hidden border-y border-white/10 bg-navy-deep py-12 text-white md:py-16">
+      <section id="archives-hockey" className="relative scroll-mt-28 overflow-hidden border-y border-white/10 bg-navy-deep py-9 text-white md:py-12">
         <div className="technical-grid pointer-events-none absolute inset-0 opacity-20" aria-hidden />
         <div className="container-site relative">
           <div className="grid gap-px overflow-hidden border border-white/12 bg-white/10 lg:grid-cols-[1.15fr_0.85fr]">
@@ -696,9 +671,9 @@ function Home() {
                 {lang === "fr" ? HOCKEY_HERITAGE.summary.fr : HOCKEY_HERITAGE.summary.en}
               </p>
 
-              <div className="mt-8 grid gap-px bg-white/12 sm:grid-cols-2">
+              <div className="scrollbar-none -mx-2 mt-6 flex snap-x snap-mandatory gap-2 overflow-x-auto px-2 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-visible sm:px-0">
                 {HOCKEY_HERITAGE.milestones.map((item) => (
-                  <article key={item.id} className="bg-competition p-5">
+                  <article key={item.id} className="min-w-[78vw] max-w-[20rem] snap-start bg-competition p-5 sm:min-w-0 sm:max-w-none">
                     <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground/75">
                       {lang === "fr" ? item.timing.fr : item.timing.en}
                     </p>
@@ -764,7 +739,7 @@ function Home() {
       <AdSenseSlot placement="home-main" className="container-site my-8 md:my-12" />
 
       {/* Partners */}
-      <section className="navy-texture overflow-hidden py-12 text-navy-foreground md:py-16">
+      <section className="navy-texture overflow-hidden py-8 text-navy-foreground md:py-10">
         <div className="container-site">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
@@ -779,13 +754,12 @@ function Home() {
             </Button>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-6">
             <OfficialSponsorShowcase compact />
           </div>
         </div>
       </section>
 
-      <RevenueActionPanel />
 
     </div>
   );
