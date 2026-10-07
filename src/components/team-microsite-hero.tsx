@@ -1,4 +1,4 @@
-import { CalendarDays, ChevronRight, Clock3, ExternalLink, MapPin, Trophy } from "lucide-react";
+import { CalendarDays, ChevronRight, Clock3, ExternalLink, Trophy } from "lucide-react";
 import type { PublicTeamDirectoryEntry } from "@/data/team-directory";
 import { legacyTeamScheduleUrl, officialTeamResultsUrl } from "@/data/team-directory";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
