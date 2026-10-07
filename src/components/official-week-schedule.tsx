@@ -1,7 +1,6 @@
-import { ArenaTripCard } from "@/components/arena-trip-card";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ExternalLink, MapPin, Search, XCircle } from "lucide-react";
+import { ExternalLink, MapPin, Navigation, Search, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VoiceSearchButton } from "@/components/voice-search-button";
 import { AddToCalendarButton } from "@/components/add-to-calendar-button";
@@ -42,9 +41,9 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   const cancelled = item.status === "cancelled";
   const today = montrealDateKey();
   const nowTime = montrealTimeKey();
-  const upcoming =
-    item.date > today || (item.date === today && item.end > nowTime);
+  const upcoming = item.date > today || (item.date === today && item.end > nowTime);
   const directionTarget = arenaDirectionsTargetForVenue(item.venue);
+  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(directionTarget)}`;
   const contributionFields = [
     { key: "date", label: { fr: "Date", en: "Date" }, kind: "date" as const, current: item.date },
     { key: "start", label: { fr: "Heure de début", en: "Start time" }, kind: "time" as const, current: item.start },
@@ -57,64 +56,70 @@ function ActivityRow({ item }: { item: OfficialWeekActivity }) {
   return (
     <article
       className={cn(
-        "interactive-surface grid gap-4 overflow-hidden rounded-2xl border border-white/12 bg-navy-deep p-4 text-white sm:grid-cols-[6rem_minmax(0,1fr)] sm:items-start",
-        cancelled && "border-status-cancelled/40 bg-status-cancelled-soft/40",
+        "interactive-surface grid gap-3 border border-white/12 bg-navy-deep p-4 text-white sm:grid-cols-[5.5rem_minmax(0,1fr)_auto] sm:items-center",
+        cancelled && "border-status-cancelled/45 bg-status-cancelled-soft/40",
       )}
     >
-      <div>
+      <div className="border-b border-white/10 pb-3 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-4">
         <p
           className={cn(
-            "font-display text-xl font-extrabold tabular-nums text-white",
+            "font-display text-2xl font-extrabold tabular-nums text-white",
             cancelled && "text-status-cancelled line-through decoration-2",
           )}
         >
           {displayTime(item.start)}
         </p>
-        <p className="mt-0.5 text-xs text-white/42">→ {displayTime(item.end)}</p>
+        <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-white/38">
+          {displayTime(item.end)}
+        </p>
       </div>
 
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           <h4 className="font-display text-lg font-bold uppercase leading-tight">{item.group}</h4>
           {cancelled && (
-            <span className="inline-flex items-center gap-1  bg-status-cancelled px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+            <span className="inline-flex items-center gap-1 bg-status-cancelled px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-white">
               <XCircle className="size-3" aria-hidden />
               {lang === "fr" ? "Annulée" : "Cancelled"}
             </span>
           )}
         </div>
         <p className="mt-1 text-sm font-semibold text-sport-foreground">{item.activity}</p>
-        <p className="mt-1 flex items-start gap-1.5 text-sm text-white/52">
-          <MapPin className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+        <p className="mt-2 flex items-start gap-1.5 text-xs text-white/52">
+          <MapPin className="mt-0.5 size-3.5 shrink-0 text-sport-foreground" aria-hidden />
           {item.venue}
         </p>
       </div>
 
-      <div className="w-full sm:col-span-2">
-        <div className="mb-2 flex justify-end">
-          <ContentContributionButton
-            resourceType="schedule"
-            resourceKey={`schedule:${item.id}`}
-            title={`${item.group} · ${item.date} · ${item.start}`}
-            snapshot={item as unknown as Record<string, unknown>}
-            fields={contributionFields}
-            evidenceRequired
-            appearance="menu"
-          />
-        </div>
-        <ArenaTripCard venue={item.venue} />
+      <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-3 sm:max-w-[15rem] sm:justify-end sm:border-t-0 sm:pt-0">
+        <a
+          href={directionsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="premium-control inline-flex min-h-10 items-center gap-2 border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white/72 hover:border-sport hover:text-white"
+        >
+          <Navigation className="size-3.5 text-sport-foreground" />
+          {lang === "fr" ? "Itinéraire" : "Directions"}
+        </a>
         {!cancelled && upcoming && (
-          <div className="mt-2">
-            <AddToCalendarButton
-              id={item.id}
-              date={item.date}
-              start={item.start}
-              end={item.end}
-              title={`AHMV — ${item.group} · ${item.activity}`}
-              location={directionTarget}
-            />
-          </div>
+          <AddToCalendarButton
+            id={item.id}
+            date={item.date}
+            start={item.start}
+            end={item.end}
+            title={`AHMV — ${item.group} · ${item.activity}`}
+            location={directionTarget}
+          />
         )}
+        <ContentContributionButton
+          resourceType="schedule"
+          resourceKey={`schedule:${item.id}`}
+          title={`${item.group} · ${item.date} · ${item.start}`}
+          snapshot={item as unknown as Record<string, unknown>}
+          fields={contributionFields}
+          evidenceRequired
+          appearance="menu"
+        />
       </div>
     </article>
   );
@@ -224,8 +229,8 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-navy-foreground/62">
             {lang === "fr"
-              ? `Transcription fidèle du PDF hebdomadaire AHMV publié le ${publishedLabel}. Aucune catégorie n'a été déduite ou renommée.`
-              : `Faithful transcription of the AHMV weekly PDF published ${publishedLabel}. No category was inferred or renamed.`}
+              ? `Activités publiées par l’AHMV pour cette semaine · mise à jour du ${publishedLabel}.`
+              : `AHMV activities published for this week · updated ${publishedLabel}.`}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -287,11 +292,11 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
         )}
 
         {weekExpired && !showArchive ? (
-          <div className="rounded-xl border border-border bg-background p-5 md:p-6">
+          <div className="border border-white/12 bg-navy-deep p-5 text-white md:p-6">
             <p className="eyebrow text-sport">
               {lang === "fr" ? "Semaine terminée" : "Week completed"}
             </p>
-            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/55">
               {lang === "fr"
                 ? `Ce PDF couvre ${rangeLabel}. Pour l'horaire actuel, utilisez les sources officielles présentées plus haut sur la page. L'archive demeure accessible pour référence.`
                 : `This PDF covers ${rangeLabel}. For the current schedule, use the official sources shown above on this page. The archive remains available for reference.`}
@@ -303,8 +308,8 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
         ) : (
           <>
             {weekExpired && (
-              <div className="mb-4 flex flex-col gap-3 rounded-lg border border-border bg-background p-4 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-muted-foreground">
+              <div className="mb-4 flex flex-col gap-3 border border-white/12 bg-navy-deep p-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-white/52">
                   {lang === "fr"
                     ? "Archive seulement — vérifiez les sources officielles pour l'horaire courant."
                     : "Archive only — check official sources for the current schedule."}
@@ -346,7 +351,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
         </div>
 
         {query.trim() && (
-          <p className="mt-3 text-sm font-semibold text-muted-foreground" aria-live="polite">
+          <p className="mt-3 text-sm font-semibold text-white/52" aria-live="polite">
             {lang === "fr"
               ? `${displayed.length} résultat${displayed.length === 1 ? "" : "s"} dans l’horaire publié`
               : `${displayed.length} result${displayed.length === 1 ? "" : "s"} in the published schedule`}
@@ -364,16 +369,16 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
         )}
 
         {displayed.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
+          <p className="py-8 text-center text-sm text-white/52">
             {lang === "fr"
-              ? "Aucune activité ne correspond à cette recherche dans le PDF de cette semaine."
+              ? "Aucune activité ne correspond à cette recherche cette semaine."
               : "No activity matches this search in this week's PDF."}
           </p>
         ) : (
           <div className="mt-6 space-y-8">
             {days.map((date) => (
               <section key={date}>
-                <div className="mb-3 flex items-center justify-between gap-3 border-b border-border pb-2">
+                <div className="mb-3 flex items-center justify-between gap-3 border-b border-white/12 pb-2">
                   <h3 className="font-display text-xl font-bold uppercase">
                     {formatDate(date, lang, { weekday: "long", day: "numeric", month: "long" })}
                   </h3>

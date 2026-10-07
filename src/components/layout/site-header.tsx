@@ -153,7 +153,7 @@ export function SiteHeader() {
       {/* Top utility bar (desktop) */}
       <div className={cn("hidden overflow-hidden border-b border-navy-foreground/10 transition-[max-height,opacity] duration-300 lg:block", scrolled ? "max-h-0 opacity-0" : "max-h-9 opacity-100")}>
         <div className="container-site flex h-9 items-center justify-between text-xs">
-          <span className="text-navy-foreground/70">{t("home.heroSub")} · {t("common.season")} {SITE.season}</span>
+          <span className="text-navy-foreground/70">{t("home.heroSub")}</span>
           <div className="flex items-center gap-4">
             {selectedTeams.length > 0 ? (
               <span className="inline-flex items-center gap-1">

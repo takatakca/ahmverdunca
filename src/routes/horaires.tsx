@@ -105,8 +105,8 @@ function SchedulePage() {
             </p>
             <p className="mt-4 text-sm leading-relaxed text-white/65">
               {lang === "fr"
-                ? "La recherche ci-dessous utilise uniquement l’horaire hebdomadaire publié. Pour une partie, un score ou un classement, ouvrez directement le calendrier officiel de l’équipe."
-                : "The search below uses only the published weekly schedule. For a game, score or standing, open the team’s official calendar directly."}
+                ? "Votre semaine AHMV, puis les accès directs aux résultats et classements officiels."
+                : "Your AHMV week, plus direct access to official results and standings."}
             </p>
           </div>
         </section>
@@ -142,18 +142,12 @@ function SchedulePage() {
                     <p className="eyebrow text-sport-foreground">{entry.level}</p>
                     <p className="mt-2 font-display text-xl font-extrabold uppercase leading-[0.9] text-white">{entry.name}</p>
                   </div>
-                  <div className="mt-auto grid grid-cols-3 gap-2 pt-5">
+                  <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
                     <a
                       href={publicTeamHubUrl(entry)}
                       className="premium-control flex min-h-10 items-center justify-center border border-white/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white/75 hover:border-sport hover:text-white"
                     >
                       {lang === "fr" ? "Équipe" : "Team"}
-                    </a>
-                    <a
-                      href={publicTeamScheduleUrl(entry)}
-                      className="premium-control flex min-h-10 items-center justify-center border border-white/12 px-2 text-center text-[8px] font-bold uppercase tracking-[0.08em] text-white/75 hover:border-sport hover:text-white"
-                    >
-                      {lang === "fr" ? "Horaire" : "Schedule"}
                     </a>
                     <a
                       href={officialTeamResultsUrl(entry)}
@@ -177,8 +171,8 @@ function SchedulePage() {
             </p>
             <p className="mt-1 text-sm text-white/55">
               {lang === "fr"
-                ? "Besoin de la donnée sportive officielle maintenant? Choisissez votre circuit."
-                : "Need official sport data right now? Choose your circuit."}
+                ? "Choisissez le circuit correspondant à votre équipe."
+                : "Choose the circuit for your team."}
             </p>
           </div>
           <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 md:p-6">
