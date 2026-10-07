@@ -45,8 +45,8 @@ export function NewsletterInterest({
             : "mt-4 max-w-xl text-sm leading-relaxed text-navy-foreground/72"
           }>
             {lang === "fr"
-              ? "Horaires, nouvelles, inscriptions et informations utiles pourront être regroupés par TAKATAK selon vos préférences et votre consentement."
-              : "Schedules, news, registration and useful updates can be grouped by TAKATAK according to your preferences and consent."}
+              ? "Horaires, nouvelles, inscriptions et informations utiles pourront être regroupés selon vos préférences et votre consentement."
+              : "Schedules, news, registration and useful updates can be grouped according to your preferences and consent."}
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export function NewsletterInterest({
               },
               {
                 title: lang === "fr" ? "Consentement centralisé" : "Centralized consent",
-                body: lang === "fr" ? "Préférences et désabonnement seront gérés par TAKATAK, pas par le navigateur." : "Preferences and unsubscribe will be managed by TAKATAK, not the browser.",
+                body: lang === "fr" ? "Vos préférences et votre désabonnement restent centralisés et modifiables." : "Your preferences and unsubscribe choices stay centralized and editable.",
               },
             ].map((item) => (
               <article key={item.title} className="bg-competition p-5">
