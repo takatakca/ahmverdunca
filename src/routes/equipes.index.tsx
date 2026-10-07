@@ -79,14 +79,14 @@ function TeamsPage() {
               </p>
               <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/72">
                 {lang === "fr"
-                  ? "Chaque catégorie devient un point d’entrée vers l’horaire, les équipes publiées, les nouvelles et les ressources utiles aux familles."
-                  : "Each category becomes a starting point for schedules, published teams, news and family resources."}
+                  ? "Choisissez une catégorie pour retrouver ses équipes, nouvelles, résultats et ressources utiles."
+                  : "Choose a category to find its teams, news, results and useful resources."}
               </p>
             </div>
           </div>
           <div className="flex flex-col justify-between border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
             <div>
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail familles" : "Family portal"}</p>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Repères rapides" : "Quick access"}</p>
               <div className="mt-6 grid gap-px border border-white/12 bg-white/12">
                 <div className="bg-navy p-5">
                   <p className="font-display text-5xl font-extrabold">{String(CURRENT_TEAMS.length).padStart(2, "0")}</p>
@@ -444,7 +444,7 @@ function TeamsPage() {
                     )}
                     {publicTeams.length > 0 && (
                       <span className="border border-white/12 px-2 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/42">
-                        {publicTeams.length} {lang === "fr" ? "équipe(s) publique(s)" : "public team(s)"}
+                        {publicTeams.length} {lang === "fr" ? "équipe(s)" : "team(s)"}
                       </span>
                     )}
                   </div>
