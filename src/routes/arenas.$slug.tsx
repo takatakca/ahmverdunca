@@ -104,7 +104,7 @@ function ArenaPage() {
     : undefined;
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={l(arena.borough)}
         title={arena.name}
@@ -207,17 +207,7 @@ function ArenaPage() {
           <ArrowLeft className="size-4" /> {t("common.back")}
         </Link>
 
-        <section className="grid gap-4 lg:grid-cols-3">
-          <article className="border border-white/12 bg-navy-deep p-6 text-white">
-            <MapPin className="size-5 text-sport-foreground" />
-            <p className="eyebrow mt-4 text-sport-foreground">{lang === "fr" ? "Adresse vérifiée" : "Verified address"}</p>
-            <p className="mt-3 text-sm leading-relaxed">{arena.address}</p>
-            <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-status-confirmed">
-              <CheckCircle2 className="size-4" />
-              {lang === "fr" ? "Source officielle recoupée" : "Official source cross-checked"}
-            </div>
-          </article>
-
+        <section className="grid gap-4 lg:grid-cols-2">
           <article className="border border-white/12 bg-navy-deep p-6 text-white">
             <Car className="size-5 text-sport-foreground" />
             <p className="eyebrow mt-4 text-sport-foreground">{lang === "fr" ? "Stationnement" : "Parking"}</p>
@@ -268,19 +258,6 @@ function ArenaPage() {
           </section>
         )}
 
-        <section className="competition-panel border border-navy/12 p-6 text-navy-foreground">
-          <CalendarDays className="size-6 text-sport-foreground" aria-hidden />
-          <h2 className="heading-card mt-5">{lang === "fr" ? "Vous jouez ici?" : "Playing here?"}</h2>
-          <p className="mt-2 max-w-2xl text-sm text-navy-foreground/70">
-            {lang === "fr"
-              ? "L’horaire AHMV structuré relie maintenant chaque glace reconnue à sa fiche aréna et aux trois services d’itinéraire."
-              : "The structured AHMV schedule now connects recognized rinks to their arena page and all three direction services."}
-          </p>
-          <Button asChild variant="outline-light" className="mt-5">
-            <Link to="/horaires">{lang === "fr" ? "Voir les horaires" : "View schedules"}</Link>
-          </Button>
-        </section>
-
         <ArenaMemberTools arena={arena} lang={lang} />
 
         <NewsletterInterest lang={lang} source="ahmv-arena" arenaSlug={arena.slug} />
@@ -323,6 +300,6 @@ function ArenaPage() {
           </section>
         )}
       </div>
-    </>
+    </div>
   );
 }
