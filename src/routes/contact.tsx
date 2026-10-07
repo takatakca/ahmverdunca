@@ -44,14 +44,14 @@ function ContactPage() {
   const showPhone = phonePublic;
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Nous joindre" : "Get in touch"}
         title={t("contact.title")}
         description={
           lang === "fr"
-            ? "Choisissez le bon accès selon votre besoin. Les opérations hockey restent dans leurs systèmes officiels; le site simplifie le chemin pour les familles."
-            : "Choose the right access point for your need. Hockey operations remain in their official systems; this site simply makes the path easier for families."
+            ? "Horaires, inscriptions, bénévolat, commandites ou information générale : choisissez le bon accès."
+            : "Schedules, registration, volunteering, sponsorships or general information: choose the right access point."
         }
         actions={
           phonePublic ? (
@@ -80,7 +80,7 @@ function ContactPage() {
           <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Accès rapide" : "Quick access"}</p>
             <p className="mt-4 text-sm leading-relaxed text-white/65">
-              {lang === "fr" ? "Horaires, inscriptions, bénévolat, commandites ou information générale : utilisez la bonne porte pour obtenir une réponse plus rapidement." : "Schedules, registration, volunteering, sponsorships or general information: use the right entry point to get an answer faster."}
+              {lang === "fr" ? "Les accès essentiels sont regroupés juste en dessous." : "The essential contact paths are grouped just below."}
             </p>
             {phonePublic && <a href={`tel:${phoneE164}`} className="mt-6 font-display text-3xl font-extrabold text-white">{phoneDisplay}</a>}
           </div>
@@ -210,6 +210,6 @@ function ContactPage() {
           </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }
