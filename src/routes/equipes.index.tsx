@@ -55,8 +55,8 @@ function TeamsPage() {
         eyebrow={lang === "fr" ? "Hockey à Verdun" : "Hockey in Verdun"}
         title={t("teams.title")}
         description={lang === "fr"
-          ? "Du premier coup de patin à M22 : choisissez une catégorie pour retrouver son horaire, ses équipes publiques, ses résultats, son classement, ses arénas et ses informations."
-          : "From the first skate to U22: choose a category to find its schedule, public teams, results, standings, arenas and information."}
+          ? "Du premier coup de patin à M22 : choisissez une catégorie pour retrouver ses équipes, résultats, arénas et informations utiles."
+          : "From the first skate to U22: choose a category to find its teams, results, arenas and useful information."}
       />
 
       <div className="container-site py-9 md:py-14">
@@ -149,14 +149,14 @@ function TeamsPage() {
           <section className="mb-8 overflow-hidden border border-sport/30 bg-navy-deep text-white">
             <div className="grid bg-competition text-white lg:grid-cols-[1fr_auto]">
               <div className="p-6 md:p-8">
-                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Portail parent" : "Parent portal"}</p>
+                <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Mes équipes" : "My teams"}</p>
                 <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.88] tracking-[-0.03em] md:text-5xl">
                   {lang === "fr" ? "Mes équipes" : "My teams"}
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/62">
                   {lang === "fr"
-                    ? "Le portail met maintenant vos équipes en priorité. Ajoutez-en plusieurs si vos enfants jouent dans des formations différentes."
-                    : "The portal now prioritizes your teams. Add several when your children play on different teams."}
+                    ? "Vos équipes restent en priorité. Ajoutez-en plusieurs si vos enfants jouent dans des formations différentes."
+                    : "Your teams stay prioritized. Add several when your children play on different teams."}
                 </p>
               </div>
               <div className="flex items-center border-t border-white/12 p-5 lg:border-l lg:border-t-0">
@@ -195,7 +195,7 @@ function TeamsPage() {
                       href={publicTeamHubUrl(entry)}
                       className="premium-control flex min-h-11 items-center justify-between bg-navy px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white"
                     >
-                      {lang === "fr" ? "Mon mini-site" : "My mini-site"} <ArrowRight className="size-3.5 text-sport-foreground" />
+                      {lang === "fr" ? "Mon équipe" : "My team"} <ArrowRight className="size-3.5 text-sport-foreground" />
                     </a>
                     <a
                       href={officialTeamResultsUrl(entry)}
@@ -213,14 +213,14 @@ function TeamsPage() {
         ) : (
           <section className="mb-8 flex flex-col gap-5 border border-white/12 bg-competition p-6 text-white md:flex-row md:items-center md:justify-between md:p-8">
             <div>
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Personnaliser le portail" : "Personalize the portal"}</p>
+              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Mes équipes" : "My teams"}</p>
               <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white">
                 {lang === "fr" ? "Choisissez les équipes de vos enfants." : "Choose your children’s teams."}
               </p>
               <p className="mt-3 max-w-2xl text-sm text-white/55">
                 {lang === "fr"
-                  ? "Ajoutez une ou plusieurs équipes. Le portail pourra ensuite mettre leurs résultats, nouvelles et contenus en premier."
-                  : "Add one or more teams. The portal can then put their results, news and content first."}
+                  ? "Ajoutez une ou plusieurs équipes pour retrouver leurs résultats, nouvelles et contenus en premier."
+                  : "Add one or more teams to see their results, news and content first."}
               </p>
             </div>
             <a href="#resultats" className="premium-control inline-flex min-h-12 shrink-0 items-center gap-2 bg-navy px-5 font-display text-sm font-bold uppercase tracking-[0.1em] text-white">
@@ -274,7 +274,7 @@ function TeamsPage() {
               <div className="flex flex-col justify-center p-6 md:p-8">
                 <span className="font-display text-5xl font-extrabold text-sport-foreground">{totalPublicTeams}</span>
                 <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/48">
-                  {lang === "fr" ? "équipes publiques" : "public teams"}
+                  {lang === "fr" ? "équipes" : "teams"}
                 </span>
               </div>
               <div className="flex flex-col justify-center border-l border-white/12 p-6 md:p-8">

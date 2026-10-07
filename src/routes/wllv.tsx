@@ -151,7 +151,7 @@ function WllvPage() {
 
         <section className="overflow-hidden border border-white/12 bg-navy-deep text-white">
           <div className="bg-competition p-5 text-white md:p-6">
-            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Saison 2026–2027" : "2026–2027 season"}</p>
+            <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Parcours hockey" : "Hockey pathway"}</p>
             <h2 className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white md:text-4xl">
               {lang === "fr" ? "Parcours Chacals" : "Chacals pathway"}
             </h2>
