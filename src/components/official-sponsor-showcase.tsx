@@ -23,8 +23,8 @@ export function OfficialSponsorShowcase({
 
   return (
     <div className={compact
-      ? "grid gap-px overflow-hidden border border-white/12 bg-white/12 sm:grid-cols-2 lg:grid-cols-4"
-      : "grid gap-px overflow-hidden border border-white/12 bg-white/10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      ? "scrollbar-none flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-hidden sm:border sm:border-white/12 sm:bg-white/12 lg:grid-cols-4"
+      : "scrollbar-none flex snap-x snap-mandatory gap-2 overflow-x-auto pb-1 sm:grid sm:grid-cols-2 sm:gap-px sm:overflow-hidden sm:border sm:border-white/12 sm:bg-white/10 lg:grid-cols-3 xl:grid-cols-4"
     }>
       {SPONSORS.map((baseSponsor, index) => {
         const resourceKey = sponsorResourceKey(baseSponsor.name);
@@ -74,7 +74,7 @@ export function OfficialSponsorShowcase({
             </div>
 
             <div className={compact ? "mt-5" : "mt-6"}>
-              <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-sport">
+              <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
                 {lang === "fr" ? "Partenaire AHMV" : "AHMV partner"}
               </p>
               <p className={compact
@@ -122,7 +122,7 @@ export function OfficialSponsorShowcase({
         );
 
         return (
-          <div key={sponsor.name} className="relative">
+          <div key={sponsor.name} className="relative w-[78vw] max-w-[19rem] shrink-0 snap-start overflow-hidden border border-white/12 sm:w-auto sm:max-w-none sm:border-0">
             <ContentContributionButton
               resourceType="sponsor"
               resourceKey={resourceKey}
