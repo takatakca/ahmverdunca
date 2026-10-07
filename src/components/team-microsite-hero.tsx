@@ -260,8 +260,8 @@ export function TeamMicrositeHero({
 
             <p className="mt-4 text-[8px] font-bold uppercase tracking-[0.15em] text-white/35">
               {lang === "fr"
-                ? "Photo AHMV de la catégorie · elle sert de contexte visuel et ne prétend pas représenter l’alignement exact. Aucune heure de partie n’est inventée."
-                : "AHMV category photo · used as visual context and not presented as the exact roster. No game time is fabricated."}
+                ? "Photo d’ambiance AHMV de la catégorie · Horaires et résultats : liens officiels."
+                : "AHMV category photo for context · Official links for schedules and results."}
             </p>
           </div>
         </div>

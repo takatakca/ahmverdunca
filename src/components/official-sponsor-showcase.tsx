@@ -82,10 +82,10 @@ export function OfficialSponsorShowcase({
                 : "mt-2 text-xs font-semibold leading-relaxed text-muted-foreground"
               }>
                 {hasOfficialLogo
-                  ? (lang === "fr" ? "Logo officiel vérifié" : "Verified official logo")
+                  ? (lang === "fr" ? "Un partenaire de l’association" : "An association partner")
                   : (lang === "fr"
-                      ? "Identité officielle affichée sans faux logo; le visuel sera branché dès qu’un fichier officiel est vérifié."
-                      : "Official identity shown without a simulated logo; artwork will be connected once an official file is verified.")}
+                      ? "Découvrez ce partenaire de l’association."
+                      : "Discover this association partner.")}
               </p>
             </div>
 
@@ -149,12 +149,12 @@ export function SponsorIdentityNotice() {
       </span>
       <div>
         <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-navy">
-          {lang === "fr" ? "Logos officiels seulement" : "Official logos only"}
+          {lang === "fr" ? "Partenaires de l’association" : "Association partners"}
         </p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
           {lang === "fr"
-            ? "Aucun logo de commanditaire n’est recréé ou simulé. Les cartes utilisent le nom officiel et le lien vérifié jusqu’à ce qu’un fichier de marque officiel soit disponible."
-            : "Sponsor logos are never recreated or simulated. Cards use the official name and verified link until an official brand file is available."}
+            ? "Découvrez les partenaires d’AHM Verdun. Les liens disponibles vous donnent accès à leurs sites pour en savoir plus."
+            : "Meet AHM Verdun’s partners. Use the available links to visit their websites and learn more."}
         </p>
       </div>
     </div>

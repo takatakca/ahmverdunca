@@ -25,8 +25,8 @@ export function RevenueActionPanel() {
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/65">
               {lang === "fr"
-                ? "La contribution en ligne n’est pas activée tant que le bénéficiaire, le processeur, les conditions et la politique de remboursement ne sont pas confirmés. Pour le moment, utilisez uniquement les canaux de contact officiels."
-                : "Online contributions remain disabled until the beneficiary, processor, terms and refund policy are confirmed. For now, use official contact channels only."}
+                ? "Contactez AHMV pour connaître les façons de contribuer et les démarches à suivre avec l’association."
+                : "Contact AHMV to learn how you can contribute and what steps to take with the association."}
             </p>
             <Button asChild variant="outline-light" className="mt-6">
               <Link to="/contact">
@@ -50,8 +50,8 @@ export function RevenueActionPanel() {
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
-                ? "Découvrez les espaces de visibilité disponibles sur le portail AHMV. Aucune audience, portée ou performance publicitaire n’est inventée : seules les possibilités réellement disponibles sont présentées."
-                : "Explore visibility placements available across the AHMV portal. No audience, reach or ad-performance numbers are invented; only real available placements are presented."}
+                ? "Découvrez les options de visibilité du portail AHMV et contactez l’association pour discuter d’un format et d’une période."
+                : "Explore visibility options on the AHMV portal and contact the association to discuss a format and dates."}
             </p>
             <Button asChild variant="sport" className="mt-6">
               <Link to="/partenaires">
@@ -65,8 +65,8 @@ export function RevenueActionPanel() {
           <ShieldCheck className="mt-0.5 size-3.5 shrink-0 text-sport" aria-hidden />
           <p>
             {lang === "fr"
-              ? "Ces surfaces sont informatives et non transactionnelles. Elles ne promettent ni reçu fiscal, ni destination de fonds non confirmée."
-              : "These surfaces are informational and non-transactional. They promise neither a tax receipt nor any unconfirmed destination of funds."}
+              ? "Les modalités de toute contribution ou commandite sont à confirmer directement avec l’association."
+              : "Confirm the terms of any contribution or sponsorship directly with the association."}
           </p>
         </div>
       </div>
