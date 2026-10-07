@@ -159,7 +159,7 @@ function ArticlePage() {
         <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
           <article className="min-w-0 overflow-hidden border border-white/12 bg-navy-deep text-white">
             <NewsArticleMedia key={slug} items={media} ownImage={Boolean(ownImageUrl)} category={category ? l(category.label) : "AHMV"} lang={lang} />
-            <div className="mt-0 grid gap-px border-x border-b border-white/12 bg-white/10 sm:grid-cols-3">
+            <div className="mt-0 grid gap-px border-x border-b border-white/12 bg-white/10 sm:grid-cols-2">
               <div className="bg-competition p-4 text-white">
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{lang === "fr" ? "Publication" : "Published"}</p>
                 <p className="mt-1 font-display text-xl font-bold uppercase text-white">{displayDate}</p>
@@ -167,10 +167,6 @@ function ArticlePage() {
               <div className="bg-competition p-4 text-white">
                 <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{t("article.author")}</p>
                 <p className="mt-1 font-display text-xl font-bold uppercase text-white">{displayAuthor}</p>
-              </div>
-              <div className="bg-competition p-4 text-white">
-                <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/42">{lang === "fr" ? "Saison" : "Season"}</p>
-                <p className="mt-1 font-display text-xl font-bold uppercase text-white">{a.season}</p>
               </div>
             </div>
             {lang === "en" && !a.body.en && (
