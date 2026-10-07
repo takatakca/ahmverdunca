@@ -109,7 +109,7 @@ function Home() {
   const featuredArena = ARENAS[0];
 
   return (
-    <>
+    <div className="flow-root bg-navy-deep text-white">
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
       <section className="relative isolate min-h-[68svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[72svh] md:min-h-[80svh]">
         <img
@@ -838,6 +838,6 @@ function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }
