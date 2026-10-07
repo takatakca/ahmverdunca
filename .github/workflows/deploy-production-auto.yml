@@ -557,32 +557,34 @@ jobs:
           echo "Checking:"
           echo "$AHMV_PRODUCTION_URL/healthz"
 
-          HEALTH_BODY="$(
-            scripts/deploy-production-http-smoke.sh body /healthz
-          )"
+          HEALTH_BODY=""
+          for attempt in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            HEALTH_BODY="$(
+              scripts/deploy-production-http-smoke.sh body /healthz
+            )"
 
-          echo "$HEALTH_BODY"
+            echo "$HEALTH_BODY"
 
-          printf '%s' "$HEALTH_BODY" |
-            grep -q '"ok"[[:space:]]*:[[:space:]]*true' || {
-              echo "ERROR: Health endpoint did not report ok=true."
-              exit 1
-            }
+            if printf '%s' "$HEALTH_BODY" |
+              grep -q '"ok"[[:space:]]*:[[:space:]]*true' &&
+              printf '%s' "$HEALTH_BODY" |
+              grep -q '"service"[[:space:]]*:[[:space:]]*"ahmverdun-web"' &&
+              printf '%s' "$HEALTH_BODY" |
+              grep -Fq "\"release\":\"$RELEASE_SHA\""
+            then
+              echo "Production health check passed for compiled release $RELEASE_SHA."
+              break
+            fi
 
-          printf '%s' "$HEALTH_BODY" |
-            grep -q '"service"[[:space:]]*:[[:space:]]*"ahmverdun-web"' || {
-              echo "ERROR: Health endpoint returned an unexpected service name."
-              exit 1
-            }
-
-          printf '%s' "$HEALTH_BODY" |
-            grep -Fq "\"release\":\"$RELEASE_SHA\"" || {
+            if [ "$attempt" -eq 12 ]; then
               echo "ERROR: Passenger is not serving the compiled release SHA $RELEASE_SHA."
-              echo "The active symlink may have changed while an older server process remained resident."
+              echo "The active symlink is current, but the application process did not rotate to the new release within the restart window."
               exit 1
-            }
+            fi
 
-          echo "Production health check passed for compiled release $RELEASE_SHA."
+            echo "Passenger is still rotating to the new release (attempt $attempt/12)."
+            sleep 3
+          done
 
       - name: Verify production homepage
         run: |
