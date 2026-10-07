@@ -1,6 +1,6 @@
 import { SponsorshipInquiry } from "@/components/sponsorship-inquiry";
 import { canonicalLink } from "@/lib/seo";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   ArrowRight,
   Building2,
@@ -11,7 +11,6 @@ import {
   Megaphone,
   MousePointerClick,
   Newspaper,
-  RefreshCw,
   ShieldCheck,
   Trophy,
   Users,
@@ -22,7 +21,6 @@ import { SPONSORS } from "@/data/sponsors";
 import { useI18n } from "@/lib/i18n";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { OfficialSponsorShowcase, SponsorIdentityNotice } from "@/components/official-sponsor-showcase";
-import { HOUSE_SPONSORS } from "@/data/house-sponsors";
 
 export const Route = createFileRoute("/partenaires")({
   head: () => ({
@@ -88,7 +86,7 @@ function PartnersPage() {
   ];
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Visibilité locale · Hockey mineur" : "Local visibility · Minor hockey"}
         title={lang === "fr" ? "Votre entreprise ici" : "Your business here"}
@@ -106,8 +104,7 @@ function PartnersPage() {
         }
       />
 
-      <div className="container-site space-y-12 py-8 md:py-12">
-        <SponsorshipInquiry />
+      <div className="container-site space-y-10 py-8 md:py-12">
         <section className="grid overflow-hidden border border-navy/12 bg-navy text-white lg:grid-cols-[1.15fr_0.85fr]">
           <div className="technical-grid p-7 md:p-10">
             <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Hockey · Familles · Verdun" : "Hockey · Families · Verdun"}</p>
@@ -219,126 +216,32 @@ function PartnersPage() {
                   {lang === "fr" ? "Préparer une demande" : "Prepare an inquiry"} <ArrowRight className="size-4" />
                 </a>
               </Button>
-              <Button asChild variant="outline-light" size="lg">
-                <Link to="/">{lang === "fr" ? "Voir le portail" : "View the portal"}</Link>
-              </Button>
             </div>
           </div>
         </section>
 
+        <SponsorshipInquiry />
+
         <section className="space-y-6">
           <div>
             <p className="eyebrow text-sport">
-              {lang === "fr" ? "Promotion TAKATAK · distincte des partenaires" : "TAKATAK promotion · separate from partners"}
+              {lang === "fr" ? "Découvertes locales" : "Local discoveries"}
             </p>
             <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-[0.9] text-navy sm:text-5xl">
-              {lang === "fr" ? "Réseau de promotions locales" : "Local promotion network"}
+              {lang === "fr" ? "Entreprises d’ici" : "Local businesses"}
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
               {lang === "fr"
-                ? "Des entreprises et services à découvrir parmi les promotions proposées par TAKATAK, distinctes des partenaires officiels d’AHMV."
-                : "Explore businesses and services in TAKATAK promotions, separate from AHMV’s official partners."}
+                ? "Découvrez des entreprises et services locaux présentés séparément des partenaires officiels de l’AHMV."
+                : "Discover local businesses and services presented separately from AHMV’s official partners."}
             </p>
           </div>
 
           <HouseSponsorSlot placement="partners-house-network" count={4} />
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {HOUSE_SPONSORS.map((sponsor) => (
-              <article
-                key={sponsor.id}
-                className="group overflow-hidden border border-white/12 bg-navy-deep text-white"
-              >
-                <div className="relative flex min-h-36 items-end overflow-hidden bg-competition p-5 text-white">
-                  <span className="pointer-events-none absolute -right-3 -top-8 font-display text-[7rem] font-extrabold uppercase leading-none text-white/[0.035]" aria-hidden>
-                    {sponsor.short}
-                  </span>
-                  <div className="relative">
-                    <p className="text-[8px] font-bold uppercase tracking-[0.17em] text-sport-foreground">
-                      {lang === "fr" ? "Promotion locale" : "Local promotion"}
-                    </p>
-                    <p className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.9] text-white">
-                      {sponsor.name}
-                    </p>
-                  </div>
-                </div>
-                <div className="border-t border-white/10 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="font-display text-2xl font-extrabold uppercase leading-none text-white">
-                        {sponsor.name}
-                      </p>
-                      <p className="mt-2 text-xs leading-relaxed text-white/55">
-                        {lang === "fr" ? sponsor.tagline.fr : sponsor.tagline.en}
-                      </p>
-                    </div>
-                    <span className="shrink-0 border border-white/12 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.12em] text-white/42">
-                      {lang === "fr" ? "Maison" : "House"}
-                    </span>
-                  </div>
-                  {sponsor.href ? (
-                    <a
-                      href={sponsor.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-4 inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-[0.1em] text-sport-foreground hover:underline"
-                    >
-                      {lang === "fr" ? "Visiter" : "Visit"} <ArrowRight className="size-3.5" />
-                    </a>
-                  ) : (
-                    <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.1em] text-white/42">
-                      {lang === "fr" ? "Lien public à confirmer" : "Public link to confirm"}
-                    </p>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
         </section>
 
-        <section className="border border-white/12 bg-competition p-6 text-white md:p-8">
-          <SectionHeading
-            eyebrow={lang === "fr" ? "Gestion partenaire" : "Partner management"}
-            title={lang === "fr" ? "Une commandite plus simple à gérer" : "Simpler sponsorship management"}
-            description={
-              lang === "fr"
-                ? "Le portail est préparé pour structurer les offres, renouvellements, campagnes et bilans lorsque les données et processus officiels seront disponibles."
-                : "The portal is prepared to structure offers, renewals, campaigns and reporting once official data and processes are available."
-            }
-          />
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {[
-              {
-                Icon: Handshake,
-                fr: "Partenariats",
-                en: "Partnerships",
-                frText: "Emplacements, période et visibilité confirmés.",
-                enText: "Confirmed placements, term and visibility.",
-              },
-              {
-                Icon: RefreshCw,
-                fr: "Renouvellements",
-                en: "Renewals",
-                frText: "Suivi structuré lorsque le processus officiel existe.",
-                enText: "Structured follow-up once the official process exists.",
-              },
-              {
-                Icon: Megaphone,
-                fr: "Campagnes",
-                en: "Campaigns",
-                frText: "Site et autres canaux uniquement lorsqu’ils sont autorisés.",
-                enText: "Website and other channels only when authorized.",
-              },
-            ].map(({ Icon, fr, en, frText, enText }) => (
-              <div key={fr} className="border border-white/10 bg-navy-deep p-5">
-                <Icon className="size-6 text-sport-foreground" aria-hidden />
-                <h3 className="mt-5 font-display text-2xl font-bold uppercase text-white">{lang === "fr" ? fr : en}</h3>
-                <p className="mt-2 text-sm text-white/55">{lang === "fr" ? frText : enText}</p>
-              </div>
-            ))}
-          </div>
-        </section>
       </div>
-    </>
+    </div>
   );
 }
