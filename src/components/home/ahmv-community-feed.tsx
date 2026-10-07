@@ -12,7 +12,7 @@ import { useI18n } from "@/lib/i18n";
 import { EXTERNAL_LINKS } from "@/lib/site";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
 
-const COMMUNITY_FEED_URL = "https://takatak.ca/api/public/ahmv/community-feed";
+const COMMUNITY_FEED_URL = "/api/ahmv/community-feed";
 const FACEBOOK_PAGE_URL = EXTERNAL_LINKS.facebook;
 
 export function AhmvCommunityFeed() {
@@ -36,8 +36,9 @@ export function AhmvCommunityFeed() {
           credentials: "omit",
           signal: controller.signal,
         });
-        if (response.ok) setItems(parseCommunityFeed(await response.json()));
+        setItems(response.ok ? parseCommunityFeed(await response.json()) : []);
       } catch {
+        if (!controller.signal.aborted) setItems([]);
         /* Official Page access and the gallery remain available. */
       } finally {
         fetching = false;
@@ -202,6 +203,7 @@ export function AhmvCommunityFeed() {
                     day: "numeric",
                     month: "short",
                     year: "numeric",
+                    timeZone: "America/Montreal",
                   }).format(new Date(item.publishedAt))}
                 </time>
                 <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-white/80">
