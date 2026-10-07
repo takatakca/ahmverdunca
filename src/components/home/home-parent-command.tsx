@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, MapPin, Trophy, Users } from "lucide-react";
+import { CalendarDays, ChevronRight, MapPin, Plus, Trophy, Users } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import {
@@ -18,9 +18,9 @@ export function HomeParentCommand() {
   const introMedia = uploadedAhmvMediaById(52);
   const today = montrealDateKey();
   return (
-    <section className="border-y border-white/10 bg-competition py-7 text-white md:py-10">
+    <section className="border-y border-white/10 bg-competition py-5 text-white md:py-8">
       <div className="container-site">
-        <div className="mb-5 flex items-center justify-between gap-4">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <h2 className="font-display text-3xl font-extrabold uppercase tracking-tight md:text-4xl">
             {lang === "fr" ? "Mes équipes" : "My teams"}
           </h2>
@@ -28,8 +28,18 @@ export function HomeParentCommand() {
             to="/equipes"
             className="inline-flex min-h-11 items-center gap-2 text-xs font-semibold text-sport-foreground"
           >
-            {lang === "fr" ? "Gérer mes équipes" : "Manage my teams"}
-            <ChevronRight className="size-4" />
+            <Plus className="size-4" />
+            {lang === "fr" ? "Ajouter / gérer" : "Add / manage"}
+          </Link>
+        </div>
+        <div className="mb-4 flex flex-wrap gap-2">
+          <Link to="/horaires" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-sport/45 bg-sport/15 px-4 text-xs font-bold text-white transition-colors hover:bg-sport/25">
+            <CalendarDays className="size-4 text-sport-foreground" />
+            {lang === "fr" ? "À la glace · horaires" : "On the ice · schedules"}
+          </Link>
+          <Link to="/equipes" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 bg-navy-deep px-4 text-xs font-bold text-white transition-colors hover:bg-navy">
+            <Plus className="size-4 text-sport-foreground" />
+            {lang === "fr" ? "Choisir une équipe" : "Choose a team"}
           </Link>
         </div>
         {selectedTeams.length ? (
