@@ -289,7 +289,7 @@ export function AhmvAssistant() {
                 const target = returnFocusRef.current?.isConnected ? returnFocusRef.current : triggerRef.current;
                 target?.focus();
               }}
-              className="w-full max-w-md overflow-hidden border border-white/12 bg-background shadow-[0_32px_90px_-28px_rgba(0,0,0,0.78)] outline-none"
+              className="w-full max-w-md overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_32px_90px_-28px_rgba(0,0,0,0.78)] outline-none"
             >
             <div className="bg-competition p-5 text-white">
               <div className="flex items-start justify-between gap-4">
@@ -344,11 +344,11 @@ export function AhmvAssistant() {
               </div>
             </div>
 
-            <div className="max-h-[62dvh] overflow-y-auto overscroll-contain p-5">
-              <div className="border-l-4 border-sport bg-ice p-4">
-                <p className="text-sm leading-relaxed text-navy">{reply?.text ?? copy.greeting}</p>
+            <div className="max-h-[62dvh] overflow-y-auto overscroll-contain bg-navy-deep p-5">
+              <div className="border-l-4 border-sport bg-competition p-4">
+                <p className="text-sm leading-relaxed text-white/78">{reply?.text ?? copy.greeting}</p>
                 {bookmarkNotice && (
-                  <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-sport">{bookmarkNotice}</p>
+                  <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">{bookmarkNotice}</p>
                 )}
               </div>
 
@@ -361,17 +361,17 @@ export function AhmvAssistant() {
                       onClick={() => { if (!action.external) setOpen(false); }}
                       target={action.external ? "_blank" : undefined}
                       rel={action.external ? "noopener noreferrer" : undefined}
-                      className="premium-control flex min-h-11 items-center justify-between border border-navy/12 px-4 text-xs font-bold uppercase tracking-[0.08em] text-navy hover:border-sport hover:bg-ice"
+                      className="premium-control flex min-h-11 items-center justify-between border border-white/12 bg-navy px-4 text-xs font-bold uppercase tracking-[0.08em] text-white/74 hover:border-sport hover:bg-white/[0.05] hover:text-white"
                     >
                       <span className="line-clamp-2">{action.label}</span>
-                      {action.kind === "results" ? <Trophy className="size-4 shrink-0 text-sport" /> : action.kind === "schedule" ? <CalendarDays className="size-4 shrink-0 text-sport" /> : <Users className="size-4 shrink-0 text-sport" />}
+                      {action.kind === "results" ? <Trophy className="size-4 shrink-0 text-sport-foreground" /> : action.kind === "schedule" ? <CalendarDays className="size-4 shrink-0 text-sport-foreground" /> : <Users className="size-4 shrink-0 text-sport-foreground" />}
                     </a>
                   ))}
                 </div>
               )}
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <button type="button" onClick={() => { setInput("M11 Coyotes"); run("M11 Coyotes"); }} className="premium-control border border-navy/12 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
+                <button type="button" onClick={() => { setInput("M11 Coyotes"); run("M11 Coyotes"); }} className="premium-control border border-white/12 bg-white/[0.03] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-white/68 hover:border-sport hover:text-white">
                   {copy.quickTeam}
                 </button>
                 <button type="button" onClick={() => { setInput(copy.quickSchedule); run(copy.quickSchedule); }} className="premium-control border border-navy/12 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
@@ -380,13 +380,13 @@ export function AhmvAssistant() {
                 <button type="button" onClick={() => { setInput(copy.quickResults); run(copy.quickResults); }} className="premium-control border border-navy/12 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
                   {copy.quickResults}
                 </button>
-                <button type="button" onClick={() => { setInput(copy.quickMyTeams); run(copy.quickMyTeams); }} className="premium-control border border-sport/30 bg-sport/5 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
+                <button type="button" onClick={() => { setInput(copy.quickMyTeams); run(copy.quickMyTeams); }} className="premium-control border border-sport/35 bg-sport/10 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
                   {copy.quickMyTeams}
                 </button>
               </div>
 
-              <div className="mt-4 flex items-center gap-2 border-l-2 border-sport bg-sport/5 px-3 py-2 text-[10px] font-semibold text-navy">
-                <Mic className="size-4 shrink-0 text-sport" aria-hidden />
+              <div className="mt-4 flex items-center gap-2 border-l-2 border-sport bg-sport/10 px-3 py-2 text-[10px] font-semibold text-white/72">
+                <Mic className="size-4 shrink-0 text-sport-foreground" aria-hidden />
                 <span>{assistantUiLanguage(assistantLanguage) === "fr" ? "Vous pouvez parler directement au micro pour trouver une équipe, un horaire, un résultat ou une aréna." : assistantUiLanguage(assistantLanguage) === "es" ? "Puedes hablar directamente al micrófono para encontrar un equipo, horario, resultado o arena." : "You can speak directly into the microphone to find a team, schedule, result or arena."}</span>
               </div>
 
@@ -399,7 +399,7 @@ export function AhmvAssistant() {
                     onChange={(event) => setInput(event.target.value)}
                     placeholder={copy.placeholder}
                     autoComplete="off"
-                    className="h-12 min-w-0 border border-navy/12 bg-background px-3 text-sm outline-none focus:border-sport"
+                    className="h-12 min-w-0 border border-white/12 bg-competition px-3 text-sm text-white placeholder:text-white/34 outline-none focus:border-sport"
                   />
                   <VoiceSearchButton
                     compact
@@ -415,19 +415,19 @@ export function AhmvAssistant() {
                 </div>
               </form>
 
-              <div className="mt-4 border-t border-navy/10 pt-4">
+              <div className="mt-4 border-t border-white/10 pt-4">
                 {phonePublic ? (
                   <a href={`tel:${phoneE164}`} className="premium-control flex min-h-11 items-center justify-between bg-navy px-4 text-xs font-bold uppercase tracking-[0.1em] text-white">
                     <span className="flex items-center gap-2"><PhoneCall className="size-4 text-sport-foreground" />{copy.phoneReady}</span>
                     <span className="font-mono text-[10px] text-white/58">{phoneDisplay}</span>
                   </a>
                 ) : null}
-                <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-[10px] leading-relaxed text-white/42">
                   {assistantUiLanguage(assistantLanguage) === "fr"
-                    ? "Le guide n’invente jamais un horaire ou un résultat officiel. Les liens hockey demeurent la source d’autorité."
+                    ? "Pour les heures et résultats, le guide vous dirige vers les liens hockey officiels."
                     : assistantUiLanguage(assistantLanguage) === "es"
-                      ? "El asistente nunca inventa un horario o resultado oficial. Las fuentes oficiales de hockey siguen siendo la autoridad."
-                      : "The guide never invents an official schedule or result. Official hockey sources remain authoritative."}
+                      ? "Para horarios y resultados, el asistente te dirige a las fuentes oficiales de hockey."
+                      : "For times and results, the guide points you to the official hockey links."}
                 </p>
               </div>
             </div>
