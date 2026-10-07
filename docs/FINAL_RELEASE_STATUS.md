@@ -4,13 +4,13 @@
 **Project:** AHM Verdun 2026–2027  
 **Digital delivery:** GROUPE TAKATAK  
 **Production domain:** https://ahmverdun.ca  
-**Verified AHMV production SHA:** `b40666e2e1a9433b3744815748bfa3d64618f528`
+**Verified AHMV production SHA:** `e366ba134ea84ed92eabb22861623b819ad47597`
 
 ## 1. Current status
 
 The AHMV public application is live on MochaHost at the verified SHA above.
 
-AHM Verdun CI #1091 succeeded and production deployment #860 completed successfully. The deployment used the approved cPanel/Passenger restart command and then proved that the `release` JSON field returned by `GET /healthz` matched the exact compiled SHA `b40666e2e1a9433b3744815748bfa3d64618f528`. Homepage, core public routes, search-noindex policy, `robots.txt` and `sitemap.xml` also passed.
+AHM Verdun CI #1094 succeeded and production deployment #863 completed successfully. The deployment used the approved cPanel/Passenger restart command and then proved that the `release` JSON field returned by `GET /healthz` matched the exact compiled SHA `e366ba134ea84ed92eabb22861623b819ad47597`. Homepage, core public routes, search-noindex policy, `robots.txt` and `sitemap.xml` also passed.
 
 The earlier stale-Passenger failure is closed: production acceptance now requires the compiled runtime SHA, not merely the active symlink or release marker.
 
