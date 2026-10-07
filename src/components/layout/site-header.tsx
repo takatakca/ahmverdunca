@@ -51,9 +51,11 @@ export function SiteHeader() {
     };
     window.addEventListener("ahmv:assistant-open", closeForAssistant);
     window.addEventListener("ahmv:welcome-open", closeForAssistant);
+    window.addEventListener("ahmv:install-open", closeForAssistant);
     return () => {
       window.removeEventListener("ahmv:assistant-open", closeForAssistant);
       window.removeEventListener("ahmv:welcome-open", closeForAssistant);
+      window.removeEventListener("ahmv:install-open", closeForAssistant);
     };
   }, []);
 
@@ -136,6 +138,7 @@ export function SiteHeader() {
             <button
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent("ahmv:welcome-open"))}
+              data-ahmv-welcome-trigger
               className="premium-control inline-flex min-h-10 shrink-0 items-center gap-1.5 border-l border-white/15 pl-3 text-[9px] font-bold uppercase tracking-[0.08em] text-white hover:text-sport-foreground"
               aria-label={lang === "fr" ? "Ouvrir le panneau de bienvenue" : "Open the welcome panel"}
               aria-haspopup="dialog"

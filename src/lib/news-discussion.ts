@@ -35,8 +35,43 @@ export function exactFacebookThreadUrl(value: string | undefined): string | unde
 export function exactFacebookCommentUrl(value: string | undefined): string | undefined {
   const threadUrl = exactFacebookThreadUrl(value);
   if (!threadUrl) return undefined;
-  const commentIds = new URL(threadUrl).searchParams.getAll("comment_id");
-  return commentIds.length === 1 && /^\d+$/.test(commentIds[0] ?? "") ? threadUrl : undefined;
+  const params = new URL(threadUrl).searchParams;
+  const commentIds = params.getAll("comment_id");
+  const replyIds = params.getAll("reply_comment_id");
+  const identifiedReply =
+    replyIds.length === 0 || (replyIds.length === 1 && /^\d+$/.test(replyIds[0] ?? ""));
+  return commentIds.length === 1 && /^\d+$/.test(commentIds[0] ?? "") && identifiedReply
+    ? threadUrl
+    : undefined;
+}
+
+/** Public archive links must identify a post on the verified official Instagram account. */
+export function exactInstagramThreadUrl(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  try {
+    const url = new URL(value);
+    if (
+      url.protocol !== "https:" ||
+      !["instagram.com", "www.instagram.com"].includes(url.hostname) ||
+      url.username ||
+      url.password ||
+      url.port ||
+      !/^\/ahm_verdun\/p\/[A-Za-z0-9_-]+\/?$/.test(url.pathname)
+    )
+      return undefined;
+    return url.href;
+  } catch {
+    return undefined;
+  }
+}
+
+export function exactSocialThread(
+  value: string | undefined,
+): { network: "Facebook" | "Instagram"; url: string } | undefined {
+  const facebook = exactFacebookThreadUrl(value);
+  if (facebook) return { network: "Facebook", url: facebook };
+  const instagram = exactInstagramThreadUrl(value);
+  return instagram ? { network: "Instagram", url: instagram } : undefined;
 }
 
 function exactIsoDate(value: string) {
@@ -62,6 +97,12 @@ export function newsCommentProblems(value: unknown): string[] {
   }
   if (comment["source"] !== "facebook" && comment["source"] !== "member")
     problems.push("source must be facebook or member");
+  if (
+    comment["language"] !== undefined &&
+    comment["language"] !== "fr" &&
+    comment["language"] !== "en"
+  )
+    problems.push("language must be fr or en when supplied");
   if (
     comment["source"] === "facebook" &&
     (typeof comment["sourceUrl"] !== "string" || !exactFacebookCommentUrl(comment["sourceUrl"]))

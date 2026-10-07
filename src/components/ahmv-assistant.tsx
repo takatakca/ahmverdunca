@@ -85,14 +85,14 @@ export function AhmvAssistant() {
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
-  const handingFocusToWelcome = useRef(false);
+  const handingFocusAway = useRef(false);
 
   const showAssistant = useCallback((returnFocus?: HTMLElement | null) => {
     const opener = returnFocus ?? document.activeElement;
     returnFocusRef.current = opener instanceof HTMLElement && opener !== document.body && !opener.closest('[role="dialog"]')
       ? opener
       : triggerRef.current;
-    handingFocusToWelcome.current = false;
+    handingFocusAway.current = false;
     setOpen(true);
     setShowNudge(false);
     setBookmarkNotice("");
@@ -147,16 +147,20 @@ export function AhmvAssistant() {
       const detail = (event as CustomEvent<{ returnFocus?: unknown }>).detail;
       showAssistant(detail?.returnFocus instanceof HTMLElement ? detail.returnFocus : undefined);
     };
-    const closeForWelcome = () => {
-      handingFocusToWelcome.current = true;
+    const closeForAnotherSurface = () => {
+      handingFocusAway.current = true;
       setOpen(false);
       setShowNudge(false);
     };
     window.addEventListener("ahmv:assistant-open", openAssistant);
-    window.addEventListener("ahmv:welcome-open", closeForWelcome);
+    window.addEventListener("ahmv:welcome-open", closeForAnotherSurface);
+    window.addEventListener("ahmv:install-open", closeForAnotherSurface);
+    window.addEventListener("ahmv:navigation-open", closeForAnotherSurface);
     return () => {
       window.removeEventListener("ahmv:assistant-open", openAssistant);
-      window.removeEventListener("ahmv:welcome-open", closeForWelcome);
+      window.removeEventListener("ahmv:welcome-open", closeForAnotherSurface);
+      window.removeEventListener("ahmv:install-open", closeForAnotherSurface);
+      window.removeEventListener("ahmv:navigation-open", closeForAnotherSurface);
     };
   }, [showAssistant]);
 
@@ -281,7 +285,7 @@ export function AhmvAssistant() {
               }}
               onCloseAutoFocus={(event) => {
                 event.preventDefault();
-                if (handingFocusToWelcome.current) return;
+                if (handingFocusAway.current) return;
                 const target = returnFocusRef.current?.isConnected ? returnFocusRef.current : triggerRef.current;
                 target?.focus();
               }}
@@ -354,6 +358,7 @@ export function AhmvAssistant() {
                     <a
                       key={`${action.kind}-${action.href}-${index}`}
                       href={action.href}
+                      onClick={() => { if (!action.external) setOpen(false); }}
                       target={action.external ? "_blank" : undefined}
                       rel={action.external ? "noopener noreferrer" : undefined}
                       className="premium-control flex min-h-11 items-center justify-between border border-navy/12 px-4 text-xs font-bold uppercase tracking-[0.08em] text-navy hover:border-sport hover:bg-ice"

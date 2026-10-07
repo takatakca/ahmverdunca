@@ -1,3 +1,5 @@
+import { getAhmvContentRuntimeConfig } from "./takatak-content-config.server.ts";
+
 const CONTENT_TYPES = new Set([
   "news","post","photo","image","gallery","schedule","arena","team","page","faq","sponsor","other",
 ]);
@@ -12,29 +14,6 @@ function json(body: unknown, status = 200) {
       "X-Robots-Tag": "noindex, nofollow",
     },
   });
-}
-
-function config() {
-  const enabled = import.meta.env["TAKATAK_CONTENT_CONTRIBUTIONS_ENABLED"] === "true";
-  const rawOrigin =
-    import.meta.env["TAKATAK_CONTENT_ORIGIN"]?.trim() ||
-    "https://takatak.ca";
-  const token = import.meta.env["TAKATAK_AHMV_CONTENT_TOKEN"]?.trim() ?? "";
-
-  let origin: URL | undefined;
-  try {
-    const candidate = new URL(rawOrigin);
-    if (candidate.protocol === "https:") origin = candidate;
-  } catch {
-    origin = undefined;
-  }
-
-  return {
-    enabled,
-    origin,
-    token,
-    ready: enabled && Boolean(origin) && token.length >= 32,
-  };
 }
 
 function safeString(value: unknown, max: number) {
@@ -102,7 +81,7 @@ function sanitizeContribution(value: unknown) {
 }
 
 async function takatakRequest(path: string, init?: RequestInit) {
-  const settings = config();
+  const settings = getAhmvContentRuntimeConfig();
   if (!settings.ready || !settings.origin) {
     return { response: json({ ok: false, status: "not_connected" }, 503), settings };
   }
