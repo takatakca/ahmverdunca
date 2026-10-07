@@ -61,7 +61,7 @@ export function OfficialWeekPreview() {
   const isPersonalized = personalized.length > 0 && savedTeam;
 
   return (
-    <section className="competition-panel relative overflow-hidden py-10 text-navy-foreground md:py-14">
+    <section className="competition-panel relative overflow-hidden py-8 text-navy-foreground md:py-10">
       <div className="technical-grid pointer-events-none absolute inset-0 opacity-25" aria-hidden />
       <div className="container-site relative">
         {upcomingOfficialDocument ? (
@@ -92,7 +92,7 @@ export function OfficialWeekPreview() {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
 
-            <h2 className="mt-2 font-display text-[clamp(2.4rem,5.2vw,4.8rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.03em]">
+            <h2 className="mt-2 font-display text-[clamp(2.15rem,5vw,4.4rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.03em]">
               {isPersonalized
                 ? lang === "fr"
                   ? `${savedTeam.code === "F" ? l(savedTeam.name) : savedTeam.code} · Cette semaine`
@@ -118,51 +118,53 @@ export function OfficialWeekPreview() {
         </div>
 
         {relevant.length ? (
-          <div className="mt-7 grid gap-3 lg:grid-cols-2">
+          <div className="scrollbar-none mt-6 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1">
             {relevant.map((item) => {
               const cancelled = item.status === "cancelled";
               return (
                 <article
                   key={item.id}
                   className={cn(
-                    "interactive-surface border border-white/12 bg-navy-deep p-5 text-white",
+                    "interactive-surface min-w-[82vw] max-w-[20rem] snap-start overflow-hidden border border-white/12 bg-navy-deep text-white sm:min-w-[19rem]",
                     cancelled && "border-status-cancelled/50 bg-status-cancelled-soft",
                   )}
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="eyebrow text-sport">
-                        {item.date === today
-                          ? lang === "fr"
-                            ? "Aujourd'hui"
-                            : "Today"
-                          : formatDate(item.date, lang, {
-                              weekday: "short",
-                              day: "numeric",
-                              month: "short",
-                            })}
-                      </p>
-                      <p
-                        className={cn(
-                          "mt-1 font-display text-2xl font-extrabold tabular-nums text-white",
-                          cancelled && "text-status-cancelled line-through decoration-2",
-                        )}
-                      >
-                        {displayTime(item.start)} – {displayTime(item.end)}
-                      </p>
-                    </div>
+                  <div className="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3">
+                    <span className="bg-sport px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.13em] text-sport-foreground">
+                      {item.date === today
+                        ? lang === "fr"
+                          ? "Aujourd'hui"
+                          : "Today"
+                        : formatDate(item.date, lang, {
+                            weekday: "short",
+                            day: "numeric",
+                            month: "short",
+                          })}
+                    </span>
                     {cancelled && (
-                      <span className="inline-flex shrink-0 items-center gap-1 bg-status-cancelled px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                      <span className="inline-flex shrink-0 items-center gap-1 text-[9px] font-bold uppercase tracking-wide text-status-cancelled">
                         <XCircle className="size-3" aria-hidden />
                         {lang === "fr" ? "Annulée" : "Cancelled"}
                       </span>
                     )}
                   </div>
 
-                  <h3 className="mt-4 font-display text-xl font-bold uppercase">{item.group}</h3>
-                  <p className="mt-1 text-sm font-semibold text-sport-foreground">{item.activity}</p>
-
-                  <div className="mt-4"><ArenaTripCard venue={item.venue} /></div>
+                  <div className="p-4">
+                    <p
+                      className={cn(
+                        "font-display text-3xl font-extrabold tabular-nums text-white",
+                        cancelled && "text-status-cancelled line-through decoration-2",
+                      )}
+                    >
+                      {displayTime(item.start)}
+                    </p>
+                    <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-white/42">
+                      {displayTime(item.start)} – {displayTime(item.end)}
+                    </p>
+                    <h3 className="mt-4 font-display text-xl font-bold uppercase leading-[0.92]">{item.group}</h3>
+                    <p className="mt-1 text-sm font-semibold text-sport-foreground">{item.activity}</p>
+                    <div className="mt-4"><ArenaTripCard venue={item.venue} /></div>
+                  </div>
                 </article>
               );
             })}
