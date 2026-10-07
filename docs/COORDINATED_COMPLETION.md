@@ -2,7 +2,7 @@
 
 Checkpoint: 2026-10-07, America/Toronto.  
 Canonical AHMV source authority: `takatakca/ahmverdunca:main`.  
-Verified deployed AHMV production release: `b40666e2e1a9433b3744815748bfa3d64618f528`.  
+Verified deployed AHMV production release: `e366ba134ea84ed92eabb22861623b819ad47597`.  
 Canonical TAKATAK backend repository: `takatakca/takatak-v1`.  
 Current TAKATAK main: `f13932daf713dd39d64ccc6f6a889f3a97ec12c6`.
 
@@ -10,8 +10,8 @@ This file separates **merged source**, **deployed production**, **database state
 
 ## 2026-10-07 live refresh
 
-- AHMV `main` is `b40666e2e1a9433b3744815748bfa3d64618f528`.
-- AHM Verdun CI #1091 succeeded for that SHA and automatic production deploy #860 succeeded, including release activation, Passenger restart, health, homepage, core routes, robots and sitemap verification.
+- AHMV `main` is `e366ba134ea84ed92eabb22861623b819ad47597`.
+- AHM Verdun CI #1094 succeeded for that SHA and automatic production deploy #863 succeeded, including release activation, Passenger restart, health, homepage, core routes, robots and sitemap verification.
 - PR #369 merged the public-copy cleanup for partner/promotion surfaces.
 - PR #370 merged visible gallery-photo recovery and dark frontend continuity.
 - The current final-consolidation pass is intentionally limited to remaining public UX regressions: bottom-nav safe area, unambiguous active mobile navigation, dark continuity on the teams directory and removal of internal TAKATAK wording from public sponsor labels.
@@ -30,9 +30,9 @@ This file separates **merged source**, **deployed production**, **database state
 
 ## Current AHMV production baseline
 
-AHMV production on MochaHost is verified at `b40666e2e1a9433b3744815748bfa3d64618f528`.
+AHMV production on MochaHost is verified at `e366ba134ea84ed92eabb22861623b819ad47597`.
 
-AHM Verdun CI #1091 succeeded. Production deployment #860 completed successfully and passed:
+AHM Verdun CI #1094 succeeded. Production deployment #863 completed successfully and passed:
 
 - exact-green-release checkout and stale-main refusal;
 - full release gate and deployment-configuration validation;
@@ -68,7 +68,7 @@ The current source also keeps the guarded Voice production-host deployment gate 
 | ID | Area | Source/data state | Live state / remaining dependency |
 | --- | --- | --- | --- |
 | A01 | Current-source authority | AHMV `main`; TAKATAK `8adfa23…` | `main` is source authority; docs-only commits may advance without changing deployed runtime |
-| A02 | AHMV production | CI + immutable deploy + cPanel restart + compiled-SHA live HTTP proof | **Ready** at `b40666e…` |
+| A02 | AHMV production | CI + immutable deploy + cPanel restart + compiled-SHA live HTTP proof | **Ready** at `e366ba1…` |
 | A03 | Teams | Exact 24-team contract/data complete | **Ready** |
 | A04 | Team Games / results | Exact-team connector/source guards complete | Shared service credential + live exact-team upstream smoke |
 | A05 | TAKATAK ADS | Publisher + six placements complete | **No real sellable inventory yet:** 0 subscription/campaign/creative/event; browser gate stays OFF |
