@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Building2, ChevronRight, MapPin, Navigation } from "lucide-react";
 import { getArenaForVenue, arenaDirectionsTargetForVenue } from "@/data/arenas";
 import { mapsDirectionsUrl } from "@/lib/site";
@@ -19,6 +20,7 @@ export function ArenaTripCard({ venue }: { venue: string }) {
     typeof arena?.["photoUrl"] === "string" && arena["photoUrl"].startsWith("https://")
       ? arena["photoUrl"]
       : original?.photoUrl;
+  const [failedPhoto, setFailedPhoto] = useState<string>();
   const address = arenaDirectionsTargetForVenue(venue);
   const target = encodeURIComponent(address);
   const photoSource = original?.officialPhotoPage;
@@ -31,10 +33,11 @@ export function ArenaTripCard({ venue }: { venue: string }) {
         className="group flex min-h-24 items-center gap-3 p-3"
       >
         <span className="relative flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-navy to-competition">
-          {photo ? (
+          {photo && failedPhoto !== photo ? (
             <img
               src={photo}
               alt={original?.photoAlt?.[lang] ?? original?.name ?? venue}
+              onError={() => setFailedPhoto(photo)}
               loading="lazy"
               className="size-full object-cover"
             />
@@ -75,14 +78,16 @@ export function ArenaTripCard({ venue }: { venue: string }) {
           </a>
         ))}
       </div>
-      {!photo && photoSource && (
+      {photoSource && (
         <a
           href={photoSource}
           target="_blank"
           rel="noopener noreferrer"
           className="block border-t border-white/10 px-3 py-2 text-[11px] text-white/55 hover:text-white"
         >
-          {lang === "fr" ? "Photos de l’aréna" : "Arena photos"} ↗
+          {photo && original?.photoCredit
+            ? `Photo : ${original.photoCredit}`
+            : lang === "fr" ? "Photos de l’aréna" : "Arena photos"} ↗
         </a>
       )}
     </div>

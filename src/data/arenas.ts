@@ -26,6 +26,7 @@ export interface Arena {
   officialPhotoPage?: string;
   photoUrl?: string;
   photoAlt?: Localized;
+  photoCredit?: string;
   directionsNotes?: Localized;
   phone?: string;
   phoneExtension?: string;
@@ -49,6 +50,9 @@ export const ARENAS: Arena[] = [
     addressVerified: true,
     website: "https://montreal.ca/lieux/auditorium-de-verdun",
     officialPhotoPage: "https://montreal.ca/lieux/auditorium-de-verdun",
+    photoUrl: "https://res.cloudinary.com/villemontreal/image/upload/w_1200,ar_16:7,c_fill/f_auto,dpr_auto,q_auto/v1/portail/o58ap5ltqbbebzbhnbt2.jpg",
+    photoAlt: { fr: "Auditorium de Verdun — photo de la Ville de Montréal", en: "Verdun Auditorium — City of Montréal photo" },
+    photoCredit: "Ville de Montréal",
     phone: "514-765-7130",
     description: {
       fr: "Bâtiment historique restauré comprenant les espaces de glace Denis-Savard et Scotty-Bowman, au bord du fleuve à Verdun.",
