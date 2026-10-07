@@ -63,7 +63,7 @@ function SchedulePage() {
   }, [selectedTeam, savePreferredTeam]);
 
   return (
-    <>
+    <div className="bg-navy-deep text-white">
       <PageHeader
         eyebrow={lang === "fr" ? "Accès rapide" : "Quick access"}
         title={t("schedule.title")}
@@ -86,7 +86,7 @@ function SchedulePage() {
               alt={lang === "fr" ? weeklyScheduleVisual.alt.fr : weeklyScheduleVisual.alt.en}
               loading="eager"
               decoding="async"
-              className="absolute inset-0 size-full bg-white object-contain transition-transform duration-700 group-hover:scale-[1.012]"
+              className="absolute inset-0 size-full bg-navy-deep object-contain p-3 transition-transform duration-700 group-hover:scale-[1.012] sm:p-5"
             />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.08),rgba(7,16,43,0.88))]" />
             <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
@@ -101,12 +101,12 @@ function SchedulePage() {
 
           <div className="flex flex-col justify-center border-t border-white/12 p-6 lg:border-l lg:border-t-0 md:p-8">
             <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Priorité aux données officielles" : "Official data first"}
+              {lang === "fr" ? "Votre semaine" : "Your week"}
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-white/65">
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-white/65">
               {lang === "fr"
-                ? "Votre semaine AHMV, puis les accès directs aux résultats et classements officiels."
-                : "Your AHMV week, plus direct access to official results and standings."}
+                ? "Pratiques, matchs, arénas et résultats : l’essentiel est regroupé ici."
+                : "Practices, games, arenas and results: the essentials are grouped here."}
             </p>
           </div>
         </section>
@@ -164,42 +164,35 @@ function SchedulePage() {
           </section>
         )}
 
-        <section className="mb-6 overflow-hidden border border-white/12 bg-navy-deep text-white">
-          <div className="border-b border-white/10 bg-competition px-5 py-4 md:px-6">
-            <p className="eyebrow text-sport-foreground">
-              {lang === "fr" ? "Horaires et classements officiels" : "Official schedules and standings"}
-            </p>
-            <p className="mt-1 text-sm text-white/55">
-              {lang === "fr"
-                ? "Choisissez le circuit correspondant à votre équipe."
-                : "Choose the circuit for your team."}
-            </p>
-          </div>
-          <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 md:p-6">
-            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
-              <a href={EXTERNAL_LINKS.officialSimpleLetterSchedule} target="_blank" rel="noopener noreferrer">
-                <span>{lang === "fr" ? "Simple lettre" : "Single letter"}</span>
-                <ExternalLink className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
-              <a href={EXTERNAL_LINKS.officialDoubleLetterSchedule} target="_blank" rel="noopener noreferrer">
-                <span>{lang === "fr" ? "Double lettre AA/BB" : "Double letter AA/BB"}</span>
-                <ExternalLink className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
-              <a href={EXTERNAL_LINKS.officialGirlsSchedule} target="_blank" rel="noopener noreferrer">
-                <span>{lang === "fr" ? "Hockey féminin" : "Girls' hockey"}</span>
-                <ExternalLink className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="outline-light" className="h-auto min-h-12 justify-between py-3">
-              <a href={EXTERNAL_LINKS.legacyTeamNotifications} target="_blank" rel="noopener noreferrer">
-                <span>{lang === "fr" ? "Notifications d’équipe" : "Team notifications"}</span>
-                <ExternalLink className="size-4" />
-              </a>
-            </Button>
+        <section className="mb-6 overflow-hidden border-y border-white/10 bg-competition text-white">
+          <div className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-6">
+            <div>
+              <p className="eyebrow text-sport-foreground">
+                {lang === "fr" ? "Circuits hockey" : "Hockey circuits"}
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                {lang === "fr" ? "Accès direct selon votre équipe." : "Direct access for your team."}
+              </p>
+            </div>
+            <div className="scrollbar-none -mx-1 flex gap-2 overflow-x-auto px-1 pb-1 sm:mx-0 sm:pb-0">
+              {[
+                { href: EXTERNAL_LINKS.officialSimpleLetterSchedule, fr: "Simple lettre", en: "Single letter" },
+                { href: EXTERNAL_LINKS.officialDoubleLetterSchedule, fr: "AA / BB", en: "AA / BB" },
+                { href: EXTERNAL_LINKS.officialGirlsSchedule, fr: "Féminin", en: "Girls" },
+                { href: EXTERNAL_LINKS.legacyTeamNotifications, fr: "Notifications", en: "Notifications" },
+              ].map((item) => (
+                <a
+                  key={item.href}
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-control inline-flex min-h-10 shrink-0 items-center gap-2 border border-white/14 bg-white/[0.035] px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white hover:border-sport"
+                >
+                  {lang === "fr" ? item.fr : item.en}
+                  <ExternalLink className="size-3.5 text-sport-foreground" />
+                </a>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -207,6 +200,6 @@ function SchedulePage() {
 
         <HouseSponsorSlot placement="schedule-after-official" count={1} compact className="mt-8" />
       </div>
-    </>
+    </div>
   );
 }
