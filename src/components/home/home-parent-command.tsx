@@ -102,8 +102,8 @@ export function HomeParentCommand() {
               </p>
               <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/60">
                 {lang === "fr"
-                  ? "Le choix reste local dans ce navigateur. Aucun compte n’est créé."
-                  : "The choice stays local in this browser. No account is created."}
+                  ? "Vos équipes enregistrées restent à portée de main pour vos prochaines visites."
+                  : "Your saved teams stay close at hand for your next visits."}
               </p>
             </div>
             <HouseSponsorSlot placement="home-parent-command" count={1} compact />

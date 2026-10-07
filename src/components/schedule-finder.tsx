@@ -234,11 +234,11 @@ export function ScheduleFinder() {
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[10px] text-white/58 sm:text-xs">
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle2 className="size-3.5 text-status-confirmed" aria-hidden />
-              {lang === "fr" ? "Choix mémorisé localement" : "Saved locally"}
+              {lang === "fr" ? "Votre choix reste disponible" : "Your choice stays available"}
             </span>
             <span className="hidden items-center gap-1.5 sm:inline-flex">
               <ShieldCheck className="size-3.5 text-white" aria-hidden />
-              {lang === "fr" ? "Aucune donnée personnelle hockey enregistrée" : "No hockey personal data stored"}
+              {lang === "fr" ? "Modifiable en tout temps" : "Change it anytime"}
             </span>
           </div>
         )}

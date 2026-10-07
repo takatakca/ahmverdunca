@@ -121,8 +121,8 @@ function SchedulePage() {
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm text-white/62">
                   {lang === "fr"
-                    ? "Les raccourcis utilisent l’identifiant public exact de chaque équipe enregistrée sur cet appareil."
-                    : "These shortcuts use the exact public identifier for every team saved on this device."}
+                    ? "Retrouvez ici les équipes que vous avez enregistrées et ouvrez directement leur horaire, leur page et leurs résultats."
+                    : "Find your saved teams here and open their schedule, team page and results directly."}
                 </p>
               </div>
               <div className="flex items-center border-t border-white/12 p-5 lg:border-l lg:border-t-0">
