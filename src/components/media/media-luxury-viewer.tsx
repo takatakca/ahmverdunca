@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEvent, type TouchEvent } from "react";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { ChevronLeft, ChevronRight, Images, X, ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +35,9 @@ export function MediaLuxuryViewer({
   const touchStartY = useRef<number | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const thumbnailRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
+  const handingFocusAway = useRef(false);
   const current = items[index];
 
   useEffect(() => {
@@ -82,14 +86,9 @@ export function MediaLuxuryViewer({
 
   useEffect(() => {
     if (!open) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onOpenChange(false);
-        return;
-      }
+      if (event.ctrlKey || event.altKey || event.metaKey) return;
+      if (["ArrowLeft", "ArrowRight", "+", "=", "-"].includes(event.key)) event.preventDefault();
       if (event.key === "ArrowLeft") {
         setZoomed(false);
         setIndex((value) => (value - 1 + items.length) % items.length);
@@ -101,11 +100,16 @@ export function MediaLuxuryViewer({
       if (event.key === "+" || event.key === "=") setZoomed(true);
       if (event.key === "-") setZoomed(false);
     };
-
+    const closeForAnotherSurface = () => {
+      handingFocusAway.current = true;
+      onOpenChange(false);
+    };
+    const surfaces = ["ahmv:navigation-open", "ahmv:assistant-open", "ahmv:welcome-open", "ahmv:install-open"];
     window.addEventListener("keydown", onKeyDown);
+    surfaces.forEach((surface) => window.addEventListener(surface, closeForAnotherSurface));
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
+      surfaces.forEach((surface) => window.removeEventListener(surface, closeForAnotherSurface));
     };
   }, [items.length, onOpenChange, open]);
 
@@ -172,12 +176,25 @@ export function MediaLuxuryViewer({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-[160] bg-navy-deep/96 text-white backdrop-blur-xl"
-      role="dialog"
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <DialogPrimitive.Portal>
+        <DialogPrimitive.Overlay className="fixed inset-0 z-[400] bg-navy-deep/90" />
+        <DialogPrimitive.Content
+      className="fixed inset-0 z-[410] bg-navy-deep/96 text-white outline-none backdrop-blur-xl"
+      data-ahmv-attention-surface="media-viewer"
       aria-modal="true"
-      aria-label={lang === "fr" ? "Visionneuse média AHMV" : "AHMV media viewer"}
+      onOpenAutoFocus={(event) => {
+        event.preventDefault();
+        returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        handingFocusAway.current = false;
+        closeButtonRef.current?.focus();
+      }}
+      onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        if (!handingFocusAway.current && returnFocusRef.current?.isConnected) returnFocusRef.current.focus({ preventScroll: true });
+      }}
     >
+      <DialogPrimitive.Description className="sr-only">{countLabel} · {lang === "fr" ? "Utilisez les flèches pour changer de photo et les boutons pour agrandir ou fermer." : "Use the arrows to change photos and the buttons to zoom or close."}</DialogPrimitive.Description>
       <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-3 border-b border-white/10 bg-navy-deep/82 px-3 py-3 backdrop-blur-xl sm:px-5">
         <div className="min-w-0">
           <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
@@ -189,7 +206,7 @@ export function MediaLuxuryViewer({
                 ? "Médiathèque AHMV"
                 : "AHMV media"}
           </p>
-          <p className="mt-1 truncate font-display text-lg font-extrabold uppercase leading-none sm:text-xl">
+          <DialogPrimitive.Title className="mt-1 truncate font-display text-lg font-extrabold uppercase leading-none sm:text-xl">
             {current.label
               ? lang === "fr"
                 ? current.label.fr
@@ -197,7 +214,7 @@ export function MediaLuxuryViewer({
               : lang === "fr"
                 ? "Photo AHMV"
                 : "AHMV photo"}
-          </p>
+          </DialogPrimitive.Title>
         </div>
 
         <div className="flex shrink-0 items-center gap-1.5">
@@ -223,6 +240,7 @@ export function MediaLuxuryViewer({
           <button
             type="button"
             onClick={() => onOpenChange(false)}
+            ref={closeButtonRef}
             className="premium-control inline-flex size-10 items-center justify-center border border-white/14 bg-white/[0.04] text-white hover:border-sport"
             aria-label={lang === "fr" ? "Fermer" : "Close"}
           >
@@ -232,7 +250,7 @@ export function MediaLuxuryViewer({
       </div>
 
       <div
-        className="absolute inset-x-0 bottom-[104px] top-[65px] flex items-center justify-center overflow-auto px-2 py-3 sm:bottom-[116px] sm:px-6 sm:py-5"
+        className="absolute inset-x-0 bottom-[calc(136px+env(safe-area-inset-bottom))] top-[65px] flex items-center justify-center overflow-auto px-2 py-3 sm:bottom-[calc(128px+env(safe-area-inset-bottom))] sm:px-6 sm:py-5"
         onTouchStart={handleTouchStart}
         onTouchMove={panWithTouch}
         onTouchEnd={handleTouchEnd}
@@ -367,6 +385,8 @@ export function MediaLuxuryViewer({
           ))}
         </div>
       </div>
-    </div>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }

@@ -31,6 +31,14 @@ The content bridge now reads its three private server settings from `process.env
 
 Full CI-equivalent gates and the final production artifact passed for this lot. Browser checks confirmed a 390 px installation dialog, keyboard focus/close/return, and the Nouvelles Instagram filter displaying ten archives. A subsequent successful deployment and matching `release` JSON field returned by `GET /healthz` are still required before certifying this follow-up as live.
 
+## Article media and publication precision
+
+The third lot makes every article cover expandable and shows all three verified initial photos in the grouped volunteer archive. The shared article/gallery viewer uses a portal above the sticky header, keyboard focus containment, Escape and return focus; zoom, pan and navigation remain available. Article margins use the existing navy palette with readable sidebar headings.
+
+Publication metadata now distinguishes an exact timestamp, a calendar day and an unknown date. The rolling hour requires a verified instant; today and the 7/30-day windows use Montreal calendar dates. Missing dates never acquire a fabricated noon or summer UTC offset. Invalid dates/corrections remain safe, and displayed labels and JSON-LD use the corrected verified metadata. The clock refreshes each minute and when returning to the page.
+
+Checks: all CI-equivalent gates, production build and artifact validation passed; the data suite has 26 tests and 160 assertions. Browser checks covered the third volunteer image, circular navigation/zoom/Escape, the existing eight-image girls gallery, and the actual compiled Node artifact with no rendering errors. The Instagram filter returned ten archives, including January 11 at the verified 10:05 Montreal time; the today filter returned no articles for the current day. This third lot still requires its own successful production deployment and matching runtime identity.
+
 ## Open work after these lots
 
 - Verify the Instagram follow-up deployment. The latest public post examined is January 11, 2026, not a current-season announcement. Twelve initial images are mirrored; original links expose the complete carousels.
