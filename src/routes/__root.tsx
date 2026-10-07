@@ -16,6 +16,7 @@ import { I18nProvider } from "../lib/i18n";
 import { SiteLayout } from "../components/layout/site-layout";
 import { EXTERNAL_LINKS, SITE } from "../lib/site";
 import { AdSenseScriptController } from "../components/adsense-script-controller";
+import { CookieBanner } from "../consent/CookieBanner";
 import { AppLaunchSplash } from "../components/layout/app-launch-splash";
 
 function NotFoundComponent() {
@@ -129,7 +130,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr-CA">
       <head>
         <HeadContent />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: organizationJsonLd }} />
@@ -137,6 +138,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         {children}
         <AdSenseScriptController />
+        <CookieBanner />
         <Scripts />
       </body>
     </html>

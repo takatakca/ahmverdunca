@@ -10,6 +10,7 @@ import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from 
 import { NewsletterInterest } from "@/components/newsletter-interest";
 import { PARENT_PREMIUM } from "@/lib/parent-premium";
 import { usePwaInstalled } from "@/lib/use-pwa-installed";
+import { ManageCookiesLink } from "@/consent/ManageCookiesLink";
 
 export function SiteFooter() {
   const { t, l, lang } = useI18n();
@@ -236,6 +237,7 @@ export function SiteFooter() {
             <Link to="/confidentialite" className="block border-b border-navy-foreground/10 pb-3 text-sm text-navy-foreground/72 hover:text-navy-foreground">
               {t("footer.legal")}
             </Link>
+            <ManageCookiesLink className="block w-full border-b border-navy-foreground/10 pb-3 text-left text-sm text-navy-foreground/72 hover:text-navy-foreground" />
           </div>
           <div className="mt-7">
             <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-navy-foreground/35">{lang === "fr" ? "Langue" : "Language"}</p>

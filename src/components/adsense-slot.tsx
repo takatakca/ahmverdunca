@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ADSENSE_CONFIG, TAKATAK_ADS_CONFIG } from "@/lib/monetization";
+import { onConsentChange, readConsent } from "@/consent/consent";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { TakatakAdSlot } from "@/components/takatak-ad-slot";
 import { useDemoMemberMode } from "@/lib/demo-member-mode";
@@ -10,6 +11,16 @@ declare global {
   }
 }
 
+/** Québec Law 25: Google AdSense slots render only after the "Publicité" cookie choice. */
+function useAdvertisingConsent() {
+  const [allowed, setAllowed] = useState(false);
+  useEffect(() => {
+    setAllowed(readConsent()?.marketing === true);
+    return onConsentChange((consent) => setAllowed(consent?.marketing === true));
+  }, []);
+  return allowed;
+}
+
 function GoogleAdSenseOrHouse({
   className,
   placement,
@@ -17,16 +28,24 @@ function GoogleAdSenseOrHouse({
   className: string;
   placement: string;
 }) {
+  const advertisingConsent = useAdvertisingConsent();
+
   useEffect(() => {
     if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) return;
+    if (!advertisingConsent) return;
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({});
     } catch {
       // Ad blockers or provider timing can prevent a slot from initializing.
     }
-  }, []);
+  }, [advertisingConsent]);
 
-  if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || !ADSENSE_CONFIG.slot) {
+  if (
+    !ADSENSE_CONFIG.enabled ||
+    !ADSENSE_CONFIG.client ||
+    !ADSENSE_CONFIG.slot ||
+    !advertisingConsent
+  ) {
     return <HouseSponsorSlot placement={placement} className={className} network={false} />;
   }
 

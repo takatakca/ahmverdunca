@@ -26,7 +26,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    document.documentElement.lang = lang;
+    document.documentElement.lang = lang === "fr" ? "fr-CA" : "en-CA";
   }, [lang]);
 
   const setLang = useCallback((l: Lang) => {

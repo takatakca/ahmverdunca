@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { ADSENSE_CONFIG } from "@/lib/monetization";
+import { onConsentChange, readConsent } from "@/consent/consent";
 import {
   DEMO_MEMBER_EVENT_NAME,
   DEMO_MEMBER_PREVIEW_ENABLED,
@@ -25,6 +26,9 @@ function removeAdSense() {
 
 function loadAdSense() {
   if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || memberPreviewActive()) return;
+  // Québec Law 25: AdSense sets advertising cookies, so it waits for the "Publicité" choice
+  // in the cookie banner. Withdrawing that choice reloads the page (src/tracking/loadTags.ts).
+  if (readConsent()?.marketing !== true) return;
   if (document.getElementById(SCRIPT_ID)) return;
 
   const script = document.createElement("script");
@@ -40,7 +44,7 @@ export function AdSenseScriptController() {
     if (!DEMO_MEMBER_PREVIEW_ENABLED) {
       window.localStorage.removeItem(DEMO_MEMBER_STORAGE_KEY);
       loadAdSense();
-      return;
+      return onConsentChange(loadAdSense);
     }
 
     const sync = () => {
@@ -49,10 +53,12 @@ export function AdSenseScriptController() {
     };
 
     sync();
+    const stopConsent = onConsentChange(sync);
     window.addEventListener(DEMO_MEMBER_EVENT_NAME, sync);
     window.addEventListener("storage", sync);
 
     return () => {
+      stopConsent();
       window.removeEventListener(DEMO_MEMBER_EVENT_NAME, sync);
       window.removeEventListener("storage", sync);
     };
