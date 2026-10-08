@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Download, Mail, Send } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { trackMarketingEvent } from "@/lib/marketing";
 
 const OPTIONS = [
   ["arena", "Affichage dans l’aréna", "Arena signage"],
@@ -111,6 +112,7 @@ export function SponsorshipInquiry() {
     ];
     setError("");
     setBrief(lines.join("\n"));
+    trackMarketingEvent("sponsorship_prepare", { section: "partners" });
   };
   const download = () => {
     const url = URL.createObjectURL(new Blob([brief], { type: "text/plain;charset=utf-8" }));

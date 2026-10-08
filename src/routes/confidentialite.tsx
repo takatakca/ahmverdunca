@@ -44,7 +44,11 @@ function PrivacyPage() {
           },
           {
             title: "Marketing et infolettres",
-            body: "Les futurs outils de marketing, d'information générale et d'infolettre gérés avec GROUPE TAKATAK devront utiliser des consentements explicites et des mécanismes de désabonnement appropriés avant leur activation.",
+            body: "Les outils optionnels de mesure d’audience et de publicité restent désactivés jusqu’à leur configuration et votre accord. Vous pouvez choisir séparément ces catégories, tout refuser ou retirer votre choix depuis les préférences du pied de page. Le site respecte les signaux DNT et GPC du navigateur. L’abonnement à une infolettre relève d’un consentement distinct et de son mécanisme de désabonnement.",
+          },
+          {
+            title: "Préférences et événements",
+            body: "Le choix de confidentialité est conservé pendant 180 jours. Les événements explicites du site utilisent des pages et actions publiques prédéfinies; ils excluent les noms, coordonnées, valeurs des formulaires et équipes choisies. Après accord, les plateformes configurées peuvent recevoir votre adresse IP et utiliser leurs propres cookies. Le retrait arrête les événements et recharge la page lorsqu’un outil tiers était déjà chargé.",
           },
           {
             title: "Publicité et soutien au développement",
@@ -70,7 +74,11 @@ function PrivacyPage() {
           },
           {
             title: "Marketing and newsletters",
-            body: "Future marketing, general-information and newsletter tools managed with GROUPE TAKATAK must use explicit consent and appropriate unsubscribe mechanisms before activation.",
+            body: "Optional analytics and advertising tools remain off until they are configured and you agree. You can choose these categories separately, decline all or withdraw through the footer preferences. The site respects browser DNT and GPC signals. Newsletter subscriptions require separate consent and their own unsubscribe mechanism.",
+          },
+          {
+            title: "Preferences and events",
+            body: "Your privacy choice is retained for 180 days. Explicit website events use predefined public pages and actions; names, contact details, form values and selected teams are excluded. After consent, configured platforms may receive your IP address and use their own cookies. Withdrawal stops events and reloads the page if a third-party tool had already loaded.",
           },
           {
             title: "Advertising and development support",

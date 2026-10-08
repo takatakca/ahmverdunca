@@ -26,6 +26,22 @@ jobs:
 
     env:
       RELEASE_SHA: ${{ github.event.workflow_run.head_sha }}
+      VITE_GA4_MEASUREMENT_ID: ${{ vars.AHMV_GA4_MEASUREMENT_ID || '' }}
+      VITE_GOOGLE_ADS_ID: ${{ vars.AHMV_GOOGLE_ADS_ID || '' }}
+      VITE_META_PIXEL_ID: ${{ vars.AHMV_META_PIXEL_ID || '' }}
+      VITE_TIKTOK_PIXEL_ID: ${{ vars.AHMV_TIKTOK_PIXEL_ID || '' }}
+      VITE_MICROSOFT_UET_ID: ${{ vars.AHMV_MICROSOFT_UET_ID || '' }}
+      VITE_LINKEDIN_PARTNER_ID: ${{ vars.AHMV_LINKEDIN_PARTNER_ID || '' }}
+      VITE_PINTEREST_TAG_ID: ${{ vars.AHMV_PINTEREST_TAG_ID || '' }}
+      VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.AHMV_GOOGLE_SITE_VERIFICATION || '' }}
+      VITE_BING_SITE_VERIFICATION: ${{ vars.AHMV_BING_SITE_VERIFICATION || '' }}
+      VITE_ADSENSE_CLIENT: ${{ vars.AHMV_ADSENSE_CLIENT || '' }}
+      VITE_ADSENSE_SLOT: ${{ vars.AHMV_ADSENSE_SLOT || '' }}
+      VITE_TAKATAK_NEWSLETTER_URL: ${{ vars.AHMV_NEWSLETTER_URL || '' }}
+      VITE_ADSENSE_ENABLED: ${{ vars.AHMV_ADSENSE_ENABLED || 'false' }}
+      VITE_TAKATAK_ADS_ENABLED: ${{ vars.AHMV_TAKATAK_ADS_ENABLED || 'false' }}
+      VITE_TAKATAK_ADS_ORIGIN: ${{ vars.AHMV_TAKATAK_ADS_ORIGIN || 'https://takatak.ca' }}
+      VITE_TAKATAK_ADS_PUBLISHER: ${{ vars.AHMV_TAKATAK_ADS_PUBLISHER || 'ahmv' }}
       VITE_AHMV_BUILD_SHA: ${{ github.event.workflow_run.head_sha }}
       AHMV_HOST: ${{ secrets.AHMV_PRODUCTION_HOST }}
       AHMV_PORT: ${{ secrets.AHMV_PRODUCTION_SSH_PORT }}
@@ -33,7 +49,8 @@ jobs:
       AHMV_APP_ROOT: ${{ secrets.AHMV_PRODUCTION_APP_ROOT }}
       AHMV_PRODUCTION_URL: ${{ secrets.AHMV_PRODUCTION_URL }}
       RESTART_COMMAND: ${{ secrets.AHMV_PRODUCTION_RESTART_COMMAND }}
-      VITE_PUBLIC_INDEXING: ${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}
+      # Official public release: allow indexing unless explicitly paused by the operator.
+      VITE_PUBLIC_INDEXING: ${{ vars.AHMV_PUBLIC_INDEXING || 'true' }}
 
     steps:
       - name: Checkout exact green release

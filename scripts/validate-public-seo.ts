@@ -75,7 +75,7 @@ if (!articleRoute.includes("canonicalUrl(`/nouvelles/${slug}`)")) {
 if (!articleRoute.includes('"@type": "SportsOrganization"')) {
   errors.push("NewsArticle structured data must identify AHMV as the publisher");
 }
-const newsJsonLdStart = articleRoute.indexOf("const newsJsonLd = JSON.stringify({");
+const newsJsonLdStart = articleRoute.indexOf("const newsJsonLd = serializeJsonLd({");
 const newsJsonLdEnd =
   newsJsonLdStart >= 0
     ? articleRoute.indexOf("\n  });", newsJsonLdStart)

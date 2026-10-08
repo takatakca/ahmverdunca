@@ -2,6 +2,11 @@ import { readBrowserPreference, removeBrowserPreference } from "@/lib/browser-pr
 import { useEffect } from "react";
 import { ADSENSE_CONFIG } from "@/lib/monetization";
 import {
+  getCurrentMarketingConsent,
+  isMarketingPageAllowed,
+  MARKETING_CONSENT_EVENT,
+} from "@/lib/marketing";
+import {
   DEMO_MEMBER_EVENT_NAME,
   DEMO_MEMBER_PREVIEW_ENABLED,
   DEMO_MEMBER_STORAGE_KEY,
@@ -26,6 +31,8 @@ function removeAdSense() {
 
 function loadAdSense() {
   if (!ADSENSE_CONFIG.enabled || !ADSENSE_CONFIG.client || memberPreviewActive()) return;
+  if (!/^ca-pub-\d{16}$/.test(ADSENSE_CONFIG.client)) return;
+  if (!getCurrentMarketingConsent().marketing || !isMarketingPageAllowed(window)) return;
   if (document.getElementById(SCRIPT_ID)) return;
 
   const script = document.createElement("script");
@@ -38,24 +45,33 @@ function loadAdSense() {
 
 export function AdSenseScriptController() {
   useEffect(() => {
-    if (!DEMO_MEMBER_PREVIEW_ENABLED) {
-      removeBrowserPreference(DEMO_MEMBER_STORAGE_KEY);
-      loadAdSense();
-      return;
-    }
+    if (!DEMO_MEMBER_PREVIEW_ENABLED) removeBrowserPreference(DEMO_MEMBER_STORAGE_KEY);
 
     const sync = () => {
-      if (memberPreviewActive()) removeAdSense();
+      if (
+        memberPreviewActive() ||
+        !getCurrentMarketingConsent().marketing ||
+        !isMarketingPageAllowed(window)
+      )
+        removeAdSense();
       else loadAdSense();
+    };
+    const consentChanged = () => {
+      const wasLoaded = Boolean(document.getElementById(SCRIPT_ID));
+      sync();
+      // A reload discards listeners installed by a running third-party SDK.
+      if (wasLoaded && !getCurrentMarketingConsent().marketing) window.location.reload();
     };
 
     sync();
     window.addEventListener(DEMO_MEMBER_EVENT_NAME, sync);
     window.addEventListener("storage", sync);
+    window.addEventListener(MARKETING_CONSENT_EVENT, consentChanged);
 
     return () => {
       window.removeEventListener(DEMO_MEMBER_EVENT_NAME, sync);
       window.removeEventListener("storage", sync);
+      window.removeEventListener(MARKETING_CONSENT_EVENT, consentChanged);
     };
   }, []);
 

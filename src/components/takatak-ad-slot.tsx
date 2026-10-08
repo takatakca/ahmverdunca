@@ -2,6 +2,11 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ExternalLink } from "lucide-react";
 import { TAKATAK_ADS_CONFIG } from "@/lib/monetization";
 import { useI18n } from "@/lib/i18n";
+import {
+  getCurrentMarketingConsent,
+  isMarketingPageAllowed,
+  MARKETING_CONSENT_EVENT,
+} from "@/lib/marketing";
 
 type TakatakAd = {
   campaignId: string;
@@ -48,7 +53,7 @@ function httpsUrl(value: unknown): string | null {
   if (typeof value !== "string" || !value.trim()) return null;
   try {
     const url = new URL(value);
-    return url.protocol === "https:" ? url.toString() : null;
+    return url.protocol === "https:" && !url.username && !url.password ? url.toString() : null;
   } catch {
     return null;
   }
@@ -86,6 +91,7 @@ async function emitEvent(
   locale: string,
 ): Promise<void> {
   if (!ad.trackingEnabled || !ad.trackingToken) return;
+  if (!getCurrentMarketingConsent().marketing || !isMarketingPageAllowed(window)) return;
 
   try {
     await fetch(`${TAKATAK_ADS_CONFIG.origin}/api/ads/events`, {
@@ -124,7 +130,20 @@ export function TakatakAdSlot({
   const { lang } = useI18n();
   const rootRef = useRef<HTMLElement | null>(null);
   const [ad, setAd] = useState<TakatakAd | null>(null);
+  const [trackingConsent, setTrackingConsent] = useState(false);
   const placementCode = useMemo(() => takatakPlacementCode(placement), [placement]);
+
+  useEffect(() => {
+    const sync = () =>
+      setTrackingConsent(getCurrentMarketingConsent().marketing && isMarketingPageAllowed(window));
+    sync();
+    window.addEventListener(MARKETING_CONSENT_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(MARKETING_CONSENT_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
 
   useEffect(() => {
     if (!TAKATAK_ADS_CONFIG.enabled) {
@@ -166,7 +185,7 @@ export function TakatakAdSlot({
   }, [lang, placementCode, requireImage]);
 
   useEffect(() => {
-    if (!ad || !rootRef.current || !("IntersectionObserver" in window)) return;
+    if (!ad || !trackingConsent || !rootRef.current || !("IntersectionObserver" in window)) return;
 
     const target = rootRef.current;
     let timer: number | null = null;
@@ -201,7 +220,7 @@ export function TakatakAdSlot({
       observer.disconnect();
       if (timer !== null) window.clearTimeout(timer);
     };
-  }, [ad, lang]);
+  }, [ad, lang, trackingConsent]);
 
   if (!ad) return <>{fallback}</>;
 
@@ -215,7 +234,11 @@ export function TakatakAdSlot({
       data-takatak-ad-placement={placementCode}
     >
       <a
-        href={ad.clickUrl ?? ad.destinationUrl}
+        href={
+          trackingConsent && ad.trackingEnabled
+            ? (ad.clickUrl ?? ad.destinationUrl)
+            : ad.destinationUrl
+        }
         target="_blank"
         rel="sponsored noopener noreferrer"
         className="group block"
@@ -241,18 +264,24 @@ export function TakatakAdSlot({
           </div>
         ) : (
           <div className={compact ? "p-4" : "p-5 md:p-6"}>
-            <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/48">{label}</p>
+            <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/48">
+              {label}
+            </p>
             <p className="mt-2 font-display text-2xl font-extrabold uppercase leading-none text-white">
               {ad.headline}
             </p>
-            {ad.body ? <p className="mt-2 text-sm leading-relaxed text-white/58">{ad.body}</p> : null}
+            {ad.body ? (
+              <p className="mt-2 text-sm leading-relaxed text-white/58">{ad.body}</p>
+            ) : null}
           </div>
         )}
 
         <div className="flex items-center justify-between gap-4 border-t border-white/10 px-4 py-3">
           <div className="min-w-0">
             {ad.imageUrl ? (
-              <p className="truncate font-display text-lg font-extrabold uppercase text-white">{ad.headline}</p>
+              <p className="truncate font-display text-lg font-extrabold uppercase text-white">
+                {ad.headline}
+              </p>
             ) : null}
             {ad.callToAction ? (
               <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-sport-foreground">
