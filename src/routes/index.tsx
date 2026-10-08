@@ -747,8 +747,8 @@ function Home() {
               </h2>
               <p className="mt-3 max-w-2xl text-sm text-navy-foreground/60">{t("home.sponsorsNote")}</p>
             </div>
-            <Button asChild variant="outline-light" size="sm">
-              <Link to="/contact">{lang === "fr" ? "Devenir partenaire" : "Become a partner"}</Link>
+            <Button asChild variant="outline-light" size="lg" className="rounded-xl">
+              <Link to="/partenaires" hash="commandite">{lang === "fr" ? "Devenir partenaire" : "Become a partner"} <ArrowRight className="size-4" aria-hidden /></Link>
             </Button>
           </div>
 
