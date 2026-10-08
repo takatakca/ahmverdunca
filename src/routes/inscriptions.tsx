@@ -1,3 +1,4 @@
+import { trackMarketingEvent } from "@/lib/marketing";
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, ExternalLink, Info } from "lucide-react";
@@ -51,7 +52,7 @@ function RegistrationPage() {
         }
         actions={
           <Button asChild variant="sport" size="lg">
-            <a href={EXTERNAL_LINKS.spordleRegister} target="_blank" rel="noopener noreferrer">
+            <a href={EXTERNAL_LINKS.spordleRegister} onClick={() => trackMarketingEvent("registration_link", { section: "registration" })} target="_blank" rel="noopener noreferrer">
               {t("reg.cta")} <ExternalLink className="size-4" />
             </a>
           </Button>
@@ -94,7 +95,7 @@ function RegistrationPage() {
                 : "Documents, payments and final confirmation are handled in the official process. The AHMV portal remains your guide before and after registration."}
             </p>
             <a
-              href={EXTERNAL_LINKS.spordleRegister}
+              href={EXTERNAL_LINKS.spordleRegister} onClick={() => trackMarketingEvent("registration_link", { section: "registration" })}
               target="_blank"
               rel="noopener noreferrer"
               className="premium-control mt-6 inline-flex min-h-12 items-center justify-between bg-sport px-5 font-display text-base font-bold uppercase tracking-wide text-sport-foreground"

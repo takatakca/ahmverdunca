@@ -21,6 +21,7 @@ import { handleTakatakMarketingConsentSync } from "./features/ahmv-phone/marketi
 import { handleAhmvMarketingCampaignCron } from "./features/ahmv-phone/marketing/cron-handler.server";
 import { handleTakatakTeamFeed } from "./lib/takatak-team-feed.server";
 import { handleCommunityFeed } from "./lib/community-feed.server";
+import { handlePublicNewsFeed } from "./lib/public-news-feed.server";
 import { handleTakatakTeamGames } from "./lib/takatak-team-games.server";
 import { handleAhmvVoiceBridge } from "./lib/ahmv-voice-bridge.server";
 import { handleTakatakContentContributions } from "./lib/takatak-content-contributions.server";
@@ -112,6 +113,8 @@ function isH3SwallowedErrorBody(body: string): boolean {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     const url = new URL(request.url);
+    const publicNewsFeed = handlePublicNewsFeed(request);
+    if (publicNewsFeed) return publicNewsFeed;
     const experienceAuthResponse = await handleAhmvExperienceAuth(request);
     if (experienceAuthResponse) return experienceAuthResponse;
     const experienceApiResponse = await handleAhmvExperienceApi(request);

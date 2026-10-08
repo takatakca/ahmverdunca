@@ -20,7 +20,7 @@ assert.match(root, /<AppLaunchSplash\s*\/>/);
 assert.match(root, /apple-touch-startup-image/);
 assert.match(root, /ahmv-app-splash-2026\.webp/);
 assert.match(root, /apple-touch-icon/);
-assert.match(root, /rel: "preload".*ahmv-app-splash-2026\.webp/);
+assert.match(root, /rel: "preload",\s*href: "\/branding\/ahmv-app-splash-2026\.webp"/);
 assert.match(root, /media: "\(display-mode: standalone\)"/);
 
 assert.match(splash, /display-mode:\s*standalone/);

@@ -10,7 +10,7 @@ on:
       public_indexing:
         description: "Enable public search indexing for this release"
         required: true
-        default: false
+        default: true
         type: boolean
       launch_confirmation:
         description: "Required only when enabling indexing: PUBLIC-INDEXING-APPROVED"
@@ -33,6 +33,22 @@ jobs:
 
     env:
       VITE_PUBLIC_INDEXING: ${{ inputs.public_indexing && 'true' || 'false' }}
+      VITE_GA4_MEASUREMENT_ID: ${{ vars.AHMV_GA4_MEASUREMENT_ID || '' }}
+      VITE_GOOGLE_ADS_ID: ${{ vars.AHMV_GOOGLE_ADS_ID || '' }}
+      VITE_META_PIXEL_ID: ${{ vars.AHMV_META_PIXEL_ID || '' }}
+      VITE_TIKTOK_PIXEL_ID: ${{ vars.AHMV_TIKTOK_PIXEL_ID || '' }}
+      VITE_MICROSOFT_UET_ID: ${{ vars.AHMV_MICROSOFT_UET_ID || '' }}
+      VITE_LINKEDIN_PARTNER_ID: ${{ vars.AHMV_LINKEDIN_PARTNER_ID || '' }}
+      VITE_PINTEREST_TAG_ID: ${{ vars.AHMV_PINTEREST_TAG_ID || '' }}
+      VITE_GOOGLE_SITE_VERIFICATION: ${{ vars.AHMV_GOOGLE_SITE_VERIFICATION || '' }}
+      VITE_BING_SITE_VERIFICATION: ${{ vars.AHMV_BING_SITE_VERIFICATION || '' }}
+      VITE_ADSENSE_CLIENT: ${{ vars.AHMV_ADSENSE_CLIENT || '' }}
+      VITE_ADSENSE_SLOT: ${{ vars.AHMV_ADSENSE_SLOT || '' }}
+      VITE_TAKATAK_NEWSLETTER_URL: ${{ vars.AHMV_NEWSLETTER_URL || '' }}
+      VITE_ADSENSE_ENABLED: ${{ vars.AHMV_ADSENSE_ENABLED || 'false' }}
+      VITE_TAKATAK_ADS_ENABLED: ${{ vars.AHMV_TAKATAK_ADS_ENABLED || 'false' }}
+      VITE_TAKATAK_ADS_ORIGIN: ${{ vars.AHMV_TAKATAK_ADS_ORIGIN || 'https://takatak.ca' }}
+      VITE_TAKATAK_ADS_PUBLISHER: ${{ vars.AHMV_TAKATAK_ADS_PUBLISHER || 'ahmv' }}
       VITE_AHMV_BUILD_SHA: ${{ inputs.release_sha }}
       AHMV_HOST: ${{ secrets.AHMV_PRODUCTION_HOST }}
       AHMV_PORT: ${{ secrets.AHMV_PRODUCTION_SSH_PORT }}

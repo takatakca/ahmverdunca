@@ -1,4 +1,4 @@
-import { canonicalLink, canonicalUrl } from "@/lib/seo";
+import { canonicalLink, canonicalUrl, serializeJsonLd } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ExternalLink, MessageCircle } from "lucide-react";
 import { PageHeader, SectionHeading } from "@/components/page-header";
@@ -62,7 +62,7 @@ function ArticlePage() {
   const displayDate = publicationDateLabel(publication, lang, a.publishedLabel?.[lang], Boolean(a.archived));
   const articleUrl = canonicalUrl(`/nouvelles/${slug}`);
   const publishedSchemaDate = publicationFieldValue(publication);
-  const newsJsonLd = JSON.stringify({
+  const newsJsonLd = serializeJsonLd({
     "@context": "https://schema.org",
     "@type": "NewsArticle",
     headline: displayTitle,

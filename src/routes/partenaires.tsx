@@ -1,3 +1,4 @@
+import { PartnerGrowthKit } from "@/components/partner-growth-kit";
 import { SponsorshipInquiry } from "@/components/sponsorship-inquiry";
 import { canonicalLink } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
@@ -96,11 +97,16 @@ function PartnersPage() {
             : "Meet AHM Verdun’s partners and explore ways to introduce your business to hockey families."
         }
         actions={
+          <>
           <Button asChild variant="sport" size="lg">
             <a href="#commandite">
               {lang === "fr" ? "Présenter ma commandite" : "Propose a sponsorship"} <ArrowRight className="size-4" />
             </a>
           </Button>
+          <Button asChild variant="outline" size="lg">
+            <a href="#partager">{lang === "fr" ? "Partager AHM Verdun" : "Share AHM Verdun"}</a>
+          </Button>
+          </>
         }
       />
 
@@ -221,6 +227,7 @@ function PartnersPage() {
         </section>
 
         <SponsorshipInquiry />
+        <PartnerGrowthKit />
 
         <section className="space-y-6">
           <div>

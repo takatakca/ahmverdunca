@@ -6,6 +6,7 @@ import { useAhmvPhoneStatus } from "@/lib/use-ahmv-phone-status";
 import { LogoSlot } from "./logo-slot";
 import { LangSwitch } from "./lang-switch";
 import { NewsletterInterest } from "@/components/newsletter-interest";
+import { getMarketingConfig, hasMarketingConfig, MARKETING_SETTINGS_EVENT } from "@/lib/marketing";
 import { usePwaInstalled } from "@/lib/use-pwa-installed";
 
 export function SiteFooter() {
@@ -107,6 +108,11 @@ export function SiteFooter() {
             <Link to="/confidentialite" className="block border-t border-navy-foreground/8 py-2 hover:text-white">
               {t("footer.legal")}
             </Link>
+            {hasMarketingConfig(getMarketingConfig(import.meta.env)) && (
+              <button type="button" onClick={() => window.dispatchEvent(new Event(MARKETING_SETTINGS_EVENT))} className="block min-h-11 w-full border-t border-navy-foreground/8 py-2 text-left hover:text-white">
+                {lang === "fr" ? "Préférences de confidentialité" : "Privacy preferences"}
+              </button>
+            )}
           </div>
 
           <div className="mt-5">
