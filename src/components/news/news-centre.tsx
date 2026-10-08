@@ -33,10 +33,9 @@ import {
   type PublicationTime,
 } from "@/lib/news-publication";
 
-const FEED_URL =
-  import.meta.env["VITE_TAKATAK_PUBLIC_API_ORIGIN"]?.trim()
-    ? `${import.meta.env["VITE_TAKATAK_PUBLIC_API_ORIGIN"].replace(/\/$/, "")}/api/public/ahmv/community-feed`
-    : "https://takatak.ca/api/public/ahmv/community-feed";
+// Same-origin relay (community-feed.server.ts): TAKATAK stays server-side and
+// the browser never hits takatak.ca directly, which it blocks with CORS.
+const FEED_URL = "/api/ahmv/community-feed";
 
 const FILTER_KEY = "ahmv-news-filter-v1";
 
@@ -50,7 +49,7 @@ type LiveFeedItem = {
   source: FeedKind;
   network?: Network;
   association?: string;
-  contentType: string;
+  contentType?: string;
   publishedAt: string;
   text: string | null;
   url: string | null;

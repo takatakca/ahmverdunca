@@ -1,3 +1,5 @@
+const NETWORKS = ["website", "facebook", "instagram", "tiktok", "youtube"] as const;
+
 export type CommunityFeedItem = {
   id: string;
   source: "official" | "community";
@@ -5,6 +7,9 @@ export type CommunityFeedItem = {
   text: string | null;
   url: string | null;
   imageUrl: string | null;
+  network?: (typeof NETWORKS)[number];
+  association?: string;
+  teamSlugs?: string[];
 };
 
 function publicHttps(value: unknown) {
@@ -38,12 +43,25 @@ export function parseCommunityFeed(payload: unknown): CommunityFeedItem[] {
       ),
     )
     .slice(0, 12)
-    .map((item) => ({
-      id: item.id,
-      source: item.source,
-      publishedAt: item.publishedAt,
-      text: typeof item.text === "string" ? item.text : null,
-      url: publicHttps(item.url),
-      imageUrl: publicHttps(item.imageUrl),
-    }));
+    .map((item) => {
+      const network = NETWORKS.find((value) => value === item.network);
+      const association =
+        typeof item.association === "string" && item.association.trim()
+          ? item.association.trim().slice(0, 80)
+          : undefined;
+      const teamSlugs = Array.isArray(item.teamSlugs)
+        ? item.teamSlugs.filter((slug): slug is string => typeof slug === "string" && /^[a-z0-9-]{1,40}$/.test(slug)).slice(0, 8)
+        : [];
+      return {
+        id: item.id,
+        source: item.source,
+        publishedAt: item.publishedAt,
+        text: typeof item.text === "string" ? item.text : null,
+        url: publicHttps(item.url),
+        imageUrl: publicHttps(item.imageUrl),
+        ...(network ? { network } : {}),
+        ...(association ? { association } : {}),
+        ...(teamSlugs.length ? { teamSlugs } : {}),
+      };
+    });
 }
