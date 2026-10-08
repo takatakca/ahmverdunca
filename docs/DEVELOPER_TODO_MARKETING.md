@@ -61,6 +61,10 @@ ne change pas les bundles déjà publiés.
 - [ ] Vérifier avec les vrais comptes : avant choix/refus aucun SDK, choix
   analytics seul, publicité seule, DNT/GPC, navigation, retrait/rechargement.
   Les cookies de domaines tiers restent sous le contrôle de ces plateformes.
+- [ ] Avant activation, compléter la gestion des changements de route SPA :
+  AdSense doit réévaluer la destination, et les SDK déjà chargés doivent cesser
+  leurs propres observations à l’entrée d’une URL exclue. Le filtrage actuel
+  protège les événements explicites du site, pas tous les observateurs tiers.
 - [ ] Soumettre `https://ahmverdun.ca/sitemap.xml` à Search Console et Bing;
   vérifier les pages réellement indexables, sans promettre un classement.
 - [ ] Publier dans `ads.txt` uniquement la ligne exacte fournie par le compte
