@@ -20,6 +20,7 @@ export function PartnerGrowthKit() {
   const [copied, setCopied] = useState<"campaign" | "backlink" | null>(null);
   const [copyFailed, setCopyFailed] = useState(false);
   const [sponsored, setSponsored] = useState(false);
+  const [editing, setEditing] = useState(false);
   const campaignUrl = buildCampaignUrl(destination, source);
   const backlink = partnerBacklinkMarkup(destination, lang, sponsored);
   async function copy(value: string, kind: "campaign" | "backlink") {
@@ -47,6 +48,11 @@ export function PartnerGrowthKit() {
   return (
     <section
       id="partager"
+      data-ahmv-attention-surface={editing ? "partner-kit" : undefined}
+      onFocusCapture={() => setEditing(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setEditing(false);
+      }}
       className="rounded-2xl border border-white/12 bg-competition p-5 text-white md:p-8"
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
