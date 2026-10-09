@@ -19,6 +19,11 @@ import { usePreferredTeam } from "@/lib/team-preference";
 const ASSISTANT_NUDGE_ENABLED =
   import.meta.env["VITE_ASSISTANT_NUDGE_ENABLED"] === "true";
 
+function visibleAssistantTrigger(fallback: HTMLButtonElement | null) {
+  const mobile = document.querySelector<HTMLButtonElement>('[data-ahmv-assistant-trigger="mobile"]');
+  return mobile?.getClientRects().length ? mobile : fallback;
+}
+
 function assistantCopy(language: AssistantLanguageCode) {
   const ui = assistantUiLanguage(language);
   if (ui === "es") {
@@ -91,7 +96,7 @@ export function AhmvAssistant() {
     const opener = returnFocus ?? document.activeElement;
     returnFocusRef.current = opener instanceof HTMLElement && opener !== document.body && !opener.closest('[role="dialog"]')
       ? opener
-      : triggerRef.current;
+      : visibleAssistantTrigger(triggerRef.current);
     handingFocusAway.current = false;
     setOpen(true);
     setShowNudge(false);
@@ -258,8 +263,10 @@ export function AhmvAssistant() {
         ref={triggerRef}
         type="button"
         onClick={openAssistant}
-        className="premium-control fixed bottom-20 left-3 z-40 flex min-h-12 items-center gap-2 border border-sport/55 bg-competition/96 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_18px_50px_-22px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-4 lg:left-4"
+        className="premium-control fixed bottom-20 left-3 z-40 hidden min-h-12 items-center gap-2 border border-sport/55 bg-competition/96 px-3 text-[10px] font-bold uppercase tracking-[0.12em] text-white shadow-[0_18px_50px_-22px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-4 lg:left-4 lg:flex"
         aria-label={copy.title}
+        aria-haspopup="dialog"
+        aria-controls="ahmv-assistant-dialog"
       >
         <span className="relative flex size-8 items-center justify-center border border-white/12 bg-white/[0.04]">
           <Bot className="size-4 text-sport-foreground" />
@@ -277,6 +284,7 @@ export function AhmvAssistant() {
         <DialogPrimitive.Overlay asChild>
           <div className="fixed inset-0 z-[115] flex items-end justify-start bg-navy-deep/55 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-end sm:bg-transparent sm:p-4">
             <DialogPrimitive.Content
+              id="ahmv-assistant-dialog"
               data-ahmv-attention-surface="assistant-dialog"
               aria-modal="true"
               onOpenAutoFocus={(event) => {
@@ -286,12 +294,14 @@ export function AhmvAssistant() {
               onCloseAutoFocus={(event) => {
                 event.preventDefault();
                 if (handingFocusAway.current) return;
-                const target = returnFocusRef.current?.isConnected ? returnFocusRef.current : triggerRef.current;
+                const target = returnFocusRef.current?.isConnected && returnFocusRef.current.getClientRects().length
+                  ? returnFocusRef.current
+                  : visibleAssistantTrigger(triggerRef.current);
                 target?.focus();
               }}
-              className="w-full max-w-md overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_32px_90px_-28px_rgba(0,0,0,0.78)] outline-none"
+              className="flex max-h-[calc(100dvh-1rem-env(safe-area-inset-bottom))] w-full max-w-md flex-col overflow-hidden border border-white/12 bg-navy-deep text-white shadow-[0_32px_90px_-28px_rgba(0,0,0,0.78)] outline-none"
             >
-            <div className="bg-competition p-5 text-white">
+            <div className="shrink-0 bg-competition p-5 text-white">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <span className="flex size-11 items-center justify-center border border-white/12 bg-white/[0.04]">
@@ -344,7 +354,7 @@ export function AhmvAssistant() {
               </div>
             </div>
 
-            <div className="max-h-[62dvh] overflow-y-auto overscroll-contain bg-navy-deep p-5">
+            <div className="min-h-0 max-h-[62dvh] overflow-y-auto overscroll-contain bg-navy-deep p-5">
               <div className="border-l-4 border-sport bg-competition p-4">
                 <p className="text-sm leading-relaxed text-white/78">{reply?.text ?? copy.greeting}</p>
                 {bookmarkNotice && (
@@ -374,10 +384,10 @@ export function AhmvAssistant() {
                 <button type="button" onClick={() => { setInput("M11 Coyotes"); run("M11 Coyotes"); }} className="premium-control border border-white/12 bg-white/[0.03] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-white/68 hover:border-sport hover:text-white">
                   {copy.quickTeam}
                 </button>
-                <button type="button" onClick={() => { setInput(copy.quickSchedule); run(copy.quickSchedule); }} className="premium-control border border-navy/12 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
+                <button type="button" onClick={() => { setInput(copy.quickSchedule); run(copy.quickSchedule); }} className="premium-control min-h-11 border border-white/12 bg-white/[0.03] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-white/80 hover:border-sport hover:text-white">
                   {copy.quickSchedule}
                 </button>
-                <button type="button" onClick={() => { setInput(copy.quickResults); run(copy.quickResults); }} className="premium-control border border-navy/12 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-navy">
+                <button type="button" onClick={() => { setInput(copy.quickResults); run(copy.quickResults); }} className="premium-control min-h-11 border border-white/12 bg-white/[0.03] px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-white/80 hover:border-sport hover:text-white">
                   {copy.quickResults}
                 </button>
                 <button type="button" onClick={() => { setInput(copy.quickMyTeams); run(copy.quickMyTeams); }} className="premium-control border border-sport/35 bg-sport/10 px-3 py-2 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground">
@@ -399,7 +409,7 @@ export function AhmvAssistant() {
                     onChange={(event) => setInput(event.target.value)}
                     placeholder={copy.placeholder}
                     autoComplete="off"
-                    className="h-12 min-w-0 border border-white/12 bg-competition px-3 text-sm text-white placeholder:text-white/34 outline-none focus:border-sport"
+                    className="h-12 min-w-0 border border-white/12 bg-competition px-3 text-base text-white placeholder:text-white/34 outline-none focus:border-sport"
                   />
                   <VoiceSearchButton
                     compact
