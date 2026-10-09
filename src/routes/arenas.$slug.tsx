@@ -383,6 +383,7 @@ function ArenaPage() {
             {arena.activities?.length ? (
               <div>
                 <SectionHeading
+                  dark
                   eyebrow={lang === "fr" ? "Sur place" : "On site"}
                   title={lang === "fr" ? "Activités" : "Activities"}
                 />
@@ -402,6 +403,7 @@ function ArenaPage() {
             {arena.amenities?.length ? (
               <div>
                 <SectionHeading
+                  dark
                   eyebrow={lang === "fr" ? "Confort parent" : "Parent comfort"}
                   title={lang === "fr" ? "Services et commodités" : "Services & amenities"}
                 />
@@ -429,6 +431,7 @@ function ArenaPage() {
         {arena.website && (
           <section>
             <SectionHeading
+              dark
               eyebrow={
                 lang === "fr"
                   ? "Source municipale / institutionnelle"

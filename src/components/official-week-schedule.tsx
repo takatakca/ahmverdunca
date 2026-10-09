@@ -314,7 +314,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
                     ? "Archive seulement — vérifiez les sources officielles pour l'horaire courant."
                     : "Archive only — check official sources for the current schedule."}
                 </p>
-                <Button type="button" variant="ghost" size="sm" onClick={() => setShowArchive(false)}>
+                <Button type="button" variant="ghost" size="sm" className="min-h-11 text-white/85 hover:bg-white/10 hover:text-white" onClick={() => setShowArchive(false)}>
                   {lang === "fr" ? "Fermer l'archive" : "Close archive"}
                 </Button>
               </div>
@@ -360,7 +360,7 @@ export function OfficialWeekSchedule({ initialQuery = "" }: { initialQuery?: str
 
         {hasPast && !query.trim() && (
           <div className="mt-3 flex justify-end">
-            <Button type="button" variant="ghost" size="sm" onClick={() => setShowPast((value) => !value)}>
+            <Button type="button" variant="ghost" size="sm" className="min-h-11 text-white/85 hover:bg-white/10 hover:text-white" onClick={() => setShowPast((value) => !value)}>
               {showPast
                 ? (lang === "fr" ? "Masquer les jours passés" : "Hide past days")
                 : (lang === "fr" ? "Voir les jours passés" : "Show past days")}

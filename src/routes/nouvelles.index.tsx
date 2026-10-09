@@ -51,8 +51,10 @@ function NewsPage() {
         }
       />
 
-      <div className="container-site pt-8 md:pt-11">
-        <HouseSponsorSlot placement="newsroom" compact />
+      <div className="bg-navy-deep">
+        <div className="container-site pt-8 md:pt-11">
+          <HouseSponsorSlot placement="newsroom" compact />
+        </div>
       </div>
 
       <NewsCentre />
