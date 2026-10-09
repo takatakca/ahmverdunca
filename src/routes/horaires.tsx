@@ -10,13 +10,14 @@ import { ARENAS } from "@/data/arenas";
 import { useI18n } from "@/lib/i18n";
 import { usePreferredTeam } from "@/lib/team-preference";
 import { EXTERNAL_LINKS } from "@/lib/site";
-import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { publicUploadedAhmvMediaById } from "@/data/uploaded-media";
 import { officialScheduleQueryForTeam } from "@/lib/official-schedule-team";
 import { officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl } from "@/data/team-directory";
 import { HouseSponsorSlot } from "@/components/house-sponsor-slot";
 import { MediaZoomTrigger } from "@/components/media/media-zoom-trigger";
 
-const WEEKLY_SCHEDULE_VISUAL = uploadedAhmvMediaById(10)!;
+// A dated poster can contradict the active week; use an approved practice photo.
+const SCHEDULE_VISUAL = publicUploadedAhmvMediaById(2)!;
 
 export const Route = createFileRoute("/horaires")({
   head: () => ({
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/horaires")({
       { title: "Horaires — AHM Verdun" },
       { name: "description", content: "Horaire hebdomadaire publié par l'AHM Verdun, recherche rapide et accès aux calendriers sportifs officiels." },
       { property: "og:title", content: "Horaires — AHM Verdun" },
-      { property: "og:image", content: WEEKLY_SCHEDULE_VISUAL.url },
+      { property: "og:image", content: SCHEDULE_VISUAL.url },
       { property: "og:description", content: "Consultez l'horaire hebdomadaire AHMV et accédez aux calendriers sportifs officiels." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -36,7 +37,7 @@ export const Route = createFileRoute("/horaires")({
 
 function SchedulePage() {
   const { t, lang } = useI18n();
-  const weeklyScheduleVisual = WEEKLY_SCHEDULE_VISUAL;
+  const weeklyScheduleVisual = SCHEDULE_VISUAL;
   const { preferredTeam, savePreferredTeam, selectedTeams } = usePreferredTeam();
   const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
 

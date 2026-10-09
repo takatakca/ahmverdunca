@@ -70,6 +70,7 @@ export function SectionHeading({
   action,
   className,
   id,
+  dark = false,
 }: {
   eyebrow?: string;
   title: string;
@@ -77,9 +78,10 @@ export function SectionHeading({
   action?: ReactNode;
   className?: string;
   id?: string;
+  dark?: boolean;
 }) {
   return (
-    <div className={cn("section-heading mb-6 grid gap-4 border-b border-navy/15 pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:mb-8", className)}>
+    <div className={cn("section-heading mb-6 grid gap-4 border-b pb-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end md:mb-8", dark ? "border-white/15" : "border-navy/15", className)}>
       <div className="max-w-4xl min-w-0">
         {eyebrow && (
           <p className="eyebrow mb-2 flex flex-wrap items-center gap-2 text-sport">
@@ -87,10 +89,10 @@ export function SectionHeading({
             {eyebrow}
           </p>
         )}
-        <h2 id={id} className="break-words font-display text-[clamp(2rem,4.8vw,3.75rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.025em] text-navy">
+        <h2 id={id} className={cn("break-words font-display text-[clamp(2rem,4.8vw,3.75rem)] font-extrabold uppercase leading-[0.9] tracking-[-0.025em]", dark ? "text-white" : "text-navy")}>
           {title}
         </h2>
-        {description && <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{description}</p>}
+        {description && <p className={cn("mt-3 max-w-2xl text-sm leading-relaxed md:text-base", dark ? "text-white/70" : "text-muted-foreground")}>{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
