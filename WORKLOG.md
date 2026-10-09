@@ -3,9 +3,9 @@
 Newest first, one line per piece of work. Rule: `AGENTS.md` › Work log rule.
 Format: `YYYY-MM-DD | agent | branch → PR | status | what | next step`
 
-- 2026-10-09 | codex/public_audit | fix/mobile-assistant-dock-20261009 → PR à créer | active | Contrôle du dock, dialogue court et retour de focus mobile | captures après build
-- 2026-10-09 | codex/dependency_review | fix/mobile-assistant-dock-20261009 → PR à créer | done | Cause du chevauchement et solution nav six cases revues | contrôle CI par agent principal
-- 2026-10-09 | codex | fix/mobile-assistant-dock-20261009 → PR à créer | active | Intégrer le panneau assistant à la navigation mobile sans masquer le contenu | contrôle visuel puis CI et déploiement
+- 2026-10-09 | codex/public_audit | fix/mobile-assistant-dock-20261009 → PR #391 | PR #391 | Contrôle du dock, dialogue court et retour de focus mobile | cinq tailles validées ; vérification finale et production
+- 2026-10-09 | codex/dependency_review | fix/mobile-assistant-dock-20261009 → PR #391 | done | Cause du chevauchement et solution nav six cases revues | contrôle CI par agent principal
+- 2026-10-09 | codex | fix/mobile-assistant-dock-20261009 → PR #391 | PR #391 | Intégrer le panneau assistant à la navigation mobile sans masquer le contenu | CI et cinq tailles validées ; contrôle écran court puis déploiement
 - 2026-10-08 | codex | feat/visual-sponsors-20261008 → PR #390 | done | Audit visuel/OCR et commanditaires déployés en 7a5e2ef ; 10 vues production vérifiées | finition du dock assistant mobile
 - 2026-10-08 | codex/dependency_review | feat/visual-sponsors-20261008 → PR #390 | done | Rotation, focus du zoom et cadrage vérifiés ; aucun blocage | CI et déploiement par agent principal
 - 2026-10-08 | codex/integration_inventory | feat/visual-sponsors-20261008 → PR #390 | done | 16 écrans publics revus ; 4 défauts visuels repérés et corrigés | contrôle du build corrigé puis production

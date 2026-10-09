@@ -282,7 +282,7 @@ export function AhmvAssistant() {
 
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay asChild>
-          <div className="fixed inset-0 z-[115] flex items-end justify-start bg-navy-deep/55 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-end sm:bg-transparent sm:p-4">
+          <div className="fixed inset-0 z-[310] flex items-end justify-start bg-navy-deep/55 p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-sm sm:items-end sm:bg-transparent sm:p-4">
             <DialogPrimitive.Content
               id="ahmv-assistant-dialog"
               data-ahmv-attention-surface="assistant-dialog"
