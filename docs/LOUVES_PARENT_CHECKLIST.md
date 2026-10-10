@@ -34,3 +34,12 @@ Users can check items, see an updated count/progress bar, close the checklist wi
 5. Production release may only be considered verified after documented merge/CI, MochaHost deployment, matching /healthz release SHA and a real on-site route check.
 
 **No claim is made that equipment reminders are official AHMV rules or that TeamLinkt permissions are connected.**
+
+## Browser QA interaction isolation
+
+The first real browser runs exposed two genuine interaction constraints outside the checklist's data model:
+- Native visually-hidden checkboxes must be exercised with keyboard focus/Space or their visible label, not by attempting a pointer click on a 1px hidden input.
+- A fixed mobile navigation bar could cover the reset control when it sat at the bottom of the expanded panel. The reset action now appears **above the six items**, where it is more visible and easier to reach, with scroll offset.
+- The separate, site-wide **CommunicationsPreview** dialog auto-opens after a delay and can intercept microsite interactions. The Playwright *test context only* sets the existing approved suppression keys before navigation; it does **not disable the welcome experience in the application**. Welcome popup QA remains independent.
+
+Actual chromium test still must complete and pass before review/merge. Images from Playwright are local compiled-source browser screenshots, not proof of MochaHost production deployment.
