@@ -21,6 +21,7 @@ import {
 import { useState } from "react";
 import type { TeamMicrositeDefinition, MicrositeModuleKey } from "@/data/team-microsites";
 import { getPublicMicrositeModules } from "@/data/team-microsites";
+import { TeamIceBagChecklist } from "@/components/team-ice-bag-checklist";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { SITE } from "@/lib/site";
 
@@ -193,6 +194,8 @@ export function PremiumTeamMicrosite({ site, lang }: {
               );
             })}
           </div>
+
+          <TeamIceBagChecklist teamSlug={site.slug} lang={lang} />
 
           <details className="group mt-5 overflow-hidden rounded-[1.5rem] border border-white/15 bg-[#111936]">
             <summary className="flex min-h-16 cursor-pointer list-none items-center justify-between gap-3 px-5 py-4 text-left marker:hidden hover:bg-white/[0.05] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#83f2e8] [&::-webkit-details-marker]:hidden sm:px-6">

@@ -58,6 +58,31 @@ def inspect_page(page, width: int) -> dict:
     details = page.locator('[data-ahmv-team-microsite="louves-m12b"] details')
     details.locator("summary").click()
     facts["detailsOpens"] = details.evaluate("(node) => node.open")
+    bag = page.locator('[data-ahmv-parent-checklist]')
+    bag.locator('[data-ahmv-checklist-toggle]').click(timeout=6000)
+    skates = bag.locator('[data-ahmv-ice-bag-item="skates"]')
+    # The native checkbox is visually hidden for accessibility; click its visible label.
+    visible_label = skates.locator("..")
+    # Keep the target above the global mobile bottom navigation and Assistant.
+    visible_label.evaluate("(element) => { element.scrollIntoView({block: 'start', behavior: 'instant'}); window.scrollBy(0, -160); }")
+    page.screenshot(path=str(OUTPUT / f"louves-{width}-checklist-open.png"), animations="disabled")
+    # Test a real keyboard interaction on the native checkbox.
+    # Pointer occlusion by the global Assistant is tracked separately in PR #391.
+    skates.focus()
+    page.keyboard.press("Space")
+    page.wait_for_function(
+        '() => localStorage.getItem("ahmv:ice-bag:v1:louves-m12b")?.includes("skates")',
+        timeout=5000,
+    )
+    facts["checklistToggles"] = skates.is_checked()
+    page.reload(wait_until="domcontentloaded")
+    bag = page.locator('[data-ahmv-parent-checklist]')
+    bag.locator('[data-ahmv-checklist-toggle]').click(timeout=6000)
+    facts["checklistPersists"] = bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
+    reset = bag.locator('[data-ahmv-checklist-reset]')
+    reset.evaluate("(el) => { el.scrollIntoView({block: 'start', behavior: 'instant'}); window.scrollBy(0, -130); }")
+    reset.click(timeout=6000)
+    facts["checklistResets"] = not bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
     facts["viewport"] = width
     return facts
 
@@ -71,6 +96,14 @@ def main() -> int:
         try:
             for width in VIEWPORTS:
                 page = browser.new_page(viewport={"width": width, "height": 900}, device_scale_factor=1)
+                # Isolate microsite interactions from the optional timed site-wide welcome dialog.
+                # The welcome experience has its own test scope and is unchanged in production.
+                page.add_init_script("""(() => {
+                  try {
+                    localStorage.setItem('ahmv-communications-preview-hidden', '1');
+                    sessionStorage.setItem('ahmv-communications-preview-seen', '1');
+                  } catch (_) {}
+                })()""")
                 try:
                     facts = inspect_page(page, width)
                     findings.append(facts)
@@ -92,8 +125,10 @@ def main() -> int:
                         errors.append(f"{width}px: private/future module count changed")
                     if facts["unreadableLinks"]:
                         errors.append(f"{width}px: {facts['unreadableLinks']} links have small hit targets")
+                    if not (facts["checklistToggles"] and facts["checklistPersists"] and facts["checklistResets"]):
+                        errors.append(f"{width}px: parent bag checklist toggle/persistence/reset failed")
                 except (PlaywrightError, AssertionError, ValueError) as exc:
-                    errors.append(f"{width}px: browser QA failed: {str(exc)[:400]}")
+                    errors.append(f"{width}px: browser QA failed: {str(exc)[:2200]}")
                 finally:
                     page.close()
         finally:
