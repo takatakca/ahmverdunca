@@ -5,9 +5,11 @@ import { usePreferredTeam } from "@/lib/team-preference";
 import {
   officialTeamResultsUrl,
   publicTeamHubUrl,
+  publicTeamScheduleUrl,
 } from "@/data/team-directory";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
+import { TeamPicker } from "@/components/team-picker";
 import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
 import { officialWeekActivityMatchesPublicTeam } from "@/lib/official-schedule-team";
 import { montrealDateKey } from "@/lib/montreal-date";
@@ -32,14 +34,18 @@ export function HomeParentCommand() {
             {lang === "fr" ? "Ajouter / gérer" : "Add / manage"}
           </Link>
         </div>
+        <div className="mb-4 rounded-2xl border border-white/12 bg-navy-deep/55 p-3 sm:p-4">
+          <p className="text-xs leading-relaxed text-white/65">
+            {lang === "fr"
+              ? "Enregistrez vos équipes ici : retrouvez leurs matchs et leurs pratiques sans recommencer votre recherche."
+              : "Save your teams here to find their games and practices without searching again."}
+          </p>
+          <TeamPicker />
+        </div>
         <div className="mb-4 flex flex-wrap gap-2">
           <Link to="/horaires" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-sport/45 bg-sport/15 px-4 text-xs font-bold text-white transition-colors hover:bg-sport/25">
             <CalendarDays className="size-4 text-sport-foreground" />
             {lang === "fr" ? "À la glace · horaires" : "On the ice · schedules"}
-          </Link>
-          <Link to="/equipes" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-white/15 bg-navy-deep px-4 text-xs font-bold text-white transition-colors hover:bg-navy">
-            <Plus className="size-4 text-sport-foreground" />
-            {lang === "fr" ? "Choisir une équipe" : "Choose a team"}
           </Link>
         </div>
         {selectedTeams.length ? (
@@ -101,13 +107,19 @@ export function HomeParentCommand() {
                       </div>
                     </div>
                   )}
-                  <div className="grid grid-cols-2 gap-px border-t border-white/10 bg-white/10">
+                  <div className="grid grid-cols-3 gap-px border-t border-white/10 bg-white/10">
                     {[
                       {
                         href: publicTeamHubUrl(team),
                         icon: Users,
                         fr: "Mon équipe",
                         en: "My team",
+                      },
+                      {
+                        href: publicTeamScheduleUrl(team),
+                        icon: CalendarDays,
+                        fr: "À la glace",
+                        en: "On the ice",
                       },
                       {
                         href: officialTeamResultsUrl(team),
@@ -122,7 +134,7 @@ export function HomeParentCommand() {
                         href={href}
                         target={external ? "_blank" : undefined}
                         rel={external ? "noopener noreferrer" : undefined}
-                        className="flex min-h-14 items-center justify-center gap-2 bg-navy-deep text-xs font-semibold hover:bg-navy"
+                        className="flex min-h-14 items-center justify-center gap-1.5 bg-navy-deep px-1 text-[10px] font-semibold hover:bg-navy sm:text-xs"
                       >
                         <Icon className="size-4 text-sport-foreground" />
                         {lang === "fr" ? fr : en}

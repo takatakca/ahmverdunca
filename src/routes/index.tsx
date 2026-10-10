@@ -6,6 +6,7 @@ import {
   ArrowRight,
   BookOpen,
   CalendarDays,
+  Download,
   ExternalLink,
   MapPin,
   Trophy,
@@ -15,19 +16,16 @@ import { Button } from "@/components/ui/button";
 import { SportArtwork } from "@/components/sport-artwork";
 import { ALERTS } from "@/data/alerts";
 import { CURRENT_TEAMS } from "@/data/teams";
-import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
 import { OFFICIAL_MEDIA } from "@/data/official-media";
 import { uploadedAhmvMediaById } from "@/data/uploaded-media";
-import { newsVisualForCategory } from "@/data/news-visuals";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { ARENAS } from "@/data/arenas";
 import { HOCKEY_HERITAGE } from "@/data/heritage";
 import { EXTERNAL_LINKS, SITE, mapsDirectionsUrl } from "@/lib/site";
-import { formatDate, formatShortDate, useI18n } from "@/lib/i18n";
+import { formatShortDate, useI18n } from "@/lib/i18n";
 import { OfficialWeekPreview } from "@/components/official-week-preview";
 import { AhmvRealHockeyWall } from "@/components/home/ahmv-real-hockey-wall";
-import { AhmvCommunityFeed } from "@/components/home/ahmv-community-feed";
 import { HomeParentCommand } from "@/components/home/home-parent-command";
 import { HomeCreativeRail } from "@/components/home/home-creative-rail";
 import { AHMV_LOGO_URL, LogoSlot } from "@/components/layout/logo-slot";
@@ -38,44 +36,9 @@ import { getActiveAlerts } from "@/lib/active-alerts";
 import { useMontrealDate } from "@/lib/use-montreal-date";
 import { cn } from "@/lib/utils";
 import { OfficialSponsorShowcase } from "@/components/official-sponsor-showcase";
-import { ContentContributionButton } from "@/components/content-contribution-button";
-import { FittedImage } from "@/components/media/fitted-image";
-
-/** Top-right correction pen for a home news card, kept outside the card link. */
-function HomeNewsPen({ article, lang }: { article: (typeof NEWS)[number]; lang: "fr" | "en" }) {
-  return (
-    <ContentContributionButton
-      resourceType="news"
-      resourceKey={`news:${article.slug}`}
-      title={article.title[lang]}
-      snapshot={{
-        slug: article.slug,
-        title: article.title,
-        excerpt: article.excerpt,
-        date: article.date ?? null,
-        sourceUrl: article.sourceUrl ?? null,
-      }}
-      fields={[
-        { key: "title", label: { fr: "Titre", en: "Title" }, kind: "text", current: article.title[lang] },
-        { key: "text", label: { fr: "Texte / résumé", en: "Text / summary" }, kind: "textarea", current: article.excerpt[lang] },
-        { key: "imageUrl", label: { fr: "Image", en: "Image" }, kind: "image-url" },
-        { key: "url", label: { fr: "Lien source", en: "Source link" }, kind: "url", current: article.sourceUrl },
-        { key: "publishedAt", label: { fr: "Date publiée", en: "Published date" }, kind: "date", current: article.date },
-      ]}
-      className="absolute right-3 top-3 z-20"
-    />
-  );
-}
 
 const HOME_HERO_MEDIA = uploadedAhmvMediaById(1)!;
 const HOME_TOURNAMENT_MEDIA = uploadedAhmvMediaById(26)!;
-
-/** The post's own image when it has one (shown whole), otherwise the category visual. */
-function homeNewsMedia(article: (typeof NEWS)[number]) {
-  if (article.image) return { url: article.image, alt: article.title, own: true };
-  const visual = newsVisualForCategory(article.category) ?? HOME_HERO_MEDIA;
-  return { url: visual.url, alt: visual.alt, own: false };
-}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -99,14 +62,12 @@ function Home() {
   const primarySelectedTeam = selectedTeams[0];
   const today = useMontrealDate();
   const alerts = getActiveAlerts(ALERTS, today);
-  const news = NEWS.slice(0, 3);
-  const featuredMedia = news[0] ? homeNewsMedia(news[0]) : undefined;
   const featuredArena = ARENAS[0];
 
   return (
     <div className="flow-root bg-navy-deep text-white">
       {/* Arena opening — verified public AHMV archive media, never synthetic photography */}
-      <section className="relative isolate min-h-[52svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[60svh] md:min-h-[70svh]">
+      <section className="relative isolate min-h-[40svh] overflow-hidden bg-competition text-navy-foreground sm:min-h-[50svh] md:min-h-[58svh]">
         <img
           src={HOME_HERO_MEDIA.url}
           alt={lang === "fr" ? HOME_HERO_MEDIA.alt.fr : HOME_HERO_MEDIA.alt.en}
@@ -132,7 +93,7 @@ function Home() {
         <div className="arena-light opacity-45" aria-hidden />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,var(--color-competition))]" aria-hidden />
 
-        <div className="container-site relative flex min-h-[50svh] flex-col justify-end pb-7 pt-12 sm:min-h-[58svh] md:min-h-[68svh] md:pb-11">
+        <div className="container-site relative flex min-h-[40svh] flex-col justify-end pb-7 pt-12 sm:min-h-[50svh] md:min-h-[56svh] md:pb-11">
           <div className="max-w-6xl">
             <div className="rise mb-5 flex items-center gap-4">
               <LogoSlot size="lg" className="size-20 sm:size-24 md:size-24" />
@@ -188,10 +149,18 @@ function Home() {
                   </Link>
                 )}
               </Button>
+              <Button
+                type="button"
+                variant="outline-light"
+                size="lg"
+                className="min-h-12 px-6"
+                onClick={() => window.dispatchEvent(new CustomEvent("ahmv:install-open"))}
+              >
+                <Download className="size-4" />
+                {lang === "fr" ? "Télécharger l’application" : "Install the app"}
+              </Button>
             </div>
           </div>
-
-
         </div>
       </section>
 
@@ -257,8 +226,6 @@ function Home() {
 
       <AhmvRealHockeyWall />
 
-      <AhmvCommunityFeed />
-
       {/* Team universe */}
       <section className="relative overflow-hidden bg-navy-deep py-10 text-navy-foreground md:py-14">
         <div className="arena-light opacity-40" aria-hidden />
@@ -322,126 +289,6 @@ function Home() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* Newsroom */}
-      <section className="relative overflow-hidden bg-competition py-8 text-white md:py-10">
-        <div className="technical-grid pointer-events-none absolute inset-0 opacity-15" aria-hidden />
-        <div className="container-site relative">
-          <div className="flex flex-col gap-4 border-b border-white/15 pb-5 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="eyebrow text-sport-foreground">{lang === "fr" ? "Salle de presse AHMV" : "AHMV newsroom"}</p>
-              <h2 className="mt-2 font-display text-4xl font-extrabold uppercase leading-none text-white sm:text-5xl md:text-6xl">
-                {t("home.news")}
-              </h2>
-            </div>
-            <Button asChild variant="outline-light" size="sm">
-              <Link to="/nouvelles">{t("common.seeAll")} <ArrowRight className="size-4" /></Link>
-            </Button>
-          </div>
-
-          {news[0] && (
-            <div className="mt-7 grid gap-0 overflow-hidden border border-white/10 lg:grid-cols-[1.65fr_0.85fr]">
-              <div className="relative">
-              <Link
-                to="/nouvelles/$slug"
-                params={{ slug: news[0].slug }}
-                className="tactile group relative block h-full min-h-[420px] overflow-hidden bg-navy-deep md:min-h-[520px]"
-              >
-                {featuredMedia?.own ? (
-                  <FittedImage
-                    src={featuredMedia.url}
-                    alt={l(featuredMedia.alt)}
-                    imgClassName="transition-transform duration-700 group-hover:scale-[1.02]"
-                  />
-                ) : (
-                  <img
-                    src={featuredMedia?.url}
-                    alt={featuredMedia ? l(featuredMedia.alt) : ""}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 size-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                  />
-                )}
-                <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.16)_0%,rgba(7,16,43,0.22)_40%,rgba(7,16,43,0.96)_100%)]" />
-                <span className="absolute left-5 top-5 border border-white/20 bg-navy/72 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-white backdrop-blur md:left-7 md:top-7">
-                  {featuredMedia?.own
-                    ? lang === "fr" ? "Image de la publication" : "Post image"
-                    : lang === "fr" ? "Photo d’archive AHMV" : "AHMV archive photo"}
-                </span>
-                <div className="absolute inset-x-0 bottom-0 p-6 text-navy-foreground md:p-9">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="bg-sport px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-sport-foreground">
-                      {lang === "fr" ? "À la une" : "Featured"}
-                    </span>
-                    <span className="eyebrow text-navy-foreground/65">{newsDateLabel(news[0], lang)}</span>
-                  </div>
-                  <h3 className="mt-4 max-w-4xl font-display text-3xl font-extrabold uppercase leading-[0.94] sm:text-4xl md:text-5xl">
-                    {l(news[0].title)}
-                  </h3>
-                  <p className="mt-4 max-w-2xl text-sm leading-relaxed text-navy-foreground/70 md:text-base">
-                    {l(news[0].excerpt)}
-                  </p>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.12em] text-sport-foreground">
-                    {t("common.readMore")} <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </div>
-              </Link>
-              <HomeNewsPen article={news[0]} lang={lang} />
-              </div>
-
-              <div className="grid divide-y divide-white/10 bg-navy-deep">
-                {news.slice(1).map((article, index) => {
-                  const media = homeNewsMedia(article);
-                  return (
-                    <div key={article.slug} className="relative">
-                    <Link
-                      to="/nouvelles/$slug"
-                      params={{ slug: article.slug }}
-                      className="interactive-surface group grid h-full min-h-56 overflow-hidden bg-competition sm:grid-cols-[0.78fr_1.22fr] lg:grid-cols-1 xl:grid-cols-[0.78fr_1.22fr]"
-                    >
-                      <div className="relative min-h-40 overflow-hidden bg-navy sm:min-h-full lg:min-h-40 xl:min-h-full">
-                        {media.own ? (
-                          <FittedImage
-                            src={media.url}
-                            alt={l(media.alt)}
-                            imgClassName="transition-transform duration-500 group-hover:scale-[1.035]"
-                          />
-                        ) : (
-                          <img
-                            src={media.url}
-                            alt={l(media.alt)}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute inset-0 size-full object-cover opacity-80 transition-[transform,opacity] duration-500 group-hover:scale-[1.035] group-hover:opacity-95"
-                          />
-                        )}
-                        <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_38%,rgba(7,16,43,0.78)_100%)]" />
-                        <span className="absolute left-3 top-3 border border-white/15 bg-navy-deep/72 px-2 py-1 text-[8px] font-bold uppercase tracking-[0.14em] text-white/78 backdrop-blur">
-                          {lang === "fr" ? "Photo AHMV" : "AHMV photo"}
-                        </span>
-                      </div>
-                      <div className="flex min-w-0 flex-col justify-between p-5 md:p-6">
-                        <div className="flex items-start justify-between gap-4">
-                          <p className="eyebrow text-sport-foreground">{newsDateLabel(article, lang)}</p>
-                          <span className="font-display text-3xl font-extrabold text-white/10">0{index + 2}</span>
-                        </div>
-                        <div className="mt-5">
-                          <h3 className="font-display text-2xl font-extrabold uppercase leading-[0.92] text-white group-hover:text-sport-foreground">
-                            {l(article.title)}
-                          </h3>
-                          <p className="mt-3 line-clamp-3 text-sm text-white/56">{l(article.excerpt)}</p>
-                        </div>
-                      </div>
-                    </Link>
-                    <HomeNewsPen article={article} lang={lang} />
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
       </section>
 

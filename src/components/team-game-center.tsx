@@ -126,9 +126,11 @@ export function TeamGameCenter({
     [venueTarget],
   );
 
-  const scoreLine = latestResult && latestResult.homeScore !== undefined && latestResult.awayScore !== undefined
-    ? `${latestResult.homeTeam} ${latestResult.homeScore} – ${latestResult.awayScore} ${latestResult.awayTeam}`
-    : undefined;
+  const hasPublishedScore = Boolean(
+    latestResult &&
+    Number.isFinite(latestResult.homeScore) &&
+    Number.isFinite(latestResult.awayScore)
+  );
 
   return (
     <section
@@ -242,9 +244,43 @@ export function TeamGameCenter({
         <div className="grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-1">
           <article className="bg-navy p-5 text-white md:p-6">
             <p className="eyebrow text-sport">{lang === "fr" ? "Dernier résultat" : "Latest result"}</p>
-            <p className="mt-3 font-display text-2xl font-extrabold uppercase leading-[0.92] text-white">
-              {scoreLine || (lang === "fr" ? "Voir la source officielle" : "View official source")}
-            </p>
+            {hasPublishedScore && latestResult ? (
+              <div className="mt-4 overflow-hidden rounded-xl border border-white/12 bg-navy-deep">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 px-3 py-2">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.13em] text-sport-foreground">
+                    {latestResult.status === "final"
+                      ? (lang === "fr" ? "Match final" : "Final")
+                      : (lang === "fr" ? "Résultat publié" : "Published result")}
+                  </span>
+                  {latestResult.startsAt && (
+                    <time className="text-[9px] text-white/55" dateTime={latestResult.startsAt}>
+                      {formatGameDate(latestResult.startsAt, lang)}
+                    </time>
+                  )}
+                </div>
+                <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 px-3 py-4 text-center">
+                  <div className="min-w-0">
+                    <span className="mx-auto flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/[0.055] font-display text-sm font-bold">
+                      {teamInitials(latestResult.awayTeam)}
+                    </span>
+                    <p className="mt-2 line-clamp-2 text-[10px] font-bold leading-tight text-white/80">{latestResult.awayTeam}</p>
+                  </div>
+                  <div className="whitespace-nowrap font-display text-4xl font-extrabold tabular-nums tracking-tight text-white" aria-label={lang === "fr" ? "Pointage" : "Score"}>
+                    {latestResult.awayScore} <span className="text-sport-foreground">–</span> {latestResult.homeScore}
+                  </div>
+                  <div className="min-w-0">
+                    <span className="mx-auto flex size-10 items-center justify-center rounded-full border border-sport/50 bg-sport/10 font-display text-sm font-bold text-sport-foreground">
+                      {teamInitials(latestResult.homeTeam)}
+                    </span>
+                    <p className="mt-2 line-clamp-2 text-[10px] font-bold leading-tight text-white/80">{latestResult.homeTeam}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="mt-3 font-display text-xl font-extrabold uppercase leading-[0.95] text-white">
+                {lang === "fr" ? "Consulter les résultats officiels" : "See official results"}
+              </p>
+            )}
             <a
               href={latestResult?.scoresheetUrl || officialResults}
               target="_blank"
