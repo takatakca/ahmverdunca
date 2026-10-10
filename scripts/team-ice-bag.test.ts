@@ -53,6 +53,8 @@ test("team page uses a keyboard-accessible, honest, private on-device checklist"
   assert.ok(page.indexOf("<TeamIceBagChecklist") < page.indexOf("<details className="));
   assert.match(component, /aria-expanded=\{expanded\}/);
   assert.match(component, /aria-controls=\{disclosureId\}/);
+  assert.match(component, /hidden=\{!expanded\}/);
+  assert.match(component, /scroll-mt-28/);
   assert.match(component, /aria-live="polite"/);
   assert.match(component, /type="checkbox"/);
   assert.match(component, /peer-focus-visible/);
