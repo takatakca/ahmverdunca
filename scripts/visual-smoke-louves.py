@@ -79,7 +79,9 @@ def inspect_page(page, width: int) -> dict:
     bag = page.locator('[data-ahmv-parent-checklist]')
     bag.locator('[data-ahmv-checklist-toggle]').click(timeout=6000)
     facts["checklistPersists"] = bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
-    bag.locator('[data-ahmv-checklist-reset]').click(timeout=6000)
+    reset = bag.locator('[data-ahmv-checklist-reset]')
+    reset.evaluate("(el) => { el.scrollIntoView({block: 'start', behavior: 'instant'}); window.scrollBy(0, -130); }")
+    reset.click(timeout=6000)
     facts["checklistResets"] = not bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
     facts["viewport"] = width
     return facts
