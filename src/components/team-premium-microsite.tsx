@@ -124,7 +124,7 @@ export function PremiumTeamMicrosite({ site, lang }: {
               </p>
             </div>
 
-            <aside className="rounded-[1.5rem] border border-white/20 bg-[#0e1430]/90 p-4 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.8)] backdrop-blur-lg sm:p-6" aria-label={isFr ? "État des informations de l’équipe" : "Team information status"}>
+            <aside className="hidden rounded-[1.5rem] border border-white/20 bg-[#0e1430]/90 p-4 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.8)] backdrop-blur-lg md:block md:p-6" aria-label={isFr ? "État des informations de l’équipe" : "Team information status"}>
               <div className="flex items-center gap-3">
                 <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#37d1c5]/15 text-[#83f2e8]">
                   <ShieldCheck aria-hidden="true" className="size-5" />
