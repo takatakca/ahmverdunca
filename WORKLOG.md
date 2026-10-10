@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | chatgpt | feat/ahmv-gmail-pdf-intake-readonly → PR pending | code complete, CI pending | Add read-only Gmail mailbox-verified PDF transport, sender/attachment quarantine, SHA-256 verification and synthetic tests; document premium team visual guardrails | run CI, fix failures; obtain owner OAuth/approved senders before live intake
+
 - 2026-10-10 | chatgpt | feat/ahmv-mail-schedule-provider-integration-plan → PR #393 | CI #1177 green / PR review | AHMV PDF revision planner, all 38 week-6 slots as unapproved review data, TeamLinkt public-widget guard, integrated CI tests and Gmail/TeamLinkt access handoff (no UI changes) | inspect CI, correct failures, get AHMV review and provider access before publication
 
 Newest first, one line per piece of work. Rule: `AGENTS.md` › Work log rule.
