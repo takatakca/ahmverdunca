@@ -1,0 +1,68 @@
+name: AHMV Louves Visual QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/components/team-premium-microsite.tsx"
+      - "src/data/team-microsites.ts"
+      - "src/routes/equipes.louves-m12b.tsx"
+      - "public/images/teams/**"
+      - "scripts/visual-smoke-louves.py"
+      - ".github/workflows/ahmv-louves-visual.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rendered-microsite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
+
+      - name: Install locked application dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install isolated Playwright Chromium
+        run: |
+          python3 -m venv /tmp/ahmv-playwright
+          /tmp/ahmv-playwright/bin/pip install --disable-pip-version-check playwright==1.55.0
+          /tmp/ahmv-playwright/bin/python -m playwright install --with-deps chromium
+
+      - name: Start the real TanStack app locally
+        run: |
+          set -euo pipefail
+          bun run dev -- --host 127.0.0.1 --port 8080 > /tmp/ahmv-visual-server.log 2>&1 &
+          echo $! > /tmp/ahmv-visual-server.pid
+          for i in $(seq 1 45); do
+            if curl --silent --fail --max-time 5 http://127.0.0.1:8080/equipes/louves-m12b > /dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "TanStack dev server failed to render route, diagnostic:"
+          tail -n 80 /tmp/ahmv-visual-server.log
+          exit 1
+
+      - name: Browser QA + full-page screenshots (320, 390, 768, 1440)
+        env:
+          AHMV_VISUAL_BASE_URL: http://127.0.0.1:8080
+          AHMV_VISUAL_ARTIFACT_DIR: artifacts/louves-visual
+        run: /tmp/ahmv-playwright/bin/python scripts/visual-smoke-louves.py
+
+      - name: Upload review screenshots and measurements
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: louves-m12b-visual-${{ github.run_number }}
+          path: artifacts/louves-visual/
+          if-no-files-found: warn
+          retention-days: 14
