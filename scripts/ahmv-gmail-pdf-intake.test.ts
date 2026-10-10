@@ -139,6 +139,8 @@ test("confirmed AHMV mailbox only performs GET for list, message and attachment"
   assert.ok(requests.every((r) => r.method === "GET"));
   assert.ok(requests.slice(1).every((r) => r.url.startsWith("https://gmail.googleapis.com/gmail/v1/users/me/")));
   assert.ok(!requests.some((r) => r.url.includes("test_token")));
+  assert.ok(requests.some((r) => r.url.includes("labelIds=INBOX")));
+  assert.ok(requests.some((r) => r.url.includes("filename%3Apdf")));
   assert.equal(requests.filter((r) => r.url.endsWith("/profile")).length, 1);
   await assert.rejects(client.getMessage("../hack"), /Invalid Gmail message ID/);
   await assert.rejects(client.listMessageIds("untrusted ?"), /Invalid Gmail pagination token/);
