@@ -55,13 +55,13 @@ Week-five previously integrated data have some differences versus the newly uplo
 
 ## Increment — read-only Gmail PDF envelope adapter (PR pending)
 
-Source: \`scripts/lib/ahmv-gmail-pdf-intake.ts\` (Node/Bun script-only, never included in public client build).
+Source: `scripts/lib/ahmv-gmail-pdf-intake.ts` (Node/Bun script-only, never included in public client build).
 
-- \`createAhmvGmailReader(accessToken, fetcher)\` reads only via \`GET\` from Gmail API. Before any request other than \`/profile\`, it verifies the authenticated Gmail profile is exactly \`ahmverdun.ca@gmail.com\` (the owner-provided address). The OAuth registration must grant \`gmail.readonly\` scope; the source code cannot grant this permission itself.
-- \`listMessageIds\` bounds results to 25 per page and searches only messages with a PDF attachment. \`getMessage\` gets \`format=full\`; \`getAttachmentData\` fetches a referenced Gmail attachment. None mark messages read, move email, reply, delete, or publish.
-- \`inspectGmailScheduleMessage\` walks nested MIME parts with depth and part limits. It only accepts PDFs whose filename, MIME, sizes and attachment reference are internally consistent. Unknown senders, unsafe PDF names, suspicious MIME mismatches and oversized PDFs are quarantined. An allowlist by From address alone is **not proof of sender authenticity**, and all candidates remain subject to review.
-- \`verifyGmailPdfData\` validates base64url, decoded length, a PDF header and SHA-256. It yields private bytes plus source references for a later malware-scanning, immutable private store and PDF extraction pipeline. **Do not display raw source emails, filenames, attachment bytes or authorization tokens publicly.**
-- The regression tests run with synthetic messages and a fake HTTP transport via \`scripts/ahmv-gmail-pdf-intake.test.ts\`. They make **zero live Gmail API requests**.
+- `createAhmvGmailReader(accessToken, fetcher)` reads only via `GET` from Gmail API. Before any request other than `/profile`, it verifies the authenticated Gmail profile is exactly `ahmverdun.ca@gmail.com` (the owner-provided address). The OAuth registration must grant `gmail.readonly` scope; the source code cannot grant this permission itself.
+- `listMessageIds` bounds results to 25 per page and searches only messages with a PDF attachment. `getMessage` gets `format=full`; `getAttachmentData` fetches a referenced Gmail attachment. None mark messages read, move email, reply, delete, or publish.
+- `inspectGmailScheduleMessage` walks nested MIME parts with depth and part limits. It only accepts PDFs whose filename, MIME, sizes and attachment reference are internally consistent. Unknown senders, unsafe PDF names, suspicious MIME mismatches and oversized PDFs are quarantined. An allowlist by From address alone is **not proof of sender authenticity**, and all candidates remain subject to review.
+- `verifyGmailPdfData` validates base64url, decoded length, a PDF header and SHA-256. It yields private bytes plus source references for a later malware-scanning, immutable private store and PDF extraction pipeline. **Do not display raw source emails, filenames, attachment bytes or authorization tokens publicly.**
+- The regression tests run with synthetic messages and a fake HTTP transport via `scripts/ahmv-gmail-pdf-intake.test.ts`. They make **zero live Gmail API requests**.
 
 **Still missing**: actual OAuth grant, approved sender policy, a least-privilege private worker, encrypted storage with replay protection, PDF text extraction, exact-week version assignment, authenticated TAKATAK/AHMV review queue and approval-to-publication endpoint. No inbox polling has been enabled, no source email read and no production schedule published through this adapter.
 
