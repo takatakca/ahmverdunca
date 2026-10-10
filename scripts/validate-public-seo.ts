@@ -27,7 +27,7 @@ const requiredPublicRoutes = [
   "/connexion",
   "/confidentialite",
 ] as const;
-const noindexRoutes = ["/recherche", "/membership", "/experience"] as const;
+const noindexRoutes = ["/recherche", "/membership", "/experience", "/equipes/louves-m12b"] as const;
 
 if (!robots.includes(`Sitemap: ${sitemapUrl}`)) {
   errors.push(`robots.txt must reference ${sitemapUrl}`);
