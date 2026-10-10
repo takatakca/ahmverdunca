@@ -133,7 +133,7 @@ export function planScheduleRevision(
 export function exactLouvesGroup(group: string): "m12a" | "m12b" | null {
   const normalized = group.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
   if (!/LOUVES?/.test(normalized)) return null;
-  if (/\bM12\s*(?:B|B\b)/.test(normalized) || /\bM12B\b/.test(normalized)) return "m12b";
+  if (/\bM12\s*B\b/.test(normalized)) return "m12b";
   if (/\bM12\s*A\b/.test(normalized) || /\bM12A\b/.test(normalized)) return "m12a";
   return null;
 }
