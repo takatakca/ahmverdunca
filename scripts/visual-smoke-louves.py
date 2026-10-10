@@ -62,7 +62,11 @@ def inspect_page(page, width: int) -> dict:
     bag.locator('[data-ahmv-checklist-toggle]').click()
     skates = bag.locator('[data-ahmv-ice-bag-item="skates"]')
     # The native checkbox is visually hidden for accessibility; click its visible label.
-    skates.locator("..").click()
+    visible_label = skates.locator("..")
+    # Keep the target above the global mobile bottom navigation and Assistant.
+    visible_label.evaluate("(element) => { element.scrollIntoView({block: 'start', behavior: 'instant'}); window.scrollBy(0, -160); }")
+    page.screenshot(path=str(OUTPUT / f"louves-{width}-checklist-open.png"), animations="disabled")
+    visible_label.click(timeout=7000)
     page.wait_for_function(
         '() => localStorage.getItem("ahmv:ice-bag:v1:louves-m12b")?.includes("skates")',
         timeout=5000,
@@ -111,7 +115,7 @@ def main() -> int:
                     if not (facts["checklistToggles"] and facts["checklistPersists"] and facts["checklistResets"]):
                         errors.append(f"{width}px: parent bag checklist toggle/persistence/reset failed")
                 except (PlaywrightError, AssertionError, ValueError) as exc:
-                    errors.append(f"{width}px: browser QA failed: {str(exc)[:400]}")
+                    errors.append(f"{width}px: browser QA failed: {str(exc)[:2200]}")
                 finally:
                     page.close()
         finally:
