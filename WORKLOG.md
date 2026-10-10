@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | chatgpt | feat/louves-m12b-premium-microsite → PR pending | code complete, CI pending | Dedicated bilingual M12B pilot microsite, authentic supplied crest, nine public/private module states, responsive premium reusable layout, separate M12A ID and security tests; existing homepage untouched | CI, screenshot/mobile review, approval before public release
+
 - 2026-10-10 | chatgpt | feat/ahmv-gmail-pdf-intake-readonly → PR #394 | CI #1186 green, awaiting review | Read-only Gmail mailbox-verified PDF transport, sender/attachment quarantine, SHA-256 verification, synthetic tests and premium team visual guardrails | owner OAuth + sender approval required for live intake; then private worker and review queue
 
 - 2026-10-10 | chatgpt | feat/ahmv-mail-schedule-provider-integration-plan → PR #393 | CI #1177 green / PR review | AHMV PDF revision planner, all 38 week-6 slots as unapproved review data, TeamLinkt public-widget guard, integrated CI tests and Gmail/TeamLinkt access handoff (no UI changes) | inspect CI, correct failures, get AHMV review and provider access before publication
