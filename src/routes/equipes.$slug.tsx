@@ -265,6 +265,11 @@ function TeamPage() {
                 </p>
                 <div className="mt-6 flex flex-wrap gap-2">
                   <Button asChild variant="sport">
+                    <a href="/equipes/louves-m12b">
+                      {lang === "fr" ? "Explorer Louves M12B" : "Explore Louves U12B"} <ArrowRight className="size-4" />
+                    </a>
+                  </Button>
+                  <Button asChild variant="outline-light">
                     <Link to="/galerie/$slug" params={{ slug: "hockey-feminin-2026-2027" }}>
                       {lang === "fr" ? "Voir l’album féminin" : "View girls hockey album"} <ArrowRight className="size-4" />
                     </Link>
