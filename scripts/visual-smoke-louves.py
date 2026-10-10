@@ -58,6 +58,21 @@ def inspect_page(page, width: int) -> dict:
     details = page.locator('[data-ahmv-team-microsite="louves-m12b"] details')
     details.locator("summary").click()
     facts["detailsOpens"] = details.evaluate("(node) => node.open")
+    bag = page.locator('[data-ahmv-parent-checklist]')
+    bag.locator('[data-ahmv-checklist-toggle]').click()
+    skates = bag.locator('[data-ahmv-ice-bag-item="skates"]')
+    skates.check()
+    page.wait_for_function(
+        '() => localStorage.getItem("ahmv:ice-bag:v1:louves-m12b")?.includes("skates")',
+        timeout=5000,
+    )
+    facts["checklistToggles"] = skates.is_checked()
+    page.reload(wait_until="domcontentloaded")
+    bag = page.locator('[data-ahmv-parent-checklist]')
+    bag.locator('[data-ahmv-checklist-toggle]').click()
+    facts["checklistPersists"] = bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
+    bag.locator('[data-ahmv-checklist-reset]').click()
+    facts["checklistResets"] = not bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
     facts["viewport"] = width
     return facts
 
@@ -92,6 +107,8 @@ def main() -> int:
                         errors.append(f"{width}px: private/future module count changed")
                     if facts["unreadableLinks"]:
                         errors.append(f"{width}px: {facts['unreadableLinks']} links have small hit targets")
+                    if not (facts["checklistToggles"] and facts["checklistPersists"] and facts["checklistResets"]):
+                        errors.append(f"{width}px: parent bag checklist toggle/persistence/reset failed")
                 except (PlaywrightError, AssertionError, ValueError) as exc:
                     errors.append(f"{width}px: browser QA failed: {str(exc)[:400]}")
                 finally:
