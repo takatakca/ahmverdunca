@@ -97,7 +97,7 @@ export function inspectGmailScheduleMessage(
     if (PDF_NAME.test(filename) || mime === "application/pdf") {
       if (!filename || !PDF_NAME.test(filename) || mime !== "application/pdf" ||
         filename.includes("/") || filename.includes("\\") || filename.length > 180 ||
-        /[\x00-\x1f\x7f]/.test(filename)) {
+        [...filename].some((character) => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127)) {
         invalidAttachment = true;
       } else {
         const size = part.body?.size;
