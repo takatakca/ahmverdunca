@@ -3,7 +3,7 @@
 Newest first, one line per piece of work. Rule: `AGENTS.md` › Work log rule.
 Format: `YYYY-MM-DD | agent | branch → PR | status | what | next step`
 
-- 2026-10-10 | chatgpt | feat/home-ice-experience-20261010 → PR pending | active | Accueil glace, accès application, nouvelles regroupées et sélection d’équipes | tests CI, revue et intégration
+- 2026-10-10 | chatgpt | feat/home-ice-experience-20261010 → PR #392 | PR #392 | Accueil glace + sélecteur multiéquipes, installation PWA, splash hockey, nouvelles regroupées, cartes d’arénas et pointages | attendre CI, revue mobile et fusion contrôlée
 
 - 2026-10-08 | codex | feat/visual-sponsors-20261008 → PR #390 | PR #390 | Audit visuel/OCR, annonces agrandissables et expérience commanditaires | contrôles du build, fusion et déploiement
 - 2026-10-08 | codex/dependency_review | feat/visual-sponsors-20261008 → PR #390 | done | Rotation, focus du zoom et cadrage vérifiés ; aucun blocage | CI et déploiement par agent principal
