@@ -33,3 +33,19 @@ CI installs Chromium dependencies in the runner. Avoid committing the screenshot
 - Only add corresponding visual checks for another team once its exact team metadata and media are approved.
 
 No changes to the site home, general navigation, TAKATAK master application, mail integration, or private team content are part of this increment.
+
+
+## Verified browser result — PR #397 (2026-10-10)
+
+- **AHM Verdun CI #1202: SUCCESS** on commit `25001ab1987f41dcdd20605180a2a66175f86df0`.
+- **AHMV Louves Visual QA #4: SUCCESS**, run `38084952618`. [Workflow run](https://github.com/takatakca/ahmverdunca/actions/runs/38084952618); [screenshot and JSON artifact](https://github.com/takatakca/ahmverdunca/actions/runs/38084952618/artifacts/11682660075).
+- Real local React/TanStack HTTP route: **200** on 320, 390, 768 and 1440px viewports.
+- `scrollWidth === innerWidth` at each width (320/320, 390/390, 768/768, 1440/1440).
+- Genuine Louves crest asset loaded at every width; expected M12B heading present, calendar/gallery public links available, details collapsed then opened, and all seven private/future modules remain inside the disclosure. No sub-40px links within the microsite section.
+- Corrected a real accessibility defect in the microsite layout: nested `main` landmarks caused the initial browser QA run to fail. The team component is now a semantic `section` inside the existing global `main`. Browser now records **one** main landmark at every tested width.
+
+### One visual issue outside this PR's scope
+
+Real 320px and 390px screenshots reveal the *global* floating mobile Assistant launcher overlapping the `VOTRE ACCÈS RAPIDE / PRÊT POUR LA GLACE` heading above the bottom navigation. This is owned by **PR #391**, which is already addressing the global Assistant launcher. Evidence and reproduction were [posted to its PR discussion](https://github.com/takatakca/ahmverdunca/pull/391). Do not duplicate or conflict with that agent's mobile nav fixes. After #391 merges, repeat the same viewport screenshots to confirm no occlusion.
+
+The screenshots are produced from GitHub Actions' **local dev server** running the real AHMV source. They are **not production screenshots**, and no MochaHost live SHA, health endpoint or DNS was confirmed in this run.
