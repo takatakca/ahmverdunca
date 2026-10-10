@@ -105,8 +105,20 @@ export function TeamIceBagChecklist({ teamSlug, lang }: { teamSlug: string; lang
         </div>
       </div>
 
-      {expanded && (
-        <div id={disclosureId} data-ahmv-checklist-items className="border-t border-white/10 bg-[#0e1830]/55 px-4 py-5 sm:px-6">
+      <div id={disclosureId} hidden={!expanded} data-ahmv-checklist-items className="border-t border-white/10 bg-[#0e1830]/55 px-4 py-5 sm:px-6">
+          {count > 0 && (
+            <div className="mb-4 flex items-center justify-end">
+              <button
+                type="button"
+                data-ahmv-checklist-reset
+                onClick={() => setSelected([])}
+                className="inline-flex min-h-11 shrink-0 scroll-mt-28 items-center justify-center gap-2 rounded-lg border border-white/25 px-4 text-xs font-bold text-white/80 transition-colors hover:border-[#88efe6] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8afff2]"
+              >
+                <RotateCcw aria-hidden="true" className="size-4" />
+                {isFr ? "Recommencer" : "Start again"}
+              </button>
+            </div>
+          )}
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {TEAM_ICE_BAG_ITEMS.map((item) => (
               <label
@@ -134,25 +146,12 @@ export function TeamIceBagChecklist({ teamSlug, lang }: { teamSlug: string; lang
               </label>
             ))}
           </div>
-          <div className="mt-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-            <p className="max-w-xl text-[11px] leading-5 text-white/62">
-              {isFr
-                ? "Aide-mémoire facultatif et non exhaustif : suivez toujours les consignes de l’équipe pour l’équipement. Votre liste reste seulement sur cet appareil."
-                : "Optional, non-exhaustive reminder: always follow your team's equipment instructions. Your checklist stays on this device only."}
-            </p>
-            <button
-              type="button"
-              data-ahmv-checklist-reset
-              disabled={count === 0}
-              onClick={() => setSelected([])}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-white/25 px-4 text-xs font-bold text-white/80 transition-colors hover:border-[#88efe6] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#8afff2] disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <RotateCcw aria-hidden="true" className="size-4" />
-              {isFr ? "Recommencer" : "Start again"}
-            </button>
-          </div>
+          <p className="mt-4 max-w-2xl text-[11px] leading-5 text-white/62">
+            {isFr
+              ? "Aide-mémoire facultatif et non exhaustif : suivez toujours les consignes de l’équipe pour l’équipement. Votre liste reste seulement sur cet appareil."
+              : "Optional, non-exhaustive reminder: always follow your team's equipment instructions. Your checklist stays on this device only."}
+          </p>
         </div>
-      )}
     </section>
   );
 }
