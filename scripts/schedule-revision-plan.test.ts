@@ -76,4 +76,5 @@ test("only explicitly designated M12 A/B Louves can route to exact team", () => 
   assert.equal(exactLouvesGroup("M12 B Louves (697955)"), "m12b");
   assert.equal(exactLouvesGroup("M12 A Louves"), "m12a");
   assert.equal(exactLouvesGroup("M12 Broncos"), null);
+  assert.equal(exactLouvesGroup("M12 Broncos Louves"), null);
 });
