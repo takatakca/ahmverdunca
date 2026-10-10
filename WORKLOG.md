@@ -1,6 +1,6 @@
 # Work log
 
-- 2026-10-10 | chatgpt | feat/louves-parent-ice-checklist → PR pending | code complete, CI pending | Added reusable bilingual on-device hockey bag checklist with 6 honest reminders, progress, local persistence and reset; tests and real-browser interactions at 4 viewport widths | CI, inspect real screenshots, controlled review/merge
+- 2026-10-10 | chatgpt | feat/louves-parent-ice-checklist → PR #398 | CI #1215 + real Chromium QA #16 green; review complete | Added bilingual on-device parent gear checklist, optional six-item progress/reset and persistence, stable reset placement on mobile, privacy tests, screenshots 320/390/768/1440 | safe merge after gates; verify MochaHost deployment and /healthz SHA; monitor global Assistant overlap PR #391
 
 - 2026-10-10 | chatgpt | feat/louves-rendered-browser-qa → PR #397 | CI #1202 green + real browser QA #4 green; screenshots reviewed | Repaired nested main landmark; tested actual React M12B at 320/390/768/1440 with HTTP 200, crest, 0 horizontal overflow, 7 private modules, expected links and capture artifacts | visual overlap from global Assistant referred to existing PR #391; monitor production deployment and revisit screenshots after #391
 
