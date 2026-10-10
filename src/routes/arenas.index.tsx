@@ -148,44 +148,76 @@ function ArenasPage() {
         </div>
 
         {list.length > 0 ? (
-          <div className="grid gap-px overflow-hidden border border-navy/12 bg-navy/12 md:grid-cols-2 lg:grid-cols-3">
-          {list.map((arena) => (
-            <article key={arena.slug} className="interactive-surface flex flex-col bg-competition p-5 text-white hover:bg-white/[0.04]">
-              <div className="flex items-start justify-between gap-3">
-                <MapPin className="mt-0.5 size-5 shrink-0 text-sport-foreground" aria-hidden />
-                {arena.website && <ExternalLink className="size-4 text-white/35" aria-hidden />}
-              </div>
-
-              <h2 className="heading-card mt-5 text-white">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {list.map((arena) => (
+              <article
+                key={arena.slug}
+                className="interactive-surface group flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/14 bg-competition text-white shadow-[0_18px_45px_-36px_rgba(0,0,0,0.7)] transition-[border-color,transform] hover:-translate-y-0.5 hover:border-sport/45"
+              >
                 <Link
                   to="/arenas/$slug"
                   params={{ slug: arena.slug }}
-                  className="hover:text-sport-foreground"
+                  className="relative block aspect-[16/9] overflow-hidden bg-navy"
+                  aria-label={lang === "fr" ? `Fiche de l’aréna ${arena.name}` : `Details for ${arena.name}`}
                 >
-                  {arena.name}
+                  {arena.photoUrl ? (
+                    <img
+                      src={arena.photoUrl}
+                      alt={arena.photoAlt?.[lang] ?? arena.name}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.035]"
+                    />
+                  ) : (
+                    <div className="technical-grid absolute inset-0 flex items-center justify-center bg-[linear-gradient(125deg,var(--color-navy),var(--color-competition))]">
+                      <span className="flex size-20 items-center justify-center rounded-full border border-sport/35 bg-white/[0.035]">
+                        <MapPin className="size-8 text-sport-foreground" />
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-deep/80 via-transparent to-transparent" />
+                  <span className="absolute bottom-3 left-3 rounded-full border border-white/20 bg-navy-deep/85 px-3 py-1.5 text-[10px] font-semibold text-white backdrop-blur">
+                    {l(arena.borough)}
+                  </span>
+                  {arena.publicStatus?.code === "temporarily_closed" && (
+                    <span className="absolute right-3 top-3 rounded-lg bg-status-cancelled-soft px-2 py-1 text-[10px] font-bold text-status-cancelled">
+                      {l(arena.publicStatus.label)}
+                    </span>
+                  )}
                 </Link>
-              </h2>
-
-              <p className="mt-1 text-sm text-white/45">{l(arena.borough)}</p>
-              <p className="mt-3 text-sm leading-relaxed">{arena.address}</p>
-
-              <div className="mt-auto pt-5">
-                <Link
-                  to="/arenas/$slug"
-                  params={{ slug: arena.slug }}
-                  className="premium-control mb-2 flex min-h-10 items-center justify-between border border-white/12 px-3 text-[9px] font-semibold uppercase tracking-[0.1em] text-white/72 hover:border-sport hover:text-white"
-                >
-                  <span>{lang === "fr" ? "Détails de l’aréna" : "Arena details"}</span>
-                  <ExternalLink className="size-3.5 text-sport" />
-                </Link>
-                <div className="grid grid-cols-3 gap-2">
-                  <a href={providerDirections(arena.address).google} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center bg-navy px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-white">Google</a>
-                  <a href={providerDirections(arena.address).waze} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-white/12 px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-white/72 hover:border-sport">Waze</a>
-                  <a href={providerDirections(arena.address).apple} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-10 items-center justify-center border border-white/12 px-2 text-[8px] font-bold uppercase tracking-[0.08em] text-white/72 hover:border-sport">Apple</a>
+                <div className="flex flex-1 flex-col p-5">
+                  <h2 className="font-display text-2xl font-extrabold uppercase leading-[0.95] text-white">
+                    <Link to="/arenas/$slug" params={{ slug: arena.slug }} className="hover:text-sport-foreground">
+                      {arena.name}
+                    </Link>
+                  </h2>
+                  <p className="mt-3 flex items-start gap-2 text-sm leading-relaxed text-white/70">
+                    <MapPin className="mt-0.5 size-4 shrink-0 text-sport-foreground" aria-hidden />
+                    {arena.address}
+                  </p>
+                  {arena.facilities && (
+                    <p className="mt-3 line-clamp-2 text-xs leading-relaxed text-white/55">
+                      {l(arena.facilities)}
+                    </p>
+                  )}
+                  <div className="mt-auto pt-5">
+                    <Link
+                      to="/arenas/$slug"
+                      params={{ slug: arena.slug }}
+                      className="premium-control mb-3 flex min-h-12 items-center justify-between rounded-xl border border-sport/40 bg-sport/10 px-4 text-xs font-bold text-white transition-colors hover:bg-sport/20"
+                    >
+                      <span>{lang === "fr" ? "Explorer la fiche aréna" : "Explore arena profile"}</span>
+                      <ExternalLink className="size-4 text-sport-foreground" />
+                    </Link>
+                    <div className="grid grid-cols-3 gap-2" aria-label={lang === "fr" ? "Itinéraires" : "Directions"}>
+                      <a href={providerDirections(arena.address).google} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center rounded-lg border border-white/14 bg-navy px-2 text-[10px] font-bold text-white">Google</a>
+                      <a href={providerDirections(arena.address).waze} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center rounded-lg border border-white/14 bg-navy px-2 text-[10px] font-bold text-white">Waze</a>
+                      <a href={providerDirections(arena.address).apple} target="_blank" rel="noopener noreferrer" className="premium-control flex min-h-11 items-center justify-center rounded-lg border border-white/14 bg-navy px-2 text-[10px] font-bold text-white">Apple</a>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))}
           </div>
         ) : (
           <div className="border border-white/12 bg-navy-deep p-8 text-center text-white">
