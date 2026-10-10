@@ -53,6 +53,7 @@ export interface VerifiedGmailPdf {
 
 const SAFE_ID = /^[a-zA-Z0-9_-]{1,128}$/;
 const PDF_NAME = /\.pdf$/i;
+const SAFE_PAGE_TOKEN = /^[a-zA-Z0-9_+/=-]{1,1024}$/;
 const EMAIL = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 function header(part: GmailPart, key: string): string {
@@ -93,7 +94,7 @@ export function inspectGmailScheduleMessage(
     }
     const filename = part.filename?.trim() ?? "";
     const mime = part.mimeType?.toLowerCase().trim() ?? "";
-    if (filename || mime === "application/pdf") {
+    if (PDF_NAME.test(filename) || mime === "application/pdf") {
       if (!filename || !PDF_NAME.test(filename) || mime !== "application/pdf" ||
         filename.includes("/") || filename.includes("\\") || filename.length > 180 ||
         /[\x00-\x1f\x7f]/.test(filename)) {
@@ -220,7 +221,7 @@ export function createAhmvGmailReader(
   return {
     async listMessageIds(pageToken) {
       await confirmMailbox();
-      if (pageToken && (!SAFE_ID.test(pageToken) || pageToken.length > 128)) {
+      if (pageToken && !SAFE_PAGE_TOKEN.test(pageToken)) {
         throw new Error("Invalid Gmail pagination token");
       }
       const query = new URLSearchParams({ maxResults: "25", q: "has:attachment filename:pdf" });
@@ -232,7 +233,7 @@ export function createAhmvGmailReader(
       const ids = (result.messages as Array<{ id?: unknown }> | undefined ?? [])
         .map((message) => message.id)
         .filter((id): id is string => typeof id === "string" && SAFE_ID.test(id));
-      if (typeof result.nextPageToken === "string" && SAFE_ID.test(result.nextPageToken)) {
+      if (typeof result.nextPageToken === "string" && SAFE_PAGE_TOKEN.test(result.nextPageToken)) {
         return { ids, nextPageToken: result.nextPageToken };
       }
       return { ids };
