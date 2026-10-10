@@ -2,7 +2,7 @@ import { readBrowserPreference, writeBrowserPreference } from "@/lib/browser-pre
 import { useEffect, useRef, useState } from "react";
 import { AHMV_LOGO_URL } from "@/components/layout/logo-slot";
 
-const SESSION_KEY = "ahmv-app-launch-splash-v1";
+const SESSION_KEY = "ahmv-app-launch-splash-v2";
 const SPLASH_ARTWORK_URL = "/branding/ahmv-app-splash-2026.webp";
 
 function isStandaloneApp() {
@@ -22,7 +22,8 @@ export function AppLaunchSplash() {
   const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!isStandaloneApp()) return;
+    // Show a short hockey launch on the website and in the installed application.
+    // The session preference prevents a replay on internal navigation.
     if (readBrowserPreference(SESSION_KEY, "sessionStorage") === "1") return;
 
     writeBrowserPreference(SESSION_KEY, "1", "sessionStorage");
@@ -32,7 +33,7 @@ export function AppLaunchSplash() {
     document.body.style.overflow = "hidden";
 
     const reduced = prefersReducedMotion();
-    const duration = reduced ? 320 : 1450;
+    const duration = reduced ? 250 : isStandaloneApp() ? 1450 : 950;
     const startedAt = performance.now();
 
     const animate = (now: number) => {
@@ -90,6 +91,8 @@ export function AppLaunchSplash() {
       <div className="absolute inset-x-0 top-[22%] h-[16%] bg-gradient-to-b from-transparent to-navy-deep" />
       <div className="absolute inset-x-0 bottom-0 h-[62%] bg-navy-deep" />
       <div className="absolute inset-0 technical-grid text-white/10" />
+      <div className="pointer-events-none absolute inset-x-0 top-[38%] h-px bg-sport/25" aria-hidden />
+      <div className="pointer-events-none absolute left-1/2 top-[38%] size-[min(58vw,20rem)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sport/20" aria-hidden />
 
       <div className="relative flex min-h-[100dvh] flex-col items-center justify-between px-5 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] text-center">
         <div className="flex w-full max-w-md justify-center pt-2">
@@ -139,6 +142,11 @@ export function AppLaunchSplash() {
                 style={{ width: `${progress}%` }}
               />
               <div className="ahmv-motion-sheen" aria-hidden="true" />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute -top-2 size-6 rounded-full border-[3px] border-white/70 bg-navy-deep shadow-[0_1px_14px_rgba(255,255,255,0.38)] transition-[left] duration-75"
+                style={{ left: `clamp(0px, calc(${progress}% - 12px), calc(100% - 24px))` }}
+              />
             </div>
 
             <div className="mt-2 flex justify-between text-[8px] font-bold uppercase tracking-[0.16em] text-white/35">
