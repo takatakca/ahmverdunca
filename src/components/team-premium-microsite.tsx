@@ -59,7 +59,7 @@ export function PremiumTeamMicrosite({ site, lang }: {
   const isFr = lang === "fr";
 
   return (
-    <main className="min-h-screen bg-[#080d22] pb-16 text-white">
+    <section data-ahmv-team-microsite={site.slug} className="min-h-screen bg-[#080d22] pb-16 text-white">
       <div className="container-site">
         <nav aria-label={isFr ? "Fil d’Ariane" : "Breadcrumbs"} className="flex flex-wrap items-center gap-2 py-5 text-xs text-white/60">
           <a href="/equipes" className="inline-flex min-h-11 items-center gap-2 underline-offset-4 transition-colors hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#28c2c2]">
@@ -261,6 +261,6 @@ export function PremiumTeamMicrosite({ site, lang }: {
           </a>
         </footer>
       </div>
-    </main>
+    </section>
   );
 }

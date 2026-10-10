@@ -73,6 +73,9 @@ test("microsite is isolated from homepage and from private/public unverified hoc
   assert.doesNotMatch(homepage, /PremiumTeamMicrosite/);
   assert.match(component, /media\.url/);
   assert.match(component, /aria-label/);
+  assert.match(component, /data-ahmv-team-microsite=\{site\.slug\}/);
+  assert.doesNotMatch(component, /<main(?:\s|>)/);
+  assert.match(component, /<section data-ahmv-team-microsite=/);
   assert.match(component, /focus-visible/);
   assert.match(component, /TeamLinkt/);
   assert.doesNotMatch(component, /LOUVES.*legacyScheduleTeamId/);
