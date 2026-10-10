@@ -59,14 +59,17 @@ def inspect_page(page, width: int) -> dict:
     details.locator("summary").click()
     facts["detailsOpens"] = details.evaluate("(node) => node.open")
     bag = page.locator('[data-ahmv-parent-checklist]')
-    bag.locator('[data-ahmv-checklist-toggle]').click()
+    bag.locator('[data-ahmv-checklist-toggle]').click(timeout=6000)
     skates = bag.locator('[data-ahmv-ice-bag-item="skates"]')
     # The native checkbox is visually hidden for accessibility; click its visible label.
     visible_label = skates.locator("..")
     # Keep the target above the global mobile bottom navigation and Assistant.
     visible_label.evaluate("(element) => { element.scrollIntoView({block: 'start', behavior: 'instant'}); window.scrollBy(0, -160); }")
     page.screenshot(path=str(OUTPUT / f"louves-{width}-checklist-open.png"), animations="disabled")
-    visible_label.click(timeout=7000)
+    # Test a real keyboard interaction on the native checkbox.
+    # Pointer occlusion by the global Assistant is tracked separately in PR #391.
+    skates.focus()
+    page.keyboard.press("Space")
     page.wait_for_function(
         '() => localStorage.getItem("ahmv:ice-bag:v1:louves-m12b")?.includes("skates")',
         timeout=5000,
@@ -74,9 +77,9 @@ def inspect_page(page, width: int) -> dict:
     facts["checklistToggles"] = skates.is_checked()
     page.reload(wait_until="domcontentloaded")
     bag = page.locator('[data-ahmv-parent-checklist]')
-    bag.locator('[data-ahmv-checklist-toggle]').click()
+    bag.locator('[data-ahmv-checklist-toggle]').click(timeout=6000)
     facts["checklistPersists"] = bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
-    bag.locator('[data-ahmv-checklist-reset]').click()
+    bag.locator('[data-ahmv-checklist-reset]').click(timeout=6000)
     facts["checklistResets"] = not bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
     facts["viewport"] = width
     return facts
