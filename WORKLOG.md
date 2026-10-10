@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | chatgpt | feat/louves-rendered-browser-qa → PR pending | CI pending | Added first true app-based Chromium visual QA across 320/390/768/1440 with screenshot artifacts, overflow, crest, link and accessibility smoke checks; builds on merged #396 | inspect browser action results and screenshots, fix defects, approve only when verified
+
 - 2026-10-10 | chatgpt | feat/louves-mobile-visual-polish → PR #396 | CI #1196 green, offline visual inspection only | Simplified M12B mobile first fold, prioritised 2 working public actions, grouped 7 future/private tools in accessible accordion, reduced repetitive hero content; no main site changes | CI, real compiled browser viewport review, then controlled release
 
 - 2026-10-10 | chatgpt | feat/louves-m12b-premium-microsite → PR #395 | CI #1192 green, awaiting mobile visual review | Dedicated bilingual M12B pilot microsite, authentic supplied crest, nine public/private module states, responsive premium reusable layout, separate M12A ID and security tests; existing homepage untouched | screenshot/mobile review, then approve controlled merge and deployment
