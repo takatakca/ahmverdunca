@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-10 | chatgpt | feat/ahmv-mail-schedule-provider-integration-plan → PR pending | in review | AHMV PDF revision planner, all 38 week-6 slots as unapproved review data, TeamLinkt public-widget guard, integrated CI tests and Gmail/TeamLinkt access handoff (no UI changes) | inspect CI, correct failures, get AHMV review and provider access before publication
+
 Newest first, one line per piece of work. Rule: `AGENTS.md` › Work log rule.
 Format: `YYYY-MM-DD | agent | branch → PR | status | what | next step`
 
