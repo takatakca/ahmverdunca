@@ -224,7 +224,7 @@ export function createAhmvGmailReader(
       if (pageToken && !SAFE_PAGE_TOKEN.test(pageToken)) {
         throw new Error("Invalid Gmail pagination token");
       }
-      const query = new URLSearchParams({ maxResults: "25", q: "has:attachment filename:pdf" });
+      const query = new URLSearchParams({ maxResults: "25", labelIds: "INBOX", q: "has:attachment filename:pdf" });
       if (pageToken) query.set("pageToken", pageToken);
       const result = await getJson("/messages", query);
       if (result.messages !== undefined && !Array.isArray(result.messages)) {
