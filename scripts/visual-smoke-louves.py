@@ -98,12 +98,12 @@ def main() -> int:
                 page = browser.new_page(viewport={"width": width, "height": 900}, device_scale_factor=1)
                 # Isolate microsite interactions from the optional timed site-wide welcome dialog.
                 # The welcome experience has its own test scope and is unchanged in production.
-                page.add_init_script("""() => {
+                page.add_init_script("""(() => {
                   try {
                     localStorage.setItem('ahmv-communications-preview-hidden', '1');
                     sessionStorage.setItem('ahmv-communications-preview-seen', '1');
                   } catch (_) {}
-                }""")
+                })()""")
                 try:
                     facts = inspect_page(page, width)
                     findings.append(facts)
