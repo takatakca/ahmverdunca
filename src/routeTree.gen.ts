@@ -29,6 +29,7 @@ import { Route as ArenasIndexRouteImport } from './routes/arenas.index'
 import { Route as ArenasSlugRouteImport } from './routes/arenas.$slug'
 import { Route as EquipesIndexRouteImport } from './routes/equipes.index'
 import { Route as EquipesSlugRouteImport } from './routes/equipes.$slug'
+import { Route as EquipesLouvesM12bRouteImport } from './routes/equipes.louves-m12b'
 import { Route as GalerieIndexRouteImport } from './routes/galerie.index'
 import { Route as GalerieSlugRouteImport } from './routes/galerie.$slug'
 import { Route as NouvellesIndexRouteImport } from './routes/nouvelles.index'
@@ -134,6 +135,11 @@ const EquipesSlugRoute = EquipesSlugRouteImport.update({
   path: '/equipes/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EquipesLouvesM12bRoute = EquipesLouvesM12bRouteImport.update({
+  id: '/equipes/louves-m12b',
+  path: '/equipes/louves-m12b',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GalerieIndexRoute = GalerieIndexRouteImport.update({
   id: '/galerie/',
   path: '/galerie/',
@@ -174,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
+  '/equipes/louves-m12b': typeof EquipesLouvesM12bRoute
   '/galerie/$slug': typeof GalerieSlugRoute
   '/nouvelles/$slug': typeof NouvellesSlugRoute
   '/arenas/': typeof ArenasIndexRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
+  '/equipes/louves-m12b': typeof EquipesLouvesM12bRoute
   '/galerie/$slug': typeof GalerieSlugRoute
   '/nouvelles/$slug': typeof NouvellesSlugRoute
   '/arenas': typeof ArenasIndexRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/equipe-event/$id': typeof EquipeEventIdRoute
   '/arenas/$slug': typeof ArenasSlugRoute
   '/equipes/$slug': typeof EquipesSlugRoute
+  '/equipes/louves-m12b': typeof EquipesLouvesM12bRoute
   '/galerie/$slug': typeof GalerieSlugRoute
   '/nouvelles/$slug': typeof NouvellesSlugRoute
   '/arenas/': typeof ArenasIndexRoute
@@ -255,6 +264,7 @@ export interface FileRouteTypes {
     | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
+    | '/equipes/louves-m12b'
     | '/galerie/$slug'
     | '/nouvelles/$slug'
     | '/arenas/'
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
+    | '/equipes/louves-m12b'
     | '/galerie/$slug'
     | '/nouvelles/$slug'
     | '/arenas'
@@ -307,6 +318,7 @@ export interface FileRouteTypes {
     | '/equipe-event/$id'
     | '/arenas/$slug'
     | '/equipes/$slug'
+    | '/equipes/louves-m12b'
     | '/galerie/$slug'
     | '/nouvelles/$slug'
     | '/arenas/'
@@ -334,6 +346,7 @@ export interface RootRouteChildren {
   EquipeEventIdRoute: typeof EquipeEventIdRoute
   ArenasSlugRoute: typeof ArenasSlugRoute
   EquipesSlugRoute: typeof EquipesSlugRoute
+  EquipesLouvesM12bRoute: typeof EquipesLouvesM12bRoute
   GalerieSlugRoute: typeof GalerieSlugRoute
   NouvellesSlugRoute: typeof NouvellesSlugRoute
   ArenasIndexRoute: typeof ArenasIndexRoute
@@ -484,6 +497,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/equipes/louves-m12b': {
+      id: '/equipes/louves-m12b'
+      path: '/equipes/louves-m12b'
+      fullPath: '/equipes/louves-m12b'
+      preLoaderRoute: typeof EquipesLouvesM12bRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/galerie/': {
       id: '/galerie/'
       path: '/galerie'
@@ -534,6 +554,7 @@ const rootRouteChildren: RootRouteChildren = {
   EquipeEventIdRoute: EquipeEventIdRoute,
   ArenasSlugRoute: ArenasSlugRoute,
   EquipesSlugRoute: EquipesSlugRoute,
+  EquipesLouvesM12bRoute: EquipesLouvesM12bRoute,
   GalerieSlugRoute: GalerieSlugRoute,
   NouvellesSlugRoute: NouvellesSlugRoute,
   ArenasIndexRoute: ArenasIndexRoute,
