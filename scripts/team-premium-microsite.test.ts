@@ -77,3 +77,29 @@ test("microsite is isolated from homepage and from private/public unverified hoc
   assert.match(component, /TeamLinkt/);
   assert.doesNotMatch(component, /LOUVES.*legacyScheduleTeamId/);
 });
+
+test("mobile microsite puts working family links first and folds away future tools", () => {
+  const component = readFileSync("src/components/team-premium-microsite.tsx", "utf8");
+  assert.match(component, /const publicModules = modules\.filter\(\(module\) => Boolean\(module\.href\)\)/);
+  assert.match(component, /const pendingModules = modules\.filter\(\(module\) => !module\.href\)/);
+  assert.match(component, /publicModules\.map\(\(module\) =>/);
+  assert.match(component, /pendingModules\.map\(\(module\) =>/);
+  assert.match(component, /<details className=/);
+  assert.match(component, /<summary className=/);
+  assert.match(component, /group-open:rotate-180/);
+  assert.match(component, /motion-reduce:transition-none/);
+  assert.match(component, /focus-visible:outline-2/);
+  assert.match(component, /min-h-16/);
+  assert.match(component, /<aside className="hidden[^"]*md:block/);
+  assert.ok(component.indexOf("publicModules.map") < component.indexOf("<details"));
+  assert.doesNotMatch(component, /modules\.map\(\(module, index\) =>/);
+});
+
+test("mobile site never advertises planned services as connected", () => {
+  const component = readFileSync("src/components/team-premium-microsite.tsx", "utf8");
+  assert.match(component, /Private access/);
+  assert.match(component, /In preparation/);
+  assert.match(component, /private-provider/);
+  assert.match(component, /module\.href/);
+  assert.doesNotMatch(component, /onClick=\{\(\) => navigateToTeamLinkt/);
+});
