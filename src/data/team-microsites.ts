@@ -51,6 +51,7 @@ export const LOUVES_M12B_MICROSITE: TeamMicrositeDefinition = {
   level: "M12B",
   categorySlug: "feminin",
   accent: "louves",
+  logoUrl: "/images/teams/louves-m12b-crest.webp",
   modules: [
     {
       key: "schedule",
