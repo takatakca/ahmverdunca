@@ -90,6 +90,7 @@ test("mobile microsite puts working family links first and folds away future too
   assert.match(component, /motion-reduce:transition-none/);
   assert.match(component, /focus-visible:outline-2/);
   assert.match(component, /min-h-16/);
+  assert.match(component, /<aside className="hidden[^"]*md:block/);
   assert.ok(component.indexOf("publicModules.map") < component.indexOf("<details"));
   assert.doesNotMatch(component, /modules\.map\(\(module, index\) =>/);
 });
