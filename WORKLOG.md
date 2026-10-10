@@ -1,6 +1,6 @@
 # Work log
 
-- 2026-10-10 | chatgpt | feat/louves-rendered-browser-qa → PR pending | CI pending | Added first true app-based Chromium visual QA across 320/390/768/1440 with screenshot artifacts, overflow, crest, link and accessibility smoke checks; builds on merged #396 | inspect browser action results and screenshots, fix defects, approve only when verified
+- 2026-10-10 | chatgpt | feat/louves-rendered-browser-qa → PR #397 | CI #1202 green + real browser QA #4 green; screenshots reviewed | Repaired nested main landmark; tested actual React M12B at 320/390/768/1440 with HTTP 200, crest, 0 horizontal overflow, 7 private modules, expected links and capture artifacts | visual overlap from global Assistant referred to existing PR #391; monitor production deployment and revisit screenshots after #391
 
 - 2026-10-10 | chatgpt | feat/louves-mobile-visual-polish → PR #396 | CI #1196 green, offline visual inspection only | Simplified M12B mobile first fold, prioritised 2 working public actions, grouped 7 future/private tools in accessible accordion, reduced repetitive hero content; no main site changes | CI, real compiled browser viewport review, then controlled release
 
