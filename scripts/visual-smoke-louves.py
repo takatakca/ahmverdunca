@@ -19,7 +19,7 @@ VIEWPORTS = (320, 390, 768, 1440)
 
 def inspect_page(page, width: int) -> dict:
     response = page.goto(BASE + ROUTE, wait_until="domcontentloaded", timeout=45000)
-    page.locator("main").wait_for(state="visible", timeout=30000)
+    page.locator('[data-ahmv-team-microsite="louves-m12b"]').wait_for(state="visible", timeout=30000)
     # Wait for fonts without letting external font requests hold up the test.
     page.evaluate(
         """async () => {
@@ -31,29 +31,31 @@ def inspect_page(page, width: int) -> dict:
     facts = page.evaluate(
         """() => {
           const root = document.documentElement;
-          const logo = document.querySelector('main img[src="/images/teams/louves-m12b-crest.webp"]');
-          const details = document.querySelector('main details');
-          const links = [...document.querySelectorAll('main a[href]')].map(a => a.getAttribute('href'));
-          const main = document.querySelector('main');
+          const team = document.querySelector('[data-ahmv-team-microsite="louves-m12b"]');
+          const logo = team?.querySelector('img[src="/images/teams/louves-m12b-crest.webp"]');
+          const details = team?.querySelector('details');
+          const links = [...(team?.querySelectorAll('a[href]') ?? [])].map(a => a.getAttribute('href'));
+          const landmarkCount = document.querySelectorAll('main').length;
           return {
             screenWidth: innerWidth,
             scrollWidth: root.scrollWidth,
-            heroTitle: main?.querySelector('h1')?.textContent?.trim(),
+            heroTitle: team?.querySelector('h1')?.textContent?.trim(),
+            mainLandmarkCount: landmarkCount,
             logoLoaded: !!logo && logo.complete && logo.naturalWidth > 0,
             navSchedule: links.some(h => h?.startsWith('/horaires?team=feminin')),
             navGallery: links.some(h => h === '/galerie/hockey-feminin-2026-2027'),
             detailsInitiallyClosed: !!details && !details.open,
-            unreadableLinks: [...document.querySelectorAll('main a[href]')].filter(a => {
+            unreadableLinks: [...(team?.querySelectorAll('a[href]') ?? [])].filter(a => {
               const bounds = a.getBoundingClientRect();
               return bounds.width < 40 || bounds.height < 40;
             }).length,
-            bodyBackground: getComputedStyle(main).backgroundColor,
+            bodyBackground: team ? getComputedStyle(team).backgroundColor : 'missing',
             moduleCount: details?.querySelectorAll('article').length ?? 0,
           };
         }"""
     )
     facts["responseStatus"] = response.status if response is not None else None
-    details = page.locator("main details")
+    details = page.locator('[data-ahmv-team-microsite="louves-m12b"] details')
     details.locator("summary").click()
     facts["detailsOpens"] = details.evaluate("(node) => node.open")
     facts["viewport"] = width
@@ -76,6 +78,8 @@ def main() -> int:
                         errors.append(f"{width}px: HTTP status {facts['responseStatus']}")
                     if facts["scrollWidth"] > facts["screenWidth"] + 1:
                         errors.append(f"{width}px: horizontal overflow {facts['scrollWidth']}px")
+                    if facts["mainLandmarkCount"] != 1:
+                        errors.append(f"{width}px: expected one main landmark, found {facts['mainLandmarkCount']}")
                     if "Louves" not in (facts["heroTitle"] or ""):
                         errors.append(f"{width}px: wrong/missing team heading")
                     if not facts["logoLoaded"]:
