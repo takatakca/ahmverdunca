@@ -61,7 +61,8 @@ def inspect_page(page, width: int) -> dict:
     bag = page.locator('[data-ahmv-parent-checklist]')
     bag.locator('[data-ahmv-checklist-toggle]').click()
     skates = bag.locator('[data-ahmv-ice-bag-item="skates"]')
-    skates.check()
+    # The native checkbox is visually hidden for accessibility; click its visible label.
+    skates.locator("..").click()
     page.wait_for_function(
         '() => localStorage.getItem("ahmv:ice-bag:v1:louves-m12b")?.includes("skates")',
         timeout=5000,
