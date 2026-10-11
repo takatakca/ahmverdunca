@@ -10,7 +10,7 @@ from playwright.sync_api import sync_playwright
 BASE = os.environ.get("AHMV_VISUAL_BASE_URL", "http://127.0.0.1:8080").rstrip("/")
 ROUTE = "/galerie/hockey-feminin-2026-2027"
 OUT = Path("artifacts/ahmv-gallery-exit")
-PHOTO_BUTTON = 'button[aria-label^="Ouvrir "]'
+PHOTO_BUTTON = '[data-ahmv-gallery-open] button[aria-label^="Ouvrir "]'
 VIEWER = '[data-ahmv-attention-surface="media-viewer"]'
 
 def main() -> int:
@@ -36,7 +36,7 @@ def main() -> int:
                 # Wait for the real React onClick props, not a guessed loading delay.
                 page.wait_for_function(
                     """() => {
-                      const button = document.querySelector('button[aria-label^="Ouvrir "]');
+                      const button = document.querySelector('[data-ahmv-gallery-open] button[aria-label^="Ouvrir "]');
                       if (!button) return false;
                       const propName = Object.keys(button).find(key => key.indexOf('__reactProps') === 0);
                       return !!propName && typeof button[propName]?.onClick === 'function';
@@ -48,23 +48,7 @@ def main() -> int:
                 page.wait_for_timeout(250)
                 gallery_state = page.locator("[data-ahmv-gallery-open]").get_attribute("data-ahmv-gallery-open")
                 if gallery_state != "true":
-                    # Diagnostic ONLY: invoke the attached React callback without a real
-                    # click to identify event interception versus an app state defect.
-                    debug = page.evaluate("""() => {
-                      const b = document.querySelector('button[aria-label^="Ouvrir "]');
-                      const key = b && Object.keys(b).find(k => k.startsWith('__reactProps'));
-                      const callback = key ? b[key]?.onClick : undefined;
-                      if (typeof callback === 'function') {
-                        callback({ type: 'click', preventDefault() {}, stopPropagation() {} });
-                        return { callback: 'invoked', label: b.getAttribute('aria-label') };
-                      }
-                      return { callback: 'missing', label: b?.getAttribute('aria-label') };
-                    }""")
-                    page.wait_for_timeout(250)
-                    debug["stateAfterDirectCallback"] = page.locator("[data-ahmv-gallery-open]").get_attribute("data-ahmv-gallery-open")
-                    debug["viewerAfterDirectCallback"] = page.locator(VIEWER).count()
-                    print(json.dumps({"diagnostic": debug, "width": width}, ensure_ascii=False))
-                print(json.dumps({"width": width, "galleryOpenAfterClick": gallery_state, "mountedViewer": page.locator(VIEWER).count()}, ensure_ascii=False))
+                    raise AssertionError("Clicking a real gallery photo did not open viewer; gallery state=" + str(gallery_state))
                 viewer = page.locator(VIEWER)
                 viewer.wait_for(state="visible", timeout=8000)
                 back = viewer.locator("[data-ahmv-gallery-exit]")
