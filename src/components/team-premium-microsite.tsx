@@ -76,7 +76,7 @@ export function PremiumTeamMicrosite({ site, lang }: {
             <span className="hidden sm:inline">{isFr ? "Équipes AHMV" : "AHMV teams"}</span>
             <span className="sm:hidden">{isFr ? "Retour" : "Back"}</span>
           </a>
-          <a href="#contenu-equipe" className="inline-flex min-w-0 items-center gap-2 text-[#1b2441] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#159cad]">
+          <a href="#contenu-equipe" className="inline-flex min-h-11 min-w-0 items-center gap-2 text-[#1b2441] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#159cad]">
             <span className="grid size-10 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-[#d3e9ec] bg-[#e1e7ec]">
               {site.logoUrl && !crestFailed
                 ? <img src={site.logoUrl} onError={() => setCrestFailed(true)} alt="" className="size-full object-cover" />
