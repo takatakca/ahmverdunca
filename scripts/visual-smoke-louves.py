@@ -110,7 +110,7 @@ def inspect_page(page, width: int) -> dict:
         )
         page.evaluate("() => window.scrollTo(0, 0)")
         page.screenshot(path=str(OUTPUT / "louves-390-English-first-screen.png"), animations="disabled")
-        facts["englishLocalized"] = "Louves U12B" in page.locator("h1").inner_text()
+        facts["englishLocalized"] = "u12b" in (page.locator('[data-ahmv-team-microsite] h1').text_content() or "").lower()
     facts["viewport"] = width
     return facts
 
