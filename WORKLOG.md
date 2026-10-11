@@ -1,6 +1,6 @@
 # Work log
 
-- 2026-10-11 | chatgpt | design/louves-team-app-and-official-widgets → PR pending | VISUAL REWORK / QA PENDING | Owner rejected tiny-text microsite; replaced pilot route with independent league-style experience, exposed schedule/scores, authentic crest, simple nav and confirmed TeamLinkt public-widget opt-in only; no homepage changes | inspect actual React 320/390/768/1440 screenshots; human visual signoff required before merge
+- 2026-10-11 | chatgpt | design/louves-team-app-and-official-widgets → PR #401 | CI #1234 green; real Chromium visual QA #30 green; owner review pending | Replaced Louves M12B pilot with distinct bright hockey team app, direct schedule/scores, mobile bottom nav, FR/EN, official safe TeamLinkt public-widget adapter disabled until URLs are approved; reviewed actual mobile/desktop screenshots | OWNER VISUAL APPROVAL REQUIRED BEFORE MERGE; obtain TeamLinkt public iframe sources separately, production status unverified
 
 - 2026-10-11 | chatgpt | feat/louves-secure-share-page → PR #399 | CI #1221 green + real Chromium QA #21 green; visual reviewed | Bilingual public-only native sharing with clipboard/manual fallback and SSR hydration guard; tests at 320/390/768/1440, no overflow, no private data, no general site edits | final PR CI, controlled merge, production SHA verification; PR #391 still owns global mobile assistant
 
