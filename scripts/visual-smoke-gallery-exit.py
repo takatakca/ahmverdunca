@@ -55,6 +55,21 @@ def main() -> int:
                 back.wait_for(state="visible")
                 page.screenshot(path=str(OUT / f"gallery-{width}-open.png"), animations="disabled")
                 size = back.bounding_box()
+                placement = page.evaluate("""() => {
+                  const modal = document.querySelector('[data-ahmv-attention-surface="media-viewer"]');
+                  const button = document.querySelector('[data-ahmv-gallery-exit]');
+                  const m = modal?.getBoundingClientRect();
+                  const b = button?.getBoundingClientRect();
+                  return {
+                    modalTop: m?.top, modalBottom: m?.bottom,
+                    exitTop: b?.top, exitBottom: b?.bottom,
+                    viewportHeight: innerHeight, scrollY,
+                    modalPosition: modal ? getComputedStyle(modal).position : null
+                  };
+                }""")
+                print(json.dumps({"width": width, "viewerPlacement": placement}, ensure_ascii=False))
+                if (placement["exitTop"] is None or placement["exitTop"] < -1 or placement["exitBottom"] > placement["viewportHeight"] + 1):
+                    errors.append(f"{width}px: close control is clipped: {placement}")
                 if size is None or size["height"] < 44 or size["width"] < 100:
                     errors.append(f"{width}px: insufficient gallery-exit hit area")
                 back.click()
