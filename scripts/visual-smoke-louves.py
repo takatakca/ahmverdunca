@@ -26,6 +26,8 @@ def inspect_page(page, width: int) -> dict:
           await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 3000))])
         }"""
     )
+    # Capture the interactive, hydrated interface rather than grey SSR placeholders.
+    page.locator('[data-ahmv-team-share] button[data-ahmv-share-ready="true"]').wait_for(state="visible", timeout=10000)
     page.screenshot(path=str(OUTPUT / f"louves-{width}.png"), full_page=True, animations="disabled")
     page.screenshot(path=str(OUTPUT / f"louves-{width}-first-screen.png"), full_page=False, animations="disabled")
 
@@ -99,6 +101,16 @@ def inspect_page(page, width: int) -> dict:
     reset.evaluate("(el) => { el.scrollIntoView({block: 'start', behavior: 'instant'}); window.scrollBy(0, -130); }")
     reset.click(timeout=6000)
     facts["checklistResets"] = not bag.locator('[data-ahmv-ice-bag-item="skates"]').is_checked()
+    if width == 390:
+        language_toggle = page.get_by_role("button", name="Switch to English")
+        language_toggle.click()
+        page.wait_for_function(
+            "() => document.querySelector('[data-ahmv-team-microsite] h1')?.textContent?.includes('U12B')",
+            timeout=5000,
+        )
+        page.evaluate("() => window.scrollTo(0, 0)")
+        page.screenshot(path=str(OUTPUT / "louves-390-English-first-screen.png"), animations="disabled")
+        facts["englishLocalized"] = "Louves U12B" in page.locator("h1").inner_text()
     facts["viewport"] = width
     return facts
 
@@ -138,6 +150,8 @@ def main() -> int:
                         errors.append(f"{width}px: general association footer incorrectly mounted in team app")
                     if not all(facts[k] for k in ("hasTeamNavigation", "hasScorePanel", "hasSchedulePanel", "hasNewsPanel", "hasTeamGallery")):
                         errors.append(f"{width}px: important visible team-app sections are missing")
+                    if width == 390 and not facts.get("englishLocalized"):
+                        errors.append("390px: FR/EN toggle did not update the exact Louves team title")
                     if facts["h1FontSize"] < 42:
                         errors.append(f"{width}px: team name is too small at {facts['h1FontSize']}px")
                     if facts["mainLandmarkCount"] != 1:
