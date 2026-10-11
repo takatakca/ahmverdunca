@@ -54,6 +54,8 @@ test("share is a public click action, never a private TeamLinkt invite", () => {
   const source = readFileSync("src/components/team-page-share.tsx", "utf8");
   const page = readFileSync("src/components/team-premium-microsite.tsx", "utf8");
   assert.match(source, /onClick=\{onShare\}/);
+  assert.match(source, /disabled=\{!hydrated\}/);
+  assert.match(source, /data-ahmv-share-ready=\{hydrated/);
   assert.match(source, /aria-live="polite"/);
   assert.match(source, /inputRef\.current\?\.select/);
   assert.match(source, /readOnly/);
