@@ -25,12 +25,19 @@ def main() -> int:
                     sessionStorage.setItem('ahmv-communications-preview-seen', '1');
                 } catch (_) {}
             })()""")
+            client_errors: list[str] = []
+            page.on("pageerror", lambda error: client_errors.append(str(error)))
             try:
                 response = page.goto(BASE + ROUTE, wait_until="domcontentloaded", timeout=45000)
                 page.locator('button[aria-label^="Ouvrir "]').first.wait_for(timeout=16000)
                 # SSR photo tiles become actionable after the React client hydrates.
                 page.wait_for_timeout(950)
+                page.screenshot(path=str(OUT / f"gallery-{width}-before.png"), animations="disabled")
                 page.locator('button[aria-label^="Ouvrir "]').first.click()
+                page.wait_for_timeout(450)
+                page.screenshot(path=str(OUT / f"gallery-{width}-after-click.png"), animations="disabled")
+                opened = page.locator('[data-ahmv-attention-surface="media-viewer"]').count()
+                print(json.dumps({"width":width,"viewerMountedAfterClick":opened,"urlAfterClick":page.url,"pageErrors":client_errors},ensure_ascii=False))
                 viewer = page.locator('[data-ahmv-attention-surface="media-viewer"]')
                 viewer.wait_for(state="visible", timeout=7000)
                 visible_exit = viewer.locator('[data-ahmv-gallery-exit]')
@@ -47,7 +54,7 @@ def main() -> int:
                 viewer.wait_for(state="hidden", timeout=7000)
                 findings.append({"width": width, "http": response.status if response else None, "exitTap": True, "escape": True, "exitWidth": size["width"] if size else None})
             except Exception as exc:
-                problems.append(f"{width}px: {str(exc)[:1300]}")
+                problems.append(f"{width}px: {str(exc)[:1300]} | pageErrors={client_errors[:3]}")
             finally:
                 page.close()
         browser.close()
