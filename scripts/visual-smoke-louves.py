@@ -27,6 +27,7 @@ def inspect_page(page, width: int) -> dict:
         }"""
     )
     page.screenshot(path=str(OUTPUT / f"louves-{width}.png"), full_page=True, animations="disabled")
+    page.screenshot(path=str(OUTPUT / f"louves-{width}-first-screen.png"), full_page=False, animations="disabled")
 
     facts = page.evaluate(
         """() => {
@@ -41,6 +42,13 @@ def inspect_page(page, width: int) -> dict:
             scrollWidth: root.scrollWidth,
             heroTitle: team?.querySelector('h1')?.textContent?.trim(),
             mainLandmarkCount: landmarkCount,
+            h1FontSize: Number.parseFloat(getComputedStyle(team.querySelector('h1')).fontSize),
+            hasGeneralFooter: !!document.querySelector('footer.bg-competition'),
+            hasTeamNavigation: !!team.querySelector('nav[aria-label="Navigation de l’équipe"]'),
+            hasScorePanel: !!team.querySelector('#pointages'),
+            hasSchedulePanel: !!team.querySelector('#calendrier'),
+            hasNewsPanel: !!team.querySelector('#vie-equipe'),
+            hasTeamGallery: !!team.querySelector('#photos-equipe'),
             logoLoaded: !!logo && logo.complete && logo.naturalWidth > 0,
             navSchedule: links.some(h => h?.startsWith('/horaires?team=feminin')),
             navGallery: links.some(h => h === '/galerie/hockey-feminin-2026-2027'),
@@ -124,6 +132,12 @@ def main() -> int:
                         errors.append(f"{width}px: HTTP status {facts['responseStatus']}")
                     if facts["scrollWidth"] > facts["screenWidth"] + 1:
                         errors.append(f"{width}px: horizontal overflow {facts['scrollWidth']}px")
+                    if facts["hasGeneralFooter"]:
+                        errors.append(f"{width}px: general association footer incorrectly mounted in team app")
+                    if not all(facts[k] for k in ("hasTeamNavigation", "hasScorePanel", "hasSchedulePanel", "hasNewsPanel", "hasTeamGallery")):
+                        errors.append(f"{width}px: important visible team-app sections are missing")
+                    if facts["h1FontSize"] < 42:
+                        errors.append(f"{width}px: team name is too small at {facts['h1FontSize']}px")
                     if facts["mainLandmarkCount"] != 1:
                         errors.append(f"{width}px: expected one main landmark, found {facts['mainLandmarkCount']}")
                     if "Louves" not in (facts["heroTitle"] or ""):
