@@ -55,6 +55,8 @@ def inspect_page(page, width: int) -> dict:
             detailsInitiallyClosed: !!details && !details.open,
             unreadableLinks: [...(team?.querySelectorAll('a[href]') ?? [])].filter(a => {
               const bounds = a.getBoundingClientRect();
+              const style = getComputedStyle(a);
+              if (!a.getClientRects().length || style.visibility === 'hidden') return false;
               return bounds.width < 40 || bounds.height < 40;
             }).length,
             bodyBackground: team ? getComputedStyle(team).backgroundColor : 'missing',
