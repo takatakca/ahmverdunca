@@ -1,5 +1,5 @@
 import { Check, Copy, Share2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   publicTeamShareUrl,
   sharePublicTeamPage,
@@ -18,6 +18,9 @@ export function TeamPageShare({
   lang: Lang;
 }) {
   const [outcome, setOutcome] = useState<TeamShareOutcome | null>(null);
+  // SSR markup cannot react to taps until hydration wires the handler.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => { setHydrated(true); }, []);
   const [manualLink, setManualLink] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const isFr = lang === "fr";
@@ -47,7 +50,9 @@ export function TeamPageShare({
       <button
         type="button"
         onClick={onShare}
-        className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#91f3e7]/25 bg-white/[0.055] px-4 text-xs font-bold text-[#c8fff8] transition-colors hover:border-[#91f3e7]/60 hover:bg-white/[0.1] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#a3fff5]"
+        disabled={!hydrated}
+        data-ahmv-share-ready={hydrated ? "true" : "false"}
+        className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[#91f3e7]/25 bg-white/[0.055] px-4 text-xs font-bold text-[#c8fff8] transition-colors hover:border-[#91f3e7]/60 hover:bg-white/[0.1] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-[#a3fff5] disabled:cursor-wait disabled:opacity-50"
         aria-label={isFr ? `Partager la page publique de ${teamName}` : `Share the public ${teamName} page`}
       >
         <Share2 aria-hidden="true" className="size-4" />
