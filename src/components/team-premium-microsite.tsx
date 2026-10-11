@@ -119,7 +119,7 @@ export function PremiumTeamMicrosite({ site, lang }: {
                   : <span className="font-display text-2xl font-bold">{site.level}</span>}
               </div>
               <div className="pb-1">
-                <TeamPageShare teamSlug={site.slug} teamName={teamName} lang={lang} />
+                <TeamPageShare teamSlug={site.slug} teamName={teamName} lang={lang} surface="light" />
               </div>
             </div>
 
