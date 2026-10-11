@@ -22,6 +22,7 @@ import { useState } from "react";
 import type { TeamMicrositeDefinition, MicrositeModuleKey } from "@/data/team-microsites";
 import { getPublicMicrositeModules } from "@/data/team-microsites";
 import { TeamIceBagChecklist } from "@/components/team-ice-bag-checklist";
+import { TeamPageShare } from "@/components/team-page-share";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { SITE } from "@/lib/site";
 
@@ -123,6 +124,7 @@ export function PremiumTeamMicrosite({ site, lang }: {
                   ? "L’horaire mène à la catégorie hockey féminin. Les événements exacts M12B seront associés seulement après confirmation."
                   : "The schedule opens the girls hockey category. Exact U12B events appear only after confirmation."}
               </p>
+              <TeamPageShare teamSlug={site.slug} teamName={identity(site, lang)} lang={lang} />
             </div>
 
             <aside className="hidden rounded-[1.5rem] border border-white/20 bg-[#0e1430]/90 p-4 shadow-[0_24px_70px_-45px_rgba(0,0,0,0.8)] backdrop-blur-lg md:block md:p-6" aria-label={isFr ? "État des informations de l’équipe" : "Team information status"}>

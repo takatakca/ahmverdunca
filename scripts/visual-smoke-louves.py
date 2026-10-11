@@ -54,6 +54,12 @@ def inspect_page(page, width: int) -> dict:
           };
         }"""
     )
+    share = page.locator('[data-ahmv-team-share] button[data-ahmv-share-ready="true"]')
+    share.click(timeout=8000)
+    page.wait_for_timeout(450)
+    facts["shareUrl"] = page.evaluate('() => window.__ahmvTestSharedUrl || null')
+    facts["shareOutcome"] = page.locator('[data-ahmv-share-status]').inner_text().strip()
+    facts["shareStatusVisible"] = facts["shareOutcome"] != ""
     facts["responseStatus"] = response.status if response is not None else None
     details = page.locator('[data-ahmv-team-microsite="louves-m12b"] details')
     details.locator("summary").click()
@@ -104,6 +110,13 @@ def main() -> int:
                     sessionStorage.setItem('ahmv-communications-preview-seen', '1');
                   } catch (_) {}
                 })()""")
+                page.add_init_script("""(() => {
+                  // Replace OS-native sharing only for this isolated test tab.
+                  Object.defineProperty(navigator, 'share', {
+                    configurable: true,
+                    value: async (data) => { window.__ahmvTestSharedUrl = data.url; },
+                  });
+                })()""")
                 try:
                     facts = inspect_page(page, width)
                     findings.append(facts)
@@ -125,6 +138,8 @@ def main() -> int:
                         errors.append(f"{width}px: private/future module count changed")
                     if facts["unreadableLinks"]:
                         errors.append(f"{width}px: {facts['unreadableLinks']} links have small hit targets")
+                    if not facts["shareStatusVisible"] or facts["shareUrl"] != BASE + "/equipes/louves-m12b":
+                        errors.append(f"{width}px: share mismatch: url={facts['shareUrl']!r}, status={facts['shareOutcome']!r}")
                     if not (facts["checklistToggles"] and facts["checklistPersists"] and facts["checklistResets"]):
                         errors.append(f"{width}px: parent bag checklist toggle/persistence/reset failed")
                 except (PlaywrightError, AssertionError, ValueError) as exc:
