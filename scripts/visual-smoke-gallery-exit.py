@@ -28,6 +28,8 @@ def main() -> int:
             try:
                 response = page.goto(BASE + ROUTE, wait_until="domcontentloaded", timeout=45000)
                 page.locator('button[aria-label^="Ouvrir "]').first.wait_for(timeout=16000)
+                # SSR photo tiles become actionable after the React client hydrates.
+                page.wait_for_timeout(950)
                 page.locator('button[aria-label^="Ouvrir "]').first.click()
                 viewer = page.locator('[data-ahmv-attention-surface="media-viewer"]')
                 viewer.wait_for(state="visible", timeout=7000)
