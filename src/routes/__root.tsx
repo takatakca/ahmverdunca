@@ -204,6 +204,10 @@ function RootComponent() {
   const location = useLocation();
   const isExperience =
     location.pathname === "/experience" || location.pathname.startsWith("/experience/");
+  // Exact-team microsites use an independent app-style shell, without the
+  // association footer, floating Assistant, correction pen or welcome popup.
+  // The general AHMV site and all other teams continue using SiteLayout.
+  const isLouvesApp = location.pathname === "/equipes/louves-m12b";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -211,6 +215,8 @@ function RootComponent() {
         <MarketingConsent />
         {isExperience ? (
           <Outlet />
+        ) : isLouvesApp ? (
+          <main id="contenu" className="min-h-screen min-w-0"><Outlet /></main>
         ) : (
           <>
             <AppLaunchSplash />
