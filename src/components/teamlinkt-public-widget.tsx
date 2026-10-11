@@ -16,7 +16,7 @@ export function TeamLinktPublicWidget({
 }: {
   kind: TeamLinktPublicWidgetKind;
   title: string;
-  widgets?: TeamLinktPublicWidgets;
+  widgets?: TeamLinktPublicWidgets | undefined;
   lang: Lang;
 }) {
   const src = publicTeamLinktWidgetFor(widgets, kind);
