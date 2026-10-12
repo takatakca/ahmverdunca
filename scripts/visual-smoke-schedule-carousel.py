@@ -63,7 +63,7 @@ def check(page, width: int) -> dict:
     page.locator('[data-ahmv-team-category="m7"]').click()
     page.wait_for_url("**/horaires?team=m7#horaire-publie", timeout=12000)
     info["m7Selected"] = page.locator('[data-ahmv-team-category="m7"]').get_attribute("aria-current") == "page"
-    info["scheduleFiltered"] = "M7" in page.locator('#horaire-publie h2').inner_text()
+    info["scheduleFiltered"] = "M7" in page.locator('#horaire-publie h2').first.inner_text()
 
     if width == 390:
         page.goto(BASE + "/horaires?team=feminin", wait_until="domcontentloaded")
