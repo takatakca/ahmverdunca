@@ -1,5 +1,5 @@
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { CURRENT_TEAMS } from "@/data/teams";
 import { teamVisualForCategory } from "@/data/team-visuals";
 
@@ -19,6 +19,22 @@ export function ScheduleTeamCarousel({
 }) {
   const scroller = useRef<HTMLUListElement>(null);
   const isFrench = lang === "fr";
+
+  // When a parent opens a saved or shared ?team=feminin link, show the
+  // selected card immediately instead of leaving M5 in the first position.
+  // Scroll *only the track* so this does not fight the schedule hash anchor.
+  useEffect(() => {
+    const track = scroller.current;
+    if (!track || !selectedTeamSlug) return;
+    const selected = Array.from(track.querySelectorAll<HTMLElement>("[data-ahmv-team-category]"))
+      .find((element) => element.dataset["ahmvTeamCategory"] === selectedTeamSlug);
+    if (!selected) return;
+    const trackBounds = track.getBoundingClientRect();
+    const cardBounds = selected.getBoundingClientRect();
+    const relativeCenter = cardBounds.left + cardBounds.width / 2 - trackBounds.left - trackBounds.width / 2;
+    track.scrollTo({ left: track.scrollLeft + relativeCenter, behavior: "auto" });
+  }, [selectedTeamSlug]);
+
   const scroll = (direction: -1 | 1) => {
     const el = scroller.current;
     if (!el) return;
