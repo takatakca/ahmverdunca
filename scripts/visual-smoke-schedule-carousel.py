@@ -79,12 +79,15 @@ def check(page, width: int) -> dict:
               const track = document.querySelector('[data-ahmv-team-carousel-track]');
               if (!card || !track) return false;
               const a = card.getBoundingClientRect(), b = track.getBoundingClientRect();
-              return card.getAttribute('aria-current') === 'page'
+              const photo = card.querySelector("img");
+              return !!photo && photo.complete && photo.naturalWidth > 0
+                && card.getAttribute('aria-current') === 'page'
                 && a.left >= b.left - 2 && a.right <= b.right + 2;
             }""",
             timeout=7000,
         )
         info["femaleSelectedCardVisible"] = True
+        info["femalePhotoLoaded"] = True
         page.screenshot(path=str(OUT / "schedule-390-feminine.png"), animations="disabled")
         info["feminineM12B"] = page.locator('[data-ahmv-feminine-team-choices] a[href="/equipes/louves-m12b"]').count() == 1
         info["historicalM12A"] = "historique" in page.locator('[data-ahmv-feminine-team-choices]').inner_text().lower()
@@ -129,7 +132,7 @@ def main() -> int:
                         failures.append(f"{width}px: horizontal category slider not working")
                     if not (result["m7Selected"] and result["scheduleFiltered"]):
                         failures.append(f"{width}px: choosing M7 did not update schedule")
-                    if width == 390 and not (result.get("feminineM12B") and result.get("historicalM12A") and result.get("femaleSelectedCardVisible")):
+                    if width == 390 and not (result.get("feminineM12B") and result.get("historicalM12A") and result.get("femaleSelectedCardVisible") and result.get("femalePhotoLoaded")):
                         failures.append("390px: women's exact-team choices missing/misrepresented")
                 except (PlaywrightError, AssertionError, ValueError) as exc:
                     failures.append(f"{width}px: browser failed: {str(exc)[:1600]}")
