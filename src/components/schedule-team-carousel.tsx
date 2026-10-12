@@ -102,7 +102,7 @@ export function ScheduleTeamCarousel({
                   <img
                     src={visual.url}
                     alt=""
-                    loading={index < 2 ? "eager" : "lazy"}
+                    loading={index < 2 || active ? "eager" : "lazy"}
                     decoding="async"
                     className="absolute inset-0 size-full object-cover transition-transform duration-500 group-hover:scale-[1.06] motion-reduce:transition-none"
                   />
