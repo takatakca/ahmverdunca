@@ -1,6 +1,6 @@
 # Work log
 
-- 2026-10-11 | chatgpt | feat/schedule-first-team-carousel → active | User wants schedules understandable at first glance; building photo-based swipeable category chooser first, simplifying schedule preface, retaining approved AHMV source data and verified feminine distinctions | run CI + real mobile screenshots, review before PR merge
+- 2026-10-11 | chatgpt | feat/schedule-first-team-carousel → PR pending / QA pending | Replaced cluttered Horaires introduction with 10 verified photo category selectors, swipe/arrow navigation, visible schedule and distinct Louves M12B vs historical M12A, preserved existing weekly publication and secondary links | run CI + actual 320/390/768/1440 browser screenshots; visual approval before any merge
 
 - 2026-10-11 | chatgpt | fix/gallery-always-visible-exit → PR #402 | CI #1242 and real gallery Chromium QA #10 green; 390/1440 and full viewport placement verified | Added 48px always-visible Retour à l’album, larger X, Escape, phone safe-area; fixed QA selector accidentally clicking welcome panel; tested photo open/exit/reopen/Escape | safe corrective merge/release gate, live MochaHost verification separately, screenshot uploads require future user consent and secure backend
 
