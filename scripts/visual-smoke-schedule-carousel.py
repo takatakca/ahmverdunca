@@ -25,6 +25,11 @@ def check(page, width: int) -> dict:
         }""",
         timeout=15000,
     )
+    # The global AHMV app-launch splash is intentional, but screenshots for
+    # *schedule-page* visual QA must capture the real content AFTER it closes.
+    page.locator('[role="status"][aria-label="Ouverture de l’application AHM Verdun"]').wait_for(
+        state="hidden", timeout=15000
+    )
     page.screenshot(path=str(OUT / f"schedule-{width}-first-screen.png"), animations="disabled")
     page.screenshot(path=str(OUT / f"schedule-{width}-full.png"), full_page=True, animations="disabled")
     info = page.evaluate(
