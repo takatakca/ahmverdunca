@@ -15,7 +15,7 @@ test("all published 2026-27 categories are selectable with existing library phot
   assert.equal(slugs.includes("m8"), false, "Do not invent a new M8 team without source evidence");
   for (const team of CURRENT_TEAMS) {
     const visual = teamVisualForCategory(team.slug);
-    assert.ok(visual?.url.startsWith("/"), `Missing approved AHMV media for ${team.slug}`);
+    assert.ok(visual?.url.startsWith("https://utuvzrqvivqyziibobvu.supabase.co/storage/v1/object/public/ahmv-media-public/"), `Missing approved public AHMV media for ${team.slug}`);
     assert.match(team.slug, /^[a-z][a-z0-9-]*$/);
   }
 });
