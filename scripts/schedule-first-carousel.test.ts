@@ -33,6 +33,8 @@ test("the carousel is first and is touch-, keyboard- and screen-reader-friendly"
   assert.match(carousel, /focus-visible:ring-4/);
   assert.match(carousel, /aria-labelledby="schedule-choose-team"/);
   assert.match(carousel, /scrollBy\(/);
+  assert.match(carousel, /track\.scrollTo\(/);
+  assert.match(carousel, /selectedTeamSlug/);
   assert.match(carousel, /data-ahmv-team-category=\{team.slug\}/);
   assert.match(carousel, /teamVisualForCategory\(team.slug\)/);
 });
