@@ -85,7 +85,7 @@ test("mobile microsite puts working family links first and folds away future too
   const component = readFileSync("src/components/team-premium-microsite.tsx", "utf8");
   assert.match(component, /const publicModules = modules\.filter\(\(module\) => Boolean\(module\.href\)\)/);
   assert.match(component, /const pendingModules = modules\.filter\(\(module\) => !module\.href\)/);
-  assert.match(component, /publicModules\.map\(\(module\) =>/);
+  assert.match(component, /publicModules\.find\(\(module\) => module\.key === "schedule"\)/);
   assert.match(component, /pendingModules\.map\(\(module\) =>/);
   assert.match(component, /<details className=/);
   assert.match(component, /<summary className=/);
@@ -93,8 +93,10 @@ test("mobile microsite puts working family links first and folds away future too
   assert.match(component, /motion-reduce:transition-none/);
   assert.match(component, /focus-visible:outline-2/);
   assert.match(component, /min-h-16/);
-  assert.match(component, /<aside className="hidden[^"]*md:block/);
-  assert.ok(component.indexOf("publicModules.map") < component.indexOf("<details"));
+  assert.match(component, /Navigation de l’équipe/);
+  assert.match(component, /id="calendrier"/);
+  assert.match(component, /id="pointages"/);
+  assert.ok(component.indexOf('id="calendrier"') < component.indexOf("<details"));
   assert.doesNotMatch(component, /modules\.map\(\(module, index\) =>/);
 });
 

@@ -1,3 +1,5 @@
+import type { TeamLinktPublicWidgets } from "@/lib/teamlinkt-public-widgets";
+
 /**
  * AHMV exact-team microsites: public presentation only, never a roster store.
  *
@@ -36,6 +38,8 @@ export interface TeamMicrositeDefinition {
   exactProviderTeamId?: string;
   teamLinktIcalUrl?: string;
   teamLinktWidgetUrl?: string;
+  /** Admin-approved PUBLIC schedule/scores/standings/location widgets only. */
+  teamLinktPublicWidgets?: TeamLinktPublicWidgets;
   logoUrl?: string;
   modules: readonly MicrositeModule[];
 }

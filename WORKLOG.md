@@ -1,5 +1,9 @@
 # Work log
 
+- 2026-10-14 | chatgpt | design/louves-team-app-and-official-widgets → PR #401 | conflict reconciled / visual approval pending | Refreshed Louves visual-review DRAFT against main while preserving current mobile, gallery, and security gates; screenshots and independent owner signoff still required | Recheck CI and visually review FR/EN at 320/390/768/1440 before any merge or deploy
+
+- 2026-10-11 | chatgpt | design/louves-team-app-and-official-widgets → PR #401 | CI and rendered Chromium QA green before reconcile; approval pending | Louves M12B visual rebuild with public schedules/scores and guarded TeamLinkt iframe disabled pending owner/provider approval | Do not merge solely on CI; obtain visual approval and approved widgets
+
 - 2026-10-14 | chatgpt | fix/mobile-assistant-dock-rebased-20261014 → PR pending | active | Port original Assistant/mobile-nav fix from blocked PR #391 onto current main without conflicts; desktop-only floating launcher, sixth mobile destination, focus return, keyboard and viewport guards | CI / merge / deployment proof; close superseded #391 after success
 
 - 2026-10-14 | chatgpt | fix/mobile-menu-keyboard-dialog-20261014 → PR pending | active | Mobile menu accessibility: move focus into modal portal, trap Tab, visible close button, return focus on Escape/close; static regression gate | PR CI / controlled merge, production SHA verification (Louves visual issue #400 remains independent)
