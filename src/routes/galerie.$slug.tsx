@@ -104,7 +104,7 @@ function AlbumPage() {
         }
       />
 
-      <div className="container-site py-8 md:py-12">
+      <div data-ahmv-gallery-open={viewerOpen ? "true" : "false"} className="container-site py-8 md:py-12">
         <Link to="/galerie" className="inline-flex items-center gap-1.5 text-sm font-semibold text-sport hover:underline">
           <ArrowLeft className="size-4" /> {t("common.back")}
         </Link>

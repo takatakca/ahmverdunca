@@ -1,6 +1,14 @@
 # Work log
 
-- 2026-10-11 | chatgpt | design/louves-team-app-and-official-widgets → PR #401 | CI #1234 green; real Chromium visual QA #30 green; owner review pending | Replaced Louves M12B pilot with distinct bright hockey team app, direct schedule/scores, mobile bottom nav, FR/EN, official safe TeamLinkt public-widget adapter disabled until URLs are approved; reviewed actual mobile/desktop screenshots | OWNER VISUAL APPROVAL REQUIRED BEFORE MERGE; obtain TeamLinkt public iframe sources separately, production status unverified
+- 2026-10-14 | chatgpt | design/louves-team-app-and-official-widgets → PR #401 | conflict reconciled / visual approval pending | Refreshed Louves visual-review DRAFT against main while preserving current mobile, gallery, and security gates; screenshots and independent owner signoff still required | Recheck CI and visually review FR/EN at 320/390/768/1440 before any merge or deploy
+
+- 2026-10-11 | chatgpt | design/louves-team-app-and-official-widgets → PR #401 | CI and rendered Chromium QA green before reconcile; approval pending | Louves M12B visual rebuild with public schedules/scores and guarded TeamLinkt iframe disabled pending owner/provider approval | Do not merge solely on CI; obtain visual approval and approved widgets
+
+- 2026-10-14 | chatgpt | fix/mobile-assistant-dock-rebased-20261014 → PR pending | active | Port original Assistant/mobile-nav fix from blocked PR #391 onto current main without conflicts; desktop-only floating launcher, sixth mobile destination, focus return, keyboard and viewport guards | CI / merge / deployment proof; close superseded #391 after success
+
+- 2026-10-14 | chatgpt | fix/mobile-menu-keyboard-dialog-20261014 → PR pending | active | Mobile menu accessibility: move focus into modal portal, trap Tab, visible close button, return focus on Escape/close; static regression gate | PR CI / controlled merge, production SHA verification (Louves visual issue #400 remains independent)
+
+- 2026-10-11 | chatgpt | fix/gallery-always-visible-exit → PR #402 | CI #1242 and real gallery Chromium QA #10 green; 390/1440 and full viewport placement verified | Added 48px always-visible Retour à l’album, larger X, Escape, phone safe-area; fixed QA selector accidentally clicking welcome panel; tested photo open/exit/reopen/Escape | safe corrective merge/release gate, live MochaHost verification separately, screenshot uploads require future user consent and secure backend
 
 - 2026-10-11 | chatgpt | feat/louves-secure-share-page → PR #399 | CI #1221 green + real Chromium QA #21 green; visual reviewed | Bilingual public-only native sharing with clipboard/manual fallback and SSR hydration guard; tests at 320/390/768/1440, no overflow, no private data, no general site edits | final PR CI, controlled merge, production SHA verification; PR #391 still owns global mobile assistant
 

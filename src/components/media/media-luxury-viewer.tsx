@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent, type PointerEvent, type TouchEvent } from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { ChevronLeft, ChevronRight, Images, X, ZoomIn, ZoomOut } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Images, X, ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type MediaViewerItem = {
@@ -183,6 +183,7 @@ export function MediaLuxuryViewer({
       className="fixed inset-0 z-[410] bg-navy-deep/96 text-white outline-none backdrop-blur-xl"
       data-ahmv-attention-surface="media-viewer"
       aria-modal="true"
+      onEscapeKeyDown={(event) => { event.preventDefault(); onOpenChange(false); }}
       onOpenAutoFocus={(event) => {
         event.preventDefault();
         returnFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -195,8 +196,17 @@ export function MediaLuxuryViewer({
       }}
     >
       <DialogPrimitive.Description className="sr-only">{countLabel} · {lang === "fr" ? "Utilisez les flèches pour changer de photo et les boutons pour agrandir ou fermer." : "Use the arrows to change photos and the buttons to zoom or close."}</DialogPrimitive.Description>
-      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-3 border-b border-white/10 bg-navy-deep/82 px-3 py-3 backdrop-blur-xl sm:px-5">
-        <div className="min-w-0">
+      <div className="absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-2 border-b border-white/10 bg-navy-deep/95 px-3 pb-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-xl sm:px-5">
+        <button
+          type="button"
+          data-ahmv-gallery-exit
+          onClick={() => onOpenChange(false)}
+          className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-xl border border-[#85cfd8]/45 bg-[#163a67] px-3 text-sm font-extrabold text-white transition-colors hover:bg-[#1b537f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a3eaf0]"
+        >
+          <ArrowLeft aria-hidden="true" className="size-5" />
+          {lang === "fr" ? "Retour à l’album" : "Back to album"}
+        </button>
+        <div className="hidden min-w-0 sm:block">
           <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-sport-foreground">
             {current.categoryLabel
               ? lang === "fr"
@@ -241,8 +251,8 @@ export function MediaLuxuryViewer({
             type="button"
             onClick={() => onOpenChange(false)}
             ref={closeButtonRef}
-            className="premium-control inline-flex size-10 items-center justify-center border border-white/14 bg-white/[0.04] text-white hover:border-sport"
-            aria-label={lang === "fr" ? "Fermer" : "Close"}
+            className="premium-control inline-flex size-12 items-center justify-center rounded-xl border border-white/35 bg-white/[0.12] text-white hover:border-sport focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a3eaf0]"
+            aria-label={lang === "fr" ? "Fermer les photos et revenir à l’album" : "Close photos and return to album"}
           >
             <X className="size-5" />
           </button>
@@ -250,7 +260,7 @@ export function MediaLuxuryViewer({
       </div>
 
       <div
-        className="absolute inset-x-0 bottom-[calc(136px+env(safe-area-inset-bottom))] top-[65px] flex items-center justify-center overflow-auto px-2 py-3 sm:bottom-[calc(128px+env(safe-area-inset-bottom))] sm:px-6 sm:py-5"
+        className="absolute inset-x-0 bottom-[calc(136px+env(safe-area-inset-bottom))] top-[max(80px,calc(68px+env(safe-area-inset-top)))] flex items-center justify-center overflow-auto px-2 py-3 sm:bottom-[calc(128px+env(safe-area-inset-bottom))] sm:px-6 sm:py-5"
         onTouchStart={handleTouchStart}
         onTouchMove={panWithTouch}
         onTouchEnd={handleTouchEnd}
