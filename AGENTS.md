@@ -20,6 +20,13 @@
 - Never put runtime `.env` files, bearer tokens, database URLs, Twilio credentials, OpenAI keys, Supabase service-role keys, SSH keys, or other production secrets into source control.
 - Keep AHMV standalone: backend TAKATAK integrations must remain server-side and must not auto-mount TAKATAK dashboard UI into the public AHMV experience.
 
+## Resume checkpoint for every agent
+
+- Start by reading `docs/AGENT_HANDOFF.md` and `docs/TASK_QUEUE.md` after this file and the top of `WORKLOG.md`; check live GitHub branch, pull requests and CI before trusting the saved status.
+- Keep `docs/PROJECT_STATUS.md`, `docs/DEPLOYMENT.md` and `docs/DECISIONS.md` aligned with release reality. Update `docs/AGENT_HANDOFF.md` before stopping with the last **actual** commit, CI, production SHA, blockers and next executable step.
+- The initial 2026-10-14 handoff files are a starting baseline: never treat source-pushed, CI-green, merged, deployed and provider-activated as interchangeable statuses.
+- Continue safe independent tasks when an item requires owner visual approval or external secrets; never auto-merge the Louves design blocker in issue #400.
+
 ## Work log rule (every agent: Claude, Codex, Cursor, people)
 
 Cheap to follow: read only what is listed here.

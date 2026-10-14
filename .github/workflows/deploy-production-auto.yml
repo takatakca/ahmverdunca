@@ -49,8 +49,9 @@ jobs:
       AHMV_APP_ROOT: ${{ secrets.AHMV_PRODUCTION_APP_ROOT }}
       AHMV_PRODUCTION_URL: ${{ secrets.AHMV_PRODUCTION_URL }}
       RESTART_COMMAND: ${{ secrets.AHMV_PRODUCTION_RESTART_COMMAND }}
-      # Official public release: allow indexing unless explicitly paused by the operator.
-      VITE_PUBLIC_INDEXING: ${{ vars.AHMV_PUBLIC_INDEXING || 'true' }}
+      # Public indexing is opt-in, requiring explicit association release approval.
+      VITE_PUBLIC_INDEXING: ${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}
+      AHMV_PUBLIC_INDEXING_APPROVAL: ${{ vars.AHMV_PUBLIC_INDEXING_APPROVAL || '' }}
 
     steps:
       - name: Checkout exact green release
@@ -147,6 +148,14 @@ jobs:
             exit 1
           fi
 
+          if [ "$VITE_PUBLIC_INDEXING" != "true" ] && [ "$VITE_PUBLIC_INDEXING" != "false" ]; then
+            echo "ERROR: AHMV_PUBLIC_INDEXING must be true or false."
+            exit 1
+          fi
+          if [ "$VITE_PUBLIC_INDEXING" = "true" ] && [ "$AHMV_PUBLIC_INDEXING_APPROVAL" != "PUBLIC-INDEXING-APPROVED" ]; then
+            echo "ERROR: Public indexing needs AHMV_PUBLIC_INDEXING_APPROVAL=PUBLIC-INDEXING-APPROVED."
+            exit 1
+          fi
           echo "Deployment configuration validated."
 
       - name: Configure resilient SSH
