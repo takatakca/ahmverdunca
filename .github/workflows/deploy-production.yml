@@ -10,7 +10,7 @@ on:
       public_indexing:
         description: "Enable public search indexing for this release"
         required: true
-        default: true
+        default: false
         type: boolean
       launch_confirmation:
         description: "Required only when enabling indexing: PUBLIC-INDEXING-APPROVED"
@@ -55,6 +55,7 @@ jobs:
       AHMV_USER: ${{ secrets.AHMV_PRODUCTION_USER }}
       AHMV_APP_ROOT: ${{ secrets.AHMV_PRODUCTION_APP_ROOT }}
       AHMV_PRODUCTION_URL: ${{ secrets.AHMV_PRODUCTION_URL }}
+      RESTART_COMMAND: ${{ secrets.AHMV_PRODUCTION_RESTART_COMMAND }}
 
     steps:
       - name: Validate release and launch intent
@@ -132,7 +133,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          for name in AHMV_HOST AHMV_PORT AHMV_USER AHMV_APP_ROOT AHMV_PRODUCTION_URL; do
+          for name in AHMV_HOST AHMV_PORT AHMV_USER AHMV_APP_ROOT AHMV_PRODUCTION_URL RESTART_COMMAND; do
             test -n "${!name:-}" || {
               echo "Missing required secret-backed value: $name"
               exit 1
@@ -154,12 +155,10 @@ jobs:
             exit 1
           }
 
-          if [ "$PUBLIC_INDEXING" = "true" ]; then
-            test "$AHMV_PRODUCTION_URL" = "https://ahmverdun.ca" || {
-              echo "Public indexing may only be enabled on https://ahmverdun.ca"
-              exit 1
-            }
-          fi
+          test "$AHMV_PRODUCTION_URL" = "https://ahmverdun.ca" || {
+            echo "AHMV production releases may only target https://ahmverdun.ca"
+            exit 1
+          }
 
       - name: Configure SSH
         env:
