@@ -63,19 +63,21 @@ public_curl_once() {
   headers_file="$(mktemp)"
 
   set +e
-  curl --fail --silent --show-error --location     --connect-timeout 15 --max-time 30     --user-agent "$USER_AGENT"     --header 'Cache-Control: no-cache'     -D "$headers_file"     -o "$body_file"     "$URL"
+  curl --fail-with-body --silent --show-error --location     --connect-timeout 15 --max-time 30     --user-agent "$USER_AGENT"     --header 'Cache-Control: no-cache'     -D "$headers_file"     -o "$body_file"     "$URL"
   status=$?
   set -e
 
-  if [ "$status" -ne 0 ]; then
-    rm -f "$body_file" "$headers_file"
-    return "$status"
-  fi
-
+  # --fail-with-body retains HTTP 403 WAF HTML even when curl returns 22.
+  # Detect the challenge before treating the HTTP status as a generic failure.
   if looks_like_waf_challenge "$body_file"; then
     echo "Public HTTPS returned a WAF/browser challenge instead of application content." >&2
     rm -f "$body_file" "$headers_file"
     return 90
+  fi
+
+  if [ "$status" -ne 0 ]; then
+    rm -f "$body_file" "$headers_file"
+    return "$status"
   fi
 
   case "$MODE" in
