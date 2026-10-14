@@ -2,6 +2,18 @@
 
 Updated 2026-10-14. Read `AGENTS.md` and `WORKLOG.md` first. Restart from the latest GitHub facts, not assumptions.
 
+## Latest verified release and checkpoint (2026-10-14)
+
+**Production correction completed:** PR #408 merged; main CI [#38613657967](https://github.com/takatakca/ahmverdunca/actions/runs/38613657967) and auto production [#38614134421](https://github.com/takatakca/ahmverdunca/actions/runs/38614134421) succeeded. Exact compiled `/healthz` release SHA: `c614dc9be786ce04710d2e9463c9c576f85369ce`; deployed homepage security verification returned **noindex**. The known production runtime is this SHA; later docs-only commits are not new compiled releases.
+
+**Files actually changed and pushed in PR #408:** `AGENTS.md`, `.github/workflows/deploy-production-auto.yml`, `scripts/validate-deployment-concurrency.ts`, `docs/PRODUCTION_CONFIGURATION_INVENTORY.md`, `WORKLOG.md`, `docs/PROJECT_STATUS.md`, `docs/TASK_QUEUE.md`, `docs/AGENT_HANDOFF.md`, `docs/DEPLOYMENT.md`, `docs/DECISIONS.md`.
+
+**Validation executed:** GitHub CI TypeScript, data/auth/privacy, full release gates, ESLint, voice audit/build and production smoke; MochaHost release activation, Passenger restart, HTTP /healthz, homepage noindex, main routes, CSS/JS assets, robots and sitemap all passed.
+
+**Known blockage on next integration:** A read-only Supabase AHMV project lookup (`bqflllsjxmhqsvemhhwv`) returned `You do not have permission to perform this action`. No database migration, table access or provider setup was attempted after this denial. External association approvals remain required for Louves #400/#401, schedule #403, public youth content, Phone/SMS #127, Parent Premium #120 and Meta OAuth. No secrets are stored here.
+
+**Exact next action for resuming agent:** inspect current `main`, `WORKLOG.md` and draft PRs #401/#403; request or find owner visual review evidence before either merge. If those remain blocked, continue a separate independent code task from `docs/TASK_QUEUE.md`, or obtain valid Supabase connector permissions to assess issue #127 safely. Keep indexing fail-closed and confirm every future compiled SHA with production Actions.
+
 ## Last completed
 PR #404 mobile menu, #405 mobile Assistant, #406 floating nudge all merged with successful separate exact-SHA production workflows; release handoff documented in PR #407.
 
