@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | chatgpt | fix/ahmv-indexing-release-gate-20261014 → PR pending | active | Prevent auto-release from defaulting homepage indexable; require explicit association approval, enforce CI guard and create five durable handoff docs | CI, safe merge, verify exact production compiled /healthz and homepage noindex
+
 - 2026-10-14 | chatgpt | fix/assistant-nudge-mobile-overlap-20261014 → PR #406 | done; CI #38609477969 and production #38609816080 green | Prevent opt-in Assistant nudge from covering mobile page content now that Assistant has a sixth bottom dock action | CI; merge and verify exact production release
 
 
