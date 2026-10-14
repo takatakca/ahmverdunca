@@ -21,6 +21,8 @@ assert.match(manual, /public_indexing:\s*\n\s*description:.*\n\s*required: true\
 assert.ok(manual.includes('test "$LAUNCH_CONFIRMATION" = "PUBLIC-INDEXING-APPROVED"'));
 assert.ok(manual.includes('test "$AHMV_PRODUCTION_URL" = "https://ahmverdun.ca"'));
 assert.ok(manual.includes('AHMV_PRODUCTION_URL RESTART_COMMAND; do'));
+assert.ok(manual.includes("grep -qi '^x-robots-tag:.*noindex' \"$SEARCH_HEADERS\""));
+assert.ok(!manual.includes("grep -qi '^x-robots-tag: noindex, nofollow' \"$SEARCH_HEADERS\""));
 assert.ok(manual.includes("RESTART_COMMAND: "+ "${{ secrets.AHMV_PRODUCTION_RESTART_COMMAND }}"));
 assert.doesNotMatch(manual, /public_indexing:[\s\S]*?default: true/);
 
