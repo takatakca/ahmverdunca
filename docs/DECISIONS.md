@@ -19,3 +19,11 @@ Louves visual failure #400 supersedes mere green CI. Draft #401 requires bilingu
 
 ## ADR-006: Ship incrementally with quality gates
 Continue coding independent features; commit/push to task branches, respect other agents, require CI critical security/build checks and actual production SHA proof before declaring any deployment finished. Never make external provider or billing changes without permissions/credentials.
+
+## ADR-007: Manual release safeguards match automatic release
+
+The manual workflow must default public indexing OFF and pin the exact canonical production origin even when indexing is disabled. An approved Passenger restart command is required **before** a release is uploaded. Search pages are required to be `noindex`; the runtime may legitimately choose `noindex, follow`, so the smoke test must not demand a mismatched follow directive.
+
+## ADR-008: HTTP 403 WAF handling without false release success
+
+The public deploy smoke uses verified TLS and preserves HTTP 4xx body content only so an identifiable WAF challenge can be detected. A recognized challenge may trigger the documented direct-origin diagnostic with the correct AHMV Host/SNI; arbitrary 4xx/5xx and transport errors must not be treated as success. This behavior is covered by a local fake-curl test and did not change youth data, SEO approval or external-provider gates.
