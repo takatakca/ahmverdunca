@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | chatgpt | fix/production-smoke-waf-403-20261014 → PR pending | active | Detect public WAF HTTP 403 challenge body before exiting curl and safely retry against hosting origin | Verify CI, merge after prior release and certify SHA
+
 - 2026-10-14 | chatgpt | fix/manual-production-release-guard-20261014 → PR pending | active | Align manual MochaHost deploy with opt-in SEO, enforce canonical production origin and pre-upload restart configuration, extend CI regression checks | Run CI, merge and certify deployed SHA
 
 - 2026-10-14 | chatgpt | fix/ahmv-indexing-release-gate-20261014 → PR pending | done; PR #408, main CI #38613657967 and production #38614134421 green | Default-deny indexing and explicit approval guard; five handoff docs, tests and AGENTS rule; compiled release c614dc9be786ce04710d2e9463c9c576f85369ce with homepage noindex verified | Continue independent queue; Louves #401/#400 and schedule #403 require visual owner review; Supabase access denied
