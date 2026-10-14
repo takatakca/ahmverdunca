@@ -26,6 +26,9 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuTop, setMobileMenuTop] = useState(72);
   const headerRef = useRef<HTMLElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const menuCloseRef = useRef<HTMLButtonElement>(null);
 
   // Subtle compaction once the parent starts scrolling.
   useEffect(() => {
@@ -95,13 +98,23 @@ export function SiteHeader() {
     };
   }, [open, scrolled]);
 
+  // Move keyboard focus into the portal: a visual overlay without focus
+  // management leaves screen-reader and keyboard users on the covered page.
+  useEffect(() => {
+    if (!open) return;
+    menuCloseRef.current?.focus();
+  }, [open]);
+
   // Let keyboard users close either navigation menu immediately.
   useEffect(() => {
     if (!open && !moreOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      setOpen(false);
+      if (open) {
+        setOpen(false);
+        menuButtonRef.current?.focus();
+      }
       setMoreOpen(false);
     };
 
@@ -301,6 +314,7 @@ export function SiteHeader() {
             </Button>
           ) : null}
           <button
+            ref={menuButtonRef}
             type="button"
             className={cn(
               "premium-control tap-target relative z-[1] inline-flex h-10 rounded-xl shrink-0 items-center justify-center gap-1.5 border px-3 font-display text-[10px] font-extrabold uppercase tracking-[0.08em] shadow-[0_8px_24px_-12px_rgba(0,0,0,0.95)] min-[360px]:gap-2 min-[360px]:px-4 min-[360px]:text-xs min-[360px]:tracking-[0.12em]",
@@ -322,7 +336,27 @@ export function SiteHeader() {
       {/* Mobile menu */}
       {open && createPortal(
         <div
+          ref={mobileMenuRef}
           id="mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label={lang === "fr" ? "Menu de navigation" : "Navigation menu"}
+          onKeyDown={(event) => {
+            if (event.key !== "Tab") return;
+            const focusable = Array.from(
+              mobileMenuRef.current?.querySelectorAll<HTMLElement>('a[href], button:not([disabled])') ?? [],
+            ).filter((element) => element.getClientRects().length > 0);
+            if (!focusable.length) return;
+            const first = focusable[0]!;
+            const last = focusable[focusable.length - 1]!;
+            if (event.shiftKey && document.activeElement === first) {
+              event.preventDefault();
+              last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+              event.preventDefault();
+              first.focus();
+            }
+          }}
           className="technical-grid fixed inset-x-0 z-[290] overflow-y-auto overscroll-contain border-t border-white/10 bg-competition shadow-[0_24px_80px_rgba(0,0,0,0.65)] pb-[env(safe-area-inset-bottom)] animate-in fade-in slide-in-from-top-2"
           style={{
             top: mobileMenuTop,
@@ -350,7 +384,19 @@ export function SiteHeader() {
                   Verdun · Montréal
                 </p>
               </div>
-              <LogoSlot className="size-14" />
+              <button
+                ref={menuCloseRef}
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  menuButtonRef.current?.focus();
+                }}
+                className="premium-control inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-white/20 px-3 text-xs font-bold text-white hover:border-sport hover:text-sport-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sport"
+                aria-label={lang === "fr" ? "Fermer le menu" : "Close navigation menu"}
+              >
+                <X className="size-5" aria-hidden />
+                <span className="hidden min-[360px]:inline">{lang === "fr" ? "Fermer" : "Close"}</span>
+              </button>
             </div>
 
             {selectedTeams[0] ? (
