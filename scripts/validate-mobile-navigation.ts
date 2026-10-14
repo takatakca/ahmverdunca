@@ -31,6 +31,17 @@ requireFragment(headerPath, header, 'event.key !== "Tab"', "focus trap Tab handl
 requireFragment(headerPath, header, "menuButtonRef.current?.focus()", "focus return on menu close");
 requireFragment(headerPath, header, 'aria-label={lang === "fr" ? "Fermer le menu"', "explicit mobile close action");
 
+const dockPath = "src/components/layout/mobile-quick-nav.tsx";
+const assistantPath = "src/components/ahmv-assistant.tsx";
+const dock = source(dockPath);
+const assistant = source(assistantPath);
+requireFragment(dockPath, dock, "grid-cols-6", "six destinations including Assistant");
+requireFragment(dockPath, dock, 'data-ahmv-assistant-trigger="mobile"', "dedicated assistant control");
+requireFragment(dockPath, dock, '"ahmv:assistant-open"', "assistant event dispatch");
+requireFragment(assistantPath, assistant, "visibleAssistantTrigger", "visible focus-return destination");
+requireFragment(assistantPath, assistant, "lg:flex", "floating launcher desktop-only");
+requireFragment(assistantPath, assistant, "id=\"ahmv-assistant-dialog\"", "assistant dialog id");
+
 requireFragment(previewPath, preview, '"ahmv:navigation-open"', "navigation-open listener");
 requireFragment(previewPath, preview, "closeForNavigation", "communications overlay close handler");
 requireFragment(previewPath, preview, "setOpen(false)", "communications overlay close action");
