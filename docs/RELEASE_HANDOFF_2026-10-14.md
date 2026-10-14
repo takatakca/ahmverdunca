@@ -31,3 +31,8 @@ The original conflicting Assistant PR [#391](https://github.com/takatakca/ahmver
 ## Next agent command sequence
 
 Read `AGENTS.md`, the top of `WORKLOG.md`, and open PRs first; pick an unclaimed task. Work on fresh branches, preserve `main`, run the full CI gates, merge only authorized green features, and require GitHub Actions production confirmation with exact compiled `/healthz` SHA. Never commit tokens, credentials or private children data. Use the above links as traceable evidence; do not claim a blocked feature is live.
+
+
+## Certified default-deny indexing repair (2026-10-14)
+
+PR [#408](https://github.com/takatakca/ahmverdunca/pull/408), main compiled merge `c614dc9be786ce04710d2e9463c9c576f85369ce`: [CI #38613657967](https://github.com/takatakca/ahmverdunca/actions/runs/38613657967) and [MochaHost deploy #38614134421](https://github.com/takatakca/ahmverdunca/actions/runs/38614134421) both succeeded. The deployment runner read `/healthz` containing the **exact compiled** SHA and verified `Public indexing is disabled and homepage is correctly noindex.` Automatic production is now opt-in for indexing, requiring the association release approval marker; the previous homepage-indexability discrepancy is resolved in this certified runtime. Provider and owner visual gates listed above remain unresolved. Persistent continuation: `docs/PROJECT_STATUS.md`, `docs/TASK_QUEUE.md`, `docs/AGENT_HANDOFF.md`, `docs/DEPLOYMENT.md`, `docs/DECISIONS.md`.
