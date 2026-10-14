@@ -16,7 +16,15 @@
 ## Indexing release approval
 Automatic production **defaults to false** when `AHMV_PUBLIC_INDEXING` is unset/false. To switch on, require both protected variables `AHMV_PUBLIC_INDEXING=true` and `AHMV_PUBLIC_INDEXING_APPROVAL=PUBLIC-INDEXING-APPROVED` after association legal/privacy/release acceptance. Unapproved true or invalid values fail before release upload. Verify the resulting homepage header, not just environment/source. The manual release defaults `public_indexing=false` and retains separate `launch_confirmation` for true. Both paths pin `https://ahmverdun.ca` and validate the approved Passenger restart command before uploading.
 
-## Latest verified deployed release (2026-10-14)
+## Current certified deployed release (2026-10-14)
+
+- **Current compiled SHA:** `de96f2e65d403b398209f5ba5042ee0ca7a61903` (PR #410), main [CI #38623287164](https://github.com/takatakca/ahmverdunca/actions/runs/38623287164) **success**, [auto production #38623392436](https://github.com/takatakca/ahmverdunca/actions/runs/38623392436) **success**. Runner `GET /healthz` reported the exact compiled SHA and `ok: true, service: ahmverdun-web`; homepage **noindex**, main routes, release CSS/JS, `/recherche` noindex, robots/sitemap verified.
+- Earlier PR #409 source SHA `08fcd8042e1de55f978deb49914bab70cdfa89bf`: [main CI #38622825907](https://github.com/takatakca/ahmverdunca/actions/runs/38622825907), [auto production #38622947479](https://github.com/takatakca/ahmverdunca/actions/runs/38622947479), both **success** and exact-SHA/noindex certified.
+- Manual workflow `public_indexing` **defaults false**, requires separate explicit confirmation to enable public search, pins exact `https://ahmverdun.ca` and refuses upload without restart configuration. The manual `/recherche` check enforces noindex regardless of follow/nofollow detail, matching runtime policy.
+- Auto deploy WAF handling uses `--fail-with-body` on public HTTPS, detects approved WAF markers even for HTTP 403 and uses its existing restricted origin diagnostic fallback. The public TLS probe is never run with `--insecure`. Curl non-WAF errors remain failures; CI exercises a synthetic HTTP 403 challenge.
+- Docs-only commits after these green runtime builds do not imply new deployed application SHAs.
+
+## Earlier verified deployed release (2026-10-14)
 
 - PR #408 merge SHA: `c614dc9be786ce04710d2e9463c9c576f85369ce`.
 - Main CI [#38613657967](https://github.com/takatakca/ahmverdunca/actions/runs/38613657967): **success**.
