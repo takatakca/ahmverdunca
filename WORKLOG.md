@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | chatgpt | fix/manual-production-release-guard-20261014 → PR pending | active | Align manual MochaHost deploy with opt-in SEO, enforce canonical production origin and pre-upload restart configuration, extend CI regression checks | Run CI, merge and certify deployed SHA
+
 - 2026-10-14 | chatgpt | fix/ahmv-indexing-release-gate-20261014 → PR pending | done; PR #408, main CI #38613657967 and production #38614134421 green | Default-deny indexing and explicit approval guard; five handoff docs, tests and AGENTS rule; compiled release c614dc9be786ce04710d2e9463c9c576f85369ce with homepage noindex verified | Continue independent queue; Louves #401/#400 and schedule #403 require visual owner review; Supabase access denied
 
 - 2026-10-14 | chatgpt | fix/assistant-nudge-mobile-overlap-20261014 → PR #406 | done; CI #38609477969 and production #38609816080 green | Prevent opt-in Assistant nudge from covering mobile page content now that Assistant has a sixth bottom dock action | CI; merge and verify exact production release

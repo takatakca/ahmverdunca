@@ -34,7 +34,7 @@ These remain OFF until deliberately accepted:
 - `VITE_DEMO_MEMBER_PREVIEW_ENABLED=false`
 - `VITE_ASSISTANT_NUDGE_ENABLED=false`
 
-Public indexing is the final SEO gate, not a substitute for production smoke testing. Automatic MochaHost deployments default to `VITE_PUBLIC_INDEXING=false`; to opt in, both protected environment variables `AHMV_PUBLIC_INDEXING=true` and `AHMV_PUBLIC_INDEXING_APPROVAL=PUBLIC-INDEXING-APPROVED` must be configured after association privacy/legal release approval. Invalid or unapproved values abort the workflow before upload. The manual workflow keeps its own explicit approval gate. Verify the actual homepage `X-Robots-Tag`, not just configuration.
+Public indexing is the final SEO gate, not a substitute for production smoke testing. Automatic MochaHost deployments default to `VITE_PUBLIC_INDEXING=false`; to opt in, both protected environment variables `AHMV_PUBLIC_INDEXING=true` and `AHMV_PUBLIC_INDEXING_APPROVAL=PUBLIC-INDEXING-APPROVED` must be configured after association privacy/legal release approval. Invalid or unapproved values abort the workflow before upload. The manual production workflow also defaults `public_indexing` to `false` (operator must deliberately select `true` and enter `PUBLIC-INDEXING-APPROVED`); both workflows require the exact `https://ahmverdun.ca` origin and validate the approved Passenger restart command before upload. Verify the actual homepage `X-Robots-Tag`, not just configuration.
 
 ## Community content corrections
 

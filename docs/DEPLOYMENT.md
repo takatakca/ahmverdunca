@@ -14,7 +14,7 @@
 5. Confirm production `GET /healthz` **compiled** release equals intended SHA, homepage and public routes respond, appropriate `X-Robots-Tag`, search noindex, robots.txt and sitemap.xml. Roll back on failed activation/smoke.
 
 ## Indexing release approval
-Automatic production **defaults to false** when `AHMV_PUBLIC_INDEXING` is unset/false. To switch on, require both protected variables `AHMV_PUBLIC_INDEXING=true` and `AHMV_PUBLIC_INDEXING_APPROVAL=PUBLIC-INDEXING-APPROVED` after association legal/privacy/release acceptance. Unapproved true or invalid values fail before release upload. Verify the resulting homepage header, not just environment/source. The manual release retains separate `launch_confirmation`.
+Automatic production **defaults to false** when `AHMV_PUBLIC_INDEXING` is unset/false. To switch on, require both protected variables `AHMV_PUBLIC_INDEXING=true` and `AHMV_PUBLIC_INDEXING_APPROVAL=PUBLIC-INDEXING-APPROVED` after association legal/privacy/release acceptance. Unapproved true or invalid values fail before release upload. Verify the resulting homepage header, not just environment/source. The manual release defaults `public_indexing=false` and retains separate `launch_confirmation` for true. Both paths pin `https://ahmverdun.ca` and validate the approved Passenger restart command before uploading.
 
 ## Latest verified deployed release (2026-10-14)
 
