@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-14 | chatgpt | fix/mobile-menu-keyboard-dialog-20261014 → PR pending | active | Mobile menu accessibility: move focus into modal portal, trap Tab, visible close button, return focus on Escape/close; static regression gate | PR CI / controlled merge, production SHA verification (Louves visual issue #400 remains independent)
+
 - 2026-10-11 | chatgpt | fix/gallery-always-visible-exit → PR #402 | CI #1242 and real gallery Chromium QA #10 green; 390/1440 and full viewport placement verified | Added 48px always-visible Retour à l’album, larger X, Escape, phone safe-area; fixed QA selector accidentally clicking welcome panel; tested photo open/exit/reopen/Escape | safe corrective merge/release gate, live MochaHost verification separately, screenshot uploads require future user consent and secure backend
 
 - 2026-10-11 | chatgpt | feat/louves-secure-share-page → PR #399 | CI #1221 green + real Chromium QA #21 green; visual reviewed | Bilingual public-only native sharing with clipboard/manual fallback and SSR hydration guard; tests at 320/390/768/1440, no overflow, no private data, no general site edits | final PR CI, controlled merge, production SHA verification; PR #391 still owns global mobile assistant
