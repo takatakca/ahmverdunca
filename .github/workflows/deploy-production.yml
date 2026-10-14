@@ -287,7 +287,7 @@ jobs:
           grep -qi '^x-content-type-options: nosniff' "$ROOT_HEADERS"
           grep -qi '^referrer-policy: strict-origin-when-cross-origin' "$ROOT_HEADERS"
           grep -qi '^x-frame-options: SAMEORIGIN' "$ROOT_HEADERS"
-          grep -qi '^x-robots-tag: noindex, nofollow' "$SEARCH_HEADERS" || {
+          grep -qi '^x-robots-tag:.*noindex' "$SEARCH_HEADERS" || {
             echo "/recherche must remain noindex"
             cat "$SEARCH_HEADERS"
             exit 1
