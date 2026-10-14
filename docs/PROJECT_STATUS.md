@@ -2,7 +2,14 @@
 
 Updated 2026-10-14. Source authority: [takatakca/ahmverdunca](https://github.com/takatakca/ahmverdunca), branch `main`. This is an operational summary, not a claim of 100% feature completion. See `docs/RELEASE_HANDOFF_2026-10-14.md`, `docs/FINAL_RELEASE_STATUS.md` and `WORKLOG.md`.
 
-## Verified
+## Latest verified releases (2026-10-14)
+
+- **Current certified production application:** `de96f2e65d403b398209f5ba5042ee0ca7a61903`, merged PR [#410](https://github.com/takatakca/ahmverdunca/pull/410). Main [CI #38623287164](https://github.com/takatakca/ahmverdunca/actions/runs/38623287164) and [production #38623392436](https://github.com/takatakca/ahmverdunca/actions/runs/38623392436) succeeded. Runner HTTP `/healthz` reported exact compiled SHA; homepage `noindex`, routes, CSS/JS and search `noindex` passed. Curl WAF 403 body handling corrected with controlled CI integration test.
+- **Previous release:** `08fcd8042e1de55f978deb49914bab70cdfa89bf`, PR [#409](https://github.com/takatakca/ahmverdunca/pull/409); [main CI #38622825907](https://github.com/takatakca/ahmverdunca/actions/runs/38622825907) and [production #38622947479](https://github.com/takatakca/ahmverdunca/actions/runs/38622947479) succeeded. Manual deploy defaults public indexing off, pins `https://ahmverdun.ca`, verifies Passenger restart config before upload and checks the true `/recherche` noindex contract.
+- Source-only documentation commits may advance `main` after these releases; do **not** mistake the latest Markdown SHA for the compiled runtime release.
+- Owner-gated draft PRs #401 (Louves, issue #400) and #403 (schedule carousel) remain **unmerged**. No public youth/social/Telecom/TAKATAK entitlement integrations were activated by these releases.
+
+## Historical verified checkpoints
 - Main before this corrective branch: `0decde9cd304273669f992ea6923edda5caf7432` (docs-only last merge).
 - Previous certified **compiled application** release before this work: `ed18150e284bc9ba67cd86dcf00dbc2e90c19097`. CI [#38609679980](https://github.com/takatakca/ahmverdunca/actions/runs/38609679980), production [#38609816080](https://github.com/takatakca/ahmverdunca/actions/runs/38609816080), both succeeded. Production workflow certified compiled /healthz identity, Passenger restart, homepage, routes, robots/sitemap. Independent web retrieval was unavailable.
 - PRs #404 (menu accessibility), #405 (mobile Assistant dock), #406 (nudge overlap) have green production releases. Former conflicting #391 closed as superseded.
@@ -16,7 +23,7 @@ Updated 2026-10-14. Source authority: [takatakca/ahmverdunca](https://github.com
 - This proves runtime / public indexing state, **not** external Phone/Voice/Parent Premium/social provider acceptance.
 
 ## Open completion gates
-- Production indexing approval not documented, yet automatic workflow previously defaulted to indexable. This branch changes it to explicit opt-in and requires approval.
+- Public SEO indexing remains disabled; association release/privacy/legal acceptance is still outstanding. Both automatic and manual release defaults are protected by explicit opt-in.
 - Source-verified continuous schedule; association approval of youth media, contact and legal policy.
 - TeamLinkt public widgets, OAuth/syndication/Meta permissions and moderators.
 - TAKATAK Auth/billing/entitlement provider, live Parent Premium acceptance (#120).
