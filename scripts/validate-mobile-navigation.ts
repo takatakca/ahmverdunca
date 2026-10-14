@@ -40,6 +40,7 @@ requireFragment(dockPath, dock, 'data-ahmv-assistant-trigger="mobile"', "dedicat
 requireFragment(dockPath, dock, '"ahmv:assistant-open"', "assistant event dispatch");
 requireFragment(assistantPath, assistant, "visibleAssistantTrigger", "visible focus-return destination");
 requireFragment(assistantPath, assistant, "lg:flex", "floating launcher desktop-only");
+requireFragment(assistantPath, assistant, "hidden w-[min(19rem,calc(100vw-1.5rem))] lg:block", "assistant nudge desktop-only");
 requireFragment(assistantPath, assistant, "id=\"ahmv-assistant-dialog\"", "assistant dialog id");
 
 requireFragment(previewPath, preview, '"ahmv:navigation-open"', "navigation-open listener");

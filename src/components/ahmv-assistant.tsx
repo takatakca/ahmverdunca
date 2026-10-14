@@ -224,7 +224,7 @@ export function AhmvAssistant() {
       {ASSISTANT_NUDGE_ENABLED && showNudge && !open && (
         <aside
           data-ahmv-attention-surface="assistant-nudge"
-          className="rise fixed bottom-36 left-3 z-40 w-[min(19rem,calc(100vw-1.5rem))] border border-sport/45 bg-competition/97 p-3 text-white shadow-[0_22px_65px_-28px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-20 lg:left-4"
+          className="rise fixed bottom-36 left-3 z-40 hidden w-[min(19rem,calc(100vw-1.5rem))] lg:block border border-sport/45 bg-competition/97 p-3 text-white shadow-[0_22px_65px_-28px_rgba(0,0,0,0.95)] backdrop-blur lg:bottom-20 lg:left-4"
           aria-label={nudgeCopy.title}
         >
           <button
