@@ -16,6 +16,12 @@ assert.match(auto, /AHMV_SFTP_MAX_ATTEMPTS=4 scripts\/deploy-production-sftp\.sh
 assert.doesNotMatch(auto, /AHMV_SSH_MAX_ATTEMPTS=8 ahmv-ssh/);
 assert.equal((auto.match(/group: ahmverdun-production-auto/g) ?? []).length, 1);
 
+// CI enforces default-deny indexing and explicit association approval.
+assert.ok(auto.includes("VITE_PUBLIC_INDEXING: "+ "${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}"));
+assert.ok(auto.includes("AHMV_PUBLIC_INDEXING_APPROVAL: "+ "${{ vars.AHMV_PUBLIC_INDEXING_APPROVAL || '' }}"));
+assert.ok(auto.includes('"$AHMV_PUBLIC_INDEXING_APPROVAL" != "PUBLIC-INDEXING-APPROVED"'));
+assert.ok(!auto.includes("VITE_PUBLIC_INDEXING: "+ "${{ vars.AHMV_PUBLIC_INDEXING || 'true' }}"));
+
 assert.match(auto, /VITE_AHMV_BUILD_SHA:\s*\$\{\{ github\.event\.workflow_run\.head_sha \}\}/);
 assert.match(auto, /RESTART_COMMAND:\s*\$\{\{ secrets\.AHMV_PRODUCTION_RESTART_COMMAND \}\}/);
 assert.match(auto, /AHMV_PRODUCTION_URL\s*\\\n\s*RESTART_COMMAND/);
