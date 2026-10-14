@@ -17,12 +17,12 @@ assert.doesNotMatch(auto, /AHMV_SSH_MAX_ATTEMPTS=8 ahmv-ssh/);
 assert.equal((auto.match(/group: ahmverdun-production-auto/g) ?? []).length, 1);
 
 // CI enforces default-deny indexing and explicit association approval on both paths.
-assert.match(manual, /public_indexing:\\s*\\n\\s*description:.*\\n\\s*required: true\\s*\\n\\s*default: false/);
+assert.match(manual, /public_indexing:\s*\n\s*description:.*\n\s*required: true\s*\n\s*default: false/);
 assert.ok(manual.includes('test "$LAUNCH_CONFIRMATION" = "PUBLIC-INDEXING-APPROVED"'));
 assert.ok(manual.includes('test "$AHMV_PRODUCTION_URL" = "https://ahmverdun.ca"'));
 assert.ok(manual.includes('AHMV_PRODUCTION_URL RESTART_COMMAND; do'));
 assert.ok(manual.includes("RESTART_COMMAND: "+ "${{ secrets.AHMV_PRODUCTION_RESTART_COMMAND }}"));
-assert.doesNotMatch(manual, /public_indexing:[\\s\\S]*?default: true/);
+assert.doesNotMatch(manual, /public_indexing:[\s\S]*?default: true/);
 
 assert.ok(auto.includes("VITE_PUBLIC_INDEXING: "+ "${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}"));
 assert.ok(auto.includes("AHMV_PUBLIC_INDEXING_APPROVAL: "+ "${{ vars.AHMV_PUBLIC_INDEXING_APPROVAL || '' }}"));
