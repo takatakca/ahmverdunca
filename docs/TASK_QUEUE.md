@@ -1,9 +1,10 @@
 # AHM Verdun — task queue
 
-Updated 2026-10-14. Consult `AGENTS.md`, top of `WORKLOG.md` and open PRs before claiming a task. Green CI is not release approval.
+Updated 2026-10-16. Consult `AGENTS.md`, top of `WORKLOG.md` and open PRs before claiming a task. Green CI is not release approval.
 
 | Priority | Task | Owner/state | Next action |
 | --- | --- | --- | --- |
+| Done | Critical TanStack Start XSS dependency remediation + Family session failure safety | PR #411; CI #38950476979, MochaHost deploy #38950582023 SUCCESS | Runtime `039111a8c723ffbfbf85f8a364f3132a2be0d447`, 0 audit vulnerabilities, exact /healthz and noindex verified; keep audit blocking CI |
 | Done | Automatic production indexing defaults and approval | PR #408 deployed | Compiled SHA and homepage noindex certified; keep protected opt-in approval gate |
 | Done | Manual production release fail-closed controls | PR #409; main CI #38622825907 and production #38622947479 success | Manual default noindex, canonical host and pre-upload restart guard verified |
 | Done | Production smoke HTTP 403 WAF challenge fallback | PR #410; main CI #38623287164 and production #38623392436 success | Real compiled SHA `de96f2e65d403b398209f5ba5042ee0ca7a61903`, noindex and public route smoke verified |
