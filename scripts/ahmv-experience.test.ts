@@ -361,7 +361,7 @@ test("TAKATAK login exchange timeout or invalid upstream JSON never creates a Fa
       assert.equal(init?.redirect, "error");
       assert.equal(init?.cache, "no-store");
       assert.ok(init?.signal instanceof AbortSignal);
-      assert.equal(init.signal.aborted, false);
+      assert.equal(init?.signal?.aborted, false);
       throw new Error("simulated upstream failure");
     }, async () => {
       const response = await handleAhmvExperienceAuth(request);
