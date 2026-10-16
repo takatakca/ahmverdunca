@@ -1,0 +1,45 @@
+name: AHMV TanStack lock refresh (one-time)
+
+on:
+  push:
+    branches: [fix/family-auth-fail-closed-20261016]
+    paths:
+      - ".github/workflows/ahmv-tanstack-lock-refresh.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    if: github.repository == 'takatakca/ahmverdunca' && github.ref == 'refs/heads/fix/family-auth-fail-closed-20261016'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: true
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
+      - name: Regenerate and validate the exact lockfile
+        run: |
+          set -euo pipefail
+          bun install
+          bun audit --audit-level=high
+          bun test scripts/ahmv-experience.test.ts
+          bunx tsc --noEmit
+          bun run build
+          bun run check:release-artifact
+          bun install --frozen-lockfile
+      - name: Commit audited lockfile to this branch only
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bun.lock
+          if git diff --cached --quiet; then
+            echo "Lockfile unchanged."
+          else
+            git commit -m "fix(deps): lock aligned audited TanStack runtime versions"
+            git push origin HEAD:refs/heads/fix/family-auth-fail-closed-20261016
+          fi
