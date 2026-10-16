@@ -16,7 +16,14 @@
 ## Indexing release approval
 Automatic production **defaults to false** when `AHMV_PUBLIC_INDEXING` is unset/false. To switch on, require both protected variables `AHMV_PUBLIC_INDEXING=true` and `AHMV_PUBLIC_INDEXING_APPROVAL=PUBLIC-INDEXING-APPROVED` after association legal/privacy/release acceptance. Unapproved true or invalid values fail before release upload. Verify the resulting homepage header, not just environment/source. The manual release defaults `public_indexing=false` and retains separate `launch_confirmation` for true. Both paths pin `https://ahmverdun.ca` and validate the approved Passenger restart command before uploading.
 
-## Current certified deployed release (2026-10-14)
+## Current certified deployed release (2026-10-16)
+
+- Current deployed compiled SHA **`039111a8c723ffbfbf85f8a364f3132a2be0d447`**, PR #411. Green branch [CI #38950318005](https://github.com/takatakca/ahmverdunca/actions/runs/38950318005), green [main CI #38950476979](https://github.com/takatakca/ahmverdunca/actions/runs/38950476979), and [production #38950582023](https://github.com/takatakca/ahmverdunca/actions/runs/38950582023) **success** on MochaHost Passenger.
+- Production GitHub Actions runner observed `{"ok":true,"service":"ahmverdun-web","release":"039111a8c723ffbfbf85f8a364f3132a2be0d447"}` at 2026-10-16 18:52:52 UTC. Homepage noindex, compiled CSS/JS, main routes, /recherche noindex, robots and sitemap passed; restart and active release checks passed. The prior release was `de96f2e65d403b398209f5ba5042ee0ca7a61903`.
+- `bun audit --audit-level=high` returned **no vulnerabilities** on patched lockfile. `@tanstack/react-start@1.168.60`, `@tanstack/start-server-core@1.169.39`, aligned `@tanstack/react-router@1.170.41` and Router Core `1.171.34` were built, tested and deployed. One-time lockfile update workflow was removed. Do not confuse docs-only main commits with a new compiled release.
+- External association approvals, TAKATAK live entitlement acceptance, youth content and Phone/Voice provider activations remain blocked pending their respective gates.
+
+## Previous certified deployed release (2026-10-14)
 
 - **Current compiled SHA:** `de96f2e65d403b398209f5ba5042ee0ca7a61903` (PR #410), main [CI #38623287164](https://github.com/takatakca/ahmverdunca/actions/runs/38623287164) **success**, [auto production #38623392436](https://github.com/takatakca/ahmverdunca/actions/runs/38623392436) **success**. Runner `GET /healthz` reported the exact compiled SHA and `ok: true, service: ahmverdun-web`; homepage **noindex**, main routes, release CSS/JS, `/recherche` noindex, robots/sitemap verified.
 - Earlier PR #409 source SHA `08fcd8042e1de55f978deb49914bab70cdfa89bf`: [main CI #38622825907](https://github.com/takatakca/ahmverdunca/actions/runs/38622825907), [auto production #38622947479](https://github.com/takatakca/ahmverdunca/actions/runs/38622947479), both **success** and exact-SHA/noindex certified.
