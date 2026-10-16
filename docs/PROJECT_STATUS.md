@@ -1,8 +1,16 @@
 # AHM Verdun — PROJECT STATUS
 
-Updated 2026-10-14. Source authority: [takatakca/ahmverdunca](https://github.com/takatakca/ahmverdunca), branch `main`. This is an operational summary, not a claim of 100% feature completion. See `docs/RELEASE_HANDOFF_2026-10-14.md`, `docs/FINAL_RELEASE_STATUS.md` and `WORKLOG.md`.
+Updated 2026-10-16. Source authority: [takatakca/ahmverdunca](https://github.com/takatakca/ahmverdunca), branch `main`. This is an operational summary, not a claim of 100% feature completion. See `docs/RELEASE_HANDOFF_2026-10-14.md`, `docs/FINAL_RELEASE_STATUS.md` and `WORKLOG.md`.
 
-## Latest verified releases (2026-10-14)
+## Current certified production release (2026-10-16)
+
+- PR [#411](https://github.com/takatakca/ahmverdunca/pull/411) merged into `main` at `039111a8c723ffbfbf85f8a364f3132a2be0d447`. Branch [CI #38950318005](https://github.com/takatakca/ahmverdunca/actions/runs/38950318005), main [CI #38950476979](https://github.com/takatakca/ahmverdunca/actions/runs/38950476979), and automatic [production #38950582023](https://github.com/takatakca/ahmverdunca/actions/runs/38950582023) all **succeeded**.
+- Runner production `GET /healthz` returned `{"ok":true,"service":"ahmverdun-web","release":"039111a8c723ffbfbf85f8a364f3132a2be0d447"}`; homepage remained **noindex**, public routes, compiled CSS/JS, search noindex, robots and sitemap passed. This is production deployment proof, not approval of pending providers.
+- Critical XSS advisory GHSA-qx66-fv34-fjm8 remediated by pinning audited `@tanstack/react-start@1.168.60`, `@tanstack/start-server-core@1.169.39` and compatible React Router/Router Core. Bun dependency audit reports **0 vulnerabilities**; protected CI and production artifact build succeeded. One-time lock refresh workflow was deleted after use.
+- AHMV Family auth now rejects malformed/oversized cookie input without exceptions and limits TAKATAK login exchange to 5 seconds; provider failures return no-store/noindex 503 with **no session cookie**.
+- **Open external gates unchanged**: Louves design issue #400/PR #401 and schedule PR #403 require owner acceptance; TAKATAK entitlements, official schedule sources, Twilio carrier, Supabase permissions and youth/social media still need verified approvals.
+
+## Historical verified releases (2026-10-14)
 
 - **Current certified production application:** `de96f2e65d403b398209f5ba5042ee0ca7a61903`, merged PR [#410](https://github.com/takatakca/ahmverdunca/pull/410). Main [CI #38623287164](https://github.com/takatakca/ahmverdunca/actions/runs/38623287164) and [production #38623392436](https://github.com/takatakca/ahmverdunca/actions/runs/38623392436) succeeded. Runner HTTP `/healthz` reported exact compiled SHA; homepage `noindex`, routes, CSS/JS and search `noindex` passed. Curl WAF 403 body handling corrected with controlled CI integration test.
 - **Previous release:** `08fcd8042e1de55f978deb49914bab70cdfa89bf`, PR [#409](https://github.com/takatakca/ahmverdunca/pull/409); [main CI #38622825907](https://github.com/takatakca/ahmverdunca/actions/runs/38622825907) and [production #38622947479](https://github.com/takatakca/ahmverdunca/actions/runs/38622947479) succeeded. Manual deploy defaults public indexing off, pins `https://ahmverdun.ca`, verifies Passenger restart config before upload and checks the true `/recherche` noindex contract.
