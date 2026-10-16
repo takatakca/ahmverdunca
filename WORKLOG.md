@@ -1,6 +1,6 @@
 # Work log
 
-- 2026-10-16 | chatgpt | fix/family-auth-fail-closed-20261016 → PR pending | active | Fail closed on malformed/oversize Family session cookies and bound TAKATAK login-code exchange to five seconds; regression tests | Validate CI, merge after green, certify exact production SHA
+- 2026-10-16 | chatgpt | fix/family-auth-fail-closed-20261016 → PR #411 | done; branch CI #38950318005, main CI #38950476979, production #38950582023 success | Fix malformed/oversize Family cookies, time-bound TAKATAK exchange, upgrade XSS-vulnerable TanStack Start/Core and align Router; built release 039111a8c723ffbfbf85f8a364f3132a2be0d447 verified via /healthz/noindex | Next: owner visual reviews #401/#403 and authorized provider gates #120/#127
 
 - 2026-10-14 | chatgpt | fix/production-smoke-waf-403-20261014 → PR #410 | done; CI #38623287164 and production #38623392436 success | Preserve HTTP 403 WAF challenge body, distinguish WAF from genuine curl errors, add synthetic origin fallback test; compiled de96f2e65d403b398209f5ba5042ee0ca7a61903, /healthz and noindex confirmed | Continue owner-gated #401/#403 only after approval; independent security tasks remain eligible
 
