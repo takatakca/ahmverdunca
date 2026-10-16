@@ -328,3 +328,62 @@ test("protected experience redirects to server login when live entitlement is re
     );
   });
 });
+
+test("malformed Family cookie input fails closed instead of throwing", async () => {
+  await withEnv({ AHMV_EXPERIENCE_SESSION_SECRET: SESSION_SECRET }, () => {
+    for (const input of [
+      "%E0%A4%A",
+      "%ZZ",
+      "a".repeat(5000),
+      "a".repeat(100) + "." + "x".repeat(43),
+      "a.b.c",
+    ]) {
+      const request = new Request("https://ahmverdun.ca/experience", {
+        headers: { cookie: AHMV_EXPERIENCE_COOKIE + "=" + input },
+      });
+      assert.equal(readAhmvExperienceSession(request), null, input.slice(0, 25));
+    }
+
+    assert.equal(decodeAhmvExperienceSession("a".repeat(5000) + "." + "x".repeat(43)), null);
+    assert.equal(readAhmvExperienceSession(new Request("https://ahmverdun.ca/experience", {
+      headers: { cookie: cookieHeader() },
+    }))?.identityId, "identity-123");
+  });
+});
+
+test("TAKATAK login exchange timeout or invalid upstream JSON never creates a Family session", async () => {
+  await withEnv(experienceEnv, async () => {
+    const request = new Request(
+      "https://ahmverdun.ca/api/ahmv/experience/callback?code=" + "c".repeat(48),
+    );
+
+    await withFetch(async (_input, init) => {
+      assert.equal(init?.redirect, "error");
+      assert.equal(init?.cache, "no-store");
+      assert.ok(init?.signal instanceof AbortSignal);
+      assert.equal(init.signal.aborted, false);
+      throw new Error("simulated upstream failure");
+    }, async () => {
+      const response = await handleAhmvExperienceAuth(request);
+      assert.equal(response?.status, 503);
+      assert.equal(response?.headers.get("cache-control"), "no-store");
+      assert.equal(response?.headers.get("X-Robots-Tag"), "noindex, nofollow");
+      assert.equal(response?.headers.get("set-cookie"), null);
+    });
+
+    await withFetch(async () => new Response("{bad JSON", {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    }), async () => {
+      const response = await handleAhmvExperienceAuth(request);
+      assert.equal(response?.status, 503);
+      assert.equal(response?.headers.get("set-cookie"), null);
+    });
+
+    await withFetch(async () => new Response("temporarily down", { status: 503 }), async () => {
+      const response = await handleAhmvExperienceAuth(request);
+      assert.equal(response?.status, 403);
+      assert.equal(response?.headers.get("set-cookie"), null);
+    });
+  });
+});
