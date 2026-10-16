@@ -49,7 +49,7 @@ function FaqPage() {
   const visibleTopics = FAQ_TOPICS.filter((topicItem) =>
     visibleFaq.some((item) => item.topic === topicItem.id),
   );
-  const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
+  const search = useRouterState({ select: (state) => state.location.search }) as unknown as Record<string, unknown>;
   const requestedItem =
     typeof search["item"] === "string" && visibleFaq.some((item) => item.id === search["item"])
       ? search["item"]
