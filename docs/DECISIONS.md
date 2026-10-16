@@ -27,3 +27,9 @@ The manual workflow must default public indexing OFF and pin the exact canonical
 ## ADR-008: HTTP 403 WAF handling without false release success
 
 The public deploy smoke uses verified TLS and preserves HTTP 4xx body content only so an identifiable WAF challenge can be detected. A recognized challenge may trigger the documented direct-origin diagnostic with the correct AHMV Host/SNI; arbitrary 4xx/5xx and transport errors must not be treated as success. This behavior is covered by a local fake-curl test and did not change youth data, SEO approval or external-provider gates.
+
+## ADR-009: Patch vulnerable server runtimes before feature releases (2026-10-16)
+
+New GitHub CI flagged critical XSS GHSA-qx66-fv34-fjm8 in TanStack Start. Never ignore or disable dependency audit to bypass this gate. Pin `@tanstack/react-start@1.168.60` and `@tanstack/start-server-core@1.169.39` with compatible `@tanstack/react-router@1.170.41` and `@tanstack/router-core@1.171.34`; regenerate `bun.lock` with approved Bun 1.4.2, test TypeScript, SSR build and full CI. The one-time branch-local write workflow was removed once its lockfile commit was made. Merge only a passing artifact and confirm live runtime SHA; done via PR #411, CI #38950476979 and production #38950582023.
+
+Untrusted Family cookies must return no session rather than crash the request. TAKATAK remains the sole identity authority; failed/timed-out 5-second login exchange cannot mint a local session or leak provider data. External tenant/entitlement and billing gates are unchanged.
