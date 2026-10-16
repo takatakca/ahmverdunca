@@ -1,5 +1,7 @@
 # Work log
 
+- 2026-10-16 | chatgpt | fix/family-auth-fail-closed-20261016 → PR pending | active | Fail closed on malformed/oversize Family session cookies and bound TAKATAK login-code exchange to five seconds; regression tests | Validate CI, merge after green, certify exact production SHA
+
 - 2026-10-14 | chatgpt | fix/production-smoke-waf-403-20261014 → PR #410 | done; CI #38623287164 and production #38623392436 success | Preserve HTTP 403 WAF challenge body, distinguish WAF from genuine curl errors, add synthetic origin fallback test; compiled de96f2e65d403b398209f5ba5042ee0ca7a61903, /healthz and noindex confirmed | Continue owner-gated #401/#403 only after approval; independent security tasks remain eligible
 
 - 2026-10-14 | chatgpt | fix/manual-production-release-guard-20261014 → PR #409 | done; CI #38622825907 and production #38622947479 success | Manual deploy default noindex, exact canonical origin, Passenger restart preflight, /recherche real robots policy; compiled 08fcd8042e1de55f978deb49914bab70cdfa89bf certified | Superseded by successful PR #410 production
