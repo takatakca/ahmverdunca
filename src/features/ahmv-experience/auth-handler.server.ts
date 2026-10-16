@@ -55,6 +55,7 @@ async function exchangeLaunchCode(code: string): Promise<ExchangeSession | null>
     body: JSON.stringify({ code }),
     redirect: "error",
     cache: "no-store",
+    signal: AbortSignal.timeout(5000),
   });
 
   if (!response.ok) return null;
@@ -101,7 +102,17 @@ export async function handleAhmvExperienceAuth(
       return new Response("Invalid launch code", { status: 400, headers: { "cache-control": "no-store" } });
     }
 
-    const session = await exchangeLaunchCode(code);
+    let session: ExchangeSession | null;
+    try {
+      session = await exchangeLaunchCode(code);
+    } catch {
+      // TAKATAK is the identity authority: never create a local session on
+      // provider timeout, network outage or invalid upstream JSON.
+      return new Response("AHMV sign-in temporarily unavailable", {
+        status: 503,
+        headers: { "cache-control": "no-store", "X-Robots-Tag": "noindex, nofollow" },
+      });
+    }
     if (!session) {
       return new Response("AHMV access denied", {
         status: 403,
