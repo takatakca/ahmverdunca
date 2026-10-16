@@ -39,7 +39,7 @@ function SchedulePage() {
   const { t, lang } = useI18n();
   const weeklyScheduleVisual = SCHEDULE_VISUAL;
   const { preferredTeam, savePreferredTeam, selectedTeams } = usePreferredTeam();
-  const search = useRouterState({ select: (state) => state.location.search }) as Record<string, unknown>;
+  const search = useRouterState({ select: (state) => state.location.search }) as unknown as Record<string, unknown>;
 
   const selectedTeam =
     typeof search["team"] === "string" && TEAMS.some((item) => item.slug === search["team"])

@@ -41,11 +41,16 @@ export function encodeAhmvExperienceSession(
 export function decodeAhmvExperienceSession(
   value: string | null | undefined,
 ): AhmvExperienceSession | null {
-  if (!value) return null;
-  const [encoded, signature, extra] = value.split(".");
-  if (!encoded || !signature || extra || !safeEqual(sign(encoded), signature)) return null;
+  // A Host cookie is client input: reject corrupted and oversized values before
+  // decoding or authenticating. Do not let a bad percent-escape crash the app.
+  if (!value || value.length > 4096) return null;
+  const match = /^([A-Za-z0-9_-]+)\.([A-Za-z0-9_-]{43})$/.exec(value);
+  if (!match) return null;
+  const [, encoded, signature] = match;
+  if (!encoded || !signature) return null;
 
   try {
+    if (!safeEqual(sign(encoded), signature)) return null;
     const payload = JSON.parse(
       Buffer.from(encoded, "base64url").toString("utf8"),
     ) as Partial<AhmvExperienceSession>;
@@ -82,9 +87,14 @@ export function readAhmvExperienceSession(request: Request) {
     .map((entry) => entry.trim())
     .find((entry) => entry.startsWith(`${AHMV_EXPERIENCE_COOKIE}=`));
   if (!cookie) return null;
-  return decodeAhmvExperienceSession(
-    decodeURIComponent(cookie.slice(AHMV_EXPERIENCE_COOKIE.length + 1)),
-  );
+  try {
+    return decodeAhmvExperienceSession(
+      decodeURIComponent(cookie.slice(AHMV_EXPERIENCE_COOKIE.length + 1)),
+    );
+  } catch {
+    // Invalid percent escapes are untrusted input, not a server error.
+    return null;
+  }
 }
 
 export function ahmvExperienceSetCookie(
