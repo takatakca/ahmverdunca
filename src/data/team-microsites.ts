@@ -37,13 +37,15 @@ export interface TeamMicrositeDefinition {
   teamLinktIcalUrl?: string;
   teamLinktWidgetUrl?: string;
   logoUrl?: string;
+  /** Louves team whose activities the official AHMV weekly PDFs name explicitly. */
+  officialScheduleSide?: "A" | "B";
   modules: readonly MicrositeModule[];
 }
 
 /**
  * The current directory has an older M12 A Louves record. M12B does not
- * inherit that identifier. The PDF week 6 record is review-only, so no
- * specific M12B event may become a confirmed public upcoming event yet.
+ * inherit that identifier. Since week 9 the official AHMV weekly PDFs name
+ * "M12 Louves B" explicitly, so the microsite lists those published activities.
  */
 export const LOUVES_M12B_MICROSITE: TeamMicrositeDefinition = {
   slug: "louves-m12b",
@@ -52,13 +54,14 @@ export const LOUVES_M12B_MICROSITE: TeamMicrositeDefinition = {
   categorySlug: "feminin",
   accent: "louves",
   logoUrl: "/images/teams/louves-m12b-crest.webp",
+  officialScheduleSide: "B",
   modules: [
     {
       key: "schedule",
       title: { fr: "Calendrier", en: "Schedule" },
       description: {
-        fr: "Consulter l’horaire publié par AHM Verdun. Les activités M12B seront identifiées séparément après validation.",
-        en: "Browse the AHM Verdun published schedule. Exact U12B events will be identified after review.",
+        fr: "Les activités M12B publiées par AHM Verdun sont listées sur cette page; l’horaire complet reste accessible.",
+        en: "U12B activities published by AHM Verdun are listed on this page; the full schedule stays available.",
       },
       access: "public",
       href: "/horaires?team=feminin",

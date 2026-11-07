@@ -24,6 +24,7 @@ import { TeamParentPremium } from "@/components/team-parent-premium";
 import { TeamCommunityBoard } from "@/components/team-community-board";
 import { getTeam } from "@/data/teams";
 import { getPublicTeamById, legacyTeamScheduleUrl, officialTeamResultsUrl, publicTeamHubUrl, publicTeamScheduleUrl, teamsForCategory } from "@/data/team-directory";
+import { LOUVES_M12B_MICROSITE } from "@/data/team-microsites";
 import { getPublicTeamSocialLinks, getTeamSocialLinks } from "@/data/team-social";
 import { NEWS, newsDateLabel } from "@/data/news";
 import { ALBUMS } from "@/data/gallery";
@@ -101,6 +102,9 @@ function TeamPage() {
   const visiblePublicTeams = exactTeam
     ? publicTeams.filter((entry) => entry.legacyScheduleTeamId !== exactTeam.legacyScheduleTeamId)
     : publicTeams;
+  // Teams AHMV publishes in its weekly PDFs but not (yet) in the mirrored public
+  // directory, e.g. Louves M12B: shown beside the directory with their own page.
+  const microsites = [LOUVES_M12B_MICROSITE].filter((site) => site.categorySlug === slug);
   const archiveImages = [
     OFFICIAL_MEDIA.tournamentM11Primary,
     OFFICIAL_MEDIA.tournamentM11Secondary,
@@ -232,7 +236,7 @@ function TeamPage() {
                   </div>
                   <div className="flex items-end justify-between gap-4 border-b border-white/12 py-4">
                     <span className="text-xs font-semibold uppercase tracking-[0.13em] text-white/52">{lang === "fr" ? "Équipes" : "Teams"}</span>
-                    <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length}</span>
+                    <span className="font-display text-3xl font-extrabold uppercase">{publicTeams.length + microsites.length}</span>
                   </div>
                 </div>
               </div>
@@ -455,7 +459,7 @@ function TeamPage() {
           </div>
         </section>
 
-        {visiblePublicTeams.length > 0 && (
+        {(visiblePublicTeams.length > 0 || microsites.length > 0) && (
           <section aria-labelledby="public-team-directory-title">
             <SectionHeading
               eyebrow={lang === "fr" ? "Répertoire d’équipes" : "Team directory"}
@@ -559,6 +563,62 @@ function TeamPage() {
                   </div>
                 );
               })}
+              {microsites.map((site, index) => (
+                <div
+                  id={`team-${site.slug}`}
+                  key={site.slug}
+                  className="interactive-surface scoreboard-panel scroll-mt-28 flex min-h-[270px] flex-col overflow-hidden p-0 text-white"
+                >
+                  <div className="relative flex min-h-40 flex-1 flex-col justify-between overflow-hidden p-5">
+                    <img
+                      src={categoryVisual.url}
+                      alt=""
+                      aria-hidden
+                      loading="lazy"
+                      decoding="async"
+                      className="pointer-events-none absolute inset-0 size-full object-cover opacity-[0.16] grayscale-[0.15]"
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,43,0.55),rgba(7,16,43,0.94))]" aria-hidden />
+                    <span
+                      className="pointer-events-none absolute -right-1 -top-5 font-display text-[7.5rem] font-extrabold leading-none tracking-[-0.08em] text-white/[0.05]"
+                      aria-hidden
+                    >
+                      {String(visiblePublicTeams.length + index + 1).padStart(2, "0")}
+                    </span>
+                    <div className="relative flex items-start justify-between gap-3">
+                      <p className="eyebrow text-sport-foreground">{site.level.replace(/^M12B$/, "M12 B féminin")}</p>
+                      {site.logoUrl ? (
+                        <img src={site.logoUrl} alt="" aria-hidden className="size-9 rounded-full border border-white/15 object-cover" />
+                      ) : null}
+                    </div>
+                    <div className="relative mt-8">
+                      <p className="font-display text-[clamp(2rem,7vw,3rem)] font-extrabold uppercase leading-[0.84] tracking-[-0.035em] text-white">
+                        LOUVES VERDUN
+                      </p>
+                      <p className="mt-3 text-[9px] font-bold uppercase tracking-[0.18em] text-white/38">
+                        {lang === "fr" ? "Équipe AHMV · espace équipe" : "AHMV team · team hub"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="relative mt-auto border-t border-white/12 bg-white/[0.035] p-3">
+                    <a
+                      href={`/equipes/${site.slug}`}
+                      className="premium-control mb-2 flex min-h-11 items-center justify-between bg-sport px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-sport-foreground hover:brightness-95"
+                    >
+                      <span>{lang === "fr" ? "Page équipe" : "Team page"}</span>
+                      <ArrowRight className="size-3.5" />
+                    </a>
+                    <a
+                      href={`/equipes/${site.slug}#horaire-equipe`}
+                      className="premium-control flex min-h-11 items-center justify-between border border-white/14 px-3 text-[9px] font-bold uppercase tracking-[0.1em] text-white hover:border-sport hover:bg-white/[0.05]"
+                    >
+                      <span>{lang === "fr" ? "Horaire" : "Schedule"}</span>
+                      <CalendarDays className="size-3.5 text-sport-foreground" />
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         )}

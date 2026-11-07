@@ -25,6 +25,81 @@ import { TeamIceBagChecklist } from "@/components/team-ice-bag-checklist";
 import { TeamPageShare } from "@/components/team-page-share";
 import { teamVisualForCategory } from "@/data/team-visuals";
 import { SITE } from "@/lib/site";
+import { OFFICIAL_WEEK_ACTIVITIES } from "@/data/official-week";
+import { officialWeekActivityConcernsLouves } from "@/lib/official-schedule-team";
+import { formatDate } from "@/lib/i18n";
+import { montrealDateKey, montrealTimeKey } from "@/lib/montreal-date";
+
+function displayTime(value: string) {
+  const [hour, minute] = value.split(":");
+  return minute === "00" ? `${Number(hour)} h` : `${Number(hour)} h ${minute}`;
+}
+
+/** Upcoming activities the official weekly PDFs publish for this exact team. */
+function TeamOfficialSchedule({ site, lang }: { site: TeamMicrositeDefinition; lang: Lang }) {
+  const isFr = lang === "fr";
+  const side = site.officialScheduleSide;
+  if (!side) return null;
+  const today = montrealDateKey();
+  const now = montrealTimeKey();
+  const upcoming = OFFICIAL_WEEK_ACTIVITIES.filter(
+    (activity) =>
+      officialWeekActivityConcernsLouves(activity, side) &&
+      (activity.date > today || (activity.date === today && activity.end > now)),
+  ).slice(0, 8);
+
+  return (
+    <section id="horaire-equipe" aria-labelledby="horaire-equipe-titre" className="scroll-mt-24 pt-9 md:pt-14">
+      <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#7de7de]">
+        {isFr ? "Horaire officiel AHMV" : "Official AHMV schedule"}
+      </p>
+      <h2 id="horaire-equipe-titre" className="mt-2 font-display text-3xl font-extrabold uppercase leading-[0.98] sm:text-4xl">
+        {isFr ? "Prochaines activités" : "Coming up"}
+      </h2>
+      {upcoming.length > 0 ? (
+        <ol className="mt-5 grid gap-3 sm:grid-cols-2">
+          {upcoming.map((activity) => {
+            const game = /^Partie/i.test(activity.activity);
+            return (
+              <li key={activity.id} className="rounded-2xl border border-white/15 bg-white/[0.06] p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="rounded-lg bg-[#51e1d4] px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.1em] text-[#06152b]">
+                    {formatDate(activity.date, lang, { weekday: "short", day: "numeric", month: "short" })}
+                  </span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/60">
+                    {game ? (isFr ? "Partie" : "Game") : isFr ? "Pratique" : "Practice"}
+                  </span>
+                </div>
+                <p className="mt-3 font-display text-2xl font-extrabold tabular-nums">
+                  {displayTime(activity.start)} – {displayTime(activity.end)}
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[#83f2e8]">{activity.activity}</p>
+                <p className="mt-1 text-xs text-white/70">{activity.group}</p>
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-white/70">
+                  <MapPinned className="size-3.5 shrink-0 text-[#83f2e8]" aria-hidden="true" />
+                  {activity.venue}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      ) : (
+        <p className="mt-5 rounded-2xl border border-white/15 bg-white/[0.06] p-4 text-sm text-white/75">
+          {isFr
+            ? "Aucune activité M12B publiée pour les prochains jours. Le prochain horaire hebdomadaire AHMV l’indiquera."
+            : "No U12B activity published for the coming days. The next AHMV weekly schedule will list it."}
+        </p>
+      )}
+      <a
+        href="/horaires?team=feminin"
+        className="mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-extrabold uppercase tracking-[0.08em] text-[#83f2e8] hover:underline"
+      >
+        {isFr ? "Voir tout l’horaire du hockey féminin" : "See the full girls hockey schedule"}
+        <ArrowRight className="size-4" aria-hidden="true" />
+      </a>
+    </section>
+  );
+}
 
 type Lang = "fr" | "en";
 
@@ -121,8 +196,8 @@ export function PremiumTeamMicrosite({ site, lang }: {
               </div>
               <p className="mt-3 max-w-lg text-[11px] leading-5 text-white/65">
                 {isFr
-                  ? "L’horaire mène à la catégorie hockey féminin. Les événements exacts M12B seront associés seulement après confirmation."
-                  : "The schedule opens the girls hockey category. Exact U12B events appear only after confirmation."}
+                  ? "Les activités M12B publiées dans l’horaire officiel AHMV sont listées plus bas."
+                  : "U12B activities published in the official AHMV schedule are listed below."}
               </p>
               <TeamPageShare teamSlug={site.slug} teamName={identity(site, lang)} lang={lang} />
             </div>
@@ -148,11 +223,13 @@ export function PremiumTeamMicrosite({ site, lang }: {
                 </p>
               </div>
               <p className="mt-3 text-[11px] leading-5 text-white/64">
-                {isFr ? "Les activités M12B précises seront publiées après confirmation." : "Exact U12B activities will appear once confirmed."}
+                {isFr ? "Parties et pratiques M12B : horaire officiel AHMV." : "U12B games and practices: official AHMV schedule."}
               </p>
             </aside>
           </div>
         </header>
+
+        <TeamOfficialSchedule site={site} lang={lang} />
 
         <section id="outils-equipe" aria-labelledby="outils-equipe-titre" className="scroll-mt-24 py-9 md:py-14">
           <div className="flex flex-col justify-between gap-3 md:flex-row md:items-end">

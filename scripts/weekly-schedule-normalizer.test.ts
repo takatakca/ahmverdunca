@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeExtractedScheduleRows } from "../src/lib/weekly-schedule-normalizer.ts";
-import { officialWeekActivityMatchesPublicTeam } from "../src/lib/official-schedule-team.ts";
+import { louvesSidesInLabel, officialWeekActivityConcernsLouves, officialWeekActivityMatchesPublicTeam } from "../src/lib/official-schedule-team.ts";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory.ts";
 import { OFFICIAL_WEEK_ACTIVITIES, type OfficialWeekActivity } from "../src/data/official-week.ts";
 
@@ -127,6 +127,27 @@ test("team pages never infer colour-only groups as exact teams", () => {
   assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, m13Leafs), false);
 
   assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1106-1800-louves"), louves), true);
+  // Louves A (the published directory entry) never receives Louves B's games.
+  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1107-1300-louves-a"), louves), true);
+  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1107-1200-louves-b"), louves), false);
+  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1113-2000-louves"), louves), true);
   assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1103-1800-hsm"), customHockey), true);
   assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1103-1800-hsm"), m11Leafs), false);
+});
+
+test("Louves labels name side A, side B, both, or neither", () => {
+  const sides = (label: string) => [...louvesSidesInLabel(label)].sort().join("");
+  assert.equal(sides("M12 Louves A"), "A");
+  assert.equal(sides("M12 Louves B"), "B");
+  assert.equal(sides("M12 B louves"), "B");
+  assert.equal(sides("M12 Louves A et B"), "AB");
+  assert.equal(sides("M12 Louves A et M12 Louves B"), "AB");
+  assert.equal(sides("M12 Louves B et M13 Coyotes"), "B");
+  assert.equal(sides("M12 Louves"), "");
+  assert.equal(sides("M13 Bulldogs"), "");
+
+  const louvesB = OFFICIAL_WEEK_ACTIVITIES.filter((activity) => officialWeekActivityConcernsLouves(activity, "B"));
+  assert.ok(louvesB.some((activity) => activity.id === "ow-1114-1500-louves-b"));
+  assert.ok(louvesB.some((activity) => activity.id === "ow-1120-1800-louves"));
+  assert.equal(louvesB.some((activity) => activity.id === "ow-1114-1600-louves-a"), false);
 });
