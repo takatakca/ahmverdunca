@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { normalizeExtractedScheduleRows } from "../src/lib/weekly-schedule-normalizer.ts";
 import { officialWeekActivityMatchesPublicTeam } from "../src/lib/official-schedule-team.ts";
 import { PUBLIC_TEAM_DIRECTORY } from "../src/data/team-directory.ts";
-import { OFFICIAL_WEEK_ACTIVITIES } from "../src/data/official-week.ts";
+import { OFFICIAL_WEEK_ACTIVITIES, type OfficialWeekActivity } from "../src/data/official-week.ts";
 
 const context = {
   week: 5,
@@ -83,6 +83,17 @@ test("team pages never infer colour-only groups as exact teams", () => {
     assert.ok(found);
     return found;
   };
+  // Shapes the current weeks no longer publish, kept as fixtures so the rules stay covered.
+  const fixture = (group: string): OfficialWeekActivity => ({
+    id: `fixture-${group}`,
+    date: "2026-11-03",
+    start: "17:00",
+    end: "18:00",
+    venue: "Aréna Denis Savard",
+    activity: "Pratique",
+    group,
+    status: "scheduled",
+  });
 
   const m11Leafs = getTeam("2025191400018816");
   const m11Broncos = getTeam("2025191400036563");
@@ -95,27 +106,27 @@ test("team pages never infer colour-only groups as exact teams", () => {
   const louves = getTeam("2025191400035012");
   const customHockey = getTeam("2025191400041974");
 
-  const namedM11 = getActivity("ow-1010-1200-m11");
+  const namedM11 = getActivity("ow-1103-1700-m11");
   assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Leafs), true);
   assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Coyotes), true);
   assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Broncos), false);
   assert.equal(officialWeekActivityMatchesPublicTeam(namedM11, m11Bulldogs), false);
 
-  const colourOnly = getActivity("ow-1006-1700-m11");
+  const colourOnly = fixture("M11 bleu et M11 rouge");
   for (const candidate of [m11Leafs, m11Broncos, m11Bulldogs, m11Coyotes]) {
     assert.equal(officialWeekActivityMatchesPublicTeam(colourOnly, candidate), false);
   }
 
-  const m13CoyotesOnly = getActivity("ow-1010-1700-m13-coyotes");
+  const m13CoyotesOnly = getActivity("ow-1108-1300-m13-coyotes");
   assert.equal(officialWeekActivityMatchesPublicTeam(m13CoyotesOnly, m13Coyotes), true);
   assert.equal(officialWeekActivityMatchesPublicTeam(m13CoyotesOnly, m13Leafs), false);
 
-  const genericM15 = getActivity("ow-1011-1300-m15");
+  const genericM15 = fixture("M15");
   assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, m15Leafs), true);
   assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, m15Bulldogs), true);
   assert.equal(officialWeekActivityMatchesPublicTeam(genericM15, m13Leafs), false);
 
-  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1009-1800-louves"), louves), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1006-1800-hsm"), customHockey), true);
-  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1006-1800-hsm"), m11Leafs), false);
+  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1106-1800-louves"), louves), true);
+  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1103-1800-hsm"), customHockey), true);
+  assert.equal(officialWeekActivityMatchesPublicTeam(getActivity("ow-1103-1800-hsm"), m11Leafs), false);
 });

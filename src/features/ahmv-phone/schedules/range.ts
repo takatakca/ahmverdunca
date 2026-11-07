@@ -14,6 +14,13 @@ function addDays(date: string, days: number) {
   return value.toISOString().slice(0, 10);
 }
 
+/** Sunday closing the Monday–Sunday week of `date` (AHMV weekly PDFs run Monday to Sunday). */
+function endOfWeek(date: string) {
+  const [year, month, day] = date.split("-").map(Number);
+  const weekday = new Date(Date.UTC(year!, month! - 1, day!)).getUTCDay();
+  return addDays(date, (7 - weekday) % 7);
+}
+
 function resolveGroup(
   query: string,
   snapshot: ScheduleSnapshot,
@@ -36,7 +43,9 @@ export function scheduleRangeAnswer(
   const clock = localClock(now);
   const group = resolveGroup(query, snapshot, aliases);
   const start = range === "tomorrow" ? addDays(clock.date, 1) : clock.date;
-  const end = range === "today" ? start : range === "tomorrow" ? start : snapshot.end;
+  // The snapshot can span several published weeks; "this week" stops at Sunday.
+  const weekEnd = endOfWeek(clock.date);
+  const end = range === "week" ? (weekEnd < snapshot.end ? weekEnd : snapshot.end) : start;
   const link = `https://ahmverdun.ca/horaires?q=${encodeURIComponent(group ?? query.slice(0, 80))}`;
 
   if (!group || clock.date > snapshot.end) {

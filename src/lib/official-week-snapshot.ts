@@ -2,6 +2,7 @@ import { getArenaForVenue } from "@/data/arenas";
 import {
   OFFICIAL_WEEK_ACTIVITIES,
   OFFICIAL_WEEK_META,
+  scheduleDocumentForDate,
   type OfficialWeekActivity,
 } from "@/data/official-week";
 
@@ -147,6 +148,8 @@ export function buildOfficialWeekSnapshot(sourceUpdatedAt: string): OfficialWeek
   const events = OFFICIAL_WEEK_ACTIVITIES.map((activity) => {
     const arena = getArenaForVenue(activity.venue);
     const category = sourceCategory(activity);
+    // Each activity cites the weekly PDF that published its date.
+    const source = scheduleDocumentForDate(activity.date)?.sourceUrl ?? OFFICIAL_WEEK_META.sourceUrl;
     return {
       id: activity.id,
       type: activity.activity,
@@ -157,8 +160,8 @@ export function buildOfficialWeekSnapshot(sourceUpdatedAt: string): OfficialWeek
       status: activity.status,
       venue: activity.venue,
       ...(arena?.addressVerified ? { venueAddress: arena.address } : {}),
-      officialUrl: OFFICIAL_WEEK_META.sourceUrl,
-      sourceUrl: OFFICIAL_WEEK_META.sourceUrl,
+      officialUrl: source,
+      sourceUrl: source,
     };
   });
 

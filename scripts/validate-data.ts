@@ -6,7 +6,7 @@ import { PUBLIC_TEAM_DIRECTORY, officialTeamResultsUrl, publicTeamHubUrl, public
 import { TAKATAK_TEAM_PORTAL_CONTRACT, teamPortalServices } from "../src/data/team-portal";
 import { REQUIRED_ARENA_COUNT, REQUIRED_COACH_RESOURCE_TITLES, REQUIRED_LEGACY_TEAM_SCHEDULE_IDS, REQUIRED_PUBLIC_ALBUM_COUNT, REQUIRED_PUBLIC_TEAM_DIRECTORY_COUNT } from "../src/data/content-mirror";
 import { SCHEDULE } from "../src/data/schedule";
-import { HAS_NEWER_PUBLISHED_SCHEDULE, LATEST_PUBLISHED_SCHEDULE_DOCUMENT, LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week";
+import { HAS_NEWER_PUBLISHED_SCHEDULE, INTEGRATED_SCHEDULE_DOCUMENTS, LATEST_PUBLISHED_SCHEDULE_DOCUMENT, LEGACY_SCHEDULE_DOCUMENTS, OFFICIAL_WEEK_ACTIVITIES, OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS, scheduleDocumentForDate } from "../src/data/official-week";
 import { TEAMS } from "../src/data/teams";
 import { COACH_RESOURCES } from "../src/data/coaches";
 import { RESOURCES } from "../src/data/resources";
@@ -172,17 +172,26 @@ for (let index = 1; index < WEEKLY_SCHEDULE_DOCUMENTS.length; index += 1) {
 if (LATEST_PUBLISHED_SCHEDULE_DOCUMENT !== WEEKLY_SCHEDULE_DOCUMENTS[0]) {
   errors.push("LATEST_PUBLISHED_SCHEDULE_DOCUMENT must reference the first weekly schedule document.");
 }
-if (
-  LATEST_PUBLISHED_SCHEDULE_DOCUMENT &&
-  (
-    LATEST_PUBLISHED_SCHEDULE_DOCUMENT.start !== OFFICIAL_WEEK_META.start ||
-    LATEST_PUBLISHED_SCHEDULE_DOCUMENT.end !== OFFICIAL_WEEK_META.end ||
-    LATEST_PUBLISHED_SCHEDULE_DOCUMENT.publishedAt !== OFFICIAL_WEEK_META.publishedAt ||
-    LATEST_PUBLISHED_SCHEDULE_DOCUMENT.title !== OFFICIAL_WEEK_META.title ||
-    LATEST_PUBLISHED_SCHEDULE_DOCUMENT.sourceUrl !== OFFICIAL_WEEK_META.sourceUrl
-  )
+// The integrated period runs from the oldest to the newest transcribed week;
+// its publication date and source are those of the newest published PDF.
+const newestIntegrated = INTEGRATED_SCHEDULE_DOCUMENTS[0];
+const oldestIntegrated = INTEGRATED_SCHEDULE_DOCUMENTS.at(-1);
+if (!newestIntegrated || !oldestIntegrated || newestIntegrated !== LATEST_PUBLISHED_SCHEDULE_DOCUMENT) {
+  errors.push("INTEGRATED_SCHEDULE_DOCUMENTS must start with the newest weekly schedule document.");
+} else if (
+  oldestIntegrated.start !== OFFICIAL_WEEK_META.start ||
+  newestIntegrated.end !== OFFICIAL_WEEK_META.end ||
+  newestIntegrated.publishedAt !== OFFICIAL_WEEK_META.publishedAt ||
+  newestIntegrated.sourceUrl !== OFFICIAL_WEEK_META.sourceUrl
 ) {
-  errors.push("OFFICIAL_WEEK_META must exactly match the newest weekly schedule document.");
+  errors.push("OFFICIAL_WEEK_META must span the integrated weeks and cite the newest weekly schedule document.");
+}
+for (let index = 1; index < INTEGRATED_SCHEDULE_DOCUMENTS.length; index += 1) {
+  const newer = INTEGRATED_SCHEDULE_DOCUMENTS[index - 1];
+  const older = INTEGRATED_SCHEDULE_DOCUMENTS[index];
+  if (newer.week !== older.week + 1) {
+    errors.push(`Integrated schedule weeks must be contiguous (week ${older.week} → ${newer.week}).`);
+  }
 }
 if (
   HAS_NEWER_PUBLISHED_SCHEDULE !==
@@ -277,6 +286,9 @@ for (const event of OFFICIAL_WEEK_ACTIVITIES) {
   }
   if (event.date < OFFICIAL_WEEK_META.start || event.date > OFFICIAL_WEEK_META.end) {
     errors.push(`Official week event "${event.id}" falls outside the published week.`);
+  }
+  if (!scheduleDocumentForDate(event.date)) {
+    errors.push(`Official week event "${event.id}" is not covered by an integrated weekly PDF.`);
   }
   if (!event.group.trim() || !event.venue.trim() || !event.activity.trim()) {
     errors.push(`Official week event "${event.id}" is missing a public label, venue or activity.`);

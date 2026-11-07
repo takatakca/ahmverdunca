@@ -17,9 +17,9 @@ const settings = {
 };
 
 test("smart-departure link is signed without phone or identity data", () => {
-  const now = new Date("2026-10-03T12:00:00.000Z");
+  const now = new Date("2026-11-18T12:00:00.000Z");
   const link = createSignedDepartureLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     now,
     3600,
@@ -43,9 +43,9 @@ test("smart-departure link is signed without phone or identity data", () => {
 });
 
 test("smart-departure link rejects wrong or expired signatures", () => {
-  const now = new Date("2026-10-03T12:00:00.000Z");
+  const now = new Date("2026-11-18T12:00:00.000Z");
   const link = createSignedDepartureLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     now,
     60,
@@ -55,7 +55,7 @@ test("smart-departure link rejects wrong or expired signatures", () => {
   assert.equal(
     validateDepartureLink(
       {
-        eventId: "ow-1009-1800-louves",
+        eventId: "ow-1120-1800-louves",
         expires: url.searchParams.get("exp") ?? "",
         signature: "00000000000000000000000000000000",
       },
@@ -73,7 +73,7 @@ test("smart-departure link rejects wrong or expired signatures", () => {
         signature: url.searchParams.get("sig") ?? "",
       },
       settings,
-      new Date("2026-10-03T12:02:00.000Z"),
+      new Date("2026-11-18T12:02:00.000Z"),
     ),
     false,
   );
@@ -120,7 +120,7 @@ test("departure page is disabled by default", async () => {
 
 test("signed departure page requests geolocation only after a button action", async () => {
   const link = createSignedDepartureLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     new Date(),
     3600,
@@ -145,7 +145,7 @@ test("estimate endpoint rejects an invalid signed request before using location"
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        event: "ow-1009-1800-louves",
+        event: "ow-1120-1800-louves",
         exp: "9999999999",
         sig: "00000000000000000000000000000000",
         origin: { latitude: 45.5, longitude: -73.57 },
@@ -160,7 +160,7 @@ test("estimate endpoint rejects an invalid signed request before using location"
 
 test("signed smart-departure page follows Spanish language preference", async () => {
   const link = createSignedDepartureLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     new Date(),
     3600,

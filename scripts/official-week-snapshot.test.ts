@@ -5,7 +5,10 @@ import {
   torontoLocalToIso,
   validateOfficialWeekSourceTimestamp,
 } from "../src/lib/official-week-snapshot.ts";
-import { OFFICIAL_WEEK_META } from "../src/data/official-week.ts";
+import { OFFICIAL_WEEK_META, WEEKLY_SCHEDULE_DOCUMENTS } from "../src/data/official-week.ts";
+
+const SOURCE_UPDATED_AT = "2026-11-04T22:30:00-05:00";
+const weekPdf = (week: number) => WEEKLY_SCHEDULE_DOCUMENTS.find((document) => document.week === week)?.sourceUrl;
 
 test("Toronto local schedule times become exact UTC instants", () => {
   assert.equal(
@@ -20,50 +23,52 @@ test("Toronto local schedule times become exact UTC instants", () => {
 
 test("source publication timestamp must be explicit and on the published Toronto date", () => {
   assert.equal(
-    validateOfficialWeekSourceTimestamp("2026-10-02T16:00:00-04:00"),
-    "2026-10-02T20:00:00.000Z",
+    validateOfficialWeekSourceTimestamp(SOURCE_UPDATED_AT),
+    "2026-11-05T03:30:00.000Z",
   );
   assert.throws(
-    () => validateOfficialWeekSourceTimestamp("2026-10-02"),
+    () => validateOfficialWeekSourceTimestamp("2026-11-04"),
     /offset-aware ISO timestamp/,
   );
   assert.throws(
-    () => validateOfficialWeekSourceTimestamp("2026-10-03T00:00:00-04:00"),
+    () => validateOfficialWeekSourceTimestamp("2026-11-05T12:00:00-05:00"),
     /published date/,
   );
 });
 
-test("weekly snapshot preserves the certified AHMV source and all 39 activities", () => {
-  const snapshot = buildOfficialWeekSnapshot("2026-10-02T16:00:00-04:00");
+test("snapshot keeps all 119 activities of weeks 9–11, each citing its own weekly PDF", () => {
+  const snapshot = buildOfficialWeekSnapshot(SOURCE_UPDATED_AT);
   assert.equal(snapshot.status, "active");
   assert.equal(snapshot.sourceUrl, OFFICIAL_WEEK_META.sourceUrl);
-  assert.equal(snapshot.events.length, 39);
-  assert.equal(snapshot.events[0]?.id, "ow-1005-2030-dollard");
-  assert.equal(snapshot.events.at(-1)?.id, "ow-1011-1730-m19");
-  assert.equal(snapshot.events[0]?.sourceUrl, OFFICIAL_WEEK_META.sourceUrl);
-  assert.equal(snapshot.events[0]?.officialUrl, OFFICIAL_WEEK_META.sourceUrl);
+  assert.equal(snapshot.events.length, 119);
+  assert.equal(snapshot.events[0]?.id, "ow-1102-2030-chacals");
+  assert.equal(snapshot.events.at(-1)?.id, "ow-1122-1800-chacals");
+  assert.equal(snapshot.events[0]?.sourceUrl, weekPdf(9));
+  assert.equal(snapshot.events[0]?.officialUrl, weekPdf(9));
+  assert.equal(snapshot.events.find((event) => event.id === "ow-1114-1500-louves-b")?.sourceUrl, weekPdf(10));
+  assert.equal(snapshot.events.at(-1)?.sourceUrl, weekPdf(11));
 });
 
 test("verified arena addresses are included without guessing unknown locations", () => {
-  const snapshot = buildOfficialWeekSnapshot("2026-10-02T16:00:00-04:00");
-  const denis = snapshot.events.find((event) => event.id === "ow-1006-1700-m11");
-  const saintCharles = snapshot.events.find((event) => event.id === "ow-1007-2100-chacals");
+  const snapshot = buildOfficialWeekSnapshot(SOURCE_UPDATED_AT);
+  const denis = snapshot.events.find((event) => event.id === "ow-1103-1700-m11");
+  const saintCharles = snapshot.events.find((event) => event.id === "ow-1104-2100-chacals");
   assert.match(denis?.venueAddress ?? "", /4110/);
   assert.match(saintCharles?.venueAddress ?? "", /1055/);
 });
 
 test("category labels are derived only from labels explicitly present in the source", () => {
-  const snapshot = buildOfficialWeekSnapshot("2026-10-02T16:00:00-04:00");
+  const snapshot = buildOfficialWeekSnapshot(SOURCE_UPDATED_AT);
   assert.equal(
-    snapshot.events.find((event) => event.id === "ow-1006-1700-m11")?.category,
+    snapshot.events.find((event) => event.id === "ow-1103-1700-m11")?.category,
     "M11",
   );
   assert.equal(
-    snapshot.events.find((event) => event.id === "ow-1006-1800-hsm")?.category,
+    snapshot.events.find((event) => event.id === "ow-1103-1800-hsm")?.category,
     "Hockey sur mesure",
   );
   assert.equal(
-    snapshot.events.find((event) => event.id === "ow-1005-2030-dollard")?.category,
+    snapshot.events.find((event) => event.id === "ow-1102-2030-chacals")?.category,
     "WLLV",
   );
 });

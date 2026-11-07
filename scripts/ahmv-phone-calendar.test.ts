@@ -17,7 +17,7 @@ const settings = {
 
 test("calendar links are disabled without the release flag", () => {
   assert.equal(
-    createSignedCalendarLink("ow-1009-1800-louves", {
+    createSignedCalendarLink("ow-1120-1800-louves", {
       AHMV_CALENDAR_LINK_SECRET: settings.AHMV_CALENDAR_LINK_SECRET,
     }),
     null,
@@ -25,9 +25,9 @@ test("calendar links are disabled without the release flag", () => {
 });
 
 test("calendar link is signed expiring and does not expose the secret", () => {
-  const now = new Date("2026-10-03T12:00:00.000Z");
+  const now = new Date("2026-11-18T12:00:00.000Z");
   const link = createSignedCalendarLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     now,
     3600,
@@ -52,7 +52,7 @@ test("calendar link is signed expiring and does not expose the secret", () => {
   assert.equal(
     validateCalendarLink(
       {
-        eventId: "ow-1009-1800-louves",
+        eventId: "ow-1120-1800-louves",
         expires: url.searchParams.get("exp") ?? "",
         signature: "00000000000000000000000000000000",
       },
@@ -64,9 +64,9 @@ test("calendar link is signed expiring and does not expose the secret", () => {
 });
 
 test("expired calendar link is rejected", () => {
-  const createdAt = new Date("2026-10-03T12:00:00.000Z");
+  const createdAt = new Date("2026-11-18T12:00:00.000Z");
   const link = createSignedCalendarLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     createdAt,
     60,
@@ -81,7 +81,7 @@ test("expired calendar link is rejected", () => {
         signature: url.searchParams.get("sig") ?? "",
       },
       settings,
-      new Date("2026-10-03T12:02:00.000Z"),
+      new Date("2026-11-18T12:02:00.000Z"),
     ),
     false,
   );
@@ -89,25 +89,25 @@ test("expired calendar link is rejected", () => {
 
 test("ICS export uses exact Toronto event time and arena destination", () => {
   const ics = calendarIcs(
-    "ow-1009-1800-louves",
-    new Date("2026-10-03T12:00:00.000Z"),
+    "ow-1120-1800-louves",
+    new Date("2026-11-18T12:00:00.000Z"),
   );
   assert.ok(ics);
   assert.match(ics ?? "", /BEGIN:VCALENDAR/);
-  assert.match(ics ?? "", /DTSTART:20261009T220000Z/);
-  assert.match(ics ?? "", /DTEND:20261009T230000Z/);
+  assert.match(ics ?? "", /DTSTART:20261120T230000Z/);
+  assert.match(ics ?? "", /DTEND:20261121T000000Z/);
   assert.match(ics ?? "", /LOCATION:/);
   assert.match(ics ?? "", /4110/);
   assert.match(ics ?? "", /ahmverdun\.ca/);
 });
 
 test("Google Calendar template is generated from the same event", () => {
-  const link = googleCalendarUrl("ow-1009-1800-louves");
+  const link = googleCalendarUrl("ow-1120-1800-louves");
   assert.ok(link);
   const url = new URL(link!);
   assert.equal(url.hostname, "calendar.google.com");
   assert.equal(url.searchParams.get("action"), "TEMPLATE");
-  assert.match(url.searchParams.get("dates") ?? "", /20261009T220000Z/);
+  assert.match(url.searchParams.get("dates") ?? "", /20261120T230000Z/);
 });
 
 test("calendar endpoint is disabled by default", () => {
@@ -120,7 +120,7 @@ test("calendar endpoint is disabled by default", () => {
 
 test("signed calendar landing exposes calendar and directions actions", async () => {
   const link = createSignedCalendarLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     new Date(),
     3600,
@@ -140,7 +140,7 @@ test("signed calendar landing exposes calendar and directions actions", async ()
 
 test("same signed link can download an ICS file", async () => {
   const link = createSignedCalendarLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     new Date(),
     3600,
@@ -156,7 +156,7 @@ test("same signed link can download an ICS file", async () => {
 
 test("signed calendar landing follows Spanish language preference", async () => {
   const link = createSignedCalendarLink(
-    "ow-1009-1800-louves",
+    "ow-1120-1800-louves",
     settings,
     new Date(),
     3600,
