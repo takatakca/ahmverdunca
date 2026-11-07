@@ -1,5 +1,9 @@
 # Work log
 
+- 2026-11-06 | claude | fix/dependency-audit-zod4 → main | active; all local CI gates green | Clear bun audit high findings blocking deploy: vite 8.1.6, zod ^4.6.7 (no patched 3.x), follow-redirects/launch-editor in range, Voice package-lock follow-redirects | Watch main CI + auto-deploy, confirm /healthz release SHA
+
+- 2026-11-06 | claude | content/horaires-semaines-9-11-louves → main 801b2f9 | done; main CI #42319271408 failed only at dependency audit (fixed in line above) | Weeks 9–11 (Nov 2–22) from official AHMV PDFs, per-week PDF provenance, SMS SEMAINE stops at Sunday; Louves A and Louves B as two teams with their own activities | Verify live /horaires, /equipes/feminin, /equipes/louves-m12b after deploy; #401/#403 still owner-gated
+
 - 2026-10-16 | chatgpt | fix/family-auth-fail-closed-20261016 → PR #411 | done; branch CI #38950318005, main CI #38950476979, production #38950582023 success | Fix malformed/oversize Family cookies, time-bound TAKATAK exchange, upgrade XSS-vulnerable TanStack Start/Core and align Router; built release 039111a8c723ffbfbf85f8a364f3132a2be0d447 verified via /healthz/noindex | Next: owner visual reviews #401/#403 and authorized provider gates #120/#127
 
 - 2026-10-14 | chatgpt | fix/production-smoke-waf-403-20261014 → PR #410 | done; CI #38623287164 and production #38623392436 success | Preserve HTTP 403 WAF challenge body, distinguish WAF from genuine curl errors, add synthetic origin fallback test; compiled de96f2e65d403b398209f5ba5042ee0ca7a61903, /healthz and noindex confirmed | Continue owner-gated #401/#403 only after approval; independent security tasks remain eligible
