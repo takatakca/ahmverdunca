@@ -33,3 +33,9 @@ The public deploy smoke uses verified TLS and preserves HTTP 4xx body content on
 New GitHub CI flagged critical XSS GHSA-qx66-fv34-fjm8 in TanStack Start. Never ignore or disable dependency audit to bypass this gate. Pin `@tanstack/react-start@1.168.60` and `@tanstack/start-server-core@1.169.39` with compatible `@tanstack/react-router@1.170.41` and `@tanstack/router-core@1.171.34`; regenerate `bun.lock` with approved Bun 1.4.2, test TypeScript, SSR build and full CI. The one-time branch-local write workflow was removed once its lockfile commit was made. Merge only a passing artifact and confirm live runtime SHA; done via PR #411, CI #38950476979 and production #38950582023.
 
 Untrusted Family cookies must return no session rather than crash the request. TAKATAK remains the sole identity authority; failed/timed-out 5-second login exchange cannot mint a local session or leak provider data. External tenant/entitlement and billing gates are unchanged.
+
+## ADR-010: Zod 4 and Coolify as the production deploy path (2026-11-06)
+
+`bun audit --audit-level=high` blocked main CI on vite 8.1.5, follow-redirects, launch-editor and zod 3.25.76 (GHSA-mrhx-c7xc-m3w5). No patched zod 3.x exists, so zod moves to ^4.6.7; the three TAKATAK control-plane schemas use only APIs zod 4 keeps. The audit gate is never disabled to ship.
+
+ahmverdun.ca was cut over to a Contabo VPS running Coolify. Production proof stays the same: `/healthz` must report the exact main SHA. Coolify builds report it from runtime `SOURCE_COMMIT`, accepted only as a 7–40 character hex SHA. The Coolify workflow uses its own concurrency group so it never cancels the MochaHost rollback path.

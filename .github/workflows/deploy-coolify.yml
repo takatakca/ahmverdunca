@@ -1,0 +1,123 @@
+name: Deploy AHM Verdun to Coolify
+
+# ahmverdun.ca is served by the Contabo VPS through Coolify since the late
+# October 2026 cutover. Coolify builds `main` itself; this workflow only asks it
+# to deploy after a green CI run and then proves the exact commit is live.
+#
+# Owner setup (no secret values ever go in git):
+#   - repository or `production` environment secret COOLIFY_DEPLOY_WEBHOOK:
+#     the app's Webhooks → Deploy Webhook URL (…/api/v1/deploy?uuid=…&force=false)
+#   - secret COOLIFY_API_TOKEN: a Coolify API token allowed to deploy
+#   - in Coolify, enable "Include Source Commit in Build" so /healthz reports it
+# Until both secrets exist the job is skipped with a notice, never failed.
+
+on:
+  workflow_run:
+    workflows:
+      - AHM Verdun CI
+    types:
+      - completed
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ahmverdun-production-coolify
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 35
+
+    env:
+      RELEASE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      COOLIFY_DEPLOY_WEBHOOK: ${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      PUBLIC_URL: ${{ vars.AHMV_COOLIFY_PUBLIC_URL || 'https://ahmverdun.ca' }}
+      PUBLIC_INDEXING: ${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Check Coolify configuration
+        id: configured
+        run: |
+          set -euo pipefail
+          if [ -z "$COOLIFY_DEPLOY_WEBHOOK" ] || [ -z "$COOLIFY_API_TOKEN" ]; then
+            echo "::notice::COOLIFY_DEPLOY_WEBHOOK and COOLIFY_API_TOKEN are not both set; Coolify deploy skipped."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          case "$COOLIFY_DEPLOY_WEBHOOK" in
+            https://*) ;;
+            *) echo "COOLIFY_DEPLOY_WEBHOOK must be an https URL."; exit 1 ;;
+          esac
+          # Refuse a stale release: Coolify always builds the current main head.
+          MAIN_SHA="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" -q .sha)"
+          if [ "$MAIN_SHA" != "$RELEASE_SHA" ]; then
+            echo "::notice::main is now $MAIN_SHA; skipping stale release $RELEASE_SHA (the newer CI run deploys)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger Coolify deployment
+        if: steps.configured.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          status="$(curl -sS -o /tmp/coolify-response -w '%{http_code}' \
+            --max-time 60 \
+            -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
+            "$COOLIFY_DEPLOY_WEBHOOK")"
+          echo "Coolify answered HTTP $status"
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            head -c 500 /tmp/coolify-response || true
+            echo
+            exit 1
+          fi
+
+      - name: Verify live release on /healthz
+        if: steps.configured.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          want="$(printf '%s' "$RELEASE_SHA" | tr 'A-F' 'a-f')"
+          body=""
+          for attempt in $(seq 1 40); do
+            body="$(curl -fsS --max-time 20 "$PUBLIC_URL/healthz" || true)"
+            echo "attempt $attempt/40: $body"
+            if printf '%s' "$body" | grep -q "\"release\":\"$want\""; then
+              echo "Coolify is serving $want."
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "::error::$PUBLIC_URL/healthz never reported $want. Last body: $body"
+          if printf '%s' "$body" | grep -q '"release":"unversioned"'; then
+            echo "::error::Enable 'Include Source Commit in Build' on the Coolify application so SOURCE_COMMIT reaches the server."
+          fi
+          exit 1
+
+      - name: Verify core public routes and indexing policy
+        if: steps.configured.outputs.ready == 'true'
+        run: |
+          set -euo pipefail
+          for path in / /horaires /equipes /nouvelles /robots.txt /sitemap.xml; do
+            code="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 30 "$PUBLIC_URL$path")"
+            echo "$path → $code"
+            test "$code" = "200"
+          done
+          headers="$(curl -sSI --max-time 30 "$PUBLIC_URL/")"
+          if [ "$PUBLIC_INDEXING" != "true" ]; then
+            printf '%s' "$headers" | grep -qi '^x-robots-tag:.*noindex' || {
+              echo "::error::Homepage lost its noindex header while public indexing is not approved."
+              exit 1
+            }
+          fi
+          echo "Coolify release $RELEASE_SHA verified on $PUBLIC_URL."

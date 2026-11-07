@@ -36,8 +36,18 @@ type ServerEntry = {
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 const PUBLIC_INDEXING_ENABLED = import.meta.env["VITE_PUBLIC_INDEXING"] === "true";
+// GitHub Actions bakes the SHA in at build time (VITE_AHMV_BUILD_SHA). Coolify
+// exposes the deployed commit at runtime as SOURCE_COMMIT when "Include Source
+// Commit in Build" is enabled. Only a hex commit SHA is ever echoed publicly.
+const COOLIFY_SOURCE_COMMIT = (
+  typeof process === "undefined" ? undefined : process.env["SOURCE_COMMIT"]
+)?.trim();
 const BUILD_RELEASE_SHA =
-  import.meta.env["VITE_AHMV_BUILD_SHA"]?.trim() || "unversioned";
+  import.meta.env["VITE_AHMV_BUILD_SHA"]?.trim() ||
+  (COOLIFY_SOURCE_COMMIT && /^[0-9a-f]{7,40}$/i.test(COOLIFY_SOURCE_COMMIT)
+    ? COOLIFY_SOURCE_COMMIT.toLowerCase()
+    : "") ||
+  "unversioned";
 
 const LEGACY_REDIRECTS: Record<string, string> = {
   "/index": "/",

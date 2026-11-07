@@ -1,6 +1,8 @@
 # Work log
 
-- 2026-11-06 | claude | fix/dependency-audit-zod4 → main | active; all local CI gates green | Clear bun audit high findings blocking deploy: vite 8.1.6, zod ^4.6.7 (no patched 3.x), follow-redirects/launch-editor in range, Voice package-lock follow-redirects | Watch main CI + auto-deploy, confirm /healthz release SHA
+- 2026-11-07 | claude | fix/dependency-audit-zod4 → main | done in source; awaits owner Coolify secrets | ahmverdun.ca is on Contabo VPS 209.145.49.63 serving a pre-Nov-6 build; add deploy-coolify.yml (webhook + exact-SHA /healthz proof, skips without secrets), /healthz reads Coolify SOURCE_COMMIT (hex only), docs record hosting reality | Owner: Coolify Redeploy main, enable Include Source Commit, add COOLIFY_DEPLOY_WEBHOOK + COOLIFY_API_TOKEN
+
+- 2026-11-06 | claude | fix/dependency-audit-zod4 → main 369da9d | done; main CI #42320332963 + Voice CI green; MochaHost deploy #42320393675 failed health (domain now on Contabo VPS) and rolled back | vite 8.1.6, zod ^4.6.7, in-range follow-redirects/launch-editor, Voice lock | Live only after Coolify redeploy (line above)
 
 - 2026-11-06 | claude | content/horaires-semaines-9-11-louves → main 801b2f9 | done; main CI #42319271408 failed only at dependency audit (fixed in line above) | Weeks 9–11 (Nov 2–22) from official AHMV PDFs, per-week PDF provenance, SMS SEMAINE stops at Sunday; Louves A and Louves B as two teams with their own activities | Verify live /horaires, /equipes/feminin, /equipes/louves-m12b after deploy; #401/#403 still owner-gated
 

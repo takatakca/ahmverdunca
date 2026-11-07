@@ -47,4 +47,19 @@ assert.match(server, /VITE_AHMV_BUILD_SHA/);
 assert.match(manual, /Production Passenger is not serving compiled release \$RELEASE_SHA/);
 assert.match(pre, /Preproduction Passenger is not serving compiled release \$RELEASE_SHA/);
 
+// Coolify (Contabo VPS) path: own concurrency group so it never cancels the
+// MochaHost rollback path, secrets only by reference, exact-SHA runtime proof.
+const coolify = readFileSync(".github/workflows/deploy-coolify.yml", "utf8");
+assert.match(coolify, /concurrency:\s*\n\s*group: ahmverdun-production-coolify\s*\n\s*cancel-in-progress: true/);
+assert.doesNotMatch(coolify, /group: ahmverdun-production-auto/);
+assert.ok(coolify.includes("COOLIFY_DEPLOY_WEBHOOK: " + "${{ secrets.COOLIFY_DEPLOY_WEBHOOK }}"));
+assert.ok(coolify.includes("COOLIFY_API_TOKEN: " + "${{ secrets.COOLIFY_API_TOKEN }}"));
+assert.ok(coolify.includes("github.event.workflow_run.conclusion == 'success'"));
+assert.ok(coolify.includes("github.event.workflow_run.head_branch == 'main'"));
+assert.ok(coolify.includes('"\\"release\\":\\"$want\\""'));
+assert.ok(coolify.includes("PUBLIC_INDEXING: " + "${{ vars.AHMV_PUBLIC_INDEXING || 'false' }}"));
+assert.ok(coolify.includes("grep -qi '^x-robots-tag:.*noindex'"));
+assert.match(server, /process\.env\["SOURCE_COMMIT"\]/);
+assert.match(server, /\[0-9a-f\]\{7,40\}/);
+
 console.log("AHM Verdun deployment concurrency contract passed.");

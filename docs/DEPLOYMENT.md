@@ -1,6 +1,14 @@
 # AHM Verdun — deployment
 
-## Actual environment
+## Hosting reality (verified 2026-11-07 00:53 UTC) — read first
+
+- `ahmverdun.ca` and `www` resolve to **209.145.49.63** = Contabo VPS `vmi3681142.contaboserver.net` (Coolify, Let's Encrypt cert issued 2026-10-26). **Not** MochaHost (209.42.24.127) and **not** the planned `31.220.96.134`.
+- The VPS serves a build older than 2026-11-06: `/horaires` says "mise à jour du 2 octobre 2026" (weeks 4–5) and `/healthz` reports `release: unversioned` because Coolify builds lack `VITE_AHMV_BUILD_SHA`.
+- `deploy-production-auto.yml` (MochaHost) still runs after every green main CI. Run 42320393675 uploaded, activated and restarted 369da9d on MochaHost, then failed "Verify health" because the public URL now reaches the VPS, and rolled MochaHost back to 039111a. **MochaHost serves no ahmverdun.ca traffic**; it is only a rollback copy.
+- New `deploy-coolify.yml`: after green main CI it calls the Coolify deploy webhook and proves `/healthz` = the main SHA, core routes 200 and homepage noindex. It skips with a notice until the owner sets secrets `COOLIFY_DEPLOY_WEBHOOK` and `COOLIFY_API_TOKEN` and enables Coolify "Include Source Commit in Build" (`src/server.ts` then reports the runtime `SOURCE_COMMIT`, hex only).
+- Owner decision pending: disable the MochaHost auto-deploy once Coolify deploys are proven; until then each main push shows a red MochaHost deploy run that does not affect the live site.
+
+## Previous environment (MochaHost, superseded by the Coolify cutover)
 - Production: https://ahmverdun.ca — MochaHost cPanel / Passenger, immutable releases. Source GitHub `main`; build in GitHub Actions (Bun 1.4.2), not on constrained shared host.
 - Website CI: `.github/workflows/ci.yml`. Automatic production: `.github/workflows/deploy-production-auto.yml` on successful green main CI only; docs-only commits skip CI/deploy by path policy.
 - Manual production: `.github/workflows/deploy-production.yml`, explicit indexing launch confirmation. Voice service is separate, Node >=22, guarded preproduction attestation, no implicit Twilio switch.

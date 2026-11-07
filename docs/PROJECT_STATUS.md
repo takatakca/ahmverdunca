@@ -2,7 +2,12 @@
 
 Updated 2026-10-16. Source authority: [takatakca/ahmverdunca](https://github.com/takatakca/ahmverdunca), branch `main`. This is an operational summary, not a claim of 100% feature completion. See `docs/RELEASE_HANDOFF_2026-10-14.md`, `docs/FINAL_RELEASE_STATUS.md` and `WORKLOG.md`.
 
-## Current certified production release (2026-10-16)
+## State on 2026-11-06 / 07
+
+- `main` carries the weeks 9–11 schedule (Nov 2–22, official AHMV PDFs) and Louves A / Louves B as two teams (801b2f9), the dependency-audit fix (369da9d) and the Coolify deploy path. Main CI green.
+- **Not live yet:** ahmverdun.ca is on the Contabo/Coolify VPS, which still serves a pre-Nov-6 build. A Coolify redeploy of `main` is required; see `docs/DEPLOYMENT.md` "Hosting reality".
+
+## Previously certified production release (2026-10-16, MochaHost)
 
 - PR [#411](https://github.com/takatakca/ahmverdunca/pull/411) merged into `main` at `039111a8c723ffbfbf85f8a364f3132a2be0d447`. Branch [CI #38950318005](https://github.com/takatakca/ahmverdunca/actions/runs/38950318005), main [CI #38950476979](https://github.com/takatakca/ahmverdunca/actions/runs/38950476979), and automatic [production #38950582023](https://github.com/takatakca/ahmverdunca/actions/runs/38950582023) all **succeeded**.
 - Runner production `GET /healthz` returned `{"ok":true,"service":"ahmverdun-web","release":"039111a8c723ffbfbf85f8a364f3132a2be0d447"}`; homepage remained **noindex**, public routes, compiled CSS/JS, search noindex, robots and sitemap passed. This is production deployment proof, not approval of pending providers.
