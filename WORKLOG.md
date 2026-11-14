@@ -1,6 +1,25 @@
 # Work log
 
-- 2026-10-11 | chatgpt | feat/schedule-first-team-carousel → PR #403 | CI #1252 PASS, actual React Chromium QA #8 PASS + mobile/desktop screenshots reviewed | Photo-first categories on /horaires; swipe/48px arrows/10 existing categories, M7 filtering, feminine M12B distinct from historical M12A, active-image preloading, no overflow at 320/390/768/1440; saved favorites and published weekly data preserved | owner visual review before merge; MochaHost production /healthz SHA not verified, global Assistant overlap belongs to PR #391
+- 2026-11-07 | claude | fix/dependency-audit-zod4 → main | done in source; awaits owner Coolify secrets | ahmverdun.ca is on Contabo VPS 209.145.49.63 serving a pre-Nov-6 build; add deploy-coolify.yml (webhook + exact-SHA /healthz proof, skips without secrets), /healthz reads Coolify SOURCE_COMMIT (hex only), docs record hosting reality | Owner: Coolify Redeploy main, enable Include Source Commit, add COOLIFY_DEPLOY_WEBHOOK + COOLIFY_API_TOKEN
+
+- 2026-11-06 | claude | fix/dependency-audit-zod4 → main 369da9d | done; main CI #42320332963 + Voice CI green; MochaHost deploy #42320393675 failed health (domain now on Contabo VPS) and rolled back | vite 8.1.6, zod ^4.6.7, in-range follow-redirects/launch-editor, Voice lock | Live only after Coolify redeploy (line above)
+
+- 2026-11-06 | claude | content/horaires-semaines-9-11-louves → main 801b2f9 | done; main CI #42319271408 failed only at dependency audit (fixed in line above) | Weeks 9–11 (Nov 2–22) from official AHMV PDFs, per-week PDF provenance, SMS SEMAINE stops at Sunday; Louves A and Louves B as two teams with their own activities | Verify live /horaires, /equipes/feminin, /equipes/louves-m12b after deploy; #401/#403 still owner-gated
+
+- 2026-10-16 | chatgpt | fix/family-auth-fail-closed-20261016 → PR #411 | done; branch CI #38950318005, main CI #38950476979, production #38950582023 success | Fix malformed/oversize Family cookies, time-bound TAKATAK exchange, upgrade XSS-vulnerable TanStack Start/Core and align Router; built release 039111a8c723ffbfbf85f8a364f3132a2be0d447 verified via /healthz/noindex | Next: owner visual reviews #401/#403 and authorized provider gates #120/#127
+
+- 2026-10-14 | chatgpt | fix/production-smoke-waf-403-20261014 → PR #410 | done; CI #38623287164 and production #38623392436 success | Preserve HTTP 403 WAF challenge body, distinguish WAF from genuine curl errors, add synthetic origin fallback test; compiled de96f2e65d403b398209f5ba5042ee0ca7a61903, /healthz and noindex confirmed | Continue owner-gated #401/#403 only after approval; independent security tasks remain eligible
+
+- 2026-10-14 | chatgpt | fix/manual-production-release-guard-20261014 → PR #409 | done; CI #38622825907 and production #38622947479 success | Manual deploy default noindex, exact canonical origin, Passenger restart preflight, /recherche real robots policy; compiled 08fcd8042e1de55f978deb49914bab70cdfa89bf certified | Superseded by successful PR #410 production
+
+- 2026-10-14 | chatgpt | fix/ahmv-indexing-release-gate-20261014 → PR pending | done; PR #408, main CI #38613657967 and production #38614134421 green | Default-deny indexing and explicit approval guard; five handoff docs, tests and AGENTS rule; compiled release c614dc9be786ce04710d2e9463c9c576f85369ce with homepage noindex verified | Continue independent queue; Louves #401/#400 and schedule #403 require visual owner review; Supabase access denied
+
+- 2026-10-14 | chatgpt | fix/assistant-nudge-mobile-overlap-20261014 → PR #406 | done; CI #38609477969 and production #38609816080 green | Prevent opt-in Assistant nudge from covering mobile page content now that Assistant has a sixth bottom dock action | CI; merge and verify exact production release
+
+
+- 2026-10-14 | chatgpt | fix/mobile-assistant-dock-rebased-20261014 → PR #405 | done; CI #38608226675 and production #38608519994 green | Port original Assistant/mobile-nav fix from blocked PR #391 onto current main without conflicts; desktop-only floating launcher, sixth mobile destination, focus return, keyboard and viewport guards | CI / merge / deployment proof; close superseded #391 after success
+
+- 2026-10-14 | chatgpt | fix/mobile-menu-keyboard-dialog-20261014 → PR #404 | done; CI #38607569927 and production #38607964690 green | Mobile menu accessibility: move focus into modal portal, trap Tab, visible close button, return focus on Escape/close; static regression gate | PR CI / controlled merge, production SHA verification (Louves visual issue #400 remains independent)
 
 - 2026-10-11 | chatgpt | fix/gallery-always-visible-exit → PR #402 | CI #1242 and real gallery Chromium QA #10 green; 390/1440 and full viewport placement verified | Added 48px always-visible Retour à l’album, larger X, Escape, phone safe-area; fixed QA selector accidentally clicking welcome panel; tested photo open/exit/reopen/Escape | safe corrective merge/release gate, live MochaHost verification separately, screenshot uploads require future user consent and secure backend
 
