@@ -1,0 +1,58 @@
+name: AHMV Schedule Team Carousel QA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/routes/horaires.tsx"
+      - "src/components/schedule-team-carousel.tsx"
+      - "src/data/teams.ts"
+      - "src/data/team-visuals.ts"
+      - "scripts/visual-smoke-schedule-carousel.py"
+      - ".github/workflows/ahmv-schedule-carousel-qa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  visual-schedule:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version: 1.4.2
+      - name: Locked dependencies
+        run: bun install --frozen-lockfile
+      - name: Playwright Chromium in isolated Python venv
+        run: |
+          python3 -m venv /tmp/ahmv-schedule-browser
+          /tmp/ahmv-schedule-browser/bin/pip install --disable-pip-version-check playwright==1.55.0
+          /tmp/ahmv-schedule-browser/bin/python -m playwright install --with-deps chromium
+      - name: Start the actual TanStack app
+        run: |
+          set -euo pipefail
+          bun run dev -- --host 127.0.0.1 --port 8080 > /tmp/ahmv-schedule-server.log 2>&1 &
+          for i in $(seq 1 45); do
+            if curl -fsS --max-time 5 http://127.0.0.1:8080/horaires >/dev/null; then exit 0; fi
+            sleep 2
+          done
+          tail -n 80 /tmp/ahmv-schedule-server.log
+          exit 1
+      - name: Capture real schedule page at 320, 390, 768 and 1440
+        env:
+          AHMV_VISUAL_BASE_URL: http://127.0.0.1:8080
+          AHMV_SCHEDULE_ARTIFACT_DIR: artifacts/schedule-team-first
+        run: /tmp/ahmv-schedule-browser/bin/python scripts/visual-smoke-schedule-carousel.py
+      - name: Upload before/after selection screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ahmv-schedule-carousel-${{ github.run_number }}
+          path: artifacts/schedule-team-first/
+          if-no-files-found: warn
+          retention-days: 14
