@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - "src/components/team-premium-microsite.tsx"
+      - "src/routes/__root.tsx"
+      - "src/components/teamlinkt-public-widget.tsx"
+      - "src/components/team-page-share.tsx"
+      - "src/lib/teamlinkt-public-widgets.ts"
       - "src/data/team-microsites.ts"
       - "src/routes/equipes.louves-m12b.tsx"
       - "public/images/teams/**"
